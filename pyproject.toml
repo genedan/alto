@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alto"
+version = "0.1.0"
+description = "Alto: a desktop music theory trainer"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = ["PySide6>=6.8", "numpy>=1.26"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.8", "pre-commit>=3.5"]
+
+[project.gui-scripts]
+alto = "alto.__main__:main"
+
+[tool.setuptools.package-data]
+alto = ["assets/piano/*", "assets/samples/*/*", "assets/ui/*", "assets/fonts/*", "assets/icon*"]
+
+[tool.setuptools.packages.find]
+include = ["alto*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 130
+src = ["alto", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "B905",  # zip() without strict=: the zipped sequences are built to the same length
+    "E741",  # one-letter names such as `l` for a letter name are normal in the music code
+]
+
+[tool.ruff.lint.per-file-ignores]
+"alto/ui/icons.py" = ["E501"]  # SVG path data
+"alto/ui/style.py" = ["E501"]  # the stylesheet template
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["PySide6.QtGui.QColor", "PySide6.QtCore.QModelIndex"]  # defaults that are never mutated
