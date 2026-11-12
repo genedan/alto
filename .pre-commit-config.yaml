@@ -33,3 +33,15 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-push]
+
+  # A reminder, not a gate: say so when the interface has changed since the docs screenshots were made.
+  - repo: local
+    hooks:
+      - id: docs-fresh
+        name: docs screenshots are up to date
+        entry: sh scripts/check-docs.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        verbose: true
+        stages: [pre-push]

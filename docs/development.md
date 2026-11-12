@@ -104,6 +104,25 @@ Alto draws notes with fonts that follow the [SMuFL](https://www.smufl.org/) stan
 
 Only add fonts whose licence allows redistribution, such as the SIL Open Font License.
 
+## Keeping the docs and screenshots current
+
+Every picture in the docs comes as a light and a dark pair, and `scripts/screenshots.py` makes all of them:
+
+```bash
+.venv/bin/python scripts/screenshots.py                    # every picture, both themes
+.venv/bin/python scripts/screenshots.py --only home stats  # just these
+.venv/bin/python scripts/screenshots.py --out /tmp/shots   # somewhere else, to look before replacing
+```
+
+It runs against a made-up profile and a temporary settings folder, so it never touches your own history or settings. It
+needs a display or `QT_QPA_PLATFORM=offscreen`. Fonts render slightly differently on each machine, so regenerate on the
+machine you normally use and look at the pictures before committing them. To add a picture, include it in a docs page
+with `shot.html`, and add its name to `SHOTS` in the script. `tests/test_docs.py` checks that both match and that both themes
+exist.
+
+The pre-push hook runs `scripts/check-docs.sh`, which warns when the interface (`alto/ui`) has changed since the pictures
+were last updated. It only warns; set `ALTO_DOCS_STRICT=1` to make it fail.
+
 ## Reporting problems
 
 Open an issue on [GitHub](https://github.com/genedan/alto/issues). Say which operating system and Python version you
