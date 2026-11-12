@@ -1,0 +1,5 @@
+<figure class="shot">
+  <img class="for-light" src="{{ '/assets/img/' | append: include.src | relative_url }}" alt="{{ include.alt }}" loading="lazy">
+  <img class="for-dark" src="{{ '/assets/img/' | append: include.src | replace: '.png', '-dark.png' | relative_url }}" alt="{{ include.alt }}" loading="lazy">
+  {% if include.caption %}<figcaption>{{ include.caption }}</figcaption>{% endif %}
+</figure>

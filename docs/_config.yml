@@ -1,0 +1,10 @@
+title: Alto
+description: Desktop music theory drills that adapt to what you find hard.
+url: https://genedan.github.io
+baseurl: /alto
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+exclude:
+  - README.md
