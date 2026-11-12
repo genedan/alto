@@ -10,12 +10,6 @@ from alto.ui import instrument_picker
 from alto.ui.instrument_picker import InstrumentPicker
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication
-
-
-@pytest.fixture(scope="module")
-def app():
-    return QApplication.instance() or QApplication([])
 
 
 @pytest.fixture

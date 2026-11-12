@@ -11,11 +11,6 @@ from PySide6.QtCore import QEvent
 from PySide6.QtWidgets import QApplication
 
 
-@pytest.fixture(scope="module")
-def app():
-    return QApplication.instance() or QApplication([])
-
-
 @pytest.fixture
 def dialog(app, monkeypatch):
     """A settings dialog that never touches the saved settings."""
