@@ -30,10 +30,10 @@ Electronic Music Studios (https://theremin.music.uiowa.edu/MIS.html). The site s
 freely available on this website and may be downloaded and used for any projects, without restrictions." They were
 converted to mono, trimmed and faded for use here. Details are in each folder's `SOURCE.txt`.
 
-## App icon (`alto/assets/icon.svg`)
+## App icons (`alto/assets/icon.svg`, `alto/assets/icon-treble.svg`)
 
-The clef in Alto's icon is the alto clef outline from the Noto Music font (Google, SIL Open Font License 1.1), set on a
-rounded square.
+The clef in each icon is an outline from the Noto Music font (Google, SIL Open Font License 1.1), set on a rounded
+square: the alto clef in `icon.svg` and the treble clef in `icon-treble.svg`.
 
 ## Fonts used from the system, not bundled
 
