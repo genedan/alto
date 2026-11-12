@@ -7,15 +7,18 @@ There are two kinds of settings. **App settings** apply everywhere. **Exercise s
 
 ## App settings
 
-Open them from the menu (☰) with **Settings…** or <kbd>Ctrl</kbd>+<kbd>,</kbd>. Categories are listed on the left, and
+Open them from the menu (☰) with **Settings…** or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd>. Categories are listed on the left, and
 the selected one's settings appear on the right.
 
 {% include shot.html src="settings.png" alt="The settings dialog showing theme and notation style options" %}
 
 ### Appearance
 
+The Appearance page has two sections, **Theme** and **Notation style**, which you switch between with the pill-shaped control at the top.
+
 **Theme.** Choose System to follow your operating system's light or dark setting, or Light or Dark to always use one.
-It applies immediately.
+Each choice is a card with a small picture of the window in that theme (System shows both halves). It applies
+immediately.
 
 **Notation style.** The music font used to draw clefs, notes and accidentals. Each choice shows a preview. Your choice
 applies to every staff in the app, including the small pictures in the settings panels. The default is Finale Maestro.
@@ -38,11 +41,29 @@ The breve is always drawn in its square form, whichever font you choose. All the
 
 ### Sound
 
-**Instrument.** The sound used for notes and for the correct-answer chime: piano, flute, clarinet, oboe, trumpet,
-violin, cello, marimba or vibraphone. Press ▶ on a card to hear it without choosing it. Sound can also be muted with
-the speaker button in any exercise.
+**Instrument.** The sound used for notes and for the correct-answer chime. The instruments are listed in a box on the
+left: piano, flute, French horn, viola, marimba and vibraphone. The one in use is in bold and
+ticked. Choose any of them to see a summary on the right of what its sound is made from:
 
-{% include shot.html src="settings-sound.png" alt="The Sound page of the settings dialog with the instrument choices" %}
+- where the recordings come from, who played them, and when and how they were recorded;
+- which articulation and dynamic were used, such as blown without vibrato at fortissimo or struck with yarn mallets;
+- how many notes are recorded, their range, and whether every semitone is covered (notes in between are shifted from
+  a neighbour);
+- how much space they take, and the terms they are available under.
+
+The viola can be played two ways, so it has one entry. Its page describes the **Arco** (bowed) and **Pizzicato**
+(plucked) recordings together, and has a row of buttons for each, such as **Use this instrument (Arco)**. The list says
+which one is in use, such as "Viola (Pizzicato)".
+
+Press **Use this instrument**, or double-click the entry in the list, to switch to it. Press **Hear it** beside it to listen
+to a short arpeggio first without choosing it, even while sound is muted. Sound can also be muted with the speaker
+button in any exercise.
+
+The flute, French horn and arco viola, which are blown or bowed, end each note as the next one begins, as a player would. Struck and plucked instruments, such as the piano, marimba and pizzicato viola, ring on. An instrument
+whose recordings are not installed in your copy of Alto is shown in italics and cannot be chosen, because it would
+only play as the synthesized piano.
+
+{% include shot.html src="settings-sound.png" alt="The Sound page of the settings dialog with a list of instruments and a summary of the selected one" %}
 
 ## Exercise settings
 

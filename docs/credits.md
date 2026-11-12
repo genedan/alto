@@ -33,7 +33,7 @@ appear only to say where a font comes from or is used.
 
 ## Instrument recordings
 
-The piano, marimba and vibraphone use recordings from the
+The piano, flute, French horn, viola, marimba and vibraphone use recordings from the
 [Musical Instrument Samples](https://theremin.music.uiowa.edu/MIS.html) of the University of Iowa Electronic Music
 Studios, which the studio makes freely available for any project. Alto converted them to mono, trimmed and faded them.
 

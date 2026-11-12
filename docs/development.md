@@ -79,6 +79,19 @@ class MyExercise(Exercise):
 Everything else comes with it: the question is recorded in the database, scored for speed, drawn in the chosen
 notation font and included in the statistics.
 
+## Adding an instrument
+
+1. Put its recordings in `alto/assets/samples/<key>/`, one mono WAV per note, named by MIDI note number (for example
+   `60.wav` for middle C). Every semitone is best. Where a note has no recording, Alto shifts the nearest one.
+2. Add an `Instrument` to `INSTRUMENTS` in `alto/audio.py`. Mark it `sustained=True` if it is bowed or blown, so each
+   note ends as the next begins. If it is another way of playing an instrument already listed, give both the same
+   `family` and each its own `variant` (the viola's "Arco" and "Pizzicato"), and they appear as one entry with a choice.
+3. Add an entry for the same key to `INFO` in `alto/instrument_info.py`: what it is, the source, who played it, and
+   the terms. This is what the summary in the Sound settings shows.
+4. Credit the recordings in `THIRD_PARTY_NOTICES.md` and the folder's `SOURCE.txt`.
+
+Only add recordings whose licence allows redistribution.
+
 ## Adding a notation font
 
 Alto draws notes with fonts that follow the [SMuFL](https://www.smufl.org/) standard.

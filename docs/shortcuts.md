@@ -9,7 +9,7 @@ permalink: /shortcuts/
 |---|---|
 | <kbd>1</kbd> to <kbd>9</kbd> | Press the matching answer button. A button's tooltip shows its number. Available when an exercise has nine answers or fewer and no separate octave row. |
 | <kbd>Esc</kbd> | Go back from the statistics or database page. |
-| <kbd>Ctrl</kbd>+<kbd>,</kbd> | Open the app settings. |
+| <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd> | Open the app settings. |
 | <kbd>Ctrl</kbd>+<kbd>R</kbd> | Restart Alto. |
 | <kbd>Ctrl</kbd>+<kbd>Q</kbd> | Quit. |
 
