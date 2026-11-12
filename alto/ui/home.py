@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
 from . import icons
 
@@ -64,10 +64,9 @@ class HomePage(QWidget):
             card.clicked.connect(lambda _=False, c=cls: self.exercise_chosen.emit(c))
             self.cards.append(card)
         body = QWidget()  # scrolls when the window is shorter than all the rows
-        self.grid = QGridLayout(body)
-        self.grid.setContentsMargins(28, 12, 28, 12)
-        self.grid.setSpacing(GAP)
-        self.grid.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        self.rows = QVBoxLayout(body)  # one centred row of cards at a time
+        self.rows.setContentsMargins(28, 12, 28, 12)
+        self.rows.setSpacing(GAP)
         self._columns = 0
         scroll = QScrollArea()
         scroll.setWidget(body)
@@ -92,5 +91,18 @@ class HomePage(QWidget):
         if columns == self._columns:
             return
         self._columns = columns
-        for i, card in enumerate(self.cards):
-            self.grid.addWidget(card, i // columns, i % columns)
+        while self.rows.count():  # take the old rows apart, keeping the cards
+            item = self.rows.takeAt(0)
+            if item.layout() is not None:
+                while item.layout().count():
+                    item.layout().takeAt(0)
+                item.layout().deleteLater()
+        for start in range(0, len(self.cards), columns):
+            row = QHBoxLayout()
+            row.setSpacing(GAP)
+            row.addStretch(1)
+            for card in self.cards[start:start + columns]:
+                row.addWidget(card)
+            row.addStretch(1)
+            self.rows.addLayout(row)
+        self.rows.addStretch(1)
