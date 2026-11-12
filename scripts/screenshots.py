@@ -32,7 +32,7 @@ SHOTS = ("home", "note-identification", "keyboard", "note-construction", "interv
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap = argparse.ArgumentParser(description=(__doc__ or "").split("\n")[0])
     ap.add_argument("--theme", choices=THEMES, help="only this theme (default: both)")
     ap.add_argument("--only", nargs="+", choices=SHOTS, metavar="NAME", help=f"only these pictures: {', '.join(SHOTS)}")
     ap.add_argument("--out", type=Path, default=OUT, help="folder to write to (default: docs/assets/img)")
@@ -67,7 +67,7 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     from alto.exercises.base import Question
     from alto.learning import Database, Learner
     from alto.ui.app_settings import AppSettingsDialog
-    from alto.ui.database_page import ROW_ROLE
+    from alto.ui.database_page import ROW_ROLE, DatabasePage
     from alto.ui.main_window import MainWindow
     from alto.ui.question_preview import QuestionPreview
     from alto.ui.theme import apply_theme
@@ -93,7 +93,7 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
         wait(250)
         pixmap = widget.grab()
         if pixmap.width() > width:
-            pixmap = pixmap.scaledToWidth(width, Qt.SmoothTransformation)
+            pixmap = pixmap.scaledToWidth(width, Qt.TransformationMode.SmoothTransformation)
         pixmap.save(str(out / f"{name}{suffix}.png"), "PNG")
 
     # A made-up profile: five weeks of answers that slowly get better.
@@ -139,6 +139,7 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     wait(400)
     save(window, "database")
     page = window._overlay
+    assert isinstance(page, DatabasePage)
     page.tabs["answers"].click()
     wait(200)
     row = next(page.proxy.index(r, 0) for r in range(page.proxy.rowCount()) if "Chord" in page.proxy.index(r, 1).data())

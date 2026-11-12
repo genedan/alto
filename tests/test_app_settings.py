@@ -18,7 +18,7 @@ def dialog(app, monkeypatch):
     dlg = AppSettingsDialog()
     yield dlg
     dlg.deleteLater()  # gone before the application, or Qt crashes when Python exits
-    QApplication.sendPostedEvents(None, QEvent.DeferredDelete)
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
 
 def test_each_theme_has_a_preview_card_and_the_saved_one_is_chosen(dialog):

@@ -105,6 +105,7 @@ class Database:
                 cur = self.conn.execute("INSERT INTO profiles (name, created_at) VALUES (?, ?)", (name, time.time()))
         except sqlite3.IntegrityError:
             raise ValueError(f"There is already a profile called {name}.") from None
+        assert cur.lastrowid is not None  # an INSERT always gives the new row an id
         return Profile(cur.lastrowid, name)
 
     def delete_profile(self, profile_id: int) -> None:

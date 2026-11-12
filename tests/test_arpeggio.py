@@ -55,6 +55,7 @@ def test_every_answer_the_exercise_can_give_is_one_of_its_buttons(cfg):
     for _ in range(400):
         q = ArpeggioNames().generate(rng)
         kind, inversion = q.answer.split(q.joiner)
+        assert q.octaves is not None
         assert kind in q.choices and inversion in q.octaves
         assert len(set(q.choices)) == len(q.choices)
         assert [n.midi for n in (c[0] for c in q.staff)] == sorted(c[0].midi for c in q.staff)
@@ -149,7 +150,7 @@ def view(app, cfg, monkeypatch):
     v = ExerciseView(ArpeggioNames(), random.Random(1))
     yield v
     v.deleteLater()  # gone before the application, or Qt crashes when Python exits
-    QApplication.sendPostedEvents(None, QEvent.DeferredDelete)
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
 
 def press(view, text):

@@ -34,7 +34,8 @@ class QuestionPreview(QDialog):
         q = question
         if q.staff or q.construct is not None:
             staff = StaffWidget()
-            notes = q.staff or [[q.construct]]  # a "place this note" question shows the note that was the answer
+            # a "place this note" question shows the note that was the answer
+            notes = q.staff or ([[q.construct]] if q.construct is not None else [])
             staff.show_notes(notes, q.clef, q.key, q.value)
             lay.addWidget(staff)
         if q.keyboard is not None:
@@ -42,7 +43,7 @@ class QuestionPreview(QDialog):
                 key_staff = StaffWidget(gap=8.0, side=12.0, note_offset=70.0, margin=3.6, compact=True)
                 key_staff.setFixedWidth(210)
                 key_staff.show_notes([], "treble", q.key)
-                lay.addWidget(key_staff, alignment=Qt.AlignHCenter)
+                lay.addWidget(key_staff, alignment=Qt.AlignmentFlag.AlignHCenter)
             keyboard = KeyboardWidget()
             keyboard.max_key_width = 30.0 if q.key_staff else 38.0
             keyboard.show_key(q.keyboard.midi, q.keyboard_range)
@@ -58,7 +59,7 @@ class QuestionPreview(QDialog):
             lines.append(q.explanation)
         info = QLabel("<br>".join(lines))
         info.setWordWrap(True)
-        info.setTextFormat(Qt.RichText)
+        info.setTextFormat(Qt.TextFormat.RichText)
         lay.addWidget(info)
 
         buttons = QDialogButtonBox()
@@ -66,8 +67,8 @@ class QuestionPreview(QDialog):
         if notes:
             play = QPushButton("Play")
             play.clicked.connect(lambda: sounds.play_notes(notes))
-            buttons.addButton(play, QDialogButtonBox.ActionRole)
-        buttons.addButton(QDialogButtonBox.Close)
+            buttons.addButton(play, QDialogButtonBox.ButtonRole.ActionRole)
+        buttons.addButton(QDialogButtonBox.StandardButton.Close)
         buttons.rejected.connect(self.accept)
         lay.addWidget(buttons)
 

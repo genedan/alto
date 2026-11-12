@@ -40,8 +40,8 @@ class KeyboardWidget(QWidget):
         self.lo, self.hi = KEYBOARD_DEFAULT
         self.highlight: int | None = None
         self.max_key_width = MAX_KEY_WIDTH  # smaller when something else (the key signature) shares the page
-        self.highlight_color = QColor(self.palette().color(QPalette.Highlight))
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.highlight_color = QColor(self.palette().color(QPalette.ColorRole.Highlight))
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._fit_height()
 
     # geometry
@@ -71,7 +71,7 @@ class KeyboardWidget(QWidget):
             if self.hi % 12 not in WHITE_PITCH_CLASSES:
                 self.hi += 1
         self.highlight = midi
-        self.highlight_color = QColor(self.palette().color(QPalette.Highlight))
+        self.highlight_color = QColor(self.palette().color(QPalette.ColorRole.Highlight))
         self._fit_height()
         self.update()
 
@@ -82,7 +82,7 @@ class KeyboardWidget(QWidget):
     # drawing
     def paintEvent(self, _):
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         whites = self._whites()
         if not whites:
             return
@@ -94,7 +94,7 @@ class KeyboardWidget(QWidget):
         first = 7 * (whites[0] // 12) + WHITE_INDEX[whites[0] % 12]  # absolute white-key number of the leftmost key
 
         # dark case behind the keys
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor("#2b2b30"))
         p.drawRoundedRect(QRectF(left - PAD, 0, n * kw + 2 * PAD, top + kh + PAD), 14, 14)
 
@@ -128,10 +128,10 @@ class KeyboardSpan(QWidget):
         self.lo, self.hi = KEYBOARD_DEFAULT
         if compact:
             self.setFixedSize(*size)
-            self.setAttribute(Qt.WA_TransparentForMouseEvents)  # the row underneath is the click target
+            self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)  # the row underneath is the click target
         else:
             self.setFixedHeight(64)
-            self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
     def set_span(self, lo: int, hi: int) -> None:
         self.lo, self.hi = lo, hi
@@ -139,12 +139,12 @@ class KeyboardSpan(QWidget):
 
     def paintEvent(self, _):
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         first, last = KEYBOARD_FULL
         whites = [m for m in range(first, last + 1) if m % 12 in WHITE_PITCH_CLASSES]
         w, h = self.width(), self.height()
-        accent = self.palette().color(QPalette.Highlight)
-        p.setPen(Qt.NoPen)
+        accent = self.palette().color(QPalette.ColorRole.Highlight)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor("#2b2b30"))
         p.drawRoundedRect(QRectF(0, 0, w, h), 8, 8)
         index_of = {}

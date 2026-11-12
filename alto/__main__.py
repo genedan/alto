@@ -18,13 +18,15 @@ def main() -> int:
     apply_theme(saved_theme())
     app.setDesktopFileName("alto")  # lets the desktop match the window to alto.desktop and its icon
     app.setWindowIcon(QIcon(str(Path(__file__).parent / "assets" / "icon.svg")))
-    db = Database(Path(QStandardPaths.writableLocation(QStandardPaths.AppDataLocation)) / "alto.db")
+    db = Database(Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)) / "alto.db")
     profile = startup_profile(db)  # asks for a name the first time
     if profile is None:
         return 0
-    app.learner = Learner(db, profile)  # kept on the app so a theme change can swap in a fresh window
-    app.main_window = MainWindow(app.learner)  # kept on the app so a theme change can swap in a fresh window
-    app.main_window.show()
+    learner = Learner(db, profile)
+    window = MainWindow(learner)
+    app.learner = learner  # pyright: ignore[reportAttributeAccessIssue]  (kept on the app so a theme change can swap in a fresh window)
+    app.main_window = window  # pyright: ignore[reportAttributeAccessIssue]
+    window.show()
     return app.exec()
 
 

@@ -107,7 +107,7 @@ class Coverage:
         return self.count > 0
 
     def describe(self) -> str:
-        if not self.installed:
+        if self.lowest is None or self.highest is None:  # no notes installed
             return "None installed"
         text = f"{self.count} notes, {key_name(self.lowest)} to {key_name(self.highest)}"
         if self.gaps == 0:

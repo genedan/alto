@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 
 from ..audio import INSTRUMENT_BY_KEY, Instrument, instrument_groups, sounds
 from ..instrument_info import FAMILY_SUMMARY, INFO, coverage
+from .colors import blend_name
 from .store import store
 
 PREVIEW = (60, 64, 67)  # a C major arpeggio, to hear an instrument
@@ -33,22 +34,18 @@ def save_instrument() -> None:
     store().setValue("audio/instrument", sounds.instrument)
 
 
-def _mix(a: QColor, b: QColor, t: float) -> str:
-    """Hex colour t of the way from a to b."""
-    return QColor.fromRgbF(*(a.getRgbF()[k] + (b.getRgbF()[k] - a.getRgbF()[k]) * t for k in range(3))).name()
-
-
 def tokens(widget: QWidget) -> dict[str, str]:
     """The summary's colours, all mixed from the system palette so they follow its light or dark theme."""
     pal = widget.palette()
-    base, text, accent = pal.color(QPalette.Base), pal.color(QPalette.Text), pal.color(QPalette.Highlight)
-    window = pal.color(QPalette.Window)
-    out = dict(accent=_mix(accent, text, 0.35),  # as text, a little towards the text colour so it reads on either theme
-                accent_soft=_mix(base, accent, 0.18), muted=_mix(text, base, 0.42),
-               line=pal.color(QPalette.Mid).name(), panel=base.name(), well=_mix(window, text, 0.05))
+    base, text = pal.color(QPalette.ColorRole.Base), pal.color(QPalette.ColorRole.Text)
+    accent = pal.color(QPalette.ColorRole.Highlight)
+    window = pal.color(QPalette.ColorRole.Window)
+    out = dict(accent=blend_name(accent, text, 0.35),  # as text, a little towards the text colour so it reads on either theme
+                accent_soft=blend_name(base, accent, 0.18), muted=blend_name(text, base, 0.42),
+               line=pal.color(QPalette.ColorRole.Mid).name(), panel=base.name(), well=blend_name(window, text, 0.05))
     for kind, hue in (("good", QColor("#2e9e50")), ("warn", QColor("#d08a00")), ("bad", QColor("#d64a37"))):
-        out[kind] = _mix(text, hue, 0.65)  # the text colour leaning towards the hue, so it stays readable
-        out[kind + "_soft"] = _mix(base, hue, 0.16)
+        out[kind] = blend_name(text, hue, 0.65)  # the text colour leaning towards the hue, so it stays readable
+        out[kind + "_soft"] = blend_name(base, hue, 0.16)
     return out
 
 
@@ -72,11 +69,11 @@ class InstrumentPicker(QWidget):
         self.groups = dict(instrument_groups())  # list entry -> the ways of playing it
         for name in self.groups:
             item = QListWidgetItem(name)
-            item.setData(Qt.UserRole, name)
+            item.setData(Qt.ItemDataRole.UserRole, name)
             item.setSizeHint(QSize(0, 34))
             self.list.addItem(item)
-        self.list.currentItemChanged.connect(lambda cur, _prev: cur and self.show_group(cur.data(Qt.UserRole)))
-        self.list.itemDoubleClicked.connect(lambda item: self.use(self._default_key(item.data(Qt.UserRole))))
+        self.list.currentItemChanged.connect(lambda cur, _prev: cur and self.show_group(cur.data(Qt.ItemDataRole.UserRole)))
+        self.list.itemDoubleClicked.connect(lambda item: self.use(self._default_key(item.data(Qt.ItemDataRole.UserRole))))
 
         # The summary page.
         self.title = QLabel()
@@ -95,8 +92,8 @@ class InstrumentPicker(QWidget):
         self.facts.setHorizontalSpacing(16)
         self.facts.setVerticalSpacing(8)
         self.facts.setColumnStretch(1, 1)
-        self.actions = QVBoxLayout()  # one row of buttons for each way of playing the instrument
-        self.actions.setSpacing(8)
+        self.action_rows = QVBoxLayout()  # one row of buttons for each way of playing the instrument
+        self.action_rows.setSpacing(8)
         self.buttons: dict[str, tuple[QPushButton, QPushButton]] = {}  # instrument key -> (use, hear)
 
         page = QWidget()
@@ -112,8 +109,8 @@ class InstrumentPicker(QWidget):
         lay.addStretch(1)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.setWidget(page)
         scroll.setStyleSheet("QScrollArea, QWidget#instrumentPage { background: transparent; }")
         self.divider = QFrame()
@@ -127,8 +124,8 @@ class InstrumentPicker(QWidget):
         right.addWidget(scroll, 1)
         right.addWidget(self.divider)
         bar = QWidget()
-        bar.setLayout(self.actions)
-        self.actions.setContentsMargins(18, 12, 18, 14)
+        bar.setLayout(self.action_rows)
+        self.action_rows.setContentsMargins(18, 12, 18, 14)
         right.addWidget(bar)
         outer = QHBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
@@ -156,7 +153,7 @@ class InstrumentPicker(QWidget):
         """Show the page of the entry this instrument belongs to."""
         group = self._group_of(key)
         for row in range(self.list.count()):
-            if self.list.item(row).data(Qt.UserRole) == group:
+            if self.list.item(row).data(Qt.ItemDataRole.UserRole) == group:
                 self.list.setCurrentRow(row)
                 break
         self.show_group(group)
@@ -166,7 +163,7 @@ class InstrumentPicker(QWidget):
         no recordings installed in italics."""
         for row in range(self.list.count()):
             item = self.list.item(row)
-            group = item.data(Qt.UserRole)
+            group = item.data(Qt.ItemDataRole.UserRole)
             members = self.groups[group]
             active = next((i for i in members if i.key == sounds.instrument), None)
             if active is None:
@@ -214,13 +211,13 @@ class InstrumentPicker(QWidget):
         name = QLabel(label)
         name.setStyleSheet(f"color: {tokens(self)['muted']};")
         name.setFixedWidth(84)
-        name.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        name.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         text = QLabel(value)
         text.setWordWrap(True)
-        text.setTextFormat(Qt.RichText if link else Qt.PlainText)
-        text.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        text.setTextFormat(Qt.TextFormat.RichText if link else Qt.TextFormat.PlainText)
+        text.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
         text.setOpenExternalLinks(True)
-        self.facts.addWidget(name, row, 0, Qt.AlignTop)
+        self.facts.addWidget(name, row, 0, Qt.AlignmentFlag.AlignTop)
         self.facts.addWidget(text, row, 1)
 
     @staticmethod
@@ -291,7 +288,7 @@ class InstrumentPicker(QWidget):
             self._fact(row, label, value, link)
 
         # One row of buttons for each way of playing the instrument.
-        self._clear(self.actions)
+        self._clear(self.action_rows)
         self.buttons = {}
         for m, h in zip(members, have):
             suffix = f" ({m.variant})" if many else ""
@@ -310,11 +307,11 @@ class InstrumentPicker(QWidget):
             row.addWidget(use)
             row.addWidget(hear)
             row.addStretch(1)
-            self.actions.addLayout(row)
+            self.action_rows.addLayout(row)
             self.buttons[m.key] = (use, hear)
 
     def changeEvent(self, event) -> None:
-        if event.type() == QEvent.PaletteChange and self.shown:
+        if event.type() == QEvent.Type.PaletteChange and self.shown:
             self.show_group(self.shown)
         super().changeEvent(event)
 

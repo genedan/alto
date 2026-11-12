@@ -36,7 +36,7 @@ def since_for(span: str | int | None, now: float) -> float | None:
     """The timestamp a timeframe starts from: midnight for today, so many days back for the rest, None for all time."""
     if span == "today":
         return datetime.fromtimestamp(now).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
-    return None if span is None else now - span * DAY
+    return None if span is None else now - int(span) * DAY
 
 
 def format_duration(seconds: float) -> str:
@@ -82,7 +82,7 @@ class StatsPage(QWidget):
         self.back_button.setToolTip("Back to the previous page (Esc)")
         self.back_button.clicked.connect(self.back)
         bar.addWidget(self.back_button)
-        QShortcut(QKeySequence(Qt.Key_Escape), self, self.back.emit)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self, self.back.emit)
         bar.addSpacing(12)
         who = QLabel(f"<b>{learner.profile.name}</b>")  # these are always the active profile's own numbers
         who.setToolTip("Statistics for the active profile")
@@ -132,20 +132,20 @@ class StatsPage(QWidget):
         self.table = QTableWidget(0, 4)
         self.table.setHorizontalHeaderLabels(["Exercise", "Question", "Missed", "Answered"])
         self.table.verticalHeader().hide()
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.table.setShowGrid(False)
         head = self.table.horizontalHeader()
-        head.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        head.setSectionResizeMode(1, QHeaderView.Stretch)
-        head.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        head.setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        head.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        head.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        head.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        head.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
         lay.addWidget(self.table)
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QScrollArea.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.setWidget(body)
         outer.addWidget(scroll, 1)
 
@@ -190,6 +190,6 @@ class StatsPage(QWidget):
             for col, text in enumerate((names.get(h.exercise, h.exercise), h.text, str(h.wrong), str(h.seen))):
                 item = QTableWidgetItem(text)
                 if col >= 2:
-                    item.setTextAlignment(Qt.AlignCenter)
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.table.setItem(row, col, item)
         self.table.setFixedHeight(self.table.horizontalHeader().height() + 30 * max(len(s.hardest), 1) + 6)

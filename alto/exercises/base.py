@@ -76,7 +76,7 @@ def signature(*parts) -> str:
     """A short description of the exercise settings in force, so a stored question is only asked again under the
     settings it was made for."""
     def plain(o):
-        if is_dataclass(o):
+        if is_dataclass(o) and not isinstance(o, type):
             return plain(asdict(o))
         if isinstance(o, dict):
             return {str(k): plain(v) for k, v in o.items()}

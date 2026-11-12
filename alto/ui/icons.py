@@ -26,9 +26,9 @@ def svg_icon(inner: str, color: QColor, size: int = 24, scale: float = 2.0) -> Q
     svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">{inner.replace("COLOR", color.name())}</svg>'
     renderer = QSvgRenderer(QByteArray(svg.encode()))
     px = QPixmap(int(size * scale), int(size * scale))
-    px.fill(Qt.transparent)
+    px.fill(Qt.GlobalColor.transparent)
     p = QPainter(px)
-    p.setRenderHint(QPainter.Antialiasing)
+    p.setRenderHint(QPainter.RenderHint.Antialiasing)
     renderer.render(p)
     p.end()
     px.setDevicePixelRatio(scale)

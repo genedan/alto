@@ -52,9 +52,9 @@ def draw_key_signature(p: QPainter, clef: str, key: int, x: float, bottom: float
     positions = _KEY_POSITIONS[(clef, 1 if key > 0 else -1)].split()
     p.save()
     p.setPen(QPen(color, 1.4))
-    font = QFont("DejaVu Sans")
-    font.setPixelSize(max(int(gap * size * 1.33), 6))
-    p.setFont(font)
+    sign_font = QFont("DejaVu Sans")
+    sign_font.setPixelSize(max(int(gap * size * 1.33), 6))
+    p.setFont(sign_font)
     for i, name in enumerate(positions[: abs(key)]):
         y = bottom - (Note.parse(name).diatonic - BOTTOM_LINE[clef]) * gap / 2
         p.drawText(QPointF(x + i * step, y + gap * 0.5), sign)
@@ -71,11 +71,11 @@ class StaffWidget(QWidget):
         self.clef = "treble"
         self.columns: list[list[Note]] = []
         self.note_color: QColor | None = None  # None draws notes in the style's ink
-        self.style: NotationStyle | None = None  # None follows the style chosen in settings
+        self.notation_style: NotationStyle | None = None  # None follows the style chosen in settings
         self.key = 0
         self.value = "whole"
         self._fit_height("treble")
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
     def show_notes(self, columns: list[list[Note]], clef: str = "treble", key: int = 0, value: str = "whole") -> None:
         self.columns, self.clef, self.key, self.value = columns, clef, key, value
@@ -104,12 +104,12 @@ class StaffWidget(QWidget):
 
     def paintEvent(self, _):
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
-        look = self.style or current_style()
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        look = self.notation_style or current_style()
         font = look.font
         fg = QColor("black")
         line = engraving.staff_line_width(font, self.GAP) if font else look.line
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor("white"))
         p.drawRoundedRect(self.rect(), CORNER_RADIUS, CORNER_RADIUS)  # the rounded "paper" behind the music
         p.setPen(QPen(fg, line))
@@ -155,7 +155,7 @@ class StaffWidget(QWidget):
                 elif steps > 8:
                     for s in range(10, steps + 1, 2):
                         self._ledger(p, x, bottom - s * gap / 2, gap)
-                p.setPen(Qt.NoPen)
+                p.setPen(Qt.PenStyle.NoPen)
                 value = self.value if len(col) == 1 else "whole"  # stems are only drawn for single notes
                 self._note(p, x, y, gap, nfg, value, stem_down=steps >= 4, font=font)
                 p.setPen(QPen(nfg, 1.4))
@@ -202,7 +202,7 @@ class StaffWidget(QWidget):
         t.scale(scale, scale)
         t.translate(-r.x(), -r.y())
         p.save()
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(color)
         p.drawPath(t.map(path))
         p.restore()
@@ -221,7 +221,7 @@ class StaffWidget(QWidget):
         path.cubicTo(x - wd * 0.4, y1 - (y1 - mid) * 0.25, x - wd * 1.4, mid + (y1 - mid) * 0.3, x - wd * 1.4, mid)
         path.cubicTo(x - wd * 1.4, mid - (mid - y0) * 0.3, x - wd * 0.4, y0 + (mid - y0) * 0.25, x, y0)
         p.save()
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(color)
         p.drawPath(path)
         p.restore()
@@ -238,7 +238,7 @@ class StaffWidget(QWidget):
         shape = outer.subtracted(t.map(hole))  # transparent hole: staff line shows through
         p.save()
         p.translate(x, y)
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(color)
         p.drawPath(shape)
         p.restore()

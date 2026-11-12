@@ -32,18 +32,18 @@ class ExerciseCard(QPushButton):
         lay = QVBoxLayout(self)
         lay.setContentsMargins(12, 14, 12, 12)
         lay.setSpacing(6)
-        icon = QLabel(alignment=Qt.AlignCenter)
-        color = self.palette().color(QPalette.WindowText)
+        icon = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
+        color = self.palette().color(QPalette.ColorRole.WindowText)
         icon.setPixmap(icons.svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), color, size=56)
                        .pixmap(QSize(56, 56)))
-        category = QLabel(cls.category.upper(), alignment=Qt.AlignCenter)
+        category = QLabel(cls.category.upper(), alignment=Qt.AlignmentFlag.AlignCenter)
         category.setStyleSheet("color: gray; font-size: 8pt; letter-spacing: 1px;")
-        name = QLabel(f"<b>{cls.name}</b>", alignment=Qt.AlignCenter)
-        about = QLabel(cls.description, alignment=Qt.AlignCenter)
+        name = QLabel(f"<b>{cls.name}</b>", alignment=Qt.AlignmentFlag.AlignCenter)
+        about = QLabel(cls.description, alignment=Qt.AlignmentFlag.AlignCenter)
         about.setWordWrap(True)
         about.setStyleSheet("color: gray; font-size: 9pt;")
         for label in (icon, category, name, about):
-            label.setAttribute(Qt.WA_TransparentForMouseEvents)
+            label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         lay.addWidget(icon)
         lay.addWidget(category)
         lay.addWidget(name)
@@ -72,11 +72,11 @@ class HomePage(QWidget):
         scroll = QScrollArea()
         scroll.setWidget(body)
         scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.viewport().setAutoFillBackground(False)
         body.setAutoFillBackground(False)
-        self.scroll = scroll
+        self.scroll_area = scroll
         lay.addWidget(scroll, 1)
         self._reflow()
 
@@ -87,17 +87,18 @@ class HomePage(QWidget):
     def _reflow(self):
         """Rows of as many cards as fit across the page."""
         # Use the page's own width: the scroll area's viewport isn't resized yet when this runs.
-        usable = self.width() - 56 - self.scroll.verticalScrollBar().sizeHint().width()
+        usable = self.width() - 56 - self.scroll_area.verticalScrollBar().sizeHint().width()
         columns = max(1, (usable + GAP) // (CARD_W + GAP))
         if columns == self._columns:
             return
         self._columns = columns
         while self.rows.count():  # take the old rows apart, keeping the cards
             item = self.rows.takeAt(0)
-            if item.layout() is not None:
-                while item.layout().count():
-                    item.layout().takeAt(0)
-                item.layout().deleteLater()
+            old_row = item.layout() if item is not None else None
+            if old_row is not None:
+                while old_row.count():
+                    old_row.takeAt(0)
+                old_row.deleteLater()
         for start in range(0, len(self.cards), columns):
             row = QHBoxLayout()
             row.setSpacing(GAP)

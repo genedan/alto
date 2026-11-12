@@ -8,6 +8,8 @@ from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPalette, QPen
 from PySide6.QtWidgets import QSizePolicy, QToolTip, QWidget
 
+from .colors import blend
+
 GOOD, BAD = QColor("#2e7d32"), QColor("#c62828")  # the same greens and reds the exercise feedback uses
 
 
@@ -22,10 +24,6 @@ def nice_ticks(top: float, count: int = 4) -> list[float]:
     return [i * step for i in range(n + 1)]
 
 
-def _mix(a: QColor, b: QColor, t: float) -> QColor:
-    return QColor.fromRgbF(*(a.getRgbF()[k] + (b.getRgbF()[k] - a.getRgbF()[k]) * t for k in range(3)))
-
-
 class _Chart(QWidget):
     """A titled plot area with a value axis on the left and labels along the bottom."""
 
@@ -36,19 +34,19 @@ class _Chart(QWidget):
         self.title, self.empty = title, empty
         self.labels: list[str] = []
         self.setMinimumSize(260, 190)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setMouseTracking(True)
 
     # -- colours -----------------------------------------------------------------------------------------------------
 
     def _ink(self) -> QColor:
-        return self.palette().color(QPalette.Text)
+        return self.palette().color(QPalette.ColorRole.Text)
 
     def _soft(self) -> QColor:
-        return _mix(self.palette().color(QPalette.Base), self._ink(), 0.55)
+        return blend(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.55)
 
     def _grid(self) -> QColor:
-        return _mix(self.palette().color(QPalette.Base), self._ink(), 0.16)
+        return blend(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.16)
 
     def _plot(self) -> QRectF:
         return QRectF(self.LEFT, self.TOP, max(self.width() - self.LEFT - self.RIGHT, 10),
@@ -57,17 +55,17 @@ class _Chart(QWidget):
     # -- shared drawing ---------------------------------------------------------------------------------------------------
 
     def _frame(self, p: QPainter) -> None:
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         p.setPen(self._ink())
         title_font = QFont(self.font())
         title_font.setBold(True)
         p.setFont(title_font)
-        p.drawText(QRectF(0, 4, self.width(), 22), Qt.AlignLeft | Qt.AlignVCenter, self.title)
+        p.drawText(QRectF(0, 4, self.width(), 22), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, self.title)
         p.setFont(self.font())
 
     def _message(self, p: QPainter, text: str) -> None:
         p.setPen(self._soft())
-        p.drawText(self._plot(), Qt.AlignCenter | Qt.TextWordWrap, text)
+        p.drawText(self._plot(), Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap, text)
 
     def _value_axis(self, p: QPainter, ticks: Sequence[float], top: float, fmt: Callable[[float], str]) -> None:
         plot = self._plot()
@@ -79,7 +77,7 @@ class _Chart(QWidget):
             p.setPen(QPen(self._grid(), 1))
             p.drawLine(QPointF(plot.left(), round(y) + 0.5), QPointF(plot.right(), round(y) + 0.5))
             p.setPen(self._soft())
-            p.drawText(QRectF(0, y - 8, self.LEFT - 6, 16), Qt.AlignRight | Qt.AlignVCenter, fmt(t))
+            p.drawText(QRectF(0, y - 8, self.LEFT - 6, 16), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, fmt(t))
         p.setFont(self.font())
 
     def _category_axis(self, p: QPainter, centres: Sequence[float], labels: Sequence[str]) -> None:
@@ -93,7 +91,8 @@ class _Chart(QWidget):
         widest = max(p.fontMetrics().horizontalAdvance(s) for s in labels) + 10
         every = max(1, math.ceil(widest / max(self._plot().width() / len(labels), 1)))
         for i in range(len(labels) - 1, -1, -every):  # count back from the latest, so the newest label is always there
-            p.drawText(QRectF(centres[i] - widest / 2, self._plot().bottom() + 5, widest, 16), Qt.AlignCenter, labels[i])
+            label_box = QRectF(centres[i] - widest / 2, self._plot().bottom() + 5, widest, 16)
+            p.drawText(label_box, Qt.AlignmentFlag.AlignCenter, labels[i])
         p.setFont(self.font())
 
     def _hover(self, event, centres: Sequence[float], texts: Sequence[str]) -> None:
@@ -137,7 +136,7 @@ class StackedBarChart(_Chart):
         slot = plot.width() / n
         bar = min(max(slot * 0.68, 2.0), 38.0)
         centres = self._centres()
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         for cx, r, w in zip(centres, self.right, self.wrong):
             h_right, h_wrong = plot.height() * r / top, plot.height() * w / top
             p.setBrush(GOOD)
@@ -187,7 +186,7 @@ class LineChart(_Chart):
         plot, centres = self._plot(), self._centres()
         points = [QPointF(cx, plot.bottom() - plot.height() * min(v, top) / top) if v is not None else None
                   for cx, v in zip(centres, self.values)]
-        accent = self.palette().color(QPalette.Highlight)
+        accent = self.palette().color(QPalette.ColorRole.Highlight)
         run: list[QPointF] = []
         for pt in [*points, None]:  # draw each unbroken run of points as one line
             if pt is not None:
@@ -197,11 +196,11 @@ class LineChart(_Chart):
                 path = QPainterPath(run[0])
                 for q in run[1:]:
                     path.lineTo(q)
-                p.setPen(QPen(accent, 2.2, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
-                p.setBrush(Qt.NoBrush)
+                p.setPen(QPen(accent, 2.2, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+                p.setBrush(Qt.BrushStyle.NoBrush)
                 p.drawPath(path)
             run = []
-        p.setPen(QPen(self.palette().color(QPalette.Base), 1.5))
+        p.setPen(QPen(self.palette().color(QPalette.ColorRole.Base), 1.5))
         p.setBrush(accent)
         radius = 3.6 if len(self.labels) <= 40 else 2.4
         for pt in points:
@@ -241,12 +240,12 @@ class HBarChart(_Chart):
         for i, (name, value, text) in enumerate(self.rows):
             y = self.TOP + i * self.ROW
             p.setPen(self._ink())
-            p.drawText(QRectF(0, y, label_w - 8, self.ROW - 6), Qt.AlignRight | Qt.AlignVCenter,
-                       p.fontMetrics().elidedText(name, Qt.ElideRight, int(label_w - 8)))
-            p.setPen(Qt.NoPen)
+            p.drawText(QRectF(0, y, label_w - 8, self.ROW - 6), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
+                       p.fontMetrics().elidedText(name, Qt.TextElideMode.ElideRight, int(label_w - 8)))
+            p.setPen(Qt.PenStyle.NoPen)
             p.setBrush(self._grid())
             p.drawRoundedRect(QRectF(x0, y + 4, x1 - x0, self.ROW - 14), 4, 4)
-            p.setBrush(self.palette().color(QPalette.Highlight))
+            p.setBrush(self.palette().color(QPalette.ColorRole.Highlight))
             p.drawRoundedRect(QRectF(x0, y + 4, max((x1 - x0) * value / 100, 3), self.ROW - 14), 4, 4)
             p.setPen(self._soft())
-            p.drawText(QRectF(x1 + 6, y, value_w, self.ROW - 6), Qt.AlignLeft | Qt.AlignVCenter, text)
+            p.drawText(QRectF(x1 + 6, y, value_w, self.ROW - 6), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, text)

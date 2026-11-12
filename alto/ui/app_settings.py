@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 
 from ..theory.pitch import Note
 from . import notation
+from .colors import blend
 from .instrument_picker import InstrumentPicker
 from .staff import StaffWidget
 from .theme import THEMES, apply_theme, save_theme, saved_theme
@@ -33,22 +34,22 @@ class StyleCard(QPushButton):
         super().__init__(parent)
         self.style_key = style.key
         self.setCheckable(True)
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedSize(232, 150)
         lay = QVBoxLayout(self)
         lay.setContentsMargins(8, 8, 8, 6)
         lay.setSpacing(4)
         self.staff = StaffWidget(gap=6.5, side=8.0, note_offset=44.0, margin=3.2, compact=True)
-        self.staff.style = style
-        self.staff.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.staff.notation_style = style
+        self.staff.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.staff.setFixedWidth(214)
         self.staff.show_notes([[Note(4, 2)], [Note(4, 4)], [Note(5, 0)], [Note(4, 6)]], "treble", key=1, value="quarter")
         name = QLabel(f"<b>{style.label}</b>")
-        name.setAttribute(Qt.WA_TransparentForMouseEvents)
+        name.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         blurb = QLabel(style.note)
         blurb.setStyleSheet("color: gray; font-size: 9pt;")
         blurb.setWordWrap(True)
-        blurb.setAttribute(Qt.WA_TransparentForMouseEvents)
+        blurb.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         lay.addWidget(self.staff)
         lay.addWidget(name)
         lay.addWidget(blurb)
@@ -66,21 +67,21 @@ class ThemeCard(QPushButton):
         super().__init__(parent)
         self.theme_key = key
         self.setCheckable(True)
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedSize(232, 168)
         self.preview = QWidget()
         self.preview.setFixedHeight(92)
-        self.preview.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.preview.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.preview.paintEvent = self._paint_preview
         lay = QVBoxLayout(self)
         lay.setContentsMargins(8, 8, 8, 6)
         lay.setSpacing(4)
         name = QLabel(f"<b>{label}</b>")
-        name.setAttribute(Qt.WA_TransparentForMouseEvents)
+        name.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         blurb = QLabel(note)
         blurb.setStyleSheet("color: gray; font-size: 9pt;")
         blurb.setWordWrap(True)
-        blurb.setAttribute(Qt.WA_TransparentForMouseEvents)
+        blurb.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         lay.addWidget(self.preview)
         lay.addWidget(name)
         lay.addWidget(blurb)
@@ -88,7 +89,7 @@ class ThemeCard(QPushButton):
 
     def _paint_preview(self, _event) -> None:
         p = QPainter(self.preview)
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         r = QRectF(self.preview.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
         clip = QPainterPath()
         clip.addRoundedRect(r, 8, 8)
@@ -103,7 +104,7 @@ class ThemeCard(QPushButton):
         else:
             self._mock(p, r, self.LIGHT if self.theme_key == "light" else self.DARK)
         p.setClipping(False)  # an outline, so the dark preview shows against a dark window
-        p.setBrush(Qt.NoBrush)
+        p.setBrush(Qt.BrushStyle.NoBrush)
         p.setPen(QPen(QColor(128, 128, 128, 150), 1))
         p.drawRoundedRect(r, 8, 8)
 
@@ -115,7 +116,7 @@ class ThemeCard(QPushButton):
         p.setPen(QPen(QColor(c["line"]), 1))
         p.setBrush(QColor(c["panel"]))
         p.drawRoundedRect(side, 5, 5)
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor(c["tint"]))
         p.drawRoundedRect(QRectF(side.left() + 4, side.top() + 5, side.width() - 8, 9), 3, 3)
         p.setBrush(QColor(c["faint"]))
@@ -129,7 +130,7 @@ class ThemeCard(QPushButton):
         top = card.top() + 12
         for i in range(5):
             p.drawLine(QPointF(card.left() + 6, top + i * 5), QPointF(card.right() - 6, top + i * 5))
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor(c["ink"]))
         for x, row in ((20, 4), (38, 3), (56, 1), (74, 2)):
             p.drawEllipse(QPointF(card.left() + x, top + row * 2.5), 3.2, 2.5)
@@ -167,7 +168,7 @@ class AppSettingsDialog(QDialog):
         body.addWidget(self.pages, 1)
         lay.addLayout(body, 1)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Close)
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
         buttons.rejected.connect(self.accept)
         lay.addWidget(buttons)
 
@@ -199,8 +200,8 @@ class AppSettingsDialog(QDialog):
         """A page that scrolls when it is taller than the dialog."""
         area = QScrollArea()
         area.setWidgetResizable(True)
-        area.setFrameShape(QScrollArea.NoFrame)
-        area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        area.setFrameShape(QScrollArea.Shape.NoFrame)
+        area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         area.setWidget(page)
         return area
 
@@ -221,7 +222,7 @@ class AppSettingsDialog(QDialog):
         for i, label in enumerate(("Theme", "Notation style")):
             b = QPushButton(label)
             b.setCheckable(True)
-            b.setCursor(Qt.PointingHandCursor)
+            b.setCursor(Qt.CursorShape.PointingHandCursor)
             b.setChecked(i == 0)
             group.addButton(b, i)
             b.clicked.connect(lambda _=False, k=i: self.appearance_pages.setCurrentIndex(k))
@@ -238,16 +239,17 @@ class AppSettingsDialog(QDialog):
     def _style_segments(self) -> None:
         """A rounded track with the chosen segment raised and tinted, from the current palette."""
         pal = self.palette()
-        window, text, base, accent = (pal.color(r) for r in (QPalette.Window, QPalette.Text, QPalette.Base, QPalette.Highlight))
-        track = QColor.fromRgbF(*(window.getRgbF()[k] + (text.getRgbF()[k] - window.getRgbF()[k]) * 0.07 for k in range(3)))
+        roles = (QPalette.ColorRole.Window, QPalette.ColorRole.Text, QPalette.ColorRole.Base, QPalette.ColorRole.Highlight)
+        window, text, base, accent = (pal.color(r) for r in roles)
+        track = blend(window, text, 0.07)
         self.segments.setStyleSheet(
             f"QFrame#segments {{ background: {track.name()}; border-radius: 12px; }}"
             "QFrame#segments QPushButton { border: 0; border-radius: 9px; padding: 6px 18px; background: transparent; }"
             f"QFrame#segments QPushButton:checked {{ background: {base.name()}; color: {accent.name()}; "
-            f"border: 1px solid {pal.color(QPalette.Mid).name()}; }}")
+            f"border: 1px solid {pal.color(QPalette.ColorRole.Mid).name()}; }}")
 
     def changeEvent(self, event) -> None:
-        if event.type() == QEvent.PaletteChange and hasattr(self, "segments"):
+        if event.type() == QEvent.Type.PaletteChange and hasattr(self, "segments"):
             self._style_segments()
         super().changeEvent(event)
 

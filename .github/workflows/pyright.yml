@@ -1,0 +1,29 @@
+name: Pyright
+
+# Check the types with Pyright on every pull request and every push to main.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pyright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      # Pyright reads PySide6's type hints from the installed package, so Alto and its dev tools go in first.
+      - name: Install Alto and its dev tools
+        run: python -m pip install -e ".[dev]"
+
+      - name: Check the types
+        run: sh scripts/typecheck.sh
