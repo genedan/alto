@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 dependencies = ["PySide6>=6.8", "numpy>=1.26"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.8", "pre-commit>=3.5"]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.8", "pyright>=1.1.400", "pre-commit>=3.5"]
 
 [project.gui-scripts]
 alto = "alto.__main__:main"
@@ -47,3 +47,8 @@ ignore = [
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["PySide6.QtGui.QColor", "PySide6.QtCore.QModelIndex"]  # defaults that are never mutated
+
+[tool.pyright]
+include = ["alto", "tests", "scripts"]
+pythonVersion = "3.10"  # the oldest Python Alto supports, so newer-only features are caught
+typeCheckingMode = "basic"

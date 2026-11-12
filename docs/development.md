@@ -34,6 +34,25 @@ GitHub Actions runs the tests on every pull request (`.github/workflows/tests.ym
 pytest --cov --cov-report=term-missing
 ```
 
+## Type checking
+
+[Pyright](https://github.com/microsoft/pyright) checks the types of `alto`, `tests` and `scripts`, in basic mode, as if
+for Python 3.10:
+
+```bash
+sh scripts/typecheck.sh
+```
+
+It must report no errors. It runs on every pull request (`.github/workflows/pyright.yml`) and before each push. Two things
+to know when writing Qt code:
+
+- **Write Qt enums in their full form**, such as `Qt.AlignmentFlag.AlignLeft`, not the short `Qt.AlignLeft`. The short form
+  works when the program runs, but Pyright cannot see it.
+- Qt functions that may return nothing (`layout()`, `widget()`, `QApplication.instance()`) have to be checked for `None`
+  before use, with an `if` or an `assert`.
+
+If Pyright is wrong about one line, silence just that line with `# pyright: ignore[ruleName]` and a short reason.
+
 ## Pre-commit
 
 A [pre-commit](https://pre-commit.com/) configuration runs the checks automatically before each commit. Set it up once:
@@ -47,9 +66,9 @@ It then trims trailing whitespace, makes sure files end with a newline, checks Y
 files (the bundled recordings and fonts are exempt) and runs Ruff, applying its safe fixes. If a hook changes a file,
 the commit stops so you can review the change, then commit again.
 
-The test suite runs when you **push**, not on every commit, so commits stay quick. A failing test stops the push.
-Run the commit checks by hand with `pre-commit run --all-files`, the push check with
-`pre-commit run pytest --hook-stage pre-push`, and update the pinned hook versions with `pre-commit autoupdate`.
+The test suite and Pyright run when you **push**, not on every commit, so commits stay quick. A failing test or a type
+error stops the push. Run the commit checks by hand with `pre-commit run --all-files`, the push checks with
+`pre-commit run --all-files --hook-stage pre-push`, and update the pinned hook versions with `pre-commit autoupdate`.
 
 ## Linting
 

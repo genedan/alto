@@ -45,3 +45,14 @@ repos:
         always_run: true
         verbose: true
         stages: [pre-push]
+
+  # Pyright is quick, but it needs the project's environment, so it runs when pushing, like the tests.
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: sh scripts/typecheck.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
