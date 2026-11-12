@@ -26,7 +26,9 @@ class Question:
     keyboard: Note | None = None  # a piano key to highlight, instead of drawing a staff
     key_staff: bool = False  # draw `key` as a small key-signature staff above the keyboard
     keyboard_range: tuple[int, int] | None = None  # the keys (MIDI, inclusive) the keyboard picture should show
-    octaves: list[str] | None = None  # when set, the answer is a name button plus one of these octave buttons
+    octaves: list[str] | None = None  # when set, the answer is a choice button plus one of these second-row buttons
+    second_label: str = "Octave"  # what the second row of buttons is called
+    joiner: str = ""  # put between the two parts to make the answer ("" for a note and its octave: C + 4 -> C4)
     construct: Note | None = None  # the note to place on the staff: the answer is a position, not a button
     accidentals: bool = False  # show the sharp / flat / natural buttons for a construct question
     accept: tuple[str, ...] = ()  # other answers that count as correct (e.g. the enharmonic name of a black key)

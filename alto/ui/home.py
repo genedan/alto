@@ -15,6 +15,7 @@ EXERCISE_ICONS = {
     "KeySignatures": icons.EXERCISE_KEY_SIGNATURES,
     "ScaleDegrees": icons.EXERCISE_SCALES,
     "ChordQualities": icons.EXERCISE_CHORDS,
+    "ArpeggioNames": icons.EXERCISE_ARPEGGIOS,
 }
 
 

@@ -43,6 +43,7 @@ from ..settings import (
     key_name,
 )
 from ..theory.pitch import MAJOR_KEYS, Note
+from ..theory.scales import INVERSION_NAMES
 from .keyboard import KeyboardSpan
 from .pictures import CLEF_NAMES, VALUE_NAMES, ClefPictures, KeySignaturePicture, NamePicture, RangePictures, ValuePictures
 from .staff import StaffWidget
@@ -1022,9 +1023,195 @@ class NoteConstructionSettingsPanel(QWidget):
         self._save_and_emit()
 
 
+def load_arpeggio() -> None:
+    saved_settings = store()
+    cfg = settings.arpeggio
+    clefs = str(saved_settings.value("arpeggio/clefs", "") or "")
+    if clefs:
+        cfg.clefs = {c for c in clefs.split(",") if c in CLEFS} or cfg.clefs
+    types = str(saved_settings.value("arpeggio/types", "") or "")
+    if types:
+        cfg.types = {t for t in types.split(",") if t in settings.ARPEGGIO_TYPES} or cfg.types
+    inversions = str(saved_settings.value("arpeggio/inversions", "") or "")
+    if inversions:
+        found = {int(i) for i in inversions.split(",") if i.isdigit() and int(i) in settings.INVERSIONS}
+        cfg.inversions = found or cfg.inversions
+    cfg.key_signature = str(saved_settings.value("arpeggio/keySignature", "false")).lower() == "true"
+    keys = str(saved_settings.value("arpeggio/keys", "") or "")
+    if keys:
+        cfg.keys = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or cfg.keys
+
+
+class ChoiceChecklist(QWidget):
+    """Checkboxes for a list of choices, optionally under small headings. At least one stays checked."""
+
+    changed = Signal()
+
+    def __init__(self, groups: list[tuple[str, list[tuple[object, str]]]], selected: set, parent=None):
+        super().__init__(parent)
+        self.boxes: dict[object, QCheckBox] = {}
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(6)
+        for title, items in groups:
+            if title:
+                heading = QLabel(title)
+                heading.setStyleSheet("color: gray;")
+                lay.addWidget(heading)
+            for key, label in items:
+                box = QCheckBox(label)
+                box.setChecked(key in selected)
+                box.toggled.connect(self._toggled)
+                self.boxes[key] = box
+                lay.addWidget(box)
+        _guard_last(list(self.boxes.values()))
+
+    def selected(self) -> set:
+        return {k for k, box in self.boxes.items() if box.isChecked()}
+
+    def _toggled(self):
+        _guard_last(list(self.boxes.values()))
+        self.changed.emit()
+
+
+_INVERSION_SHORT = ("Root", "1st", "2nd", "3rd")
+
+
+class ArpeggioSettingsPanel(QWidget):
+    """Settings for the arpeggio exercise: a menu (Staff, Arpeggio types, Inversions, Key signatures) with a page for
+    each. Edits are live; emits `changed` after each one."""
+
+    changed = Signal()
+
+    def __init__(self, cfg: settings.ArpeggioSettings, parent=None):
+        super().__init__(parent)
+        self.cfg = cfg
+        self.stack = SlideStack()
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        outer.addWidget(self.stack)
+
+        # layer 1: menu
+        menu = QWidget()
+        mlay = QVBoxLayout(menu)
+        mlay.setContentsMargins(0, 0, 0, 0)
+        mlay.addWidget(QLabel("<h3>Settings</h3>"))
+        self.staff_row = _Row("Staff")
+        self.staff_row.clicked.connect(lambda: self._go(1))
+        self.clef_pictures = ClefPictures()
+        self.staff_row.attach(self.clef_pictures)
+        self.types_row = _Row("Arpeggio types")
+        self.types_row.clicked.connect(lambda: self._go(2))
+        self.inversions_row = _Row("Inversions")
+        self.inversions_row.clicked.connect(lambda: self._go(3))
+        self.keys_row = _Row("Key signatures")
+        self.keys_row.setToolTip("Draw a key signature; the arpeggio then only gets signs where it differs from it")
+        self.keys_row.clicked.connect(lambda: self._go(4))
+        self.keys_diagram = KeyDiagram()
+        self.keys_row.attach(self.keys_diagram)
+        for row in (self.staff_row, self.types_row, self.inversions_row, self.keys_row):
+            mlay.addWidget(row)
+        mlay.addStretch()
+
+        # layer 2: the staff (the four clefs that have a single staff)
+        body = QWidget()
+        blay = QVBoxLayout(body)
+        blay.setContentsMargins(0, 0, 0, 0)
+        hint = QLabel("One of the checked choices is picked at random.")
+        hint.setWordWrap(True)
+        hint.setStyleSheet("color: gray;")
+        blay.addWidget(hint)
+        self.boxes = {c: _clef_box(c) for c in CLEFS}
+        for c, box in self.boxes.items():
+            box.setChecked(c in cfg.clefs)
+            box.toggled.connect(self._clefs_edited)
+        blay.addWidget(_clef_grid(self.boxes))
+        _guard_last(list(self.boxes.values()))
+        staff_page = _subpage("Staff", body, lambda: self._go(0))
+
+        # layer 2: arpeggio types, and inversions
+        self.types = ChoiceChecklist([("Triads", [(t, t.capitalize()) for t in settings.ARPEGGIO_TRIADS]),
+                                      ("Seventh chords", [(t, t.capitalize()) for t in settings.ARPEGGIO_SEVENTHS])],
+                                     cfg.types)
+        self.types.changed.connect(self._types_edited)
+        types_page = _subpage("Arpeggio types", self.types, lambda: self._go(0))
+        names = settings_inversion_names()
+        self.inversions = ChoiceChecklist([("", [(i, names[i]) for i in settings.INVERSIONS])], cfg.inversions)
+        self.inversions.changed.connect(self._inversions_edited)
+        note = QLabel("A triad has no 3rd inversion, so that choice only applies to seventh chords.")
+        note.setWordWrap(True)
+        note.setStyleSheet("color: gray;")
+        inv_body = QWidget()
+        inv_lay = QVBoxLayout(inv_body)
+        inv_lay.setContentsMargins(0, 0, 0, 0)
+        inv_lay.addWidget(self.inversions)
+        inv_lay.addWidget(note)
+        inversions_page = _subpage("Inversions", inv_body, lambda: self._go(0))
+
+        # layer 2: key signatures
+        self.key_page = KeySignaturePage(cfg.key_signature, cfg.keys)
+        self.key_page.changed.connect(self._keys_edited)
+        keys_page = _subpage("Key signatures", self.key_page, lambda: self._go(0))
+
+        for page in (menu, staff_page, types_page, inversions_page, keys_page):
+            self.stack.addWidget(page)
+        self._refresh_summaries()
+
+    def _go(self, index: int):
+        if self.stack.sliding or index == self.stack.currentIndex():
+            return
+        if index == 0:
+            self._refresh_summaries()
+        self.stack.slide_to(index)
+
+    def _refresh_summaries(self):
+        cfg = self.cfg
+        self.clef_pictures.set_clefs(cfg.active_clefs())
+        types = cfg.active_types()
+        self.types_row.value.setText(f"{len(types)} of {len(settings.ARPEGGIO_TYPES)}")
+        inversions = cfg.active_inversions()
+        self.inversions_row.value.setText("All" if len(inversions) == len(settings.INVERSIONS)
+                                          else ", ".join(_INVERSION_SHORT[i] for i in inversions))
+        _show_keys(self.keys_row, self.keys_diagram, cfg.key_signature, set(cfg.active_keys()))
+
+    def _save_and_emit(self):
+        saved_settings = store()
+        cfg = self.cfg
+        saved_settings.setValue("arpeggio/clefs", ",".join(cfg.active_clefs()))
+        saved_settings.setValue("arpeggio/types", ",".join(cfg.active_types()))
+        saved_settings.setValue("arpeggio/inversions", ",".join(str(i) for i in cfg.active_inversions()))
+        saved_settings.setValue("arpeggio/keySignature", "true" if cfg.key_signature else "false")
+        saved_settings.setValue("arpeggio/keys", ",".join(str(k) for k in cfg.active_keys()))
+        self.changed.emit()
+
+    def _clefs_edited(self):
+        self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
+        _guard_last(list(self.boxes.values()))
+        self._save_and_emit()
+
+    def _types_edited(self):
+        self.cfg.types = self.types.selected()
+        self._save_and_emit()
+
+    def _inversions_edited(self):
+        self.cfg.inversions = self.inversions.selected()
+        self._save_and_emit()
+
+    def _keys_edited(self):
+        self.cfg.key_signature = self.key_page.enabled()
+        self.cfg.keys = self.key_page.selected()
+        _show_keys(self.keys_row, self.keys_diagram, self.cfg.key_signature, set(self.cfg.active_keys()))
+        self._save_and_emit()
+
+
+def settings_inversion_names() -> tuple[str, ...]:
+    """The inversions as written in the settings: 'Root position', '1st inversion' ..."""
+    return tuple(n.capitalize() for n in INVERSION_NAMES)
+
+
 def settings_panel_for(exercise) -> QWidget | None:
     """The settings panel for an exercise (has a `changed` signal), or None if it has none."""
-    from ..exercises.library import KeyboardNotes, NoteConstruction, NoteNames
+    from ..exercises.library import ArpeggioNames, KeyboardNotes, NoteConstruction, NoteNames
 
     if isinstance(exercise, NoteNames):
         return NoteNameSettingsPanel(settings.note_names)
@@ -1032,4 +1219,6 @@ def settings_panel_for(exercise) -> QWidget | None:
         return KeyboardSettingsPanel(settings.keyboard)
     if isinstance(exercise, NoteConstruction):
         return NoteConstructionSettingsPanel(settings.construction)
+    if isinstance(exercise, ArpeggioNames):
+        return ArpeggioSettingsPanel(settings.arpeggio)
     return None

@@ -8,12 +8,6 @@ pytest.importorskip("PySide6")
 from alto.theory.pitch import Note
 from alto.ui.staff import BOTTOM_LINE
 from alto.ui.staff_input import StaffInput
-from PySide6.QtWidgets import QApplication
-
-
-@pytest.fixture(scope="module")
-def app():
-    return QApplication.instance() or QApplication([])
 
 
 def y_of(staff: StaffInput, clef: str, diatonic: int) -> float:

@@ -1,8 +1,8 @@
-# Alto
+# <img src="docs/assets/img/icon.png" alt="" width="44" height="44" align="absmiddle"> Alto
 
 **Music theory practice for the Linux desktop that remembers what you get wrong.**
 
-Alto is a free music theory trainer. Read notes on any clef, name intervals and chords, spell scales, learn key
+Alto is a free music theory trainer. Read notes on any clef, name intervals, chords and arpeggios, spell scales, learn key
 signatures, find keys on a keyboard. It uses spaced repetition to optimize the learning process by feeding you problems that you find more challenging, and skipping over ones that are already easy.
 
 <p align="center">

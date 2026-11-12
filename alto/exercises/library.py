@@ -5,7 +5,7 @@ import random
 from .. import settings
 from ..settings import spell
 from ..theory.pitch import MAJOR_KEYS, NATURAL_SEMITONES, QUALITY_NAMES, Interval, Note, key_accidental
-from ..theory.scales import CHORDS, SCALES, build, format_key_signature, key_signature
+from ..theory.scales import CHORDS, INVERSION_NAMES, SCALES, arpeggio, build, format_key_signature, key_signature
 from .base import Exercise, Question, pick_distractors, register, signature
 
 CLEF_RANGES = {  # inclusive diatonic range that sits comfortably on the staff
@@ -180,6 +180,68 @@ class ChordQualities(Exercise):
         choices = pick_distractors(quality, list(CHORDS), 4, rng)
         expl = f"{root.name} {quality}: " + " ".join(n.name for n in chord)
         return Question("", choices, quality, [chord], clef, expl)
+
+
+# Where the lowest and highest note of an arpeggio may sit on each clef (up to two ledger lines either side of the staff).
+ARPEGGIO_WINDOWS = {
+    "treble": (Note(3, 6), Note(6, 0)),  # B3..C6
+    "bass": (Note(2, 0), Note(4, 2)),    # C2..E4
+    "alto": (Note(2, 6), Note(5, 1)),    # B2..D5
+    "tenor": (Note(2, 4), Note(4, 6)),   # G2..B4
+}
+
+
+@register
+class ArpeggioNames(Exercise):
+    name = "Arpeggio identification"
+    category = "Chords"
+    description = "Name the type and the inversion of a broken chord."
+    par_seconds = 9.0
+
+    def settings_signature(self) -> str:
+        return signature(settings.arpeggio)
+
+    def instructions(self) -> str:
+        return ("<b>Arpeggio identification</b><br>A chord is played one note at a time, rising from its lowest note to "
+                "the same note an octave higher. Press its type, then its inversion.<br><br>"
+                "Find the chord's root by looking for the notes a third apart. The inversion is which chord tone is "
+                "lowest: the root (root position), the third (1st inversion), the fifth (2nd inversion) or the seventh "
+                "(3rd inversion, seventh chords only).<br><br>"
+                "Use the sliders button to choose the clefs, the types of arpeggio, the inversions and key signatures.")
+
+    def generate(self, rng):
+        cfg = settings.arpeggio
+        for _ in range(500):
+            chord_type = rng.choice(cfg.active_types())
+            inversion = rng.choice(cfg.inversions_for(chord_type))
+            clef = rng.choice(cfg.active_clefs())
+            key = rng.choice(cfg.active_keys()) if cfg.key_signature else 0
+            root = Note(4, rng.randrange(7), rng.choice((-1, 0, 1)))
+            if (root.letter, root.accidental) in ((2, 1), (6, 1), (0, -1), (3, -1)):  # E♯ B♯ C♭ F♭ are not worth asking
+                continue
+            notes = arpeggio(root, CHORDS[chord_type], inversion)
+            if any(abs(n.accidental) > 1 for n in notes):  # no double sharps or flats
+                continue
+            low, high = (n.diatonic for n in ARPEGGIO_WINDOWS[clef])
+            fits = [s for s in range(-28, 29, 7) if notes[0].diatonic + s >= low and notes[-1].diatonic + s <= high]
+            if not fits:
+                continue
+            shift = rng.choice(fits) // 7
+            notes = [Note(n.octave + shift, n.letter, n.accidental) for n in notes]
+            return self._question(chord_type, inversion, root, notes, clef, key, cfg)
+        raise RuntimeError("no arpeggio fits the chosen settings")
+
+    @staticmethod
+    def _question(chord_type, inversion, root, notes, clef, key, cfg) -> Question:
+        joiner = " \u00b7 "
+        types = cfg.active_types()
+        inversions = sorted({i for t in types for i in cfg.inversions_for(t)})
+        answer = f"{chord_type}{joiner}{INVERSION_NAMES[inversion]}"
+        grid = {t: divmod(i, 5) for i, t in enumerate(types)} if len(types) > 5 else None  # two rows once there are many
+        expl = f"{root.name} {chord_type}, {INVERSION_NAMES[inversion]}: " + " ".join(n.name for n in notes)
+        return Question("What type of arpeggio is this, and which inversion?", types, answer, [[n] for n in notes], clef,
+                        expl, key=key, value="quarter", grid=grid, octaves=[INVERSION_NAMES[i] for i in inversions],
+                        second_label="Inversion", joiner=joiner)
 
 
 # Black keys: pitch class -> (letter, accidental) for the sharp name and for the flat name.

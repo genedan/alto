@@ -55,6 +55,25 @@ EXERCISE_INTERVALS = _ring(7, 6, 3.2, 2.2) + _ring(7, 18, 3.2, 2.2) + f'<path d=
 EXERCISE_KEY_SIGNATURES = f'<path d="M9 4v16M15 3.5v16M5 9.5l14-3M5 16.5l14-3" {_LINE}/>'
 EXERCISE_SCALES = "".join(_ring(x, y, 2.4, 1.7) for x, y in ((4.5, 18.5), (9.5, 14.8), (14.5, 11.1), (19.5, 7.4)))
 EXERCISE_CHORDS = _ring(12, 18.5, 3.6, 2.4) + _ring(12, 12, 3.6, 2.4) + _ring(12, 5.5, 3.6, 2.4)
+# Three eighth notes rising under one beam.
+_NOTE = 'fill="COLOR" stroke="COLOR" stroke-width="1" stroke-linejoin="round"'
+
+
+def _beamed_notes() -> str:
+    heads = ((4.6, 19.0), (11.8, 15.0), (19.0, 11.0))  # note heads rise to the right
+    beam_start, beam_end = (7.0, 6.2), (21.6, 2.2)  # the beam follows them
+    out = []
+    for x, y in heads:
+        stem = x + 2.4  # the stem rises from the right edge of the head to the beam
+        top = beam_start[1] + (stem - beam_start[0]) * (beam_end[1] - beam_start[1]) / (beam_end[0] - beam_start[0])
+        out.append(f'<ellipse cx="{x}" cy="{y}" rx="2.7" ry="1.9" transform="rotate(-20 {x} {y})" {_NOTE}/>')
+        out.append(f'<path d="M{stem} {y - 0.3}V{top:.2f}" {_LINE}/>')
+    out.append(f'<path d="M{beam_start[0]} {beam_start[1]}L{beam_end[0]} {beam_end[1]}" stroke="COLOR" stroke-width="2.6" '
+               'stroke-linecap="butt" fill="none"/>')
+    return "".join(out)
+
+
+EXERCISE_ARPEGGIOS = _beamed_notes()
 
 # A play triangle, for the "hear it" buttons.
 PLAY = '<path d="M8 5.5v13l11-6.5z" fill="COLOR" stroke="COLOR" stroke-width="1.6" stroke-linejoin="round"/>'

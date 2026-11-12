@@ -109,7 +109,7 @@ class Sounds:
         self._effects = {}
         self._sounding: list = []  # sustained notes that may still be sounding, to release when the next note begins
         self._fades: dict = {}  # running fade-outs, by effect
-        self._preview_run = 0  # which preview is current, so that an older one stops when a new one starts
+        self._sequence_run = 0  # which sequence of notes is current, so that an older one stops when a new one starts
         self._sample_files: dict[str, dict[int, Path]] = {}
         self._dir = Path(tempfile.gettempdir()) / "alto_sounds"
 
@@ -210,22 +210,37 @@ class Sounds:
 
     def preview(self, key: str, midis, step_ms: int = 300) -> None:
         """Play these notes one after another in an instrument, even while muted, to hear what it sounds like.
+        Starting a preview silences the one before it."""
+        self.stop_all()
+        self._play_sequence(key, [([m], 0.9) for m in midis], step_ms, force=True)
 
-        The notes are loaded first, and each one is scheduled when the one before it has played, so a pause while the
-        sound system starts up delays the rest instead of making them all sound at once. Starting a preview ends the
-        one before it."""
+    def _play_column(self, midis, volume: float, key: str | None = None, force: bool = False) -> None:
+        """Start the notes of one column together, first ending any sustained notes still ringing."""
+        inst = INSTRUMENT_BY_KEY.get(key or self.instrument, INSTRUMENTS[0])
+        if inst.sustained and (self.enabled or force):
+            self._release_sounding()
+        for midi in midis:
+            self.play_midi(midi, volume, instrument=key, force=force, release_previous=False)
+
+    def _play_sequence(self, key: str, steps: list[tuple[list[int], float]], gap_ms: int, force: bool = False) -> None:
+        """Play `steps` (the notes of each column, and their volume) one after another, `gap_ms` apart.
+
+        The rhythm has to be even, so the notes are loaded first (making a sound effect the first time it is needed
+        takes long enough to hold up the next note), and each step is scheduled only once the one before it has been
+        started. A pause while the sound system starts therefore delays the rest instead of making them sound
+        together. Starting a sequence cancels the steps still waiting from an earlier one."""
         import time
 
         from PySide6.QtCore import QTimer
 
-        self._preview_run += 1
-        run = self._preview_run
-        self.stop_all()
-        notes = list(midis)
+        self._sequence_run += 1
+        run = self._sequence_run
+        if not (self.enabled or force) or not steps:
+            return
         try:
             inst = INSTRUMENT_BY_KEY[key]
-            effects = [self._effect(inst, m) for m in notes]
-        except Exception as exc:  # audio must never break the settings
+            effects = [self._effect(inst, m) for midis, _ in steps for m in midis]
+        except Exception as exc:  # audio must never break an exercise
             print(f"audio unavailable: {exc}")
             return
         deadline = time.monotonic() + 1.0
@@ -236,14 +251,15 @@ class Sounds:
             return any(getattr(fx, "status", lambda: None)() == QSoundEffect.Status.Loading for fx in effects)
 
         def step(i: int) -> None:
-            if run != self._preview_run:
+            if run != self._sequence_run:
                 return
-            self.play_midi(notes[i], 0.9, instrument=key, force=True)
-            if i + 1 < len(notes):
-                QTimer.singleShot(step_ms, lambda: step(i + 1))
+            midis, volume = steps[i]
+            self._play_column(midis, volume, key, force)
+            if i + 1 < len(steps):  # the next one is due a full gap after this one has started, however long that took
+                QTimer.singleShot(gap_ms, lambda: step(i + 1))
 
         def wait() -> None:
-            if run != self._preview_run:
+            if run != self._sequence_run:
                 return
             if loading() and time.monotonic() < deadline:
                 QTimer.singleShot(10, wait)
@@ -252,24 +268,10 @@ class Sounds:
 
         wait()
 
-    def _play_column(self, notes, volume: float) -> None:
-        """Start the notes of one column together, first ending any sustained notes still ringing."""
-        inst = INSTRUMENT_BY_KEY.get(self.instrument, INSTRUMENTS[0])
-        if inst.sustained and (self.enabled):
-            self._release_sounding()
-        for note in notes:
-            self.play_midi(note.midi, volume, release_previous=False)
-
     def play_notes(self, columns, gap_ms: int = 450) -> None:
-        """Play staff columns left to right; notes within a column sound together."""
-        from PySide6.QtCore import QTimer
-
-        for i, col in enumerate(columns):
-            vol = min(1.0, 1.4 / len(col) ** 0.5)
-            if i == 0:
-                self._play_column(col, vol)
-            else:
-                QTimer.singleShot(i * gap_ms, lambda c=col, v=vol: self._play_column(c, v))
+        """Play staff columns left to right, evenly spaced; the notes within a column sound together."""
+        self._play_sequence(self.instrument, [([n.midi for n in col], min(1.0, 1.4 / len(col) ** 0.5)) for col in columns],
+                            gap_ms)
 
     def play_correct(self, streak: int) -> None:
         """Climb the C major scale (C5..C6) as the streak grows, then wrap."""

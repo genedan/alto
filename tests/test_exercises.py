@@ -12,7 +12,10 @@ def test_every_exercise_generates_valid_questions():
             if q.construct:  # answered by clicking the staff, so there are no buttons
                 assert not q.choices and q.check_placed(q.construct), (cls.name, q)
                 continue
-            assert q.answer in q.choices, (cls.name, q)
+            if q.octaves:  # a two-part answer: a choice, then one of the second row
+                assert q.answer in [c + q.joiner + o for c in q.choices for o in q.octaves], (cls.name, q)
+            else:
+                assert q.answer in q.choices, (cls.name, q)
             assert len(set(q.choices)) == len(q.choices), (cls.name, q)
 
 
