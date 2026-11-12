@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 
 from ..theory.pitch import Note
 from . import notation
+from .colors import blend
 from .instrument_picker import InstrumentPicker
 from .staff import StaffWidget
 from .theme import THEMES, apply_theme, save_theme, saved_theme
@@ -39,7 +40,7 @@ class StyleCard(QPushButton):
         lay.setContentsMargins(8, 8, 8, 6)
         lay.setSpacing(4)
         self.staff = StaffWidget(gap=6.5, side=8.0, note_offset=44.0, margin=3.2, compact=True)
-        self.staff.style = style
+        self.staff.notation_style = style
         self.staff.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.staff.setFixedWidth(214)
         self.staff.show_notes([[Note(4, 2)], [Note(4, 4)], [Note(5, 0)], [Note(4, 6)]], "treble", key=1, value="quarter")
@@ -240,7 +241,7 @@ class AppSettingsDialog(QDialog):
         pal = self.palette()
         roles = (QPalette.ColorRole.Window, QPalette.ColorRole.Text, QPalette.ColorRole.Base, QPalette.ColorRole.Highlight)
         window, text, base, accent = (pal.color(r) for r in roles)
-        track = QColor.fromRgbF(*(window.getRgbF()[k] + (text.getRgbF()[k] - window.getRgbF()[k]) * 0.07 for k in range(3)))
+        track = blend(window, text, 0.07)
         self.segments.setStyleSheet(
             f"QFrame#segments {{ background: {track.name()}; border-radius: 12px; }}"
             "QFrame#segments QPushButton { border: 0; border-radius: 9px; padding: 6px 18px; background: transparent; }"

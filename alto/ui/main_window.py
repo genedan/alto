@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 
 from PySide6.QtCore import QProcess, QSize, Qt, QVariantAnimation
-from PySide6.QtGui import QColor, QFont, QKeySequence, QPalette
+from PySide6.QtGui import QFont, QKeySequence, QPalette
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -25,6 +25,7 @@ from ..exercises import REGISTRY
 from ..learning import Learner
 from . import icons
 from .app_settings import AppSettingsDialog
+from .colors import blend
 from .database_page import DatabasePage
 from .exercise_view import ExerciseView
 from .home import EXERCISE_ICONS, HomePage
@@ -34,7 +35,7 @@ from .notation import load_style as load_notation_style
 from .profile_dialog import ProfileDialog, remember_profile
 from .settings_panel import load_arpeggio, load_construction, load_keyboard, load_note_names
 from .stats_dialog import StatsPage
-from .store import store
+from .store import int_value, store
 
 
 class MainWindow(QMainWindow):
@@ -43,8 +44,8 @@ class MainWindow(QMainWindow):
 
     def __init__(self, learner: Learner | None = None):
         super().__init__()
-        self._overlay: QWidget | None = None  # the statistics or database page, while one is showing
-        self._overlay_return: tuple[QWidget, str] | None = None  # the page and title to go back to
+        self._overlay: StatsPage | DatabasePage | None = None  # the statistics or database page, while one is showing
+        self._overlay_return: tuple[QWidget | None, str] | None = None  # the page and title to go back to
         self.learner = learner  # who is practising, and their history; None practises without recording
         self.setWindowTitle(self.APP_TITLE)
         self.resize(1000, 640)
@@ -61,7 +62,7 @@ class MainWindow(QMainWindow):
         self._items: dict[type, QListWidgetItem] = {}
         pal = self.palette()
         ink, window = pal.color(QPalette.ColorRole.Text), pal.color(QPalette.ColorRole.Window)
-        section_colour = QColor.fromRgbF(*(ink.getRgbF()[k] * 0.5 + window.getRgbF()[k] * 0.5 for k in range(3)))
+        section_colour = blend(ink, window, 0.5)
         section_font = QFont()
         section_font.setPixelSize(10)
         section_font.setBold(True)
@@ -138,7 +139,7 @@ class MainWindow(QMainWindow):
         self.splitter.setStretchFactor(1, 1)
         self.splitter.setCollapsible(0, True)
         self.splitter.setCollapsible(1, False)
-        self._sidebar_width = int(store().value("ui/sidebarWidth", self.SIDEBAR_DEFAULT))
+        self._sidebar_width = int_value(store(), "ui/sidebarWidth", self.SIDEBAR_DEFAULT)
         # Whether the user wants the list shown on exercise pages. The start screen never shows it.
         self._sidebar_pref = str(store().value("ui/sidebarCollapsed", "false")).lower() != "true"
         self._sidebar_anim: QVariantAnimation | None = None
@@ -268,7 +269,9 @@ class MainWindow(QMainWindow):
         fresh = type(self)(self.learner)
         fresh.setGeometry(self.geometry())
         fresh.setWindowState(self.windowState())
-        QApplication.instance().main_window = fresh
+        app = QApplication.instance()
+        if app is not None:
+            app.main_window = fresh  # pyright: ignore[reportAttributeAccessIssue]  (see alto/__main__.py)
         fresh.show()
         self.close()
 
@@ -285,7 +288,7 @@ class MainWindow(QMainWindow):
         if self.learner:
             self._open_overlay(DatabasePage(self.learner), "Database")
 
-    def _open_overlay(self, page: QWidget, title: str):
+    def _open_overlay(self, page: StatsPage | DatabasePage, title: str):
         """Show `page` (which has a `back` signal) in place of the current page; Back returns to it."""
         self.close_overlay()
         self._overlay_return = (self.stack.currentWidget(), self.title_label.text())
@@ -298,10 +301,11 @@ class MainWindow(QMainWindow):
     def close_overlay(self):
         """Leave the statistics or database page and show the page that was open before it."""
         page, self._overlay = self._overlay, None
-        if page is None:
+        if page is None or self._overlay_return is None:
             return
         previous, title = self._overlay_return
-        self.stack.setCurrentWidget(previous)
+        if previous is not None:
+            self.stack.setCurrentWidget(previous)
         self.title_label.setText(title)
         self.stack.removeWidget(page)
         page.deleteLater()
@@ -322,7 +326,7 @@ class MainWindow(QMainWindow):
         old = self.stack.currentWidget()
         self.title_label.setText(self.APP_TITLE)
         self.nav.clearSelection()
-        self.nav.setCurrentItem(None)
+        self.nav.setCurrentRow(-1)
         self.stack.setCurrentWidget(self.home)
         self._update_sidebar_button()
         self._drop(old)

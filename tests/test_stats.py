@@ -42,6 +42,7 @@ def test_collects_first_attempt_accuracy_and_extra_attempts():
     db, ada, _ = fill()
     s = stats.collect(db, [ada.id], now=NOW)
     assert (s.questions, s.first_right, s.attempts) == (3, 1, 4)
+    assert s.accuracy is not None and s.attempts_per_question is not None
     assert round(s.accuracy) == 33 and round(s.attempts_per_question, 2) == 1.33
     assert s.days_practised == 2
     assert s.median_seconds == 4.0  # first attempts took 2, 4 and 6 s

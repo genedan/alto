@@ -34,7 +34,8 @@ class QuestionPreview(QDialog):
         q = question
         if q.staff or q.construct is not None:
             staff = StaffWidget()
-            notes = q.staff or [[q.construct]]  # a "place this note" question shows the note that was the answer
+            # a "place this note" question shows the note that was the answer
+            notes = q.staff or ([[q.construct]] if q.construct is not None else [])
             staff.show_notes(notes, q.clef, q.key, q.value)
             lay.addWidget(staff)
         if q.keyboard is not None:

@@ -10,6 +10,7 @@ IMG = ROOT / "docs" / "assets" / "img"
 
 def script():
     spec = importlib.util.spec_from_file_location("screenshots", ROOT / "scripts" / "screenshots.py")
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)  # only defines things; the work happens under __main__
     return module

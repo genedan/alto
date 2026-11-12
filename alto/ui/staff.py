@@ -52,9 +52,9 @@ def draw_key_signature(p: QPainter, clef: str, key: int, x: float, bottom: float
     positions = _KEY_POSITIONS[(clef, 1 if key > 0 else -1)].split()
     p.save()
     p.setPen(QPen(color, 1.4))
-    font = QFont("DejaVu Sans")
-    font.setPixelSize(max(int(gap * size * 1.33), 6))
-    p.setFont(font)
+    sign_font = QFont("DejaVu Sans")
+    sign_font.setPixelSize(max(int(gap * size * 1.33), 6))
+    p.setFont(sign_font)
     for i, name in enumerate(positions[: abs(key)]):
         y = bottom - (Note.parse(name).diatonic - BOTTOM_LINE[clef]) * gap / 2
         p.drawText(QPointF(x + i * step, y + gap * 0.5), sign)
@@ -71,7 +71,7 @@ class StaffWidget(QWidget):
         self.clef = "treble"
         self.columns: list[list[Note]] = []
         self.note_color: QColor | None = None  # None draws notes in the style's ink
-        self.style: NotationStyle | None = None  # None follows the style chosen in settings
+        self.notation_style: NotationStyle | None = None  # None follows the style chosen in settings
         self.key = 0
         self.value = "whole"
         self._fit_height("treble")
@@ -105,7 +105,7 @@ class StaffWidget(QWidget):
     def paintEvent(self, _):
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
-        look = self.style or current_style()
+        look = self.notation_style or current_style()
         font = look.font
         fg = QColor("black")
         line = engraving.staff_line_width(font, self.GAP) if font else look.line

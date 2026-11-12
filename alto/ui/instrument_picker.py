@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
 
 from ..audio import INSTRUMENT_BY_KEY, Instrument, instrument_groups, sounds
 from ..instrument_info import FAMILY_SUMMARY, INFO, coverage
+from .colors import blend_name
 from .store import store
 
 PREVIEW = (60, 64, 67)  # a C major arpeggio, to hear an instrument
@@ -33,23 +34,18 @@ def save_instrument() -> None:
     store().setValue("audio/instrument", sounds.instrument)
 
 
-def _mix(a: QColor, b: QColor, t: float) -> str:
-    """Hex colour t of the way from a to b."""
-    return QColor.fromRgbF(*(a.getRgbF()[k] + (b.getRgbF()[k] - a.getRgbF()[k]) * t for k in range(3))).name()
-
-
 def tokens(widget: QWidget) -> dict[str, str]:
     """The summary's colours, all mixed from the system palette so they follow its light or dark theme."""
     pal = widget.palette()
     base, text = pal.color(QPalette.ColorRole.Base), pal.color(QPalette.ColorRole.Text)
     accent = pal.color(QPalette.ColorRole.Highlight)
     window = pal.color(QPalette.ColorRole.Window)
-    out = dict(accent=_mix(accent, text, 0.35),  # as text, a little towards the text colour so it reads on either theme
-                accent_soft=_mix(base, accent, 0.18), muted=_mix(text, base, 0.42),
-               line=pal.color(QPalette.ColorRole.Mid).name(), panel=base.name(), well=_mix(window, text, 0.05))
+    out = dict(accent=blend_name(accent, text, 0.35),  # as text, a little towards the text colour so it reads on either theme
+                accent_soft=blend_name(base, accent, 0.18), muted=blend_name(text, base, 0.42),
+               line=pal.color(QPalette.ColorRole.Mid).name(), panel=base.name(), well=blend_name(window, text, 0.05))
     for kind, hue in (("good", QColor("#2e9e50")), ("warn", QColor("#d08a00")), ("bad", QColor("#d64a37"))):
-        out[kind] = _mix(text, hue, 0.65)  # the text colour leaning towards the hue, so it stays readable
-        out[kind + "_soft"] = _mix(base, hue, 0.16)
+        out[kind] = blend_name(text, hue, 0.65)  # the text colour leaning towards the hue, so it stays readable
+        out[kind + "_soft"] = blend_name(base, hue, 0.16)
     return out
 
 
@@ -96,8 +92,8 @@ class InstrumentPicker(QWidget):
         self.facts.setHorizontalSpacing(16)
         self.facts.setVerticalSpacing(8)
         self.facts.setColumnStretch(1, 1)
-        self.actions = QVBoxLayout()  # one row of buttons for each way of playing the instrument
-        self.actions.setSpacing(8)
+        self.action_rows = QVBoxLayout()  # one row of buttons for each way of playing the instrument
+        self.action_rows.setSpacing(8)
         self.buttons: dict[str, tuple[QPushButton, QPushButton]] = {}  # instrument key -> (use, hear)
 
         page = QWidget()
@@ -128,8 +124,8 @@ class InstrumentPicker(QWidget):
         right.addWidget(scroll, 1)
         right.addWidget(self.divider)
         bar = QWidget()
-        bar.setLayout(self.actions)
-        self.actions.setContentsMargins(18, 12, 18, 14)
+        bar.setLayout(self.action_rows)
+        self.action_rows.setContentsMargins(18, 12, 18, 14)
         right.addWidget(bar)
         outer = QHBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
@@ -292,7 +288,7 @@ class InstrumentPicker(QWidget):
             self._fact(row, label, value, link)
 
         # One row of buttons for each way of playing the instrument.
-        self._clear(self.actions)
+        self._clear(self.action_rows)
         self.buttons = {}
         for m, h in zip(members, have):
             suffix = f" ({m.variant})" if many else ""
@@ -311,7 +307,7 @@ class InstrumentPicker(QWidget):
             row.addWidget(use)
             row.addWidget(hear)
             row.addStretch(1)
-            self.actions.addLayout(row)
+            self.action_rows.addLayout(row)
             self.buttons[m.key] = (use, hear)
 
     def changeEvent(self, event) -> None:

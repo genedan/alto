@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QWidget
 from ..settings import SOLFEGE
 from ..theory.pitch import MAJOR_KEYS, Note
 from . import engraving
+from .colors import blend
 from .notation import current as current_style
 from .staff import BOTTOM_LINE, MIDDLE_C, StaffWidget
 
@@ -35,7 +36,7 @@ class _Picture(QWidget):
         """(ink, softer ink for staff lines), both readable against the background in light and dark themes."""
         pal = self.palette()
         text, base = pal.color(QPalette.ColorRole.Text), pal.color(QPalette.ColorRole.Base)
-        line = QColor.fromRgbF(*(base.getRgbF()[k] + (text.getRgbF()[k] - base.getRgbF()[k]) * 0.62 for k in range(3)))
+        line = blend(base, text, 0.62)
         return text, line
 
     def _painter(self) -> QPainter:

@@ -105,6 +105,7 @@ def test_every_answer_is_recorded_including_the_wrong_ones():
     rows = learner.db.attempts(learner.profile.id)
     assert [(r["attempt_no"], r["answer"], r["correct"]) for r in rows] == [(1, "B", 0), (2, "B", 0), (3, "A", 1)]
     item = learner.db.get_item(learner.profile.id, "Stub", q.item_key())
+    assert item is not None
     assert (item.seen, item.first_try_right, item.wrong_attempts) == (1, 0, 2)
 
 
@@ -118,8 +119,12 @@ def test_more_attempts_and_slower_answers_leave_a_question_more_strained():
     learner.record(ex, fumbled, "A", True, 3, 4.0, now=3.0)
     learner.record(ex, slow, "A", True, 1, 30.0, now=1.0)
     learner.record(ex, quick, "A", True, 1, 0.5, now=1.0)
-    strain = {n: learner.db.get_item(learner.profile.id, "Stub", q.item_key()).strain
-              for n, q in (("clean", clean), ("fumbled", fumbled), ("slow", slow), ("quick", quick))}
+    def strain_of(q):
+        item = learner.db.get_item(learner.profile.id, "Stub", q.item_key())
+        assert item is not None
+        return item.strain
+
+    strain = {n: strain_of(q) for n, q in (("clean", clean), ("fumbled", fumbled), ("slow", slow), ("quick", quick))}
     assert strain["fumbled"] > strain["slow"] > strain["clean"] > strain["quick"]
 
 
@@ -183,6 +188,7 @@ def test_exercise_view_records_each_answer_with_its_timing():
     learner, _ = make_learner()
     view = ExerciseView(KeySignatures(), random.Random(7), learner=learner)
     q = view.question
+    assert q is not None
     wrong = next(b for b in view.buttons if b.text() != q.answer)
     right = next(b for b in view.buttons if b.text() == q.answer)
     wrong.click()
@@ -190,7 +196,8 @@ def test_exercise_view_records_each_answer_with_its_timing():
     rows = learner.db.attempts(learner.profile.id, "KeySignatures")
     assert [(r["attempt_no"], r["correct"]) for r in rows] == [(1, 0), (2, 1)]
     assert all(r["item_key"] == q.item_key() for r in rows)
-    assert learner.db.get_item(learner.profile.id, "KeySignatures", q.item_key()).wrong_attempts == 1
+    item = learner.db.get_item(learner.profile.id, "KeySignatures", q.item_key())
+    assert item is not None and item.wrong_attempts == 1
     view._advance.stop()
     view.next_question()
-    assert view.question.item_key() != q.item_key()  # the next one is a different question
+    assert view.question is not None and view.question.item_key() != q.item_key()  # the next one is a different question

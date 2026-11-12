@@ -14,6 +14,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import QColor, QPainter, QPalette, QPen
 from PySide6.QtWidgets import (
     QAbstractButton,
+    QBoxLayout,
     QButtonGroup,
     QCheckBox,
     QFrame,
@@ -44,10 +45,11 @@ from ..settings import (
 )
 from ..theory.pitch import MAJOR_KEYS, Note
 from ..theory.scales import INVERSION_NAMES
+from .colors import blend
 from .keyboard import KeyboardSpan
 from .pictures import CLEF_NAMES, VALUE_NAMES, ClefPictures, KeySignaturePicture, NamePicture, RangePictures, ValuePictures
 from .staff import StaffWidget
-from .store import store
+from .store import int_value, store
 
 
 def load_note_names() -> None:
@@ -66,7 +68,7 @@ def load_note_names() -> None:
     values = str(s.value("noteNames/values", "") or "")
     if values:
         cfg.note_values = {v for v in values.split(",") if v in NOTE_VALUES} or {"whole"}
-    naming = s.value("noteNames/naming", cfg.naming)
+    naming = str(s.value("noteNames/naming", cfg.naming))
     cfg.naming = naming if naming in NAMINGS else "letters"
     cfg.accidentals = str(s.value("noteNames/accidentals", "false")).lower() == "true"
     cfg.ranges = {}
@@ -212,10 +214,10 @@ class KeyDiagram(QWidget):
         text = pal.color(QPalette.ColorRole.Text)
         base = pal.color(QPalette.ColorRole.Base)  # the row is filled with the base colour
 
-        def blend(t: float) -> QColor:  # t of the way from the row's background to the text colour
-            return QColor.fromRgbF(*(base.getRgbF()[k] + (text.getRgbF()[k] - base.getRgbF()[k]) * t for k in range(3)))
+        def shade(t: float) -> QColor:  # t of the way from the row's background to the text colour
+            return blend(base, text, t)
 
-        filled, outline = blend(0.85), blend(0.5)  # both stand out from the background, in a light or a dark theme
+        filled, outline = shade(0.85), shade(0.5)  # both stand out from the background, in a light or a dark theme
         mid, top = self.height() / 2, self.height() / 2 - self.ROW_GAP / 2
         spots = [(0, self.PAD + self.DOT, mid)]  # C major, between the two rows
         for n in range(1, 8):
@@ -276,6 +278,7 @@ class _Row(QPushButton):
     def __init__(self, title: str, chevron: bool = True, tall: bool = False):
         super().__init__()
         self.tall = tall
+        self._contents: QBoxLayout  # the layout inside the row
         self.title = QLabel(f"<b>{title}</b>")
         self.value = QLabel()
         self.value.setStyleSheet("color: gray;")
@@ -296,9 +299,11 @@ class _Row(QPushButton):
             outer.addLayout(top)
             self._below = QHBoxLayout()
             outer.addLayout(self._below)
+            self._contents = outer
             return
         self.setMinimumHeight(48)
         lay = QHBoxLayout(self)
+        self._contents = lay
         lay.setContentsMargins(11, 4, 11, 4)  # leaves room for a small diagram in the row
         lay.addWidget(self.title)
         lay.addWidget(self.value, 1)
@@ -313,12 +318,12 @@ class _Row(QPushButton):
             self._below.addStretch()
             self.fit()
         else:
-            self.layout().insertWidget(2, widget)
+            self._contents.insertWidget(2, widget)
 
     def fit(self) -> None:
         """Make a tall row as high as its contents need (a button does not size itself to a layout inside it)."""
         if self.tall:
-            self.setMinimumHeight(self.layout().minimumSize().height())
+            self.setMinimumHeight(self._contents.minimumSize().height())
 
 
 class Switch(QAbstractButton):
@@ -358,7 +363,7 @@ class Switch(QAbstractButton):
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         pal = self.palette()
         off, on = pal.color(QPalette.ColorRole.Mid), pal.color(QPalette.ColorRole.Highlight)
-        track = QColor.fromRgbF(*(off.getRgbF()[k] + (on.getRgbF()[k] - off.getRgbF()[k]) * self._pos for k in range(3)))
+        track = blend(off, on, self._pos)
         if not self.isEnabled():
             track.setAlpha(110)
         p.setPen(Qt.PenStyle.NoPen)
@@ -383,7 +388,7 @@ class _ToggleRow(_Row):
         self.value.hide()
         self.switch = Switch()
         self.switch.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)  # the whole row is the click target
-        self.layout().addWidget(self.switch)
+        self._contents.addWidget(self.switch)
         self.clicked.connect(lambda: self._set(not self.switch.isChecked()))
 
     def _set(self, on: bool):
@@ -433,6 +438,7 @@ class SlideStack(QStackedWidget):
         if self.sliding or index == self.currentIndex():
             return  # ignore requests mid-transition
         old, new = self.currentWidget(), self.widget(index)
+        assert old is not None and new is not None
         w = self.width()
         sign = 1 if index > self.currentIndex() else -1
         new.setGeometry(0, 0, w, self.height())
@@ -459,10 +465,14 @@ class SlideStack(QStackedWidget):
         group.start()
 
 
-class NoteNameSettingsPanel(QWidget):
-    """Two-layer settings: a menu (Clefs, Range) leading to a page for each. Edits are live."""
+class ExerciseSettingsPanel(QWidget):
+    """What every exercise's settings pane has in common: it says when a setting has been edited."""
 
     changed = Signal()
+
+
+class NoteNameSettingsPanel(ExerciseSettingsPanel):
+    """Two-layer settings: a menu (Clefs, Range) leading to a page for each. Edits are live."""
 
     def __init__(self, cfg: NoteNameSettings, parent=None):
         super().__init__(parent)
@@ -549,8 +559,9 @@ class NoteNameSettingsPanel(QWidget):
         vlay = QVBoxLayout(values_body)
         vlay.setContentsMargins(0, 0, 0, 0)
         vlay.setSpacing(2)
-        vlay.addWidget(QLabel("One of the checked values is picked at random."))
-        vlay.itemAt(0).widget().setWordWrap(True)
+        values_hint = QLabel("One of the checked values is picked at random.")
+        values_hint.setWordWrap(True)
+        vlay.addWidget(values_hint)
         for v, box in self.value_boxes.items():
             picture = ValuePictures([v], 1.25, centre_stemless=True)
             box.setIcon(picture.to_icon())
@@ -648,8 +659,9 @@ class NoteNameSettingsPanel(QWidget):
     def _build_range_rows(self):
         while self.range_lay.count():
             item = self.range_lay.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+            widget = item.widget() if item is not None else None
+            if widget is not None:
+                widget.deleteLater()
         self.range_editors = {}
         for key in self._active_keys():
             editor = RangeEditor(key, *self.cfg.range_for(key))
@@ -678,7 +690,8 @@ def load_keyboard() -> None:
     cfg.black_keys = str(saved_settings.value("keyboard/blackKeys", "true")).lower() != "false"
     cfg.require_octave = str(saved_settings.value("keyboard/requireOctave", "false")).lower() == "true"
     try:
-        low, high = int(saved_settings.value("keyboard/low", cfg.low)), int(saved_settings.value("keyboard/high", cfg.high))
+        low = int_value(saved_settings, "keyboard/low", cfg.low)
+        high = int_value(saved_settings, "keyboard/high", cfg.high)
     except (TypeError, ValueError):
         return
     first, last = settings.KEYBOARD_FULL
@@ -772,11 +785,9 @@ class KeySignaturePage(QWidget):
         self.changed.emit()
 
 
-class KeyboardSettingsPanel(QWidget):
+class KeyboardSettingsPanel(ExerciseSettingsPanel):
     """Settings for the keyboard exercise: a menu (Range, Black keys, Octave number) with a page for the range.
     Edits are live; emits `changed` after each one."""
-
-    changed = Signal()
 
     def __init__(self, cfg: settings.KeyboardSettings, parent=None):
         super().__init__(parent)
@@ -925,11 +936,9 @@ def load_construction() -> None:
         cfg.keys = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or cfg.keys
 
 
-class NoteConstructionSettingsPanel(QWidget):
+class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
     """Settings for the note-construction exercise: a menu (Staff, Accidentals, Key signature, Keys) with a page for
     the staff choices and one for the keys. Edits are live; emits `changed` after each one."""
-
-    changed = Signal()
 
     def __init__(self, cfg: settings.ConstructionSettings, parent=None):
         super().__init__(parent)
@@ -1079,11 +1088,9 @@ class ChoiceChecklist(QWidget):
 _INVERSION_SHORT = ("Root", "1st", "2nd", "3rd")
 
 
-class ArpeggioSettingsPanel(QWidget):
+class ArpeggioSettingsPanel(ExerciseSettingsPanel):
     """Settings for the arpeggio exercise: a menu (Staff, Arpeggio types, Inversions, Key signatures) with a page for
     each. Edits are live; emits `changed` after each one."""
-
-    changed = Signal()
 
     def __init__(self, cfg: settings.ArpeggioSettings, parent=None):
         super().__init__(parent)
@@ -1211,7 +1218,7 @@ def settings_inversion_names() -> tuple[str, ...]:
     return tuple(n.capitalize() for n in INVERSION_NAMES)
 
 
-def settings_panel_for(exercise) -> QWidget | None:
+def settings_panel_for(exercise) -> ExerciseSettingsPanel | None:
     """The settings panel for an exercise (has a `changed` signal), or None if it has none."""
     from ..exercises.library import ArpeggioNames, KeyboardNotes, NoteConstruction, NoteNames
 

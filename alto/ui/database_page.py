@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from datetime import datetime
 
-from PySide6.QtCore import QAbstractTableModel, QModelIndex, QSortFilterProxyModel, Qt, Signal
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, QPersistentModelIndex, QSortFilterProxyModel, Qt, Signal
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -32,20 +33,20 @@ ROW_ROLE = Qt.ItemDataRole.UserRole + 1  # a row's hidden details
 class RowsModel(QAbstractTableModel):
     """Rows of (text shown, value to sort by) cells. Numbers are right-aligned."""
 
-    def __init__(self, headers: list[str], rows: list[list[tuple[str, object]]], numeric: set[int] = frozenset(),
+    def __init__(self, headers: list[str], rows: list[list[tuple[str, object]]], numeric: Iterable[int] = (),
                  extras: list[dict] | None = None, parent=None):
         """`extras` holds something about each row that is not shown, such as the stored question (see ROW_ROLE)."""
         super().__init__(parent)
         self.headers, self.rows, self.numeric = headers, rows, set(numeric)
         self.extras = extras or [{} for _ in rows]
 
-    def rowCount(self, parent=QModelIndex()) -> int:
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         return 0 if parent.isValid() else len(self.rows)
 
-    def columnCount(self, parent=QModelIndex()) -> int:
+    def columnCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         return 0 if parent.isValid() else len(self.headers)
 
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole):
         if role == ROW_ROLE:
             return self.extras[index.row()]
         text, value = self.rows[index.row()][index.column()]
@@ -57,7 +58,7 @@ class RowsModel(QAbstractTableModel):
             return int(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         return None
 
-    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = Qt.ItemDataRole.DisplayRole):
         if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return self.headers[section]
         return None
@@ -218,7 +219,7 @@ class DatabasePage(QWidget):
             question = Question.from_dict(json.loads(extra["payload"]))
         except (ValueError, KeyError, TypeError):
             return
-        name = self._names.get(extra["exercise"], extra["exercise"])
+        name = str(self._names.get(extra["exercise"], extra["exercise"]))
         QuestionPreview(name, question, extra.get("details"), self).exec()
 
     def _show_count(self) -> None:

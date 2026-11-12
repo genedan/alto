@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 )
 
 from ..learning import Database, Profile
-from .store import store
+from .store import int_value, store
 
 
 class ProfileDialog(QDialog):
@@ -107,7 +107,7 @@ def startup_profile(db: Database) -> Profile | None:
     """The profile to open with: the one used last time, else ask. None if the person closed the dialog."""
     profiles = db.profiles()
     if profiles:
-        last = db.profile(int(store().value("profile/last", -1)))
+        last = db.profile(int_value(store(), "profile/last", -1))
         if last:
             return last
         if len(profiles) == 1:

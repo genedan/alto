@@ -36,7 +36,7 @@ def since_for(span: str | int | None, now: float) -> float | None:
     """The timestamp a timeframe starts from: midnight for today, so many days back for the rest, None for all time."""
     if span == "today":
         return datetime.fromtimestamp(now).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
-    return None if span is None else now - span * DAY
+    return None if span is None else now - int(span) * DAY
 
 
 def format_duration(seconds: float) -> str:

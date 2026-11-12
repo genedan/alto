@@ -5,14 +5,11 @@ Colours come from the palette so it follows the system light/dark theme.
 
 from pathlib import Path
 
-from PySide6.QtGui import QColor, QPalette
+from PySide6.QtGui import QPalette
+
+from .colors import blend_name
 
 RADIUS = 10
-
-
-def _mix(a: QColor, b: QColor, t: float) -> str:
-    """Hex colour t of the way from a to b."""
-    return QColor.fromRgbF(*(a.getRgbF()[k] + (b.getRgbF()[k] - a.getRgbF()[k]) * t for k in range(3))).name()
 
 
 def app_style(palette: QPalette) -> str:
@@ -22,9 +19,9 @@ def app_style(palette: QPalette) -> str:
     window_c = palette.color(QPalette.ColorRole.Window)
     return _TEMPLATE.format(RADIUS=RADIUS, r2=RADIUS - 2, r3=RADIUS - 3, rp=RADIUS + 2,
                             fill=base, fill_hover=base, fill_pressed=midlight, edge=dark,
-                            box_edge=_mix(base_c, text_c, 0.45), box_edge_off=_mix(base_c, text_c, 0.2),
-                            accent=accent_c.name(), accent_dim=_mix(accent_c, base_c, 0.55),
-                            nav_hover=_mix(window_c, text_c, 0.07), nav_selected=_mix(window_c, accent_c, 0.2),
+                            box_edge=blend_name(base_c, text_c, 0.45), box_edge_off=blend_name(base_c, text_c, 0.2),
+                            accent=accent_c.name(), accent_dim=blend_name(accent_c, base_c, 0.55),
+                            nav_hover=blend_name(window_c, text_c, 0.07), nav_selected=blend_name(window_c, accent_c, 0.2),
                             check=(Path(__file__).resolve().parent.parent / "assets" / "ui" / "check.svg").as_posix())
 
 

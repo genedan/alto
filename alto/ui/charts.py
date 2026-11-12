@@ -8,6 +8,8 @@ from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPalette, QPen
 from PySide6.QtWidgets import QSizePolicy, QToolTip, QWidget
 
+from .colors import blend
+
 GOOD, BAD = QColor("#2e7d32"), QColor("#c62828")  # the same greens and reds the exercise feedback uses
 
 
@@ -20,10 +22,6 @@ def nice_ticks(top: float, count: int = 4) -> list[float]:
     step = next(m * magnitude for m in (1, 2, 2.5, 5, 10) if m * magnitude >= raw)
     n = math.ceil(top / step - 1e-9)
     return [i * step for i in range(n + 1)]
-
-
-def _mix(a: QColor, b: QColor, t: float) -> QColor:
-    return QColor.fromRgbF(*(a.getRgbF()[k] + (b.getRgbF()[k] - a.getRgbF()[k]) * t for k in range(3)))
 
 
 class _Chart(QWidget):
@@ -45,10 +43,10 @@ class _Chart(QWidget):
         return self.palette().color(QPalette.ColorRole.Text)
 
     def _soft(self) -> QColor:
-        return _mix(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.55)
+        return blend(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.55)
 
     def _grid(self) -> QColor:
-        return _mix(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.16)
+        return blend(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.16)
 
     def _plot(self) -> QRectF:
         return QRectF(self.LEFT, self.TOP, max(self.width() - self.LEFT - self.RIGHT, 10),

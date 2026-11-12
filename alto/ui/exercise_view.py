@@ -23,6 +23,7 @@ from ..audio import sounds
 from ..exercises.base import Exercise, Question
 from ..learning import Learner
 from ..settings import spell
+from .colors import blend
 from .icons import SLIDERS, SPEAKER_MUTED, SPEAKER_ON, svg_icon
 from .keyboard import KeyboardWidget
 from .settings_panel import settings_panel_for
@@ -216,8 +217,9 @@ class ExerciseView(QWidget):
             self.choice_box.setColumnStretch(col, 1)  # equal-width columns
         while self.octave_box.count():
             item = self.octave_box.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+            widget = item.widget() if item is not None else None
+            if widget is not None:
+                widget.deleteLater()
         self.octave_row.setVisible(bool(q.octaves))
         if q.octaves:
             self.octave_box.addWidget(QLabel(q.second_label))
@@ -236,14 +238,14 @@ class ExerciseView(QWidget):
 
     def _flash(self, button: QPushButton, target: str, staff: bool = False):
         """Animate from the staff ink to `target` over a short time."""
-        end, start = QColor(target).getRgbF(), QColor("black").getRgbF()
+        end, start = QColor(target), QColor("black")
         anim = QVariantAnimation(self)
         anim.setDuration(350)
         anim.setStartValue(0.0)
         anim.setEndValue(1.0)
 
         def step(t: float):
-            c = QColor.fromRgbF(*(start[k] + (end[k] - start[k]) * t for k in range(3)))
+            c = blend(start, end, t)
             button.setStyleSheet(self._style(c))
             if staff:
                 self.staff.set_note_color(c if t > 0 else None)
@@ -276,13 +278,12 @@ class ExerciseView(QWidget):
 
     def _flash_note(self, target: str):
         """Fade the placed note from the staff ink to `target`."""
-        end, start = QColor(target).getRgbF(), QColor("black").getRgbF()
+        end, start = QColor(target), QColor("black")
         anim = QVariantAnimation(self)
         anim.setDuration(350)
         anim.setStartValue(0.0)
         anim.setEndValue(1.0)
-        anim.valueChanged.connect(lambda t: self.input_staff.set_note_color(
-            QColor.fromRgbF(*(start[k] + (end[k] - start[k]) * t for k in range(3)))))
+        anim.valueChanged.connect(lambda t: self.input_staff.set_note_color(blend(start, end, t)))
         self._anims.append(anim)
         anim.start()
 
@@ -341,6 +342,7 @@ class ExerciseView(QWidget):
 
     def _submit_pair(self):
         q = self.question
+        assert q is not None
         (name, name_btn), (octave, octave_btn) = self._pending["name"], self._pending["octave"]
         choice = name + q.joiner + octave
         if q.check(choice):

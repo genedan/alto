@@ -37,15 +37,16 @@ ACCIDENTALS = {-2: "accidentalDoubleFlat", -1: "accidentalFlat", 0: "accidentalN
                1: "accidentalSharp", 2: "accidentalDoubleSharp"}
 STEM_LENGTH = {"half": 3.5, "quarter": 3.5, "eighth": 3.5, "sixteenth": 4.0, "thirty_second": 4.5}  # staff spaces
 
-_data: dict | None = None
 _family: dict[str, str] = {}
 
 
+@cache
+def _all_metrics() -> dict:
+    return json.loads((_DIR / "engraving.json").read_text())
+
+
 def _metrics(font: str) -> dict:
-    global _data
-    if _data is None:
-        _data = json.loads((_DIR / "engraving.json").read_text())
-    return _data[font]
+    return _all_metrics()[font]
 
 
 def _family_of(font: str) -> str:

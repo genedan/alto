@@ -25,4 +25,5 @@ def apply_theme(key: str) -> None:
     """Switch the application's colour scheme and rebuild the stylesheet from the new palette."""
     QGuiApplication.styleHints().setColorScheme(_SCHEMES.get(key, Qt.ColorScheme.Unknown))
     app = QApplication.instance()
+    assert isinstance(app, QApplication)
     app.setStyleSheet(app_style(app.palette()))

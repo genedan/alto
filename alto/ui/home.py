@@ -76,7 +76,7 @@ class HomePage(QWidget):
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.viewport().setAutoFillBackground(False)
         body.setAutoFillBackground(False)
-        self.scroll = scroll
+        self.scroll_area = scroll
         lay.addWidget(scroll, 1)
         self._reflow()
 
@@ -87,17 +87,18 @@ class HomePage(QWidget):
     def _reflow(self):
         """Rows of as many cards as fit across the page."""
         # Use the page's own width: the scroll area's viewport isn't resized yet when this runs.
-        usable = self.width() - 56 - self.scroll.verticalScrollBar().sizeHint().width()
+        usable = self.width() - 56 - self.scroll_area.verticalScrollBar().sizeHint().width()
         columns = max(1, (usable + GAP) // (CARD_W + GAP))
         if columns == self._columns:
             return
         self._columns = columns
         while self.rows.count():  # take the old rows apart, keeping the cards
             item = self.rows.takeAt(0)
-            if item.layout() is not None:
-                while item.layout().count():
-                    item.layout().takeAt(0)
-                item.layout().deleteLater()
+            old_row = item.layout() if item is not None else None
+            if old_row is not None:
+                while old_row.count():
+                    old_row.takeAt(0)
+                old_row.deleteLater()
         for start in range(0, len(self.cards), columns):
             row = QHBoxLayout()
             row.setSpacing(GAP)
