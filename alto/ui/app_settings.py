@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QEvent, QPointF, QRectF, QSize, Qt
+from PySide6.QtGui import QColor, QPainter, QPainterPath, QPalette, QPen, QPolygonF
 from PySide6.QtWidgets import (
     QButtonGroup,
     QDialog,
     QDialogButtonBox,
+    QFrame,
     QGridLayout,
     QHBoxLayout,
     QLabel,
@@ -52,6 +54,89 @@ class StyleCard(QPushButton):
         lay.addWidget(blurb)
 
 
+class ThemeCard(QPushButton):
+    """A selectable tile that previews a theme: a miniature of the app window in light, in dark, or split for System."""
+
+    LIGHT = dict(window="#efefef", panel="#ffffff", line="#c9c9c9", ink="#2a2a2a", faint="#b9b9b9",
+                 accent="#3b8ed0", tint="#c9dce8")
+    DARK = dict(window="#2b2b2b", panel="#232323", line="#454545", ink="#ececec", faint="#5a5a5a",
+                accent="#2f7fe0", tint="#22364f")
+
+    def __init__(self, key: str, label: str, note: str, parent=None):
+        super().__init__(parent)
+        self.theme_key = key
+        self.setCheckable(True)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setFixedSize(232, 168)
+        self.preview = QWidget()
+        self.preview.setFixedHeight(92)
+        self.preview.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.preview.paintEvent = self._paint_preview
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(8, 8, 8, 6)
+        lay.setSpacing(4)
+        name = QLabel(f"<b>{label}</b>")
+        name.setAttribute(Qt.WA_TransparentForMouseEvents)
+        blurb = QLabel(note)
+        blurb.setStyleSheet("color: gray; font-size: 9pt;")
+        blurb.setWordWrap(True)
+        blurb.setAttribute(Qt.WA_TransparentForMouseEvents)
+        lay.addWidget(self.preview)
+        lay.addWidget(name)
+        lay.addWidget(blurb)
+        lay.addStretch(1)
+
+    def _paint_preview(self, _event) -> None:
+        p = QPainter(self.preview)
+        p.setRenderHint(QPainter.Antialiasing)
+        r = QRectF(self.preview.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
+        clip = QPainterPath()
+        clip.addRoundedRect(r, 8, 8)
+        p.setClipPath(clip)
+        if self.theme_key == "system":  # light on the left, dark on the right, split on a slant
+            self._mock(p, r, self.LIGHT)
+            right = QPainterPath()
+            right.addPolygon(QPolygonF([QPointF(r.center().x() + 14, r.top()), r.topRight(), r.bottomRight(),
+                                        QPointF(r.center().x() - 14, r.bottom())]))
+            p.setClipPath(right.intersected(clip))
+            self._mock(p, r, self.DARK)
+        else:
+            self._mock(p, r, self.LIGHT if self.theme_key == "light" else self.DARK)
+        p.setClipping(False)  # an outline, so the dark preview shows against a dark window
+        p.setBrush(Qt.NoBrush)
+        p.setPen(QPen(QColor(128, 128, 128, 150), 1))
+        p.drawRoundedRect(r, 8, 8)
+
+    @staticmethod
+    def _mock(p: QPainter, r: QRectF, c: dict) -> None:
+        """A small drawing of the settings window: a list on the left, a staff with notes and a button on the right."""
+        p.fillRect(r, QColor(c["window"]))
+        side = QRectF(r.left() + 6, r.top() + 6, 40, r.height() - 12)
+        p.setPen(QPen(QColor(c["line"]), 1))
+        p.setBrush(QColor(c["panel"]))
+        p.drawRoundedRect(side, 5, 5)
+        p.setPen(Qt.NoPen)
+        p.setBrush(QColor(c["tint"]))
+        p.drawRoundedRect(QRectF(side.left() + 4, side.top() + 5, side.width() - 8, 9), 3, 3)
+        p.setBrush(QColor(c["faint"]))
+        for i in range(2):
+            p.drawRoundedRect(QRectF(side.left() + 6, side.top() + 22 + i * 12, side.width() - 20 - i * 6, 4), 2, 2)
+        card = QRectF(side.right() + 8, r.top() + 6, r.right() - side.right() - 14, r.height() - 12)
+        p.setPen(QPen(QColor(c["line"]), 1))
+        p.setBrush(QColor(c["panel"]))
+        p.drawRoundedRect(card, 5, 5)
+        p.setPen(QPen(QColor(c["ink"]), 0.8))
+        top = card.top() + 12
+        for i in range(5):
+            p.drawLine(QPointF(card.left() + 6, top + i * 5), QPointF(card.right() - 6, top + i * 5))
+        p.setPen(Qt.NoPen)
+        p.setBrush(QColor(c["ink"]))
+        for x, row in ((20, 4), (38, 3), (56, 1), (74, 2)):
+            p.drawEllipse(QPointF(card.left() + x, top + row * 2.5), 3.2, 2.5)
+        p.setBrush(QColor(c["accent"]))
+        p.drawRoundedRect(QRectF(card.left() + 6, card.bottom() - 17, 30, 10), 4, 4)
+
+
 class AppSettingsDialog(QDialog):
     """Application-wide settings. Changes apply immediately."""
 
@@ -69,7 +154,7 @@ class AppSettingsDialog(QDialog):
         self.categories.setObjectName("categories")  # styled in style.py
         self.categories.setFixedWidth(170)
         self.pages = QStackedWidget()
-        for name, page in (("Appearance", self._scrolling(self._appearance_page())), ("Sound", self._sound_page())):
+        for name, page in (("Appearance", self._appearance_page()), ("Sound", self._sound_page())):
             item = QListWidgetItem(name)
             item.setSizeHint(QSize(0, 36))
             self.categories.addItem(item)
@@ -103,6 +188,13 @@ class AppSettingsDialog(QDialog):
         lay.addWidget(text)
 
     @staticmethod
+    def _about(text: str) -> QLabel:
+        label = QLabel(text)
+        label.setStyleSheet("color: gray;")
+        label.setWordWrap(True)
+        return label
+
+    @staticmethod
     def _scrolling(page: QWidget) -> QScrollArea:
         """A page that scrolls when it is taller than the dialog."""
         area = QScrollArea()
@@ -113,25 +205,78 @@ class AppSettingsDialog(QDialog):
         return area
 
     def _appearance_page(self) -> QWidget:
+        """Two sections, switched with a segmented control: the colour theme, and the notation style."""
         page, lay = self._page()
-        self._heading(lay, "Theme", "Follow the system's light or dark setting, or always use one of them.")
-        theme_row = QHBoxLayout()
-        theme_row.setSpacing(10)
-        theme_group = QButtonGroup(self)
-        theme_group.setExclusive(True)
-        current = saved_theme()
-        for key, label in THEMES:
+        self.appearance_pages = QStackedWidget()
+        self.appearance_pages.addWidget(self._theme_tab())
+        self.appearance_pages.addWidget(self._scrolling(self._notation_tab()))
+        self.segments = QFrame()
+        self.segments.setObjectName("segments")
+        row = QHBoxLayout(self.segments)
+        row.setContentsMargins(3, 3, 3, 3)
+        row.setSpacing(2)
+        group = QButtonGroup(self)
+        group.setExclusive(True)
+        self.segment_buttons = []
+        for i, label in enumerate(("Theme", "Notation style")):
             b = QPushButton(label)
             b.setCheckable(True)
-            b.setChecked(key == current)
-            b.setFixedHeight(40)
-            theme_group.addButton(b)
-            b.clicked.connect(lambda _=False, k=key: self.choose_theme(k))
-            theme_row.addWidget(b)
-        theme_row.addStretch(1)
-        lay.addLayout(theme_row)
-        lay.addSpacing(6)
-        self._heading(lay, "Notation style", "The music font used to draw clefs, notes and accidentals.")
+            b.setCursor(Qt.PointingHandCursor)
+            b.setChecked(i == 0)
+            group.addButton(b, i)
+            b.clicked.connect(lambda _=False, k=i: self.appearance_pages.setCurrentIndex(k))
+            row.addWidget(b)
+            self.segment_buttons.append(b)
+        self._style_segments()
+        top = QHBoxLayout()
+        top.addWidget(self.segments)
+        top.addStretch(1)
+        lay.addLayout(top)
+        lay.addWidget(self.appearance_pages, 1)
+        return page
+
+    def _style_segments(self) -> None:
+        """A rounded track with the chosen segment raised and tinted, from the current palette."""
+        pal = self.palette()
+        window, text, base, accent = (pal.color(r) for r in (QPalette.Window, QPalette.Text, QPalette.Base, QPalette.Highlight))
+        track = QColor.fromRgbF(*(window.getRgbF()[k] + (text.getRgbF()[k] - window.getRgbF()[k]) * 0.07 for k in range(3)))
+        self.segments.setStyleSheet(
+            f"QFrame#segments {{ background: {track.name()}; border-radius: 12px; }}"
+            "QFrame#segments QPushButton { border: 0; border-radius: 9px; padding: 6px 18px; background: transparent; }"
+            f"QFrame#segments QPushButton:checked {{ background: {base.name()}; color: {accent.name()}; "
+            f"border: 1px solid {pal.color(QPalette.Mid).name()}; }}")
+
+    def changeEvent(self, event) -> None:
+        if event.type() == QEvent.PaletteChange and hasattr(self, "segments"):
+            self._style_segments()
+        super().changeEvent(event)
+
+    THEME_NOTES = {"system": "Follows your desktop's light or dark setting.", "light": "Always light.", "dark": "Always dark."}
+
+    def _theme_tab(self) -> QWidget:
+        page, lay = self._page()
+        lay.addWidget(self._about("Follow the system's light or dark setting, or always use one of them."))
+        row = QHBoxLayout()
+        row.setSpacing(10)
+        group = QButtonGroup(self)
+        group.setExclusive(True)
+        self.theme_cards = {}
+        current = saved_theme()
+        for key, label in THEMES:
+            card = ThemeCard(key, label, self.THEME_NOTES.get(key, ""))
+            card.setChecked(key == current)
+            group.addButton(card)
+            card.clicked.connect(lambda _=False, k=key: self.choose_theme(k))
+            row.addWidget(card)
+            self.theme_cards[key] = card
+        row.addStretch(1)
+        lay.addLayout(row)
+        lay.addStretch(1)
+        return page
+
+    def _notation_tab(self) -> QWidget:
+        page, lay = self._page()
+        lay.addWidget(self._about("The music font used to draw clefs, notes and accidentals."))
         grid = QGridLayout()
         grid.setSpacing(10)
         group = QButtonGroup(self)
