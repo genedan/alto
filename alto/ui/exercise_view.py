@@ -93,7 +93,7 @@ class ExerciseView(QWidget):
         self.settings_panel = settings_panel_for(exercise)
         if self.settings_panel:
             self.gear = QToolButton()
-            self.gear.setIcon(svg_icon(SLIDERS, self.palette().color(QPalette.WindowText)))
+            self.gear.setIcon(svg_icon(SLIDERS, self.palette().color(QPalette.ColorRole.WindowText)))
             self.gear.setIconSize(QSize(24, 24))
             self.gear.setCheckable(True)
             self.gear.setAutoRaise(True)
@@ -107,7 +107,7 @@ class ExerciseView(QWidget):
         lay.addWidget(self.staff)
         lay.addWidget(self.input_staff)
         lay.addWidget(self.accidental_row)
-        lay.addWidget(self.key_staff, alignment=Qt.AlignHCenter)
+        lay.addWidget(self.key_staff, alignment=Qt.AlignmentFlag.AlignHCenter)
         lay.addWidget(self.keyboard)
         lay.addLayout(self.choice_box)
         self.octave_row = QWidget()  # shown only when the answer needs an octave as well as a name
@@ -121,18 +121,18 @@ class ExerciseView(QWidget):
             # Collapsible pane on the right, toggled by the gear.
             self.pane = QFrame()
             self.pane.setObjectName("settingsPane")
-            self.pane.setFrameShape(QFrame.StyledPanel)
+            self.pane.setFrameShape(QFrame.Shape.StyledPanel)
             self.pane.setMinimumWidth(0)
             self.pane.setMaximumWidth(0)
             pane_lay = QVBoxLayout(self.pane)
-            pane_lay.setSizeConstraint(QLayout.SetNoConstraint)  # let the pane shrink to zero while animating
+            pane_lay.setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)  # let the pane shrink to zero while animating
             self.settings_panel.setFixedWidth(self.PANE_WIDTH - 2 * 9)
             pane_lay.addWidget(self.settings_panel, 1)  # fill the pane so long pages (Range) can scroll
             self.pane.hide()
             outer.addWidget(self.pane)
             self._pane_anim = QPropertyAnimation(self.pane, b"maximumWidth", self)
             self._pane_anim.setDuration(220)
-            self._pane_anim.setEasingCurve(QEasingCurve.OutCubic)
+            self._pane_anim.setEasingCurve(QEasingCurve.Type.OutCubic)
             self._pane_anim.finished.connect(self._pane_settled)
             self.gear.toggled.connect(self._toggle_pane)
             self.settings_panel.changed.connect(self.next_question)  # apply new settings right away
@@ -144,7 +144,7 @@ class ExerciseView(QWidget):
         self._show_sound_state()
 
     def _show_sound_state(self):
-        color = self.palette().color(QPalette.WindowText)
+        color = self.palette().color(QPalette.ColorRole.WindowText)
         self.sound_btn.setIcon(svg_icon(SPEAKER_ON if sounds.enabled else SPEAKER_MUTED, color))
         self.sound_btn.setToolTip("Sound on (click to mute)" if sounds.enabled else "Muted (click to unmute)")
 
@@ -248,7 +248,7 @@ class ExerciseView(QWidget):
             if staff:
                 self.staff.set_note_color(c if t > 0 else None)
                 if self.question and self.question.keyboard:
-                    self.keyboard.set_highlight_color(c if t > 0 else self.palette().color(QPalette.Highlight))
+                    self.keyboard.set_highlight_color(c if t > 0 else self.palette().color(QPalette.ColorRole.Highlight))
 
         anim.valueChanged.connect(step)
         self._anims.append(anim)

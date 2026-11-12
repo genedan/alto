@@ -75,7 +75,7 @@ class StaffWidget(QWidget):
         self.key = 0
         self.value = "whole"
         self._fit_height("treble")
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
     def show_notes(self, columns: list[list[Note]], clef: str = "treble", key: int = 0, value: str = "whole") -> None:
         self.columns, self.clef, self.key, self.value = columns, clef, key, value
@@ -104,12 +104,12 @@ class StaffWidget(QWidget):
 
     def paintEvent(self, _):
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         look = self.style or current_style()
         font = look.font
         fg = QColor("black")
         line = engraving.staff_line_width(font, self.GAP) if font else look.line
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor("white"))
         p.drawRoundedRect(self.rect(), CORNER_RADIUS, CORNER_RADIUS)  # the rounded "paper" behind the music
         p.setPen(QPen(fg, line))
@@ -155,7 +155,7 @@ class StaffWidget(QWidget):
                 elif steps > 8:
                     for s in range(10, steps + 1, 2):
                         self._ledger(p, x, bottom - s * gap / 2, gap)
-                p.setPen(Qt.NoPen)
+                p.setPen(Qt.PenStyle.NoPen)
                 value = self.value if len(col) == 1 else "whole"  # stems are only drawn for single notes
                 self._note(p, x, y, gap, nfg, value, stem_down=steps >= 4, font=font)
                 p.setPen(QPen(nfg, 1.4))
@@ -202,7 +202,7 @@ class StaffWidget(QWidget):
         t.scale(scale, scale)
         t.translate(-r.x(), -r.y())
         p.save()
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(color)
         p.drawPath(t.map(path))
         p.restore()
@@ -221,7 +221,7 @@ class StaffWidget(QWidget):
         path.cubicTo(x - wd * 0.4, y1 - (y1 - mid) * 0.25, x - wd * 1.4, mid + (y1 - mid) * 0.3, x - wd * 1.4, mid)
         path.cubicTo(x - wd * 1.4, mid - (mid - y0) * 0.3, x - wd * 0.4, y0 + (mid - y0) * 0.25, x, y0)
         p.save()
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(color)
         p.drawPath(path)
         p.restore()
@@ -238,7 +238,7 @@ class StaffWidget(QWidget):
         shape = outer.subtracted(t.map(hole))  # transparent hole: staff line shows through
         p.save()
         p.translate(x, y)
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(color)
         p.drawPath(shape)
         p.restore()

@@ -17,9 +17,9 @@ def _mix(a: QColor, b: QColor, t: float) -> str:
 
 def app_style(palette: QPalette) -> str:
     """The stylesheet: white-filled buttons with a dark border and a heavier lower edge."""
-    base, dark, midlight = (palette.color(r).name() for r in (QPalette.Base, QPalette.Dark, QPalette.Midlight))
-    base_c, text_c, accent_c = palette.color(QPalette.Base), palette.color(QPalette.Text), palette.color(QPalette.Highlight)
-    window_c = palette.color(QPalette.Window)
+    base, dark, midlight = (palette.color(r).name() for r in (QPalette.ColorRole.Base, QPalette.ColorRole.Dark, QPalette.ColorRole.Midlight))
+    base_c, text_c, accent_c = palette.color(QPalette.ColorRole.Base), palette.color(QPalette.ColorRole.Text), palette.color(QPalette.ColorRole.Highlight)
+    window_c = palette.color(QPalette.ColorRole.Window)
     return _TEMPLATE.format(RADIUS=RADIUS, r2=RADIUS - 2, r3=RADIUS - 3, rp=RADIUS + 2,
                             fill=base, fill_hover=base, fill_pressed=midlight, edge=dark,
                             box_edge=_mix(base_c, text_c, 0.45), box_edge_off=_mix(base_c, text_c, 0.2),

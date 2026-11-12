@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
         self.nav.setObjectName("nav")  # styled in style.py
         self.nav.setIconSize(QSize(20, 20))
         self.nav.setMinimumWidth(self.SIDEBAR_MIN)
-        self.nav.setVerticalScrollMode(QListWidget.ScrollPerPixel)
+        self.nav.setVerticalScrollMode(QListWidget.ScrollMode.ScrollPerPixel)
         self.stack = QStackedWidget()
         self.home = HomePage(REGISTRY)  # start screen with a button for every exercise
         self.home.exercise_chosen.connect(self.open_exercise)
@@ -60,42 +60,42 @@ class MainWindow(QMainWindow):
 
         self._items: dict[type, QListWidgetItem] = {}
         pal = self.palette()
-        ink, window = pal.color(QPalette.Text), pal.color(QPalette.Window)
+        ink, window = pal.color(QPalette.ColorRole.Text), pal.color(QPalette.ColorRole.Window)
         section_colour = QColor.fromRgbF(*(ink.getRgbF()[k] * 0.5 + window.getRgbF()[k] * 0.5 for k in range(3)))
         section_font = QFont()
         section_font.setPixelSize(10)
         section_font.setBold(True)
-        section_font.setLetterSpacing(QFont.AbsoluteSpacing, 1.3)
+        section_font.setLetterSpacing(QFont.SpacingType.AbsoluteSpacing, 1.3)
         seen: set[str] = set()
         for cls in REGISTRY:
             if cls.category not in seen:
                 seen.add(cls.category)
                 label = QListWidgetItem(cls.category.upper())
-                label.setFlags(Qt.NoItemFlags)  # a section label: not selectable, no hover highlight
+                label.setFlags(Qt.ItemFlag.NoItemFlags)  # a section label: not selectable, no hover highlight
                 label.setFont(section_font)
                 label.setForeground(section_colour)
-                label.setTextAlignment(Qt.AlignLeft | Qt.AlignBottom)
+                label.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
                 label.setSizeHint(QSize(0, 40))
                 self.nav.addItem(label)
             item = QListWidgetItem(svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), ink, size=20), cls.name)
-            item.setData(Qt.UserRole, cls)
+            item.setData(Qt.ItemDataRole.UserRole, cls)
             item.setToolTip(cls.description)
             item.setSizeHint(QSize(0, 38))
             self.nav.addItem(item)
             self._items[cls] = item
-        self.nav.itemClicked.connect(lambda item: self.open_exercise(item.data(Qt.UserRole)))
+        self.nav.itemClicked.connect(lambda item: self.open_exercise(item.data(Qt.ItemDataRole.UserRole)))
 
         # Hamburger menu above the exercise list (replaces the menu bar).
         self.menu_button = QToolButton()
         self.menu_button.setText("☰")
         self.menu_button.setToolTip("Menu")
-        self.menu_button.setPopupMode(QToolButton.InstantPopup)
+        self.menu_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         self.menu_button.setStyleSheet("QToolButton { font-size: 16pt; } QToolButton::menu-indicator { image: none; }")
         menu = QMenu(self.menu_button)
         # A transparent, frameless popup lets the stylesheet's rounded corners show without a square backdrop.
-        menu.setWindowFlags(menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
-        menu.setAttribute(Qt.WA_TranslucentBackground)
-        glyph = self.menu_button.palette().color(QPalette.WindowText)  # menu icons share the text colour
+        menu.setWindowFlags(menu.windowFlags() | Qt.WindowType.FramelessWindowHint | Qt.WindowType.NoDropShadowWindowHint)
+        menu.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        glyph = self.menu_button.palette().color(QPalette.ColorRole.WindowText)  # menu icons share the text colour
         home = menu.addAction(svg_icon(icons.HOME, glyph, size=18), "Home")
         home.triggered.connect(self.show_home)
         menu.addSeparator()
@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
         settings_action.triggered.connect(self.open_settings)
         menu.addSeparator()
         quit_action = menu.addAction(svg_icon(icons.QUIT, glyph, size=18), "Quit")
-        quit_action.setShortcut(QKeySequence.Quit)
+        quit_action.setShortcut(QKeySequence.StandardKey.Quit)
         quit_action.triggered.connect(QApplication.quit)
         self.menu_button.setMenu(menu)
         self.addAction(settings_action)
@@ -130,7 +130,7 @@ class MainWindow(QMainWindow):
 
         # The list and the exercise sit in a splitter: drag the handle to resize, or drag the list
         # narrower than its minimum to collapse it.
-        self.splitter = QSplitter(Qt.Horizontal)
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.setHandleWidth(10)
         self.splitter.addWidget(self.nav)
         self.splitter.addWidget(self.stack)
@@ -157,7 +157,7 @@ class MainWindow(QMainWindow):
         buttons.setContentsMargins(0, 0, 0, 0)
         buttons.addWidget(self.menu_button)
         self.stats_button = QToolButton()  # a quick way to the statistics, beside the menu
-        self.stats_button.setIcon(svg_icon(icons.CHART, self.palette().color(QPalette.WindowText)))
+        self.stats_button.setIcon(svg_icon(icons.CHART, self.palette().color(QPalette.ColorRole.WindowText)))
         self.stats_button.setIconSize(QSize(22, 22))
         self.stats_button.setAutoRaise(True)
         self.stats_button.setToolTip("Statistics")
@@ -165,7 +165,7 @@ class MainWindow(QMainWindow):
         self.stats_button.clicked.connect(self.open_stats)
         buttons.addWidget(self.stats_button)
         self.database_button = QToolButton()
-        self.database_button.setIcon(svg_icon(icons.DATABASE, self.palette().color(QPalette.WindowText)))
+        self.database_button.setIcon(svg_icon(icons.DATABASE, self.palette().color(QPalette.ColorRole.WindowText)))
         self.database_button.setIconSize(QSize(22, 22))
         self.database_button.setAutoRaise(True)
         self.database_button.setToolTip("Browse the database")
@@ -173,8 +173,8 @@ class MainWindow(QMainWindow):
         self.database_button.clicked.connect(self.open_database)
         buttons.addWidget(self.database_button)
         bar = QGridLayout()
-        bar.addLayout(buttons, 0, 0, Qt.AlignLeft)
-        bar.addWidget(self.title_label, 0, 1, Qt.AlignCenter)
+        bar.addLayout(buttons, 0, 0, Qt.AlignmentFlag.AlignLeft)
+        bar.addWidget(self.title_label, 0, 1, Qt.AlignmentFlag.AlignCenter)
         bar.setColumnStretch(0, 1)
         bar.setColumnStretch(2, 1)
         lay.addLayout(bar)
@@ -311,7 +311,7 @@ class MainWindow(QMainWindow):
         if not self.learner:
             return
         dialog = ProfileDialog(self.learner.db, self.learner.profile, self)
-        if dialog.exec() == QDialog.Accepted and dialog.chosen and dialog.chosen != self.learner.profile:
+        if dialog.exec() == QDialog.DialogCode.Accepted and dialog.chosen and dialog.chosen != self.learner.profile:
             self.learner.profile = dialog.chosen
             remember_profile(dialog.chosen)
             self._show_profile()

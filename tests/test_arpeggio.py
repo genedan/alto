@@ -149,7 +149,7 @@ def view(app, cfg, monkeypatch):
     v = ExerciseView(ArpeggioNames(), random.Random(1))
     yield v
     v.deleteLater()  # gone before the application, or Qt crashes when Python exits
-    QApplication.sendPostedEvents(None, QEvent.DeferredDelete)
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
 
 def press(view, text):

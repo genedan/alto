@@ -50,7 +50,7 @@ class ProfileDialog(QDialog):
         if not first_run:
             for p in db.profiles():
                 item = QListWidgetItem(p.name)
-                item.setData(Qt.UserRole, p)
+                item.setData(Qt.ItemDataRole.UserRole, p)
                 self.list.addItem(item)
                 if current and p.id == current.id:
                     self.list.setCurrentItem(item)
@@ -77,9 +77,9 @@ class ProfileDialog(QDialog):
 
         buttons = QDialogButtonBox()
         if not first_run:
-            use = buttons.addButton("Use selected profile", QDialogButtonBox.AcceptRole)
+            use = buttons.addButton("Use selected profile", QDialogButtonBox.ButtonRole.AcceptRole)
             use.clicked.connect(self._use_selected)
-        buttons.addButton(QDialogButtonBox.Cancel if not first_run else QDialogButtonBox.Close)
+        buttons.addButton(QDialogButtonBox.StandardButton.Cancel if not first_run else QDialogButtonBox.StandardButton.Close)
         buttons.rejected.connect(self.reject)
         lay.addWidget(buttons)
         self.name.setFocus()
@@ -95,7 +95,7 @@ class ProfileDialog(QDialog):
     def _use_selected(self) -> None:
         item = self.list.currentItem()
         if item is not None:
-            self.chosen = item.data(Qt.UserRole)
+            self.chosen = item.data(Qt.ItemDataRole.UserRole)
             self.accept()
 
 
@@ -113,7 +113,7 @@ def startup_profile(db: Database) -> Profile | None:
         if len(profiles) == 1:
             return profiles[0]
     dialog = ProfileDialog(db)
-    if dialog.exec() != QDialog.Accepted or dialog.chosen is None:
+    if dialog.exec() != QDialog.DialogCode.Accepted or dialog.chosen is None:
         return None
     remember_profile(dialog.chosen)
     return dialog.chosen

@@ -22,7 +22,7 @@ class StaffInput(StaffWidget):
         self.accidental: int | None = None  # the sign you chose (-1 flat, 0 natural, +1 sharp); None follows the key signature
         self.locked = False  # ignore the mouse (while feedback is showing)
         self.setMouseTracking(True)
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
 
     def reset(self, clef: str, key: int = 0) -> None:
         """Clear the staff for a new question, drawing the key signature `key` (sharps +, flats -)."""
@@ -68,9 +68,9 @@ class StaffInput(StaffWidget):
             self.show_note(None)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        if event.button() == Qt.RightButton and not self.locked:
+        if event.button() == Qt.MouseButton.RightButton and not self.locked:
             self.accidental_cycled.emit()
-        elif event.button() == Qt.LeftButton and not self.locked:
+        elif event.button() == Qt.MouseButton.LeftButton and not self.locked:
             note = self.note_at(event.position().y())
             self.show_note(note)  # solid black: the note you placed
             self.placed.emit(note)

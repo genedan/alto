@@ -25,8 +25,8 @@ from ..learning import Learner, stats
 from .question_preview import QuestionPreview
 
 ROW_LIMIT = 10000
-SORT_ROLE = Qt.UserRole
-ROW_ROLE = Qt.UserRole + 1  # a row's hidden details
+SORT_ROLE = Qt.ItemDataRole.UserRole
+ROW_ROLE = Qt.ItemDataRole.UserRole + 1  # a row's hidden details
 
 
 class RowsModel(QAbstractTableModel):
@@ -45,20 +45,20 @@ class RowsModel(QAbstractTableModel):
     def columnCount(self, parent=QModelIndex()) -> int:
         return 0 if parent.isValid() else len(self.headers)
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         if role == ROW_ROLE:
             return self.extras[index.row()]
         text, value = self.rows[index.row()][index.column()]
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             return text
         if role == SORT_ROLE:
             return value
-        if role == Qt.TextAlignmentRole and index.column() in self.numeric:
-            return int(Qt.AlignRight | Qt.AlignVCenter)
+        if role == Qt.ItemDataRole.TextAlignmentRole and index.column() in self.numeric:
+            return int(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         return None
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return self.headers[section]
         return None
 
@@ -85,7 +85,7 @@ class DatabasePage(QWidget):
         back.setToolTip("Back to the previous page (Esc)")
         back.clicked.connect(self.back)
         bar.addWidget(back)
-        QShortcut(QKeySequence(Qt.Key_Escape), self, self.back.emit)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self, self.back.emit)
         bar.addSpacing(12)
         self.group = QButtonGroup(self)
         self.group.setExclusive(True)
@@ -111,8 +111,8 @@ class DatabasePage(QWidget):
         self.note.setStyleSheet("color: gray;")
         lay.addWidget(self.note)
         self.view = QTableView()
-        self.view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.view.setAlternatingRowColors(True)
         self.view.setSortingEnabled(True)
         self.view.verticalHeader().hide()
@@ -121,7 +121,7 @@ class DatabasePage(QWidget):
         self.view.horizontalHeader().setStretchLastSection(False)
         self.proxy = QSortFilterProxyModel(self)
         self.proxy.setSortRole(SORT_ROLE)
-        self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.proxy.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.proxy.setFilterKeyColumn(-1)  # search every column
         self.view.setModel(self.proxy)
         self.view.doubleClicked.connect(self._preview)
@@ -200,13 +200,13 @@ class DatabasePage(QWidget):
         head = self.view.horizontalHeader()
         for col in range(model.columnCount()):
             stretch = model.headers[col] == "Question"
-            head.setSectionResizeMode(col, QHeaderView.Stretch if stretch else QHeaderView.ResizeToContents)
+            head.setSectionResizeMode(col, QHeaderView.ResizeMode.Stretch if stretch else QHeaderView.ResizeMode.ResizeToContents)
         if key == "answers":
-            self.view.sortByColumn(0, Qt.DescendingOrder)
+            self.view.sortByColumn(0, Qt.SortOrder.DescendingOrder)
         elif key == "questions":
-            self.view.sortByColumn(2, Qt.DescendingOrder)
+            self.view.sortByColumn(2, Qt.SortOrder.DescendingOrder)
         else:
-            self.view.sortByColumn(0, Qt.AscendingOrder)
+            self.view.sortByColumn(0, Qt.SortOrder.AscendingOrder)
         self._show_count()
 
     def _preview(self, index: QModelIndex) -> None:

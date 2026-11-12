@@ -99,7 +99,7 @@ def ledger_width(font: str, gap: float) -> float:
 
 def _fill(p: QPainter, path: QPainterPath, colour: QColor) -> None:
     p.save()
-    p.setPen(Qt.NoPen)
+    p.setPen(Qt.PenStyle.NoPen)
     p.setBrush(colour)
     p.drawPath(path)
     p.restore()
@@ -123,7 +123,7 @@ def draw_note(p: QPainter, font: str, value: str, x: float, y: float, gap: float
     left = sx if stem_down else sx - thick
     top, bottom = (sy, end) if stem_down else (end, sy)
     p.save()
-    p.setPen(Qt.NoPen)
+    p.setPen(Qt.PenStyle.NoPen)
     p.setBrush(colour)
     p.drawRect(QRectF(left, top, thick, bottom - top))
     p.restore()

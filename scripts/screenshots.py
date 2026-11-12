@@ -93,7 +93,7 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
         wait(250)
         pixmap = widget.grab()
         if pixmap.width() > width:
-            pixmap = pixmap.scaledToWidth(width, Qt.SmoothTransformation)
+            pixmap = pixmap.scaledToWidth(width, Qt.TransformationMode.SmoothTransformation)
         pixmap.save(str(out / f"{name}{suffix}.png"), "PNG")
 
     # A made-up profile: five weeks of answers that slowly get better.

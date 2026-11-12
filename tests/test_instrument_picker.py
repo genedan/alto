@@ -23,7 +23,7 @@ def picker(app, monkeypatch):
 
 
 def rows(picker):
-    return [picker.list.item(i).data(Qt.UserRole) for i in range(picker.list.count())]
+    return [picker.list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(picker.list.count())]
 
 
 def texts(picker):
@@ -37,7 +37,7 @@ def row_labels(picker):
 
 def test_every_instrument_is_listed_once_and_the_one_in_use_is_selected_and_ticked(picker):
     assert rows(picker) == ["Piano", "Flute", "French Horn", "Viola", "Marimba", "Vibraphone"]
-    assert picker.list.currentItem().data(Qt.UserRole) == "Piano"
+    assert picker.list.currentItem().data(Qt.ItemDataRole.UserRole) == "Piano"
     assert "✓" in picker.list.item(0).text()
     assert picker.title.text() == "Piano"
     assert row_labels(picker) == ["In use"]  # the piano has only one way of playing, so one row
@@ -75,7 +75,8 @@ def test_using_an_instrument_switches_to_it_and_ticks_it(picker):
     assert sounds.instrument == "marimba"
     use = picker.buttons["marimba"][0]
     assert use.text() == "In use" and not use.isEnabled()
-    ticked = [picker.list.item(i).data(Qt.UserRole) for i in range(picker.list.count()) if "✓" in picker.list.item(i).text()]
+    items = [picker.list.item(i) for i in range(picker.list.count())]
+    ticked = [item.data(Qt.ItemDataRole.UserRole) for item in items if "✓" in item.text()]
     assert ticked == ["Marimba"]
 
 

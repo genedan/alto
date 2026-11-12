@@ -104,7 +104,7 @@ def draw_note(p: QPainter, value: str, x: float, y: float, gap: float, colour: Q
     t.scale(k, k)
     t.translate(-hx, -hy)
     p.save()
-    p.setPen(Qt.NoPen)
+    p.setPen(Qt.PenStyle.NoPen)
     p.setBrush(colour)
     p.drawPath(t.map(note_shape(value, stem_down)))
     p.restore()

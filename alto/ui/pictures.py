@@ -26,7 +26,7 @@ class _Picture(QWidget):
     def __init__(self, scale: float = 1.0, parent=None):
         super().__init__(parent)
         self.scale = scale
-        self.setAttribute(Qt.WA_TransparentForMouseEvents)  # the row or checkbox underneath is the click target
+        self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)  # the row or checkbox underneath is the click target
 
     def _fit(self, width: float, height: float) -> None:
         self.setFixedSize(round(width * self.scale), round(height * self.scale))
@@ -34,14 +34,14 @@ class _Picture(QWidget):
     def _colours(self) -> tuple[QColor, QColor]:
         """(ink, softer ink for staff lines), both readable against the background in light and dark themes."""
         pal = self.palette()
-        text, base = pal.color(QPalette.Text), pal.color(QPalette.Base)
+        text, base = pal.color(QPalette.ColorRole.Text), pal.color(QPalette.ColorRole.Base)
         line = QColor.fromRgbF(*(base.getRgbF()[k] + (text.getRgbF()[k] - base.getRgbF()[k]) * 0.62 for k in range(3)))
         return text, line
 
     def _painter(self) -> QPainter:
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
-        p.setRenderHint(QPainter.SmoothPixmapTransform)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
         p.scale(self.scale, self.scale)
         self._dev = abs(p.deviceTransform().m11()) or 1.0  # device pixels per picture unit
         return p
@@ -52,14 +52,14 @@ class _Picture(QWidget):
         d = self._dev
         n = max(round(width * d), 1)
         y = (int(y * d) + 0.5) / d if n % 2 else round(y * d) / d
-        p.setPen(QPen(colour, n / d, Qt.SolidLine, Qt.FlatCap))
+        p.setPen(QPen(colour, n / d, Qt.PenStyle.SolidLine, Qt.PenCapStyle.FlatCap))
         p.drawLine(QPointF(x0, y), QPointF(x1, y))
 
     def _vline(self, p: QPainter, x: float, y0: float, y1: float, colour: QColor, width: float = 1.0) -> None:
         d = self._dev
         n = max(round(width * d), 1)
         x = (int(x * d) + 0.5) / d if n % 2 else round(x * d) / d
-        p.setPen(QPen(colour, n / d, Qt.SolidLine, Qt.FlatCap))
+        p.setPen(QPen(colour, n / d, Qt.PenStyle.SolidLine, Qt.PenCapStyle.FlatCap))
         p.drawLine(QPointF(x, y0), QPointF(x, y1))
 
     def to_icon(self) -> QIcon:
@@ -67,8 +67,8 @@ class _Picture(QWidget):
         ratio = 2.0
         pixmap = QPixmap(self.size() * ratio)
         pixmap.setDevicePixelRatio(ratio)
-        pixmap.fill(Qt.transparent)
-        self.render(pixmap, QPoint(), QRegion(), QWidget.DrawChildren)  # just the picture, not the widget background
+        pixmap.fill(Qt.GlobalColor.transparent)
+        self.render(pixmap, QPoint(), QRegion(), QWidget.RenderFlag.DrawChildren)  # just the picture, not the widget background
         return QIcon(pixmap)
 
     def _staff(self, p: QPainter, x0: float, x1: float, bottom: float, gap: float, colour: QColor) -> None:
@@ -307,4 +307,4 @@ class NamePicture(_Picture):
                 self._hline(p, x - 3.4, x + 3.4, y, text, 0.65)
             StaffWidget._note(p, x, y, gap * 1.45, text, "whole", False, current_style().font)
             p.setPen(QPen(text, 1.0))
-            p.drawText(QRectF(x - 6.5, 29.5, 13, 9), Qt.AlignCenter, name)
+            p.drawText(QRectF(x - 6.5, 29.5, 13, 9), Qt.AlignmentFlag.AlignCenter, name)

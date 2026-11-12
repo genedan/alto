@@ -134,9 +134,10 @@ class RangeEditor(QWidget):
         caption_row.addStretch()
         self.staff = StaffWidget(gap=9.0, side=18.0, note_offset=62.0, margin=8.0, compact=True)
         self.staff.setFixedWidth(168)
-        self.low_up, self.low_down = _arrow(Qt.UpArrow, "Raise the lowest note"), _arrow(Qt.DownArrow, "Lower the lowest note")
-        self.high_up = _arrow(Qt.UpArrow, "Raise the highest note")
-        self.high_down = _arrow(Qt.DownArrow, "Lower the highest note")
+        self.low_up = _arrow(Qt.ArrowType.UpArrow, "Raise the lowest note")
+        self.low_down = _arrow(Qt.ArrowType.DownArrow, "Lower the lowest note")
+        self.high_up = _arrow(Qt.ArrowType.UpArrow, "Raise the highest note")
+        self.high_down = _arrow(Qt.ArrowType.DownArrow, "Lower the highest note")
         self.low_up.clicked.connect(lambda: self._move(low=1))
         self.low_down.clicked.connect(lambda: self._move(low=-1))
         self.high_up.clicked.connect(lambda: self._move(high=1))
@@ -192,7 +193,7 @@ class KeyDiagram(QWidget):
         self.first_column = self.PAD + 2 * self.DOT + 7 + self.DOT          # x of the 1-sharp / 1-flat dots
         self.setFixedSize(int(self.first_column + 6 * self.PITCH + self.DOT + self.PAD) + 1,
                           int(self.ROW_GAP + 2 * self.DOT + 2 * self.PAD) + 3)
-        self.setAttribute(Qt.WA_TransparentForMouseEvents)  # the row underneath is the click target
+        self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)  # the row underneath is the click target
         self._update_tip()
 
     def set_keys(self, keys: set[int]) -> None:
@@ -206,9 +207,10 @@ class KeyDiagram(QWidget):
 
     def paintEvent(self, _):
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         pal = self.palette()
-        text, base = pal.color(QPalette.Text), pal.color(QPalette.Base)  # the row is filled with the base colour
+        text = pal.color(QPalette.ColorRole.Text)
+        base = pal.color(QPalette.ColorRole.Base)  # the row is filled with the base colour
 
         def blend(t: float) -> QColor:  # t of the way from the row's background to the text colour
             return QColor.fromRgbF(*(base.getRgbF()[k] + (text.getRgbF()[k] - base.getRgbF()[k]) * t for k in range(3)))
@@ -256,7 +258,7 @@ def _clef_grid(boxes: dict[str, QCheckBox]) -> QWidget:
     grid.setHorizontalSpacing(14)
     grid.setVerticalSpacing(10)
     for i, box in enumerate(boxes.values()):
-        grid.addWidget(box, i // 2, i % 2, Qt.AlignLeft)
+        grid.addWidget(box, i // 2, i % 2, Qt.AlignmentFlag.AlignLeft)
     return grid_widget
 
 
@@ -277,11 +279,11 @@ class _Row(QPushButton):
         self.title = QLabel(f"<b>{title}</b>")
         self.value = QLabel()
         self.value.setStyleSheet("color: gray;")
-        self.value.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.value.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         for label in (self.title, self.value):
-            label.setAttribute(Qt.WA_TransparentForMouseEvents)
+            label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         arrow = QLabel("›")
-        arrow.setAttribute(Qt.WA_TransparentForMouseEvents)
+        arrow.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         if tall:
             outer = QVBoxLayout(self)
             outer.setContentsMargins(11, 8, 11, 8)
@@ -328,11 +330,11 @@ class Switch(QAbstractButton):
         super().__init__(parent)
         self.setCheckable(True)
         self.setFixedSize(self.W, self.H)
-        self.setCursor(Qt.PointingHandCursor)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self._pos = 0.0  # knob position, 0 (off) .. 1 (on)
         self._anim = QVariantAnimation(self)
         self._anim.setDuration(140)
-        self._anim.setEasingCurve(QEasingCurve.OutCubic)
+        self._anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         self._anim.valueChanged.connect(self._set_pos)
         self.toggled.connect(self._slide)
 
@@ -353,13 +355,13 @@ class Switch(QAbstractButton):
 
     def paintEvent(self, _):
         p = QPainter(self)
-        p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
         pal = self.palette()
-        off, on = pal.color(QPalette.Mid), pal.color(QPalette.Highlight)
+        off, on = pal.color(QPalette.ColorRole.Mid), pal.color(QPalette.ColorRole.Highlight)
         track = QColor.fromRgbF(*(off.getRgbF()[k] + (on.getRgbF()[k] - off.getRgbF()[k]) * self._pos for k in range(3)))
         if not self.isEnabled():
             track.setAlpha(110)
-        p.setPen(Qt.NoPen)
+        p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(track)
         p.drawRoundedRect(self.rect(), self.H / 2, self.H / 2)
         r, margin = self.H / 2 - 3, 3
@@ -380,7 +382,7 @@ class _ToggleRow(_Row):
         super().__init__(title, chevron=False)
         self.value.hide()
         self.switch = Switch()
-        self.switch.setAttribute(Qt.WA_TransparentForMouseEvents)  # the whole row is the click target
+        self.switch.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)  # the whole row is the click target
         self.layout().addWidget(self.switch)
         self.clicked.connect(lambda: self._set(not self.switch.isChecked()))
 
@@ -441,7 +443,7 @@ class SlideStack(QStackedWidget):
         for widget, start, end in ((old, 0, -sign * w), (new, sign * w, 0)):
             anim = QPropertyAnimation(widget, b"pos", group)
             anim.setDuration(220)
-            anim.setEasingCurve(QEasingCurve.OutCubic)
+            anim.setEasingCurve(QEasingCurve.Type.OutCubic)
             anim.setStartValue(QPoint(start, 0))
             anim.setEndValue(QPoint(end, 0))
             group.addAnimation(anim)
@@ -531,8 +533,8 @@ class NoteNameSettingsPanel(QWidget):
         scroll = QScrollArea()
         scroll.setWidget(self.range_body)
         scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         range_page = _subpage("Range", scroll, lambda: self._go(0), fill=True)
 
         # layer 2: key signatures, each drawn as it would be written (flats on the left, sharps on the right)
@@ -823,11 +825,11 @@ class KeyboardSettingsPanel(QWidget):
         for title, label, which in (("Lowest key", self.low_label, "low"), ("Highest key", self.high_label, "high")):
             row = QHBoxLayout()
             row.addWidget(QLabel(f"<b>{title}</b>"), 1)
-            down = _arrow(Qt.LeftArrow, f"{title}: one key down")
-            up = _arrow(Qt.RightArrow, f"{title}: one key up")
+            down = _arrow(Qt.ArrowType.LeftArrow, f"{title}: one key down")
+            up = _arrow(Qt.ArrowType.RightArrow, f"{title}: one key up")
             down.clicked.connect(lambda _=False, w=which: self._step(w, -1))
             up.clicked.connect(lambda _=False, w=which: self._step(w, 1))
-            label.setAlignment(Qt.AlignCenter)
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             label.setMinimumWidth(48)
             row.addWidget(down)
             row.addWidget(label)
