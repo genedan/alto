@@ -27,6 +27,13 @@ pytest
 
 The tests that touch widgets run with Qt's offscreen platform, so no display is needed.
 
+GitHub Actions runs the tests on every pull request (`.github/workflows/tests.yml`) and reports coverage to Codecov
+(`.github/workflows/codecov.yml`). To measure coverage yourself:
+
+```bash
+pytest --cov --cov-report=term-missing
+```
+
 ## Pre-commit
 
 A [pre-commit](https://pre-commit.com/) configuration runs the checks automatically before each commit. Set it up once:
