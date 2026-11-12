@@ -41,6 +41,7 @@ for the exercise, since reading a note takes less time than spelling a scale:
 | Key signatures | 4 s |
 | Interval identification, Chord quality, Note Construction | 6 s |
 | Scale spelling | 8 s |
+| Arpeggio identification | 9 s |
 
 At half the par time or quicker you get the full speed bonus. At par there is no effect. At four times par or slower
 you get the full slow penalty. In between it changes smoothly.

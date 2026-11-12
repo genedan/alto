@@ -3,7 +3,7 @@ title: Exercises
 nav_order: 3
 permalink: /exercises/
 ---
-Alto has seven exercises. Each one has a **?** button with a short explanation, and three of them have their own
+Alto has eight exercises. Each one has a **?** button with a short explanation, and four of them have their own
 settings (the sliders button). The others use fixed rules, described below.
 
 ## Note Identification
@@ -72,3 +72,30 @@ A chord is drawn in root position on a treble or bass staff. Press its type:
 major, minor, diminished, augmented, major 7th, dominant 7th, minor 7th, half-diminished 7th and diminished 7th.
 
 Check the size of the intervals stacked above the lowest note to tell the types apart.
+
+## Arpeggio identification
+
+A chord is drawn one note at a time, rising from its lowest note to the same note an octave higher. Press its type, then
+press its inversion. The answer counts once you have chosen both, in either order, and a wrong pair is cleared so you can
+try again.
+
+The inversion is which chord tone is lowest:
+
+| Inversion | Lowest note |
+|---|---|
+| Root position | the root |
+| 1st inversion | the third |
+| 2nd inversion | the fifth |
+| 3rd inversion | the seventh (seventh chords only) |
+
+By default Alto asks major, minor, dominant 7th and diminished 7th arpeggios on the treble and bass staves, in every
+inversion. In the exercise settings you can choose:
+
+- **Staff:** treble, bass, alto and tenor clefs.
+- **Arpeggio types:** any of major, minor, diminished and augmented triads, and dominant 7th, major 7th, minor 7th,
+  half-diminished 7th and diminished 7th chords. The type buttons below the staff follow your choice.
+- **Inversions:** root position and the first three inversions. A triad has no 3rd inversion, so that choice only applies to seventh chords.
+- **Key signatures:** draw a key signature from the keys you pick. The arpeggio then only gets a sign where it differs
+  from the signature, so a natural sign appears where the chord needs one.
+
+{% include shot.html src="arpeggios.png" alt="Arpeggio identification showing four notes rising on a staff, with a row of type buttons and a row of inversion buttons" %}

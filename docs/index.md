@@ -20,6 +20,7 @@ permalink: /
   <li><strong>Key signatures</strong>How many sharps or flats does a key have?</li>
   <li><strong>Scale spelling</strong>Spell a degree of a scale or mode.</li>
   <li><strong>Chord quality</strong>Tell triads and seventh chords apart.</li>
+  <li><strong>Arpeggio identification</strong>Name the type and the inversion of a broken chord.</li>
 </ul>
 
 ## What makes it different
@@ -29,6 +30,8 @@ permalink: /
 - **Notation in the font you like.** Eleven notation styles, including Finale Maestro, Leland, Bravura and two handwritten jazz styles. [Settings]({{ '/settings/' | relative_url }}).
 - **Local and private.** Your history is one file on your computer. Alto makes no network connections. [Your data]({{ '/data/' | relative_url }}).
 - **Free and open source** under the MIT License.
+
+{% include shot.html src="stats.png" alt="The statistics page with summary tiles and charts of accuracy, speed and volume" caption="Statistics for a demo profile: how often you are right, how fast, and how much you practise." %}
 
 ## Get started
 
