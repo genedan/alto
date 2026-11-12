@@ -36,6 +36,19 @@ CHORDS: dict[str, list[Interval]] = {
 }
 
 
+INVERSION_NAMES = ("root position", "1st inversion", "2nd inversion", "3rd inversion")
+OCTAVE = Interval(8, "P")
+
+
+def arpeggio(root: Note, intervals: list[Interval], inversion: int = 0) -> list[Note]:
+    """A chord broken and rising from its lowest note, then that note again an octave higher. `inversion` is how many of
+    the lowest chord tones are moved up an octave first (0 = root position, 1 = the third at the bottom ...)."""
+    tones = build(root, intervals)
+    for _ in range(inversion):
+        tones.append(tones.pop(0).transpose(OCTAVE))
+    return tones + [tones[0].transpose(OCTAVE)]
+
+
 def build(tonic: Note, intervals: list[Interval]) -> list[Note]:
     return [tonic.transpose(iv) for iv in intervals]
 
@@ -62,4 +75,5 @@ def all_tonics(max_accidentals: int = 1) -> list[Note]:
     ]
 
 
-__all__ = ["SCALES", "CHORDS", "build", "key_signature", "format_key_signature", "all_tonics", "LETTERS"]
+__all__ = ["SCALES", "CHORDS", "INVERSION_NAMES", "arpeggio", "build", "key_signature", "format_key_signature", "all_tonics",
+           "LETTERS"]

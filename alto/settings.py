@@ -116,3 +116,40 @@ class ConstructionSettings:
 
 
 construction = ConstructionSettings()
+
+
+# Arpeggio exercise. The chord types are the names in theory.scales.CHORDS, triads first and then seventh chords.
+ARPEGGIO_TRIADS = ("major", "minor", "diminished", "augmented")
+ARPEGGIO_SEVENTHS = ("dominant 7th", "major 7th", "minor 7th", "half-diminished 7th", "diminished 7th")
+ARPEGGIO_TYPES = ARPEGGIO_TRIADS + ARPEGGIO_SEVENTHS
+INVERSIONS = (0, 1, 2, 3)  # root position, 1st, 2nd and 3rd inversion (the 3rd only exists for seventh chords)
+
+
+@dataclass
+class ArpeggioSettings:
+    clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of CLEFS
+    types: set[str] = field(default_factory=lambda: {"major", "minor", "dominant 7th", "diminished 7th"})
+    inversions: set[int] = field(default_factory=lambda: set(INVERSIONS))
+    key_signature: bool = False  # draw a key signature, so the arpeggio only gets signs where it differs from it
+    keys: set[int] = field(default_factory=lambda: {-3, -2, -1, 0, 1, 2, 3})  # sharps (+) / flats (-) to draw from
+
+    def active_clefs(self) -> list[str]:
+        return [c for c in CLEFS if c in self.clefs] or ["treble"]
+
+    def active_types(self) -> list[str]:
+        return [t for t in ARPEGGIO_TYPES if t in self.types] or ["major"]
+
+    def active_inversions(self) -> list[int]:
+        return [i for i in INVERSIONS if i in self.inversions] or [0]
+
+    def inversions_for(self, chord_type: str) -> list[int]:
+        """The inversions that can be asked for this type: a triad has no 3rd inversion. If none of the chosen
+        inversions applies (only the 3rd, for a triad), root position is used."""
+        allowed = [i for i in self.active_inversions() if i < (3 if chord_type in ARPEGGIO_TRIADS else 4)]
+        return allowed or [0]
+
+    def active_keys(self) -> list[int]:
+        return sorted(self.keys) or [0]
+
+
+arpeggio = ArpeggioSettings()

@@ -220,7 +220,7 @@ class ExerciseView(QWidget):
                 item.widget().deleteLater()
         self.octave_row.setVisible(bool(q.octaves))
         if q.octaves:
-            self.octave_box.addWidget(QLabel("Octave"))
+            self.octave_box.addWidget(QLabel(q.second_label))
             for octave in q.octaves:
                 b = QPushButton(octave)
                 b.setMinimumHeight(40)
@@ -327,7 +327,8 @@ class ExerciseView(QWidget):
             self.streak = self.streak + 1 if ok else 0
 
     def _pick(self, part: str, text: str, button: QPushButton):
-        """Two-part answer: choose a name and an octave, in either order; the answer is checked once both are set."""
+        """Two-part answer: choose a name and then an octave (or a chord type and an inversion), in either order; the
+        answer is checked once both are set."""
         if self.answered or self._busy:
             return
         previous = self._pending.get(part)
@@ -341,7 +342,7 @@ class ExerciseView(QWidget):
     def _submit_pair(self):
         q = self.question
         (name, name_btn), (octave, octave_btn) = self._pending["name"], self._pending["octave"]
-        choice = name + octave
+        choice = name + q.joiner + octave
         if q.check(choice):
             self._flash(octave_btn, "#2e7d32")
             self.submit(choice, name_btn)  # scores it, flashes the name button, plays the note, moves on

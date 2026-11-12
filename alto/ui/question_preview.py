@@ -51,6 +51,8 @@ class QuestionPreview(QDialog):
         lines = [f"<b>Answer:</b> {self._answer_text()}"]
         if q.choices:
             lines.append("<span style='color: gray;'>Choices: " + "  ·  ".join(q.choices) + "</span>")
+        if q.octaves:
+            lines.append(f"<span style='color: gray;'>{q.second_label}: " + "  ·  ".join(q.octaves) + "</span>")
         lines += details or []
         if q.explanation:
             lines.append(q.explanation)
