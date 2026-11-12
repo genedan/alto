@@ -2,7 +2,45 @@ Instrument samples: University of Iowa Electronic Music Studios, Musical Instrum
 (https://theremin.music.uiowa.edu/MIS.html). The source states the recordings are freely
 available and may be used for any project, without restrictions.
 
-Used: marimba (yarn mallets, ff) and vibraphone (sustain, ff).
+Used: marimba (yarn mallets, ff), vibraphone (sustain, ff), the viola, flute and French horn (see below).
 Converted to mono 22.05 kHz, silence trimmed from the start, cut to 2.2 s with a fade-out and levelled
-per instrument. Only every second semitone is stored (file names are MIDI note numbers); the app
-pitch-shifts the nearest stored note for the others.
+per instrument. For the marimba and vibraphone only every second semitone is stored (file names are MIDI
+note numbers); the app pitch-shifts the nearest stored note for the others.
+
+Viola (viola_bowed and viola_plucked): University of Iowa Electronic Music Studios, Musical Instrument Samples,
+Viola (2012) (https://theremin.music.uiowa.edu/MISviola2012.html). Played by Manuel Tabora on a viola by Anton Krutz
+(2001), recorded 11 May 2012 in an anechoic chamber with Earthworks QTC40 microphones. The mono files for arco
+(bowed) and pizz (plucked) were used. Same terms as above.
+
+The headers of these files say 44.1 kHz, but the audio is 96 kHz: read at 44.1 kHz every note sounds 13 semitones low and
+2.2 times too slow. They were read at 96 kHz, which gives the expected pitches. Each file is a chromatic run on one
+string. The notes were found one by one and matched to the run in order, then checked against their own harmonics.
+Processing as for the other instruments (mono 22.05 kHz, 10 ms before the onset, levelled to an RMS of 0.11, peaks held
+under 0.9).
+
+viola_bowed: mezzo-forte (mf), 45 notes, every semitone from C3 to A6 (MIDI 48 to 93) except D#3, which failed the
+harmonic check; Alto pitch-shifts a neighbour for that one. Each note is cut to 2.2 s with a 0.4 s fade-out.
+  C string C3-D3 and E3-A3, G string A#3-B3 (G3-B3 run) and C4-C#4 (C4-B4 run), D string D4-B4 and C5-B5,
+  A string C6-A6.
+  Because every semitone is stored, Alto does not have to borrow a neighbouring note, which would change the tone.
+
+viola_plucked: fortissimo (ff), 20 notes, every second semitone from C3 to F#6 (MIDI 48 to 90). Notes are cut where the
+sound has died away (0.6 to 1.6 s) with a short fade-out.
+  C string C3-B3 and C4, D string D4-B4, A string C5-B5 and C6-F#6.
+  Left out: F#5, whose take carries a loud G5 ring, and D6 and everything above F#6, which are too weak to identify
+  reliably. The app pitch-shifts the nearest stored note for those and for the odd semitones. The G#5 and A#5
+  plucks carry some sympathetic ringing from the recording.
+
+Flute (flute): Flute (2000), non-vibrato set (https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISFlute2012.html). Played by
+Sonja Feig, April 2000, anechoic chamber, Neumann KM 84 microphone; 16-bit 44.1 kHz. Fortissimo, no vibrato, the stereo
+note files (Flute.nonvib.ff.<note>.stereo.aiff) from the site's zip, one per semitone. Same terms as above.
+39 notes, every semitone from B3 to C#7 (MIDI 59 to 97). Mixed down to mono, 22.05 kHz, 10 ms before the onset, cut to 2.2 s
+with a 0.4 s fade-out (the shortest notes, which end earlier, fade over their last 0.4 s), levelled to an RMS of 0.11 and
+peaks held under 0.9. Every file's fundamental was checked against its name. The recording is not perfectly in tune: the
+highest notes are up to about 45 cents sharp. This is left as recorded.
+
+French horn (horn): French Horn (1997) (https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISHorn2012.html). Played by
+Jessica Wiskus, 27 July 1997, anechoic chamber, Neumann KM 84 microphone, 5 feet away; 16-bit 44.1 kHz. Fortissimo, the stereo
+note files (Horn.ff.<note>.stereo.aiff) from the site's zip, one per semitone. Same terms as above.
+44 notes, every semitone from A#1 to F5 (MIDI 34 to 77). Processed as the flute. Every file's fundamental was checked
+against its name. The lowest notes are up to about 45 cents flat. This is left as recorded.

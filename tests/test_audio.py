@@ -36,8 +36,8 @@ def test_bundled_samples_cover_staff_range():
 def test_every_instrument_has_recordings_and_covers_the_notes():
     from alto.audio import INSTRUMENTS, Sounds, read_wav
 
-    assert len(INSTRUMENTS) >= 8 and INSTRUMENTS[0].key == "piano"
-    shipped = {"piano", "marimba", "vibraphone"}  # recordings for the other instruments are still being sourced
+    assert len(INSTRUMENTS) >= 7 and INSTRUMENTS[0].key == "piano"
+    shipped = {"piano", "marimba", "vibraphone", "flute", "horn", "viola_bowed", "viola_plucked"}
     sounds = Sounds()
     for inst in INSTRUMENTS:
         files = sounds._samples(inst)

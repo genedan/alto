@@ -53,11 +53,9 @@ class Instrument:
 INSTRUMENTS = (
     Instrument("piano", "Piano", "piano"),
     Instrument("flute", "Flute", "samples/flute", 0.85),
-    Instrument("clarinet", "Clarinet", "samples/clarinet", 0.85),
-    Instrument("oboe", "Oboe", "samples/oboe", 0.85),
-    Instrument("trumpet", "Trumpet", "samples/trumpet", 0.8),
-    Instrument("violin", "Violin", "samples/violin", 0.85),
-    Instrument("cello", "Cello", "samples/cello", 0.85),
+    Instrument("horn", "French Horn", "samples/horn", 0.85),
+    Instrument("viola_bowed", "Viola (Arco)", "samples/viola_bowed", 0.85),
+    Instrument("viola_plucked", "Viola (Pizzicato)", "samples/viola_plucked", 0.85),
     Instrument("marimba", "Marimba", "samples/marimba", 0.85),
     Instrument("vibraphone", "Vibraphone", "samples/vibraphone", 0.85),
 )

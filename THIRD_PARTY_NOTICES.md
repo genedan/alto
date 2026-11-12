@@ -23,12 +23,13 @@ All are under the SIL Open Font License 1.1 (OFL), whose texts are kept beside t
 The font names are the names their authors gave them. Alto is not affiliated with or endorsed by any of them, nor by
 Dorico, Finale, MuseScore or Verovio, which are mentioned only to say where a font is used.
 
-## Instrument recordings (`alto/assets/piano/`, `alto/assets/samples/marimba/`, `alto/assets/samples/vibraphone/`)
+## Instrument recordings (`alto/assets/piano/` and `alto/assets/samples/`: marimba, vibraphone, flute, horn, viola_bowed, viola_plucked)
 
-The piano, marimba and vibraphone recordings come from the Musical Instrument Samples of the University of Iowa
+The piano, marimba, vibraphone, flute, French horn and viola recordings come from the Musical Instrument Samples of the University of Iowa
 Electronic Music Studios (https://theremin.music.uiowa.edu/MIS.html). The site states that these recordings "have been
 freely available on this website and may be downloaded and used for any projects, without restrictions." They were
-converted to mono, trimmed and faded for use here. Details are in each folder's `SOURCE.txt`.
+converted to mono, trimmed and faded for use here. The viola is the 2012 recording by Manuel Tabora, the flute the 2000 recording by Sonja Feig and the horn the 1997 recording by Jessica Wiskus. Details are in
+each folder's `SOURCE.txt`.
 
 ## App icons (`alto/assets/icon.svg`, `alto/assets/icon-treble.svg`)
 
