@@ -48,13 +48,14 @@ class Instrument:
     label: str
     folder: str  # under assets/: "piano" or "samples/<key>"; file names are MIDI note numbers
     gain: float = 1.0  # level relative to the piano
+    sustained: bool = False  # bowed and blown notes end when the next one begins; struck and plucked ones ring on
 
 
 INSTRUMENTS = (
     Instrument("piano", "Piano", "piano"),
-    Instrument("flute", "Flute", "samples/flute", 0.85),
-    Instrument("horn", "French Horn", "samples/horn", 0.85),
-    Instrument("viola_bowed", "Viola (Arco)", "samples/viola_bowed", 0.85),
+    Instrument("flute", "Flute", "samples/flute", 0.85, sustained=True),
+    Instrument("horn", "French Horn", "samples/horn", 0.85, sustained=True),
+    Instrument("viola_bowed", "Viola (Arco)", "samples/viola_bowed", 0.85, sustained=True),
     Instrument("viola_plucked", "Viola (Pizzicato)", "samples/viola_plucked", 0.85),
     Instrument("marimba", "Marimba", "samples/marimba", 0.85),
     Instrument("vibraphone", "Vibraphone", "samples/vibraphone", 0.85),
@@ -96,6 +97,9 @@ class Sounds:
         self.enabled = True
         self.instrument = "piano"  # key into INSTRUMENT_BY_KEY
         self._effects = {}
+        self._sounding: list = []  # sustained notes that may still be sounding, to release when the next note begins
+        self._fades: dict = {}  # running fade-outs, by effect
+        self._preview_run = 0  # which preview is current, so that an older one stops when a new one starts
         self._sample_files: dict[str, dict[int, Path]] = {}
         self._dir = Path(tempfile.gettempdir()) / "alto_sounds"
 
@@ -123,25 +127,124 @@ class Sounds:
             path.write_bytes(to_wav_bytes(synth_piano(midi)))
         return path
 
-    def play_midi(self, midi: int, volume: float = 1.0, instrument: str | None = None, force: bool = False) -> None:
-        """Play a note in the chosen instrument (or `instrument`). `force` plays even while muted, for previews."""
-        if not (self.enabled or force):
-            return
-        try:
+    FADE_MS = 70  # how quickly a sustained note dies away when the next one begins
+
+    def _effect(self, inst: Instrument, midi: int):
+        """The sound effect for this note, created the first time it is needed."""
+        key = (inst.key, midi)
+        fx = self._effects.get(key)
+        if fx is None:
             from PySide6.QtCore import QUrl
             from PySide6.QtMultimedia import QSoundEffect
 
+            fx = QSoundEffect()
+            fx.setSource(QUrl.fromLocalFile(str(self._note_file(inst, midi))))
+            self._effects[key] = fx
+        return fx
+
+    def _release(self, fx) -> None:
+        """Let a sustained note die away quickly instead of cutting it off."""
+        from PySide6.QtCore import QPropertyAnimation
+
+        fade = QPropertyAnimation(fx, b"volume")
+        fade.setDuration(self.FADE_MS)
+        fade.setStartValue(fx.volume())
+        fade.setEndValue(0.0)
+        fade.finished.connect(fx.stop)
+        self._fades[id(fx)] = fade
+        fade.start()
+
+    def _release_sounding(self) -> None:
+        """End the sustained notes that are still ringing."""
+        sounding, self._sounding = self._sounding, []
+        for fx in sounding:
+            self._release(fx)
+
+    def play_midi(self, midi: int, volume: float = 1.0, instrument: str | None = None, force: bool = False,
+                  release_previous: bool = True) -> None:
+        """Play a note in the chosen instrument (or `instrument`). `force` plays even while muted, for previews.
+
+        A sustained instrument (bowed or blown) ends the notes still sounding first, as a player would, unless
+        `release_previous` is False, which is for the notes of a chord that start together."""
+        if not (self.enabled or force):
+            return
+        try:
             inst = INSTRUMENT_BY_KEY.get(instrument or self.instrument, INSTRUMENTS[0])
-            key = (inst.key, midi)
-            fx = self._effects.get(key)
-            if fx is None:
-                fx = QSoundEffect()
-                fx.setSource(QUrl.fromLocalFile(str(self._note_file(inst, midi))))
-                self._effects[key] = fx
+            if inst.sustained and release_previous:
+                self._release_sounding()
+            fx = self._effect(inst, midi)
+            fade = self._fades.pop(id(fx), None)  # this note may have been released a moment ago
+            if fade is not None:
+                fade.stop()
             fx.setVolume(min(1.0, volume * inst.gain))
             fx.play()
+            if inst.sustained:
+                self._sounding.append(fx)
         except Exception as exc:  # audio must never break an exercise
             print(f"audio unavailable: {exc}")
+
+    def stop_all(self) -> None:
+        """Silence every note at once, and cancel any fade-outs under way."""
+        for fade in self._fades.values():
+            fade.stop()
+        self._fades.clear()
+        self._sounding = []
+        for fx in self._effects.values():
+            if fx.isPlaying():
+                fx.setVolume(0.0)
+                fx.stop()
+
+    def preview(self, key: str, midis, step_ms: int = 300) -> None:
+        """Play these notes one after another in an instrument, even while muted, to hear what it sounds like.
+
+        The notes are loaded first, and each one is scheduled when the one before it has played, so a pause while the
+        sound system starts up delays the rest instead of making them all sound at once. Starting a preview ends the
+        one before it."""
+        import time
+
+        from PySide6.QtCore import QTimer
+
+        self._preview_run += 1
+        run = self._preview_run
+        self.stop_all()
+        notes = list(midis)
+        try:
+            inst = INSTRUMENT_BY_KEY[key]
+            effects = [self._effect(inst, m) for m in notes]
+        except Exception as exc:  # audio must never break the settings
+            print(f"audio unavailable: {exc}")
+            return
+        deadline = time.monotonic() + 1.0
+
+        def loading() -> bool:
+            from PySide6.QtMultimedia import QSoundEffect
+
+            return any(getattr(fx, "status", lambda: None)() == QSoundEffect.Status.Loading for fx in effects)
+
+        def step(i: int) -> None:
+            if run != self._preview_run:
+                return
+            self.play_midi(notes[i], 0.9, instrument=key, force=True)
+            if i + 1 < len(notes):
+                QTimer.singleShot(step_ms, lambda: step(i + 1))
+
+        def wait() -> None:
+            if run != self._preview_run:
+                return
+            if loading() and time.monotonic() < deadline:
+                QTimer.singleShot(10, wait)
+            else:
+                step(0)
+
+        wait()
+
+    def _play_column(self, notes, volume: float) -> None:
+        """Start the notes of one column together, first ending any sustained notes still ringing."""
+        inst = INSTRUMENT_BY_KEY.get(self.instrument, INSTRUMENTS[0])
+        if inst.sustained and (self.enabled):
+            self._release_sounding()
+        for note in notes:
+            self.play_midi(note.midi, volume, release_previous=False)
 
     def play_notes(self, columns, gap_ms: int = 450) -> None:
         """Play staff columns left to right; notes within a column sound together."""
@@ -149,11 +252,10 @@ class Sounds:
 
         for i, col in enumerate(columns):
             vol = min(1.0, 1.4 / len(col) ** 0.5)
-            for note in col:
-                if i == 0:
-                    self.play_midi(note.midi, vol)
-                else:
-                    QTimer.singleShot(i * gap_ms, lambda m=note.midi, v=vol: self.play_midi(m, v))
+            if i == 0:
+                self._play_column(col, vol)
+            else:
+                QTimer.singleShot(i * gap_ms, lambda c=col, v=vol: self._play_column(c, v))
 
     def play_correct(self, streak: int) -> None:
         """Climb the C major scale (C5..C6) as the streak grows, then wrap."""

@@ -37,7 +37,8 @@ def test_every_instrument_has_recordings_and_covers_the_notes():
     from alto.audio import INSTRUMENTS, Sounds, read_wav
 
     assert len(INSTRUMENTS) >= 7 and INSTRUMENTS[0].key == "piano"
-    shipped = {"piano", "marimba", "vibraphone", "flute", "horn", "viola_bowed", "viola_plucked"}
+    # instruments whose recordings ship with Alto; any other is still being sourced
+    shipped = {"piano", "marimba", "vibraphone", "viola_bowed", "viola_plucked", "flute", "horn"}
     sounds = Sounds()
     for inst in INSTRUMENTS:
         files = sounds._samples(inst)
@@ -60,3 +61,153 @@ def test_pitch_shift_moves_the_frequency():
     shifted = shift_pitch(tone, 2)  # up a whole tone: ~493.9 Hz
     peak = np.argmax(np.abs(np.fft.rfft(shifted))) * SAMPLE_RATE / len(shifted)
     assert abs(peak - 493.9) < 3
+
+
+# -- sustained and ringing notes ------------------------------------------------------------------------------------
+
+class FakeEffect:
+    """Stands in for QSoundEffect, so these tests need no audio hardware."""
+
+    def __init__(self, label, log):
+        self.label, self.log, self._volume = label, log, 1.0
+
+    def setVolume(self, v):
+        self._volume = v
+
+    def volume(self):
+        return self._volume
+
+    def play(self):
+        self.log.append(("play", self.label))
+
+    def stop(self):
+        self.log.append(("stop", self.label))
+
+
+def engine(monkeypatch, instrument):
+    from alto.audio import Sounds
+
+    log, effects = [], {}
+    s = Sounds()
+    s.instrument = instrument
+    monkeypatch.setattr(s, "_effect", lambda inst, midi: effects.setdefault(midi, FakeEffect(midi, log)))
+    monkeypatch.setattr(s, "_release", lambda fx: log.append(("release", fx.label)))
+    return s, log
+
+
+def test_only_bowed_and_blown_instruments_are_sustained():
+    from alto.audio import INSTRUMENT_BY_KEY
+
+    sustained = {k for k, i in INSTRUMENT_BY_KEY.items() if i.sustained}
+    assert {"viola_bowed", "flute", "horn"} <= sustained
+    assert not sustained & {"piano", "marimba", "vibraphone", "viola_plucked"}
+
+
+def test_a_bowed_note_ends_when_the_next_one_begins(monkeypatch):
+    s, log = engine(monkeypatch, "viola_bowed")
+    s.play_midi(60)
+    s.play_midi(62)
+    assert log == [("play", 60), ("release", 60), ("play", 62)]
+
+
+def test_struck_and_plucked_notes_ring_on(monkeypatch):
+    for instrument in ("piano", "marimba", "vibraphone", "viola_plucked"):
+        s, log = engine(monkeypatch, instrument)
+        s.play_midi(60)
+        s.play_midi(62)
+        assert log == [("play", 60), ("play", 62)], instrument
+
+
+def test_the_notes_of_a_chord_sound_together_and_end_together(monkeypatch):
+    from alto.theory.pitch import Note
+
+    s, log = engine(monkeypatch, "viola_bowed")
+    s.play_notes([[Note(4, 0), Note(4, 2), Note(4, 4)]])  # C4 E4 G4 at once
+    assert log == [("play", 60), ("play", 64), ("play", 67)]  # none of them cuts off another
+    s.play_notes([[Note(4, 1)]])
+    assert log[3:] == [("release", 60), ("release", 64), ("release", 67), ("play", 62)]
+
+
+def test_a_melody_hands_over_from_note_to_note(monkeypatch):
+    import os
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from alto.theory.pitch import Note
+    from PySide6.QtTest import QTest
+    from PySide6.QtWidgets import QApplication
+
+    _app = QApplication.instance() or QApplication([])  # kept alive for the timers
+    s, log = engine(monkeypatch, "viola_bowed")
+    s.play_notes([[Note(4, 0)], [Note(4, 1)], [Note(4, 2)]], gap_ms=30)
+    QTest.qWait(250)
+    assert log == [("play", 60), ("release", 60), ("play", 62), ("release", 62), ("play", 64)]
+
+
+def test_a_muted_engine_neither_plays_nor_releases(monkeypatch):
+    s, log = engine(monkeypatch, "viola_bowed")
+    s.enabled = False
+    s.play_midi(60)
+    s.play_midi(62)
+    assert log == []
+
+
+# -- hearing an instrument (the preview in the settings) ------------------------------------------------------------
+
+def preview_engine(monkeypatch, instrument="viola_bowed"):
+    """An engine whose notes are recorded with the time they were started."""
+    import os
+    import time
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from alto.audio import Sounds
+    from PySide6.QtWidgets import QApplication
+
+    global _preview_app
+    _preview_app = QApplication.instance() or QApplication([])  # kept alive for the timers
+    s, started = Sounds(), []
+
+    class Quiet(FakeEffect):
+        def isPlaying(self):
+            return False
+
+    monkeypatch.setattr(s, "_effect", lambda inst, midi: Quiet(midi, []))
+    monkeypatch.setattr(s, "play_midi", lambda midi, *a, **k: started.append((midi, time.monotonic())))
+    return s, started
+
+
+def test_a_preview_plays_its_notes_in_order_one_step_apart(monkeypatch):
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+    s.preview("viola_bowed", (60, 64, 67), step_ms=60)
+    QTest.qWait(400)
+    assert [m for m, _ in started] == [60, 64, 67]
+    times = [t for _, t in started]
+    assert all(b - a >= 0.05 for a, b in zip(times, times[1:]))
+
+
+def test_a_pause_in_the_program_delays_the_notes_instead_of_making_them_sound_together(monkeypatch):
+    import time
+
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+    s.preview("viola_bowed", (60, 64, 67), step_ms=80)
+    time.sleep(0.5)  # the sound system starting up, say, which blocks the timers
+    QTest.qWait(500)
+    assert [m for m, _ in started] == [60, 64, 67]
+    times = [t for _, t in started]
+    assert all(b - a >= 0.07 for a, b in zip(times, times[1:]))
+
+
+def test_starting_a_second_preview_ends_the_first(monkeypatch):
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+    s.preview("viola_bowed", (60, 64, 67), step_ms=80)
+    QTest.qWait(100)  # the first note, and maybe the second, have started
+    s.preview("viola_bowed", (62, 65, 69), step_ms=80)
+    QTest.qWait(400)
+    played = [m for m, _ in started]
+    assert played[-3:] == [62, 65, 69]
+    assert 67 not in played  # the old one never reached its last note
