@@ -1,0 +1,13 @@
+SMuFL music fonts, all under the SIL Open Font License 1.1 (licence texts in this folder: OFL-bravura.txt, OFL-petaluma.txt, LICENSE-leland.txt, OFL-musejazz.txt, OFL-eugene.txt, OFL-leipzig.txt, OFL-sebastian.txt, OFL-goldenage.txt, OFL-finale.txt).
+engraving.json holds the engraving defaults and the stem anchors this app uses, taken from each
+font's own SMuFL metadata file.
+
+Bravura   Steinberg      https://github.com/steinbergmedia/bravura
+Petaluma  Steinberg      https://github.com/steinbergmedia/petaluma
+Leland    MuseScore      https://github.com/musescore/MuseScore/tree/main/fonts/leland
+MuseJazz  MuseScore      https://github.com/musescore/MuseScore/tree/main/fonts/musejazz
+Eugene    Mikko Patama   https://github.com/mikkopatama/eugenefont
+Leipzig   RISM Digital   https://github.com/rism-digital/leipzig
+Sebastian F. Kretlow     https://github.com/fkretlow/sebastian
+Finale Maestro, Finale Broadway   MakeMusic, via https://github.com/musescore/MuseScore/tree/main/fonts
+Golden Age  Don Rice     https://github.com/benwiggy/GoldenAge
