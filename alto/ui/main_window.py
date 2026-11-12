@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
         self.profile_action.triggered.connect(self.switch_profile)
         self._show_profile()
         settings_action = menu.addAction(svg_icon(icons.GEAR, glyph, size=18), "Settings…")
-        settings_action.setShortcut(QKeySequence("Ctrl+,"))
+        settings_action.setShortcut(QKeySequence("Ctrl+Alt+S"))
         settings_action.triggered.connect(self.open_settings)
         menu.addSeparator()
         quit_action = menu.addAction(svg_icon(icons.QUIT, glyph, size=18), "Quit")
