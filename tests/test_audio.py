@@ -221,3 +221,77 @@ def test_starting_a_second_preview_ends_the_first(monkeypatch):
     played = [m for m, _ in started]
     assert played[-3:] == [62, 65, 69]
     assert 67 not in played  # the old one never reached its last note
+
+
+# -- the rhythm of a melody (the arpeggio that plays on a right answer) ----------------------------------------------
+
+def melody(n):
+    from alto.theory.pitch import Note
+
+    return [[Note(4, i % 7)] for i in range(n)]
+
+
+def test_the_notes_of_a_melody_are_evenly_spaced(monkeypatch):
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+    s.play_notes(melody(5), gap_ms=70)
+    QTest.qWait(600)
+    assert len(started) == 5
+    gaps = [b - a for (_, a), (_, b) in zip(started, started[1:])]
+    assert all(0.06 <= g <= 0.14 for g in gaps), gaps
+
+
+def test_a_note_that_is_slow_to_start_does_not_upset_the_rhythm(monkeypatch):
+    import time
+
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+
+    def slow_start(midi, *args, **kwargs):  # the first note takes 60 ms to get going, as the first one can
+        if not started:
+            time.sleep(0.06)
+        started.append((midi, time.monotonic()))
+
+    monkeypatch.setattr(s, "play_midi", slow_start)
+    s.play_notes(melody(4), gap_ms=100)
+    QTest.qWait(700)
+    gaps = [b - a for (_, a), (_, b) in zip(started, started[1:])]
+    assert len(started) == 4 and all(0.09 <= g <= 0.16 for g in gaps), gaps
+
+
+def test_a_stall_delays_the_notes_instead_of_bunching_them(monkeypatch):
+    import time
+
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+    s.play_notes(melody(4), gap_ms=80)
+    time.sleep(0.4)  # the program is busy, so the timers are late
+    QTest.qWait(600)
+    gaps = [b - a for (_, a), (_, b) in zip(started, started[1:])]
+    assert len(started) == 4 and all(g >= 0.07 for g in gaps), gaps
+
+
+def test_a_new_melody_cancels_the_notes_still_waiting_from_the_last(monkeypatch):
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+    s.play_notes(melody(5), gap_ms=80)
+    QTest.qWait(100)
+    s.play_notes([[n] for n in melody(1)[0]] * 3, gap_ms=80)
+    QTest.qWait(500)
+    first = [m for m, _ in started]
+    assert first.count(first[0]) >= 3 and len(started) < 5 + 3  # the old melody never reached its end
+    assert len([m for m in first]) <= 2 + 3
+
+
+def test_a_muted_melody_plays_nothing(monkeypatch):
+    from PySide6.QtTest import QTest
+
+    s, started = preview_engine(monkeypatch)
+    s.enabled = False
+    s.play_notes(melody(3), gap_ms=30)
+    QTest.qWait(150)
+    assert started == []
