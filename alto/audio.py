@@ -49,18 +49,28 @@ class Instrument:
     folder: str  # under assets/: "piano" or "samples/<key>"; file names are MIDI note numbers
     gain: float = 1.0  # level relative to the piano
     sustained: bool = False  # bowed and blown notes end when the next one begins; struck and plucked ones ring on
+    family: str = ""  # instruments that are ways of playing the same instrument share a family (the viola: arco, pizzicato)
+    variant: str = ""  # which way of playing it, within the family
 
 
 INSTRUMENTS = (
     Instrument("piano", "Piano", "piano"),
     Instrument("flute", "Flute", "samples/flute", 0.85, sustained=True),
     Instrument("horn", "French Horn", "samples/horn", 0.85, sustained=True),
-    Instrument("viola_bowed", "Viola (Arco)", "samples/viola_bowed", 0.85, sustained=True),
-    Instrument("viola_plucked", "Viola (Pizzicato)", "samples/viola_plucked", 0.85),
+    Instrument("viola_bowed", "Viola (Arco)", "samples/viola_bowed", 0.85, sustained=True, family="Viola", variant="Arco"),
+    Instrument("viola_plucked", "Viola (Pizzicato)", "samples/viola_plucked", 0.85, family="Viola", variant="Pizzicato"),
     Instrument("marimba", "Marimba", "samples/marimba", 0.85),
     Instrument("vibraphone", "Vibraphone", "samples/vibraphone", 0.85),
 )
 INSTRUMENT_BY_KEY = {i.key: i for i in INSTRUMENTS}
+
+
+def instrument_groups() -> list[tuple[str, list[Instrument]]]:
+    """The instruments as they are listed for choosing: ways of playing one instrument share a single entry."""
+    groups: dict[str, list[Instrument]] = {}
+    for inst in INSTRUMENTS:
+        groups.setdefault(inst.family or inst.label, []).append(inst)
+    return list(groups.items())
 
 
 def read_wav(path: Path) -> tuple[np.ndarray, int]:
@@ -111,6 +121,10 @@ class Sounds:
             found = {int(p.stem): p for p in folder.glob("*.wav") if p.stem.isdigit()}
             self._sample_files[inst.key] = found
         return found
+
+    def recordings(self, inst: Instrument) -> dict[int, Path]:
+        """The notes this instrument has a recording for on disk, as MIDI note -> file."""
+        return self._samples(inst)
 
     def _note_file(self, inst: Instrument, midi: int) -> Path:
         """A WAV for this note: the recording if there is one, else the nearest recording pitch-shifted."""

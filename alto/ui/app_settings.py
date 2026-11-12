@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QSize, Qt, QTimer
-from PySide6.QtGui import QPalette
+from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import (
     QButtonGroup,
     QDialog,
@@ -14,50 +13,15 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QStackedWidget,
-    QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
-from ..audio import INSTRUMENT_BY_KEY, INSTRUMENTS, sounds
 from ..theory.pitch import Note
 from . import notation
-from .icons import PLAY, svg_icon
+from .instrument_picker import InstrumentPicker
 from .staff import StaffWidget
-from .store import store
 from .theme import THEMES, apply_theme, save_theme, saved_theme
-
-
-def load_instrument() -> None:
-    """Apply the saved instrument (falls back to the piano if it is unknown)."""
-    key = str(store().value("audio/instrument", "piano"))
-    sounds.instrument = key if key in INSTRUMENT_BY_KEY else "piano"
-
-
-def save_instrument() -> None:
-    store().setValue("audio/instrument", sounds.instrument)
-
-
-class InstrumentCard(QPushButton):
-    """A selectable tile: the instrument's name, and a small button to hear it without choosing it."""
-
-    def __init__(self, instrument, parent=None):
-        super().__init__(parent)
-        self.instrument = instrument
-        self.setCheckable(True)
-        self.setFixedSize(170, 54)
-        lay = QHBoxLayout(self)
-        lay.setContentsMargins(14, 6, 8, 6)
-        name = QLabel(f"<b>{instrument.label}</b>")
-        name.setAttribute(Qt.WA_TransparentForMouseEvents)
-        self.play = QToolButton()
-        self.play.setIcon(svg_icon(PLAY, self.palette().color(QPalette.WindowText), size=16))
-        self.play.setIconSize(QSize(16, 16))
-        self.play.setAutoRaise(True)
-        self.play.setCursor(Qt.PointingHandCursor)
-        self.play.setToolTip(f"Hear {instrument.label.lower()}")
-        lay.addWidget(name, 1)
-        lay.addWidget(self.play)
 
 
 class StyleCard(QPushButton):
@@ -91,8 +55,6 @@ class StyleCard(QPushButton):
 class AppSettingsDialog(QDialog):
     """Application-wide settings. Changes apply immediately."""
 
-    COLUMNS = 3
-    PREVIEW = (60, 64, 67)  # C major arpeggio
 
     def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
@@ -188,35 +150,13 @@ class AppSettingsDialog(QDialog):
     def _sound_page(self) -> QWidget:
         page, lay = self._page()
         self._heading(lay, "Instrument",
-                      "The sound used for notes and for the correct-answer chime. Select one, and press ▶ to hear it.")
-        grid = QGridLayout()
-        grid.setSpacing(10)
-        group = QButtonGroup(self)
-        group.setExclusive(True)
-        self.cards: dict[str, InstrumentCard] = {}
-        for i, inst in enumerate(INSTRUMENTS):
-            card = InstrumentCard(inst)
-            card.setChecked(inst.key == sounds.instrument)
-            group.addButton(card)
-            card.clicked.connect(lambda _=False, key=inst.key: self.choose(key))  # selecting is silent
-            card.play.clicked.connect(lambda _=False, key=inst.key: self.preview(key))
-            grid.addWidget(card, i // self.COLUMNS, i % self.COLUMNS)
-            self.cards[inst.key] = card
-        grid.setColumnStretch(self.COLUMNS, 1)
-        lay.addLayout(grid)
-        lay.addStretch(1)
+                      "The sound used for notes and for the correct-answer chime. Choose an instrument to see what it is "
+                      "made from, and press Hear it to listen.")
+        self.instruments = InstrumentPicker()
+        lay.addWidget(self.instruments, 1)
         return page
 
     def choose_theme(self, key: str) -> None:
         save_theme(key)
         apply_theme(key)
         self.theme_changed = True
-
-    def choose(self, key: str) -> None:
-        sounds.instrument = key
-        save_instrument()
-
-    def preview(self, key: str) -> None:
-        """Play a short C major arpeggio in that instrument, even if sound is muted."""
-        for i, midi in enumerate(self.PREVIEW):
-            QTimer.singleShot(i * 300, lambda m=midi: sounds.play_midi(m, 0.9, instrument=key, force=True))

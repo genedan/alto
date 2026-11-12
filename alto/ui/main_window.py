@@ -24,11 +24,12 @@ from PySide6.QtWidgets import (
 from ..exercises import REGISTRY
 from ..learning import Learner
 from . import icons
-from .app_settings import AppSettingsDialog, load_instrument
+from .app_settings import AppSettingsDialog
 from .database_page import DatabasePage
 from .exercise_view import ExerciseView
 from .home import EXERCISE_ICONS, HomePage
 from .icons import svg_icon
+from .instrument_picker import load_instrument
 from .notation import load_style as load_notation_style
 from .profile_dialog import ProfileDialog, remember_profile
 from .settings_panel import load_construction, load_keyboard, load_note_names

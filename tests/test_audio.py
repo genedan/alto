@@ -151,6 +151,16 @@ def test_a_muted_engine_neither_plays_nor_releases(monkeypatch):
     assert log == []
 
 
+def test_the_two_ways_of_playing_the_viola_are_listed_together():
+    from alto.audio import instrument_groups
+
+    groups = dict(instrument_groups())
+    assert [i.key for i in groups["Viola"]] == ["viola_bowed", "viola_plucked"]
+    assert [i.variant for i in groups["Viola"]] == ["Arco", "Pizzicato"]
+    assert all(len(v) == 1 for k, v in groups.items() if k != "Viola")  # everything else is on its own
+    assert len(groups) == 6
+
+
 # -- hearing an instrument (the preview in the settings) ------------------------------------------------------------
 
 def preview_engine(monkeypatch, instrument="viola_bowed"):
