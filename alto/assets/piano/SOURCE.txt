@@ -1,0 +1,5 @@
+Piano samples: University of Iowa Electronic Music Studios, Musical Instrument Samples
+(Steinway & Sons model B, performed by Evan Mazunik, 2001; "mf" dynamic).
+https://theremin.music.uiowa.edu/MISpiano.html
+Described by the source as freely available recordings. Converted here to mono,
+trimmed to 2.5 s with a fade-out; file names are MIDI note numbers (C2=36 .. C7=96).

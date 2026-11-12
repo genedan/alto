@@ -1,0 +1,8 @@
+Instrument samples: University of Iowa Electronic Music Studios, Musical Instrument Samples
+(https://theremin.music.uiowa.edu/MIS.html). The source states the recordings are freely
+available and may be used for any project, without restrictions.
+
+Used: marimba (yarn mallets, ff) and vibraphone (sustain, ff).
+Converted to mono 22.05 kHz, silence trimmed from the start, cut to 2.2 s with a fade-out and levelled
+per instrument. Only every second semitone is stored (file names are MIDI note numbers); the app
+pitch-shifts the nearest stored note for the others.
