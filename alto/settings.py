@@ -5,7 +5,11 @@ from dataclasses import dataclass, field
 
 from .theory.pitch import ACCIDENTAL_SYMBOLS, LETTERS, Note
 
-CLEFS = ("treble", "bass", "alto", "tenor")
+# The clefs with a single staff. The C clefs differ only in the line the clef sits on: soprano on the bottom line, mezzo-soprano
+# on the second, alto on the middle, tenor on the fourth and baritone on the top line.
+CLEFS = ("treble", "bass", "alto", "tenor", "soprano", "mezzo", "baritone")
+# How the clefs are grouped on the settings pages: the grand staff, the four in everyday use, and the three rarer ones.
+CLEF_GROUPS = (("grand",), ("treble", "bass", "alto", "tenor"), ("soprano", "mezzo", "baritone"))
 RANGE_KEYS = (*CLEFS, "grand")  # clefs that can have a note range
 # Inclusive diatonic range of notes that may be asked, per clef (defaults sit comfortably on the staff).
 DEFAULT_RANGES = {
@@ -13,6 +17,9 @@ DEFAULT_RANGES = {
     "bass": (Note(1, 3).diatonic, Note(5, 5).diatonic),    # F1..A5
     "alto": (Note(3, 0).diatonic, Note(5, 0).diatonic),    # C3..C5
     "tenor": (Note(2, 5).diatonic, Note(4, 5).diatonic),   # A2..A4
+    "soprano": (Note(3, 4).diatonic, Note(5, 4).diatonic),   # G3..G5
+    "mezzo": (Note(3, 2).diatonic, Note(5, 2).diatonic),     # E3..E5
+    "baritone": (Note(2, 3).diatonic, Note(4, 3).diatonic),  # F2..F4
     "grand": (Note(2, 0).diatonic, Note(6, 0).diatonic),   # C2..C6
 }
 # Bounds for the range pickers: C1..C7.
@@ -25,7 +32,8 @@ SOLFEGE = ("Do", "Re", "Mi", "Fa", "Sol", "La", "Si")
 
 
 # How far the range arrows may go: up to 5 ledger lines (10 steps) beyond the staff.
-_BOTTOM_LINES = {"treble": Note(4, 2), "bass": Note(2, 4), "alto": Note(3, 3), "tenor": Note(3, 1)}  # E4 G2 F3 D3
+_BOTTOM_LINES = {"treble": Note(4, 2), "bass": Note(2, 4), "alto": Note(3, 3), "tenor": Note(3, 1),  # E4 G2 F3 D3
+                 "soprano": Note(4, 0), "mezzo": Note(3, 5), "baritone": Note(2, 6)}  # C4 A3 B2
 RANGE_LIMITS = {
     **{c: (max(MIN_DIATONIC, n.diatonic - 10), min(MAX_DIATONIC, n.diatonic + 8 + 10)) for c, n in _BOTTOM_LINES.items()},
     "grand": (max(MIN_DIATONIC, _BOTTOM_LINES["bass"].diatonic - 10),
@@ -49,8 +57,7 @@ def diatonic_name(d: int) -> str:
 
 @dataclass
 class NoteNameSettings:
-    mode: str = "single"  # "grand" = grand staff; "single" = random pick among `clefs`
-    clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})
+    clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of RANGE_KEYS, so "grand" is allowed
     ranges: dict[str, tuple[int, int]] = field(default_factory=dict)  # overrides of DEFAULT_RANGES
     key_signatures: set[int] = field(default_factory=lambda: {0})  # sharps (+) / flats (-) of the keys to use
     note_values: set[str] = field(default_factory=lambda: {"whole"})
@@ -59,7 +66,7 @@ class NoteNameSettings:
 
     def active_clefs(self) -> list[str]:
         """Clefs to draw from, in canonical order; falls back to treble if none are checked."""
-        return [c for c in CLEFS if c in self.clefs] or ["treble"]
+        return [c for c in RANGE_KEYS if c in self.clefs] or ["treble"]
 
     def active_keys(self) -> list[int]:
         return sorted(self.key_signatures) or [0]

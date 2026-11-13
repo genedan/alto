@@ -179,7 +179,7 @@ class ExerciseView(QWidget):
         self._pending = {}  # 'name' / 'octave' -> (text, button), for two-part answers
         self._busy = False
         self.prompt.setText(q.prompt)
-        self.prompt.setVisible(bool(q.prompt))  # some exercises need no prompt
+        self.prompt.setVisible(bool(q.prompt) and not q.caption)  # some need none; a caption goes on the staff
         construct = q.construct is not None
         self.staff.setVisible((bool(q.staff) or q.show_staff) and not construct)
         self.input_staff.setVisible(construct)
@@ -193,7 +193,7 @@ class ExerciseView(QWidget):
         self.key_staff.show_notes([], "treble", q.key)
         self.keyboard.max_key_width = 30.0 if q.key_staff else 38.0  # leave room for the staff above
         self.keyboard.show_key(q.keyboard.midi if q.keyboard else None, q.keyboard_range)
-        self.staff.show_notes(q.staff, q.clef, q.key, q.value)
+        self.staff.show_notes(q.staff, q.clef, q.key, q.value, q.caption)
         for b in self.buttons:
             b.deleteLater()
         self.buttons = []
@@ -377,7 +377,7 @@ class ExerciseView(QWidget):
         if ok:
             self.answered = True  # the other buttons stay as they are; only the one pressed animates
             self._flash(button, "#2e7d32", staff=True)
-            notes = q.staff or q.play or ([[q.keyboard]] if q.keyboard else [])
+            notes = q.staff or ([[q.keyboard]] if q.keyboard else [])
             if notes:
                 sounds.play_notes(notes)
             else:

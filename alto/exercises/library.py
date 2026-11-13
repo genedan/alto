@@ -34,7 +34,7 @@ def _random_note(rng: random.Random, clef: str, accidentals: bool, span: tuple[i
 class NoteNames(Exercise):
     name = "Note Identification"
     category = "Notation"
-    description = "Identify notes on the grand staff or the treble, bass, alto and tenor clefs."
+    description = "Identify notes on the grand staff or on any of seven clefs, from treble to baritone."
     par_seconds = 3.0
 
     def settings_signature(self) -> str:
@@ -50,7 +50,7 @@ class NoteNames(Exercise):
 
     def generate(self, rng):
         cfg = settings.note_names
-        clef = "grand" if cfg.mode == "grand" else rng.choice(cfg.active_clefs())
+        clef = rng.choice(cfg.active_clefs())
         key = rng.choice(cfg.active_keys())
         value = rng.choice(cfg.active_values())
         with_accidentals = self.accidentals or cfg.accidentals
@@ -165,8 +165,10 @@ class KeySignatures(Exercise):
         choices = pick_distractors(correct, near + everyone, 5, rng)
         word = MODE_WORDS.get(mode, f"{mode} scale")
         notes = [*build(tonic, SCALES[mode]), tonic.transpose(Interval(8, "P"))]  # the scale, up to its octave
+        scale = _scale_name(mode)
+        blank = f"_ {scale if scale == 'minor' else scale[0].upper() + scale[1:]}"  # "_ Major", "_ minor", "_ Dorian"
         return Question(f"Which {word} has this key signature?", choices, correct, clef=clef, key=count, show_staff=True,
-                        play=[[n] for n in notes],
+                        caption=blank,
                         explanation=f"{format_key_signature(count)}: {tonic.name} {_scale_name(mode)}: "
                         + " ".join(n.name for n in notes))
 
@@ -228,6 +230,9 @@ ARPEGGIO_WINDOWS = {
     "bass": (Note(2, 0), Note(4, 2)),    # C2..E4
     "alto": (Note(2, 6), Note(5, 1)),    # B2..D5
     "tenor": (Note(2, 4), Note(4, 6)),   # G2..B4
+    "soprano": (Note(3, 3), Note(5, 5)),    # F3..A5
+    "mezzo": (Note(3, 1), Note(5, 3)),      # D3..F5
+    "baritone": (Note(2, 2), Note(4, 4)),   # E2..G4
 }
 
 

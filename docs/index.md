@@ -13,7 +13,7 @@ permalink: /
 ## What you can practise
 
 <ul class="cards">
-  <li><strong>Note Identification</strong>Name notes on the treble, bass, alto and tenor clefs or the grand staff.</li>
+  <li><strong>Note Identification</strong>Name notes on the grand staff or on any of seven clefs, treble to baritone.</li>
   <li><strong>Keyboard Identification</strong>Name the highlighted key on a piano keyboard.</li>
   <li><strong>Note Construction</strong>Click the staff where a named note belongs.</li>
   <li><strong>Interval identification</strong>Name the interval between two notes.</li>

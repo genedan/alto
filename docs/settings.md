@@ -37,6 +37,14 @@ applies to every staff in the app, including the small pictures in the settings 
 | MuseJazz | A brush-pen hand, like MuseScore's jazz template. |
 | Finale Broadway | A bold copyist's hand, as in Broadway scores. |
 
+Under the styles, **Baritone clef** chooses how that clef is written. It is the same staff and the same notes either way
+(the bottom line is B2 and the top line is C4):
+
+- **F clef, on the middle line** is the default. It looks like a bass clef moved up, with its dots either side of the middle line.
+- **C clef, on the top line** looks like an alto clef moved up, with its centre on the top line.
+
+The choice applies to every baritone staff in the app and its pictures, in whichever music font you have chosen.
+
 **Keyboard style.** How the piano keyboard looks in the keyboard exercise and in the range picker. Each choice is a card with a
 small picture of the keys. Your choice applies to every keyboard in the app. The default is Classic, the standard Alto look.
 

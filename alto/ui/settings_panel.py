@@ -56,12 +56,13 @@ def load_note_names() -> None:
     """Load saved note-name settings into the shared settings object."""
     s = store()
     cfg = settings.note_names
-    mode = s.value("noteNames/mode", cfg.mode)
-    cfg.mode = mode if mode in ("grand", "single") else "single"
     saved = s.value("noteNames/clefs")
     if saved is not None:
         text = saved if isinstance(saved, str) else ",".join(saved)
-        cfg.clefs = {c for c in text.split(",") if c in CLEFS}
+        cfg.clefs = {c for c in text.split(",") if c in settings.RANGE_KEYS}
+    if s.value("noteNames/mode") == "grand":  # an older version had a switch between the grand staff and single clefs
+        cfg.clefs = {"grand"}
+    s.remove("noteNames/mode")
     keys = str(s.value("noteNames/keys", "") or "")
     if keys:
         cfg.key_signatures = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or {0}
@@ -85,8 +86,7 @@ def load_note_names() -> None:
 def save_note_names() -> None:
     s = store()
     cfg = settings.note_names
-    s.setValue("noteNames/mode", cfg.mode)
-    s.setValue("noteNames/clefs", ",".join(c for c in CLEFS if c in cfg.clefs))
+    s.setValue("noteNames/clefs", ",".join(c for c in settings.RANGE_KEYS if c in cfg.clefs))
     s.setValue("noteNames/keys", ",".join(str(k) for k in cfg.active_keys()))
     s.setValue("noteNames/values", ",".join(cfg.active_values()))
     s.setValue("noteNames/naming", cfg.naming)
@@ -242,26 +242,37 @@ def _label_with_picture(button: QAbstractButton, picture, name: str) -> None:
     button.setAccessibleName(name)
 
 
-def _label_with_clef(button: QAbstractButton, clef: str, scale: float = 1.7) -> None:
+def _label_with_clef(button: QAbstractButton, clef: str, scale: float = 1.4) -> None:
+    """A clef's picture, with its name written to the right of it."""
     _label_with_picture(button, ClefPictures([clef], scale), CLEF_NAMES[clef])
+    button.setText(CLEF_NAMES[clef])
 
 
-def _clef_box(clef: str, scale: float = 1.7) -> QCheckBox:
+def _clef_box(clef: str, scale: float = 1.4) -> QCheckBox:
     box = QCheckBox()
     _label_with_clef(box, clef, scale)
     return box
 
 
-def _clef_grid(boxes: dict[str, QCheckBox]) -> QWidget:
-    """The clef checkboxes in two columns, indented under their heading."""
-    grid_widget = QWidget()
-    grid = QGridLayout(grid_widget)
-    grid.setContentsMargins(24, 0, 0, 0)
-    grid.setHorizontalSpacing(14)
-    grid.setVerticalSpacing(10)
-    for i, box in enumerate(boxes.values()):
-        grid.addWidget(box, i // 2, i % 2, Qt.AlignmentFlag.AlignLeft)
-    return grid_widget
+def _clef_list(boxes: dict[str, QCheckBox]) -> QWidget:
+    """The clef checkboxes one under another, in three groups divided by a line: the grand staff, the treble, bass, alto and
+    tenor clefs, and the soprano, mezzo-soprano and baritone clefs. A group none of the boxes belong to is left out. The
+    list is indented under its heading."""
+    widget = QWidget()
+    lay = QVBoxLayout(widget)
+    lay.setContentsMargins(24, 0, 0, 0)
+    lay.setSpacing(8)
+    groups = [[boxes[c] for c in group if c in boxes] for group in settings.CLEF_GROUPS]
+    for i, group in enumerate([g for g in groups if g]):
+        if i:
+            rule = QFrame()
+            rule.setFrameShape(QFrame.Shape.HLine)
+            rule.setFrameShadow(QFrame.Shadow.Plain)
+            rule.setStyleSheet("color: palette(mid);")
+            lay.addWidget(rule)
+        for box in group:
+            lay.addWidget(box, 0, Qt.AlignmentFlag.AlignLeft)
+    return widget
 
 
 def _show_keys(row: _Row, diagram: KeyDiagram, enabled: bool, keys: set[int]) -> None:
@@ -510,27 +521,18 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         mlay.addStretch()
 
         # layer 2: clefs
-        self.grand = QRadioButton()  # labelled with a picture of the grand staff
-        _label_with_clef(self.grand, "grand")
-        self.single = QRadioButton("Single clef")
-        group = QButtonGroup(self)
-        group.addButton(self.grand)
-        group.addButton(self.single)
-        self.boxes = {c: _clef_box(c) for c in CLEFS}
+        self.boxes = {c: _clef_box(c) for c in settings.RANGE_KEYS}
         body = QWidget()
         blay = QVBoxLayout(body)
         blay.setContentsMargins(0, 0, 0, 0)
-        blay.addWidget(self.grand)
-        blay.addWidget(self.single)
         hint = QLabel("One of the checked clefs is picked at random.")
         hint.setWordWrap(True)
-        hint.setStyleSheet("margin-left: 24px; color: gray;")
+        hint.setStyleSheet("color: gray;")
         blay.addWidget(hint)
         for c, box in self.boxes.items():
             box.setChecked(c in cfg.clefs)
-        blay.addWidget(_clef_grid(self.boxes))
-        (self.grand if cfg.mode == "grand" else self.single).setChecked(True)
-        self.grand.toggled.connect(self._clefs_edited)
+        blay.addWidget(_clef_list(self.boxes))
+        _guard_last(list(self.boxes.values()))  # the last checked clef can't be unchecked
         for box in self.boxes.values():
             box.toggled.connect(self._clefs_edited)
         clefs_page = _subpage("Clefs", body, lambda: self._go(0))
@@ -590,7 +592,6 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
 
         for page in (menu, clefs_page, range_page, keys_page, values_page, names_page):
             self.stack.addWidget(page)
-        self._refresh_enabled()
         _guard_last(list(self.key_boxes.values()))
         _guard_last(list(self.value_boxes.values()))
         self._refresh_summaries()
@@ -606,11 +607,11 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.stack.slide_to(index)
 
     def _active_keys(self) -> list[str]:
-        return ["grand"] if self.cfg.mode == "grand" else self.cfg.active_clefs()
+        return self.cfg.active_clefs()
 
     def _refresh_summaries(self):
         keys = self._active_keys()
-        self.clef_pictures.set_clefs(["grand"] if self.cfg.mode == "grand" else keys)
+        self.clef_pictures.set_clefs(keys)
         self.range_pictures.set_items([(k, *self.cfg.range_for(k)) for k in keys])
         self.range_row.fit()
         _show_keys(self.keys_row, self.keys_diagram, True, set(self.cfg.active_keys()))
@@ -618,17 +619,9 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.name_picture.set_naming(self.cfg.naming)
 
     # clefs page
-    def _refresh_enabled(self):
-        single = self.single.isChecked()
-        checked = [b for b in self.boxes.values() if b.isChecked()]
-        for box in self.boxes.values():
-            # The last checked clef can't be unchecked: single mode needs one to pick from.
-            box.setEnabled(single and not (len(checked) == 1 and box.isChecked()))
-
     def _clefs_edited(self):
-        self.cfg.mode = "single" if self.single.isChecked() else "grand"
         self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
-        self._refresh_enabled()
+        _guard_last(list(self.boxes.values()))  # the last checked clef can't be unchecked
         save_note_names()
         self.changed.emit()
 
@@ -983,7 +976,7 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
         for c, box in self.boxes.items():
             box.setChecked(c in cfg.clefs)
             box.toggled.connect(self._clefs_edited)
-        blay.addWidget(_clef_grid(self.boxes))
+        blay.addWidget(_clef_list(self.boxes))
         _guard_last(list(self.boxes.values()))
         staff_page = _subpage("Staff", body, lambda: self._go(0))
 
@@ -1135,7 +1128,7 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         for c, box in self.boxes.items():
             box.setChecked(c in cfg.clefs)
             box.toggled.connect(self._clefs_edited)
-        blay.addWidget(_clef_grid(self.boxes))
+        blay.addWidget(_clef_list(self.boxes))
         _guard_last(list(self.boxes.values()))
         staff_page = _subpage("Staff", body, lambda: self._go(0))
 
@@ -1287,7 +1280,7 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         for c, box in self.boxes.items():
             box.setChecked(c in cfg.clefs)
             box.toggled.connect(self._clefs_edited)
-        blay.addWidget(_clef_grid(self.boxes))
+        blay.addWidget(_clef_list(self.boxes))
         _guard_last(list(self.boxes.values()))
         staff_page = _subpage("Staff", body, lambda: self._go(0))
 

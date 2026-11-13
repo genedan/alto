@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QPointF, QSize, Qt
+from PySide6.QtCore import QPointF, QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPen, QTransform
 from PySide6.QtWidgets import QSizePolicy, QWidget
 
 from ..theory.pitch import ACCIDENTAL_SYMBOLS, Note, key_accidental
 from . import engraving
-from .notation import NotationStyle
+from .notation import NotationStyle, clef_shape
 from .notation import current as current_style
 from .notes import draw_note
 
@@ -16,19 +16,40 @@ BOTTOM_LINE = {
     "bass": Note(2, 4).diatonic,    # G2
     "alto": Note(3, 3).diatonic,    # F3
     "tenor": Note(3, 1).diatonic,   # D3
+    "soprano": Note(4, 0).diatonic,   # C4
+    "mezzo": Note(3, 5).diatonic,     # A3
+    "baritone": Note(2, 6).diatonic,  # B2
 }
-CLEF_GLYPH = {"treble": "𝄞", "bass": "𝄢", "alto": "𝄡", "tenor": "𝄡"}
+CLEF_GLYPH = {"treble": "𝄞", "bass": "𝄢", "alto": "𝄡", "tenor": "𝄡", "soprano": "𝄡", "mezzo": "𝄡", "baritone_c": "𝄡",
+              "baritone_f": "𝄢"}
 # (glyph top, glyph bottom) measured upward from the bottom staff line, in staff gaps
-CLEF_EXTENT = {"treble": (6.6, -2.2), "bass": (4.0, 0.7), "alto": (4.0, 0.0), "tenor": (5.0, 1.0)}
+CLEF_EXTENT = {"treble": (6.6, -2.2), "bass": (4.0, 0.7), "alto": (4.0, 0.0), "tenor": (5.0, 1.0),
+               "soprano": (2.0, -2.0), "mezzo": (3.0, -1.0), "baritone_c": (6.0, 2.0), "baritone_f": (3.0, -0.3)}
 MIDDLE_C = Note(4, 0).diatonic
 
-# Where each key-signature accidental sits, in order of appearance (diatonic positions as note names).
-_KEY_POSITIONS = {
-    ("treble", 1): "F5 C5 G5 D5 A4 E5 B4", ("treble", -1): "B4 E5 A4 D5 G4 C5 F4",
-    ("bass", 1): "F3 C3 G3 D3 A2 E3 B2", ("bass", -1): "B2 E3 A2 D3 G2 C3 F2",
-    ("alto", 1): "F4 C4 G4 D4 A3 E4 B3", ("alto", -1): "B3 E4 A3 D4 G3 C4 F3",
-    ("tenor", 1): "F3 C4 G3 D4 A3 E4 B3", ("tenor", -1): "B3 E4 A3 D4 G3 C4 F3",
-}
+# Where each key-signature accidental sits, in order of appearance. Each is a fourth up or a fifth down from the one before
+# (sharps: F C G D A E B, flats: B E A D G C F), and the pattern is chosen so that all seven stay on the staff, or one step
+# above or below it. This gives the usual signatures for the treble, bass, alto and tenor clefs, and works out the rest.
+_SHARP_PATTERNS = ((-3, 4, -3, -3, 4, -3), (4, -3, 4, -3, 4, -3))
+_FLAT_PATTERNS = ((3, -4, 3, -4, 3, -4), (-4, 3, -4, 3, -4, 3))
+
+
+def key_signature_positions(clef: str, sign: int) -> list[str]:
+    """The notes the sharps (sign 1) or flats (sign -1) of a key signature are written on in this clef."""
+    bottom = BOTTOM_LINE[clef]
+    first, patterns = ("F", _SHARP_PATTERNS) if sign > 0 else ("B", _FLAT_PATTERNS)
+    for steps in patterns:
+        for start in range(bottom - 1, bottom + 10):
+            offsets = [0]
+            for s in steps:
+                offsets.append(offsets[-1] + s)
+            places = [start + o for o in offsets]
+            if Note.from_diatonic(start).name == first and all(bottom - 1 <= d <= bottom + 9 for d in places):
+                return [f"{n.name}{n.octave}" for n in map(Note.from_diatonic, places)]
+    raise ValueError(f"no key signature fits the {clef} clef")
+
+
+_KEY_POSITIONS = {(clef, sign): " ".join(key_signature_positions(clef, sign)) for clef in BOTTOM_LINE for sign in (1, -1)}
 KEY_STEP = 13.0  # horizontal spacing between key-signature accidentals
 # A staff with few notes should not stretch across a wide window: each column of notes gets at most this much width, and the
 # staff is never made narrower than MIN_COLUMNS columns would need.
@@ -81,11 +102,13 @@ class StaffWidget(QWidget):
         self.notation_style: NotationStyle | None = None  # None follows the style chosen in settings
         self.key = 0
         self.value = "whole"
+        self.caption = ""  # text written under the staff, inside the paper
         self._fit_height("treble")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
-    def show_notes(self, columns: list[list[Note]], clef: str = "treble", key: int = 0, value: str = "whole") -> None:
-        self.columns, self.clef, self.key, self.value = columns, clef, key, value
+    def show_notes(self, columns: list[list[Note]], clef: str = "treble", key: int = 0, value: str = "whole",
+                   caption: str = "") -> None:
+        self.columns, self.clef, self.key, self.value, self.caption = columns, clef, key, value, caption
         self.note_color = None
         self._fit_height(clef)
         self._fit_width()
@@ -157,6 +180,15 @@ class StaffWidget(QWidget):
             p.drawLine(QPointF(left, ys[0] - 4 * gap), QPointF(left, ys[1]))
             self._brace(p, left - 3, ys[0] - 4 * gap, ys[1], fg, font=font)
 
+        if self.caption:
+            caption_font = QFont(self.font())
+            caption_font.setPixelSize(max(int(gap * 1.6), 12))
+            p.setFont(caption_font)
+            p.setPen(fg)
+            top = max(staves.values()) + 2.5 * gap  # below the lowest staff, clear of its ledger lines
+            p.drawText(QRectF(left, top, right - left, max(self.height() - top - gap, gap * 2)),
+                       Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter, self.caption)
+
         n = max(len(self.columns), 1)
         x0 = left + self.note_offset + KEY_STEP * abs(self.key)
         step = (right - x0) / n
@@ -211,6 +243,7 @@ class StaffWidget(QWidget):
     def _draw_clef(p: QPainter, clef: str, x: float, bottom: float, gap: float, color: QColor = QColor("black"),
                    font: str | None = None) -> None:
         """Draw the clef: from a SMuFL font if given, else as a Noto Music path scaled to its extent in gaps."""
+        clef = clef_shape(clef)  # the baritone clef is an F clef or a C clef, as chosen in the settings
         if font:
             engraving.draw_clef(p, font, clef, x, bottom, gap, color)
             return

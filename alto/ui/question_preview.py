@@ -25,7 +25,7 @@ class QuestionPreview(QDialog):
         lay.setSpacing(10)
         title = QLabel(f"<h3>{exercise_name}</h3>")
         lay.addWidget(title)
-        if question.prompt:
+        if question.prompt and not question.caption:
             prompt = QLabel(question.prompt)
             prompt.setWordWrap(True)
             prompt.setStyleSheet("font-size: 14pt;")
@@ -36,7 +36,7 @@ class QuestionPreview(QDialog):
             staff = StaffWidget(max_step=MAX_STEP)
             # a "place this note" question shows the note that was the answer
             notes = q.staff or ([[q.construct]] if q.construct is not None else [])
-            staff.show_notes(notes, q.clef, q.key, q.value)
+            staff.show_notes(notes, q.clef, q.key, q.value, q.caption)
             lay.addWidget(staff, alignment=Qt.AlignmentFlag.AlignHCenter)
         if q.keyboard is not None:
             if q.key_staff:
@@ -63,7 +63,7 @@ class QuestionPreview(QDialog):
         lay.addWidget(info)
 
         buttons = QDialogButtonBox()
-        notes = q.staff or q.play or ([[q.keyboard]] if q.keyboard else [[q.construct]] if q.construct is not None else [])
+        notes = q.staff or ([[q.keyboard]] if q.keyboard else [[q.construct]] if q.construct is not None else [])
         if notes:
             play = QPushButton("Play")
             play.clicked.connect(lambda: sounds.play_notes(notes))
