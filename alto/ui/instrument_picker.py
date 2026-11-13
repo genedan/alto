@@ -228,8 +228,6 @@ class InstrumentPicker(QWidget):
             return ""
         if len({v for _, v in shown}) == 1 and len(shown) == len(members):
             return shown[0][1]
-        if len(members) == 1:
-            return shown[0][1]
         return "\n".join(f"{m.variant}: {v}" for m, v in shown)
 
     def show_group(self, group: str) -> None:

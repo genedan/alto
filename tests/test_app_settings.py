@@ -41,3 +41,21 @@ def test_the_segmented_control_switches_between_theme_and_notation_style(dialog)
     assert dialog.appearance_pages.currentIndex() == 1
     dialog.segment_buttons[0].click()
     assert dialog.appearance_pages.currentIndex() == 0
+
+
+def test_a_palette_change_restyles_the_segmented_control(dialog):
+    from PySide6.QtCore import QEvent
+
+    before = dialog.segments.styleSheet()
+    QApplication.sendEvent(dialog, QEvent(QEvent.Type.PaletteChange))
+    assert dialog.segments.styleSheet() == before  # same palette, same style: redrawn without error
+
+
+def test_choosing_a_theme_saves_and_applies_it(dialog, monkeypatch):
+    from alto.ui import theme
+
+    applied = []
+    monkeypatch.setattr(app_settings, "apply_theme", applied.append)
+    assert not dialog.theme_changed
+    dialog.theme_cards["light"].click()
+    assert theme.saved_theme() == "light" and applied == ["light"] and dialog.theme_changed

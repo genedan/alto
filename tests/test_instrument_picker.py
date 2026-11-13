@@ -102,3 +102,38 @@ def test_hear_it_plays_a_short_arpeggio_in_that_instrument(picker, monkeypatch):
     QTest.qWait(900)
     assert played == [(60, "viola_bowed", True), (64, "viola_bowed", True), (67, "viola_bowed", True)]
     assert sounds.instrument == "piano"  # hearing it does not choose it
+
+
+def test_double_clicking_an_entry_uses_the_way_of_playing_already_in_use_or_the_first(picker):
+    viola = rows(picker).index("Viola")
+    picker.list.itemDoubleClicked.emit(picker.list.item(viola))
+    assert sounds.instrument == "viola_bowed"  # the first way of playing
+    picker.use("viola_plucked")
+    picker.list.itemDoubleClicked.emit(picker.list.item(viola))
+    assert sounds.instrument == "viola_plucked"  # the one in use stays
+
+
+def test_a_theme_change_redraws_the_summary_in_the_new_colours(picker):
+    from PySide6.QtCore import QEvent
+    from PySide6.QtWidgets import QApplication
+
+    picker.select("viola_bowed")
+    before = picker.title.text()
+    QApplication.sendEvent(picker, QEvent(QEvent.Type.PaletteChange))
+    assert picker.title.text() == before and picker.shown == "Viola"
+
+
+def test_the_chosen_instrument_is_saved_and_read_back(app):
+    from alto.ui.instrument_picker import load_instrument, save_instrument
+    from alto.ui.store import store
+
+    sounds.instrument = "marimba"
+    save_instrument()
+    assert store().value("audio/instrument") == "marimba"
+    sounds.instrument = "piano"
+    load_instrument()
+    assert sounds.instrument == "marimba"
+    store().setValue("audio/instrument", "no-such-instrument")
+    load_instrument()
+    assert sounds.instrument == "piano"  # an unknown one falls back to the piano
+    sounds.instrument = "piano"
