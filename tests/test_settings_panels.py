@@ -403,3 +403,10 @@ def test_the_arpeggio_pane_opens_each_page_and_back_returns(app):
     panel.key_page.switch_row.click()
     assert settings.arpeggio.key_signature
     assert panel.keys_row.value.text() == ""
+
+
+def test_dragging_the_keyboard_sets_the_range(app):
+    panel = sp.KeyboardSettingsPanel(settings.keyboard)
+    panel.span.dragged.emit(48, 60)
+    assert (settings.keyboard.low, settings.keyboard.high) == (48, 60)
+    assert panel.low_label.text() == sp.key_name(48)

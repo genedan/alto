@@ -43,13 +43,18 @@ def _isolated_state():
     from alto import settings
     from alto.audio import sounds
 
-    names = ("note_names", "keyboard", "construction", "arpeggio")
+    names = ("note_names", "keyboard", "construction", "arpeggio", "key_signatures")
     before = {n: copy.deepcopy(getattr(settings, n).__dict__) for n in names}
     muted = sounds.enabled
     sounds.enabled = False
     yield
     _close_every_window()
     sounds.enabled = muted
+    from alto.ui import keyboard_styles
+
+    keyboard_styles._current = keyboard_styles.BY_KEY[keyboard_styles.DEFAULT]
+    keyboard_styles._custom.clear()
+    keyboard_styles._custom.update(keyboard_styles.DEFAULT_CUSTOM)
     for n in names:
         getattr(settings, n).__dict__.clear()
         getattr(settings, n).__dict__.update(before[n])

@@ -5,7 +5,7 @@ from PySide6.QtGui import QColor, QMouseEvent
 
 from ..settings import RANGE_LIMITS
 from ..theory.pitch import Note, key_accidental
-from .staff import BOTTOM_LINE, MIDDLE_C, StaffWidget
+from .staff import BOTTOM_LINE, MAX_STEP, MIDDLE_C, StaffWidget
 
 PREVIEW = QColor(53, 132, 228, 170)  # the note that follows the pointer
 
@@ -18,7 +18,7 @@ class StaffInput(StaffWidget):
     accidental_cycled = Signal()  # right click: the owner steps through natural, sharp and flat
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent, max_step=MAX_STEP)
         self.accidental: int | None = None  # the sign you chose (-1 flat, 0 natural, +1 sharp); None follows the key signature
         self.locked = False  # ignore the mouse (while feedback is showing)
         self.setMouseTracking(True)

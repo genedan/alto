@@ -38,7 +38,7 @@ for the exercise, since reading a note takes less time than spelling a scale:
 | Exercise | Par time |
 |---|---|
 | Note Identification, Keyboard Identification | 3 s |
-| Key signatures | 4 s |
+| Key signatures | 5 s |
 | Interval identification, Chord quality, Note Construction | 6 s |
 | Scale spelling | 8 s |
 | Arpeggio identification | 9 s |

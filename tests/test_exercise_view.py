@@ -4,7 +4,14 @@ import random
 import pytest
 from alto import settings
 from alto.audio import sounds
-from alto.exercises.library import ArpeggioNames, KeyboardNotes, KeySignatures, NoteConstruction, NoteNames
+from alto.exercises.library import (
+    ArpeggioNames,
+    IntervalNames,
+    KeyboardNotes,
+    KeySignatures,
+    NoteConstruction,
+    NoteNames,
+)
 from alto.theory.pitch import Note
 from alto.ui.exercise_view import ExerciseView
 from PySide6.QtTest import QTest
@@ -32,7 +39,7 @@ def test_the_speaker_button_mutes_and_unmutes(app):
 
 
 def test_an_exercise_with_fixed_rules_has_no_settings_button(app):
-    view = view_of(KeySignatures())
+    view = view_of(IntervalNames())
     assert view.settings_panel is None and not hasattr(view, "gear") and not hasattr(view, "pane")
 
 
@@ -251,3 +258,30 @@ def test_a_wrong_pair_clears_itself_unless_a_new_question_has_come(app):
     QTest.qWait(800)  # the old timer fires and finds its question gone
     assert not view._busy and view._pending == {}
     view._advance.stop()
+
+
+# -- the music stays a readable size in a wide window -----------------------------------------------------------------
+
+
+def test_in_a_wide_window_the_staff_is_capped_and_centred(app):
+    view = view_of(NoteNames(), seed=2)
+    view.resize(2400, 700)
+    view.show()
+    QTest.qWait(50)
+    staff = view.staff
+    assert staff.width() == staff.maximumWidth() < 1000  # a single note is not spread over the whole window
+    parent = staff.parentWidget()
+    assert parent is not None
+    left, right = staff.x(), parent.width() - staff.x() - staff.width()
+    assert left > 200 and abs(left - right) <= 2  # centred
+    view.hide()
+
+
+def test_the_staff_for_placing_a_note_is_capped_too(app):
+    settings.construction.accidentals = False
+    view = view_of(NoteConstruction(), seed=4)
+    view.resize(2400, 700)
+    view.show()
+    QTest.qWait(50)
+    assert view.input_staff.width() == view.input_staff.maximumWidth() < 1000
+    view.hide()

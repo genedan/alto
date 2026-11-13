@@ -18,7 +18,7 @@ Your practice history, profiles included, is one [SQLite](https://www.sqlite.org
 | macOS | `~/Library/Application Support/Alto/alto.db` |
 | Windows | `C:\Users\<you>\AppData\Roaming\Alto\alto.db` |
 
-Your settings (theme, notation style, instrument, exercise options and the last profile you used) are stored separately by Qt, in
+Your settings (theme, notation style, keyboard style, instrument, exercise options and the last profile you used) are stored separately by Qt, in
 your usual configuration location.
 
 ## What the file contains

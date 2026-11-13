@@ -27,8 +27,8 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "assets" / "img"
 THEMES = ("light", "dark")
 # The pictures this script makes. A docs page includes each of them with shot.html.
-SHOTS = ("home", "note-identification", "keyboard", "note-construction", "intervals", "arpeggios", "stats", "database",
-         "question-preview", "settings", "settings-sound")
+SHOTS = ("home", "note-identification", "keyboard", "note-construction", "intervals", "arpeggios", "key-signatures", "stats",
+         "database", "question-preview", "settings", "settings-sound")
 
 
 def main() -> int:
@@ -126,7 +126,14 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     by_class = {c.__name__: c for c in REGISTRY}
     for cls, name in (("NoteNames", "note-identification"), ("KeyboardNotes", "keyboard"),
                       ("NoteConstruction", "note-construction"), ("IntervalNames", "intervals"),
-                      ("ArpeggioNames", "arpeggios")):
+                      ("ArpeggioNames", "arpeggios"), ("KeySignatures", "key-signatures")):
+        if cls == "KeySignatures":  # show a signature to read, on an alto clef staff, whatever the default is
+            from alto import settings
+
+            settings.key_signatures.questions = {"read"}
+            settings.key_signatures.clefs = {"alto"}
+            settings.key_signatures.modes = {"Major (Ionian)"}
+            settings.key_signatures.keys = {-3}  # three flats, so there is something to read
         window.open_exercise(by_class[cls])
         wait(500)
         save(window, name)

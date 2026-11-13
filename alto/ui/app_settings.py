@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QEvent, QPointF, QRectF, QSize, Qt
+from PySide6.QtCore import QEvent, QPointF, QRectF, QSize, Qt, Signal
 from PySide6.QtGui import QColor, QPainter, QPainterPath, QPalette, QPen, QPolygonF
 from PySide6.QtWidgets import (
     QButtonGroup,
+    QColorDialog,
     QDialog,
     QDialogButtonBox,
     QFrame,
@@ -15,14 +16,16 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QStackedWidget,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
 from ..theory.pitch import Note
-from . import notation
+from . import keyboard_styles, notation
 from .colors import blend
 from .instrument_picker import InstrumentPicker
+from .keyboard import KeyboardWidget
 from .staff import StaffWidget
 from .theme import THEMES, apply_theme, save_theme, saved_theme
 
@@ -53,6 +56,130 @@ class StyleCard(QPushButton):
         lay.addWidget(self.staff)
         lay.addWidget(name)
         lay.addWidget(blurb)
+
+
+RIM = "rgba(136, 136, 136, 0.5)"  # the faint outline of the builder's swatches and chips
+
+
+class KeyboardCard(QPushButton):
+    """A selectable tile that previews a keyboard style: a short stretch of keys drawn in that style."""
+
+    def __init__(self, style: keyboard_styles.KeyboardStyle, parent=None):
+        super().__init__(parent)
+        self.style_key = style.key
+        self.setCheckable(True)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setFixedSize(232, 222)
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(8, 8, 8, 6)
+        lay.setSpacing(4)
+        self.keys = KeyboardWidget()
+        self.keys.style_override = style
+        self.keys.pad = 6.0
+        self.keys.max_key_width = 16.0
+        self.keys.setFixedWidth(2 * 6 + 10 * 16)  # ten white keys, C4 to E5
+        self.keys.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        self.keys.show_key(None, (60, 76))
+        holder = QWidget()
+        holder.setFixedHeight(int(2 * 6 + 30 + 16 * 6.2))  # room for the tallest strip above the keys
+        holder.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        holder_lay = QVBoxLayout(holder)
+        holder_lay.setContentsMargins(0, 0, 0, 0)
+        holder_lay.addWidget(self.keys, 0, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
+        name = QLabel(f"<b>{style.label}</b>")
+        name.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        blurb = QLabel(style.note)
+        blurb.setStyleSheet("color: gray; font-size: 9pt;")
+        blurb.setWordWrap(True)
+        blurb.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        lay.addWidget(holder)
+        lay.addWidget(name)
+        lay.addWidget(blurb)
+        lay.addStretch(1)
+
+    def show_style(self, style: keyboard_styles.KeyboardStyle) -> None:
+        """Redraw the preview in `style` (the custom card follows the colours being edited)."""
+        self.keys.style_override = style
+        self.keys.refit()
+
+
+class KeyboardBuilder(QFrame):
+    """Rows for colouring each part of a keyboard: a swatch that opens the colour picker, and chips for colours named after
+    materials. Changing anything selects the Custom style."""
+
+    changed = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(0, 8, 0, 0)
+        lay.setSpacing(6)
+        lay.addWidget(QLabel("<b>Build your own</b>"))
+        about = QLabel("Choose a colour for each part, from a material or with the colour picker. "
+                       "Changing any part switches to the Custom style.")
+        about.setWordWrap(True)
+        about.setStyleSheet("color: gray;")
+        lay.addWidget(about)
+        self.swatches: dict[str, QPushButton] = {}
+        for part, label, optional in keyboard_styles.COMPONENTS:
+            row = QHBoxLayout()
+            row.setSpacing(4)
+            name = QLabel(label)
+            name.setFixedWidth(84)
+            row.addWidget(name)
+            swatch = QPushButton()
+            swatch.setFixedSize(46, 24)
+            swatch.setCursor(Qt.CursorShape.PointingHandCursor)
+            swatch.setToolTip(f"Pick a colour for the {label.lower()}")
+            swatch.clicked.connect(lambda _=False, p=part, t=label: self._pick(p, t))
+            row.addWidget(swatch)
+            row.addSpacing(6)
+            self.swatches[part] = swatch
+            if optional:
+                none = self._chip("None", None)
+                none.setText("✕")
+                none.clicked.connect(lambda _=False, p=part: self._set(p, None))
+                row.addWidget(none)
+            else:
+                row.addSpacing(24)  # line the chips up with the rows that have a None chip
+            for material, colour in keyboard_styles.MATERIALS:
+                chip = self._chip(f"{material}  {colour}", colour)
+                chip.clicked.connect(lambda _=False, p=part, c=colour: self._set(p, c))
+                row.addWidget(chip)
+            row.addStretch(1)
+            lay.addLayout(row)
+        self.refresh()
+
+    @staticmethod
+    def _chip(tip: str, colour: str | None) -> QToolButton:
+        chip = QToolButton()
+        chip.setFixedSize(20, 20)
+        chip.setToolTip(tip)
+        chip.setCursor(Qt.CursorShape.PointingHandCursor)
+        if colour:
+            chip.setStyleSheet(f"QToolButton {{ background: {colour}; border: 1px solid {RIM}; border-radius: 10px; }}")
+        else:
+            chip.setStyleSheet(f"QToolButton {{ border: 1px solid {RIM}; border-radius: 10px; color: gray; }}")
+        return chip
+
+    def refresh(self) -> None:
+        """Show each part's current colour on its swatch."""
+        for part, colour in keyboard_styles.custom_colours().items():
+            swatch = self.swatches[part]
+            swatch.setText("" if colour else "none")
+            swatch.setStyleSheet(f"QPushButton {{ background: {colour}; border: 1px solid {RIM}; border-radius: 6px; }}"
+                                 if colour else f"QPushButton {{ border: 1px dashed {RIM}; border-radius: 6px; color: gray; }}")
+
+    def _set(self, part: str, colour: str | None) -> None:
+        keyboard_styles.set_custom_colour(part, colour)
+        self.refresh()
+        self.changed.emit()
+
+    def _pick(self, part: str, title: str) -> None:
+        current = keyboard_styles.custom_colours()[part] or "#ffffff"
+        colour = QColorDialog.getColor(QColor(current), self, f"Colour for the {title.lower()}")
+        if colour.isValid():
+            self._set(part, colour.name())
 
 
 class ThemeCard(QPushButton):
@@ -206,11 +333,12 @@ class AppSettingsDialog(QDialog):
         return area
 
     def _appearance_page(self) -> QWidget:
-        """Two sections, switched with a segmented control: the colour theme, and the notation style."""
+        """Three sections, switched with a segmented control: the colour theme, the notation style and the keyboard style."""
         page, lay = self._page()
         self.appearance_pages = QStackedWidget()
         self.appearance_pages.addWidget(self._theme_tab())
         self.appearance_pages.addWidget(self._scrolling(self._notation_tab()))
+        self.appearance_pages.addWidget(self._scrolling(self._keyboard_tab()))
         self.segments = QFrame()
         self.segments.setObjectName("segments")
         row = QHBoxLayout(self.segments)
@@ -219,7 +347,7 @@ class AppSettingsDialog(QDialog):
         group = QButtonGroup(self)
         group.setExclusive(True)
         self.segment_buttons = []
-        for i, label in enumerate(("Theme", "Notation style")):
+        for i, label in enumerate(("Theme", "Notation style", "Keyboard style")):
             b = QPushButton(label)
             b.setCheckable(True)
             b.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -293,6 +421,36 @@ class AppSettingsDialog(QDialog):
         lay.addLayout(grid)
         lay.addStretch(1)
         return page
+
+    def _keyboard_tab(self) -> QWidget:
+        page, lay = self._page()
+        lay.addWidget(self._about("How the piano keyboard looks: the colours and materials of its keys."))
+        grid = QGridLayout()
+        grid.setSpacing(10)
+        group = QButtonGroup(self)
+        group.setExclusive(True)
+        self.keyboard_cards = {}
+        styles = (*keyboard_styles.STYLES, keyboard_styles.custom_style())
+        for i, st in enumerate(styles):
+            card = KeyboardCard(st)
+            card.setChecked(st.key == keyboard_styles.current().key)
+            group.addButton(card)
+            card.clicked.connect(lambda _=False, k=st.key: keyboard_styles.set_style(k))
+            grid.addWidget(card, i // 3, i % 3)
+            self.keyboard_cards[st.key] = card
+        grid.setColumnStretch(3, 1)  # keep the cards at the left edge
+        lay.addLayout(grid)
+        self.builder = KeyboardBuilder()
+        self.builder.changed.connect(self._custom_edited)
+        lay.addWidget(self.builder)
+        lay.addStretch(1)
+        return page
+
+    def _custom_edited(self) -> None:
+        """A part was recoloured: the Custom card shows the result and becomes the chosen one."""
+        card = self.keyboard_cards[keyboard_styles.CUSTOM]
+        card.show_style(keyboard_styles.custom_style())
+        card.setChecked(True)
 
     def _sound_page(self) -> QWidget:
         page, lay = self._page()

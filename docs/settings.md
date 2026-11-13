@@ -14,7 +14,7 @@ the selected one's settings appear on the right.
 
 ### Appearance
 
-The Appearance page has two sections, **Theme** and **Notation style**, which you switch between with the pill-shaped control at the top.
+The Appearance page has three sections, **Theme**, **Notation style** and **Keyboard style**, which you switch between with the pill-shaped control at the top.
 
 **Theme.** Choose System to follow your operating system's light or dark setting, or Light or Dark to always use one.
 Each choice is a card with a small picture of the window in that theme (System shows both halves). It applies
@@ -36,6 +36,32 @@ applies to every staff in the app, including the small pictures in the settings 
 | Petaluma | A handwritten look, as in jazz real books. |
 | MuseJazz | A brush-pen hand, like MuseScore's jazz template. |
 | Finale Broadway | A bold copyist's hand, as in Broadway scores. |
+
+**Keyboard style.** How the piano keyboard looks in the keyboard exercise and in the range picker. Each choice is a card with a
+small picture of the keys. Your choice applies to every keyboard in the app. The default is Classic, the standard Alto look.
+
+| Style | Character |
+|---|---|
+| Classic | White keys in a dark case. |
+| Modern piano | A current upright or grand, with red felt under the fallboard. |
+| Antique ivory | Naturals aged to a warm yellow, in a rosewood case. |
+| Harpsichord, Italian | Boxwood naturals and dark sharps in a cypress case. |
+| Harpsichord, French | Reversed colours: ebony naturals with bone-topped sharps. |
+| Baroque pipe organ | Bone and ebony keys in an oak case, under a row of stop knobs. |
+| Tonewheel organ | Plastic keys in a walnut case, with the lowest octave reversed. |
+| Flat and minimal | No case and no gradients. Reads well at small sizes. |
+| Engraving | Ink on paper, like a plate in an old method book. |
+| Colour by note | One hue per semitone, so every C has the same colour. |
+| Midnight neon | Dark keys with a cyan glow and magenta sharps. |
+| High contrast | Pure black and white with heavy outlines and a yellow dot on every C. |
+
+The colours are typical of the materials, not measurements of one instrument.
+
+**Build your own.** Below the cards, each part of the keyboard has a row: **Naturals**, **Sharps**, **Case**, **Felt strip** and
+**Sharp caps**. Click a part's swatch to open the colour picker, or click one of the round chips for a colour named after a
+material: Acrylic white, Mother-of-pearl, Ivory, Bone, Boxwood, Maple, Cypress, Oak, Walnut, Rosewood, Ebonised pearwood, Ebony,
+Black acrylic, Aluminium, Brass, Red felt, Green baize and Blue felt. Hover a chip to see its name. The case, felt and caps can be
+left out with the ✕ chip. Changing any part switches to the **Custom** style, and your colours are remembered.
 
 The breve is always drawn in its square form, whichever font you choose. All the fonts are bundled with Alto except Noto Music, which is read from your system.
 
