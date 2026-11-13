@@ -105,6 +105,7 @@ class MyExercise(Exercise):
 - `Question` describes everything the screen needs: a prompt, the answer buttons, the notes to draw, a key signature, a keyboard key to highlight, and so on.
 - If your exercise reads user settings, override `settings_signature()` and return `signature(...)` of those settings. Stored questions are only replayed while the signature is unchanged.
 - Give the exercise an icon in `alto/ui/home.py` so it appears properly on the home screen.
+- Pick its `category` from the existing ones, or make a new one. `@register` places the exercise next to the others of its category, so the home screen and the exercise list show each category once, whatever order the classes are written in.
 
 Everything else comes with it: the question is recorded in the database, scored for speed, drawn in the chosen
 notation font and included in the statistics.
