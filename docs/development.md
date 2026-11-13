@@ -27,6 +27,10 @@ pytest
 
 The tests that touch widgets run with Qt's offscreen platform, so no display is needed.
 
+The tests never read or change your own settings, profile or history. `tests/conftest.py` points them at a throwaway
+folder, closes every window and database a test leaves open, and turns the sound off. Every line of `alto/` is covered, so a
+change that adds code should add a test for it; `pytest --cov --cov-report=term-missing` shows which lines are missed.
+
 GitHub Actions runs the tests on every pull request (`.github/workflows/tests.yml`) and reports coverage to Codecov
 (`.github/workflows/codecov.yml`). To measure coverage yourself:
 
