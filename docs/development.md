@@ -91,6 +91,86 @@ one element per line with a trailing comma, and a trailing comma you write yours
 formatter. Run in this order, it does not: the formatter leaves out a comma after a lone long argument, the check adds it,
 and the formatter keeps it.
 
+Imports follow these rules:
+
+- **Absolute only.** `from alto.ui.store import store`, never `from .store import store` (`TID252`).
+- **At the top of the file.** None inside a function (`PLC0415`), except in the `>>>` examples of a docstring, which have to
+  import what they use. Two modules that need each other do not import each other: `notation.py` and `keyboard_styles.py`
+  call hooks that `staff.py` and `keyboard.py` register with `on_redraw`. The `conftest.py` files set the settings folders
+  before importing anything from Alto, so their imports are marked `# noqa: E402`.
+- **One name per line** when a `from` import has two or more names, in parentheses with a trailing comma. Ruff cannot
+  enforce this, but it keeps an import you have already written that way.
+- **Sorted like isort** (`I`): the standard library, then third-party packages (PySide6, numpy, pytest), then `alto` as
+  its own section (`known-first-party`), each section sorted alphabetically.
+
+## PyCharm
+
+The code is kept free of PyCharm warnings as well as Ruff and Pyright errors. PyCharm's settings live in `.idea/`, which
+is not in the repository, so a fresh clone needs the three changes below. Without them PyCharm shows many warnings that
+are not real problems.
+
+**1. Use a project inspection profile that ignores the `alto` imports.** PyCharm analyses the `>>>` examples in
+docstrings, which is useful, but it resolves `alto.exercises` and the like only when the file itself imports them, so
+every example that imports from another package gets a false "Cannot find reference" warning.
+
+- *Settings, Editor, Inspections*: choose the **Project Default** profile (the one saved in the project, not the IDE
+  one).
+- Under *Python, Unresolved references*, add these to *Ignore references*: `alto.exercises.*`, `alto.learning.*`,
+  `alto.theory.*`, `alto.ui.*`, `alto.audio.*` and `alto.__main__`.
+
+The result is this in `.idea/inspectionProfiles/Project_Default.xml`, with `USE_PROJECT_PROFILE` set to `true` in
+`profiles_settings.xml` next to it:
+
+```xml
+<inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+  <option name="ignoredIdentifiers">
+    <list>
+      <option value="alto.exercises.*" />
+      <option value="alto.learning.*" />
+      <option value="alto.theory.*" />
+      <option value="alto.ui.*" />
+      <option value="alto.audio.*" />
+      <option value="alto.__main__" />
+    </list>
+  </option>
+</inspection_tool>
+```
+
+Names that really are unresolved are still reported, in code and in examples.
+
+**2. Add a database connection, so the SQL in `alto/learning/database.py` is checked.** Without one, PyCharm warns about
+every SQL string.
+
+1. Make a file with the real schema, which `Database` creates when it opens a new file:
+
+   ```bash
+   python -c "from alto.learning import Database; Database('.idea/alto-schema.db').close()"
+   ```
+
+   Delete the file and run this again whenever the schema in `database.py` changes.
+2. In the *Database* tool window, add a **SQLite** data source named `alto (schema)` for that file
+   (`jdbc:sqlite:<path to the clone>/.idea/alto-schema.db`).
+3. In *Settings, Languages & Frameworks, SQL Dialects*, set the **Project SQL Dialect** to **SQLite**
+   (`.idea/sqldialects.xml`).
+
+**3. Leave "Analyze Python code in docstrings" switched on.** The examples are real code, so PyCharm should keep checking
+them. A few habits keep them quiet:
+
+- Name example variables so they do not shadow a parameter or a module-level name; a trailing underscore is fine
+  (`database_`, `cfg_`).
+- Where PyCharm cannot tell a value is not `None`, or the example deliberately uses a private member, put a comment line
+  before that statement: `>>> # noinspection PyUnresolvedReferences` or `>>> # noinspection PyProtectedMember`. It covers
+  only the next statement.
+
+In code, suppress a false positive narrowly, with `# noinspection <Inspection>` on the line above the statement or the
+function, and say why when it is not obvious. A few things that are not obvious:
+
+- `PyUnusedLocal` is not honoured for the parameters of a fake that has to match what it replaces; delete them explicitly
+  (`del volume, kwargs`) instead.
+- Read saved text with `text_value` in `alto/ui/store.py`, not `str(settings.value(...))`, which PyCharm flags and Pyright
+  needs.
+- Declare every attribute in `__init__`, not in the method that first sets it.
+
 ## Adding an exercise
 
 Subclass `Exercise` in `alto/exercises/library.py`, decorate it with `@register`, and implement `generate`, which returns a
