@@ -68,6 +68,11 @@ a:hover { text-decoration-thickness: 2px; }
 .menu li a { display: block; padding: 6px 10px; border-radius: 8px; color: var(--fg); text-decoration: none; }
 .menu li a:hover { background: var(--accent-soft); }
 .menu li a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+/* The API reference and the developer guide list their pages under their own entry; the API pages are grouped by package. */
+.menu .sub-nav { margin: 2px 0 6px 12px; }
+.menu .sub-nav > li > a { padding: 3px 10px; font-size: .9rem; }
+.menu .sub-group > span { display: block; padding: 6px 10px 2px; font-size: .72rem; letter-spacing: .06em; color: var(--muted); }
+.menu .sub-group li a { padding: 3px 10px 3px 18px; font-size: .9rem; }
 
 .content { padding: 40px clamp(20px, 5vw, 64px) 56px; min-width: 0; }
 article, footer { max-width: 780px; }

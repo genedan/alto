@@ -103,7 +103,8 @@ Guides for every exercise, how the practice scheduling works, the statistics, se
 ```
 
 The theory, exercises and learning code have no Qt dependency, so they can be tested without a display. See the
-[developer guide](docs/development.md) for how to add an exercise or a notation font.
+[developer guide](docs/guide/index.md) for how the program works, and [For developers](docs/development.md) for commands and
+recipes such as adding an exercise or a notation font.
 
 ## License
 

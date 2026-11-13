@@ -9,9 +9,9 @@ permalink: /getting-started/
 - A desktop operating system that runs Qt 6: Linux, macOS or Windows.
 - Alto installs [PySide6](https://doc.qt.io/qtforpython-6/) (6.8 or newer) and numpy for you.
 
-The default notation style is drawn with the Noto Music font, which Alto looks for on your system. Most Linux
-distributions include it in their Noto font packages. If it is missing, choose another notation style in
-[Settings]({{ '/settings/' | relative_url }}); the bundled fonts always work.
+The default notation style, Finale Maestro, uses a font that comes with Alto, so nothing more needs installing. Only the
+"Noto Music" style reads a font from your system; most Linux distributions include it in their Noto font packages. You can
+change the notation style in [Settings]({{ '/settings/' | relative_url }}).
 
 ## Install and run
 

@@ -5,6 +5,9 @@ permalink: /development/
 ---
 Alto is a Python application using PySide6. The source is at [github.com/genedan/alto](https://github.com/genedan/alto).
 
+This page is the quick reference: commands, tooling and the short recipes. The [developer guide]({{ '/guide/' | relative_url }}) explains how
+the program works and the ideas underneath it (audio, notation, spaced repetition, styling, animation), with reading lists.
+
 ## Layout
 
 | Folder | What is in it |
@@ -246,6 +249,21 @@ exist.
 
 The pre-push hook runs `scripts/check-docs.sh`, which warns when the interface (`alto/ui`) has changed since the pictures
 were last updated. It only warns; set `ALTO_DOCS_STRICT=1` to make it fail.
+
+## The API reference
+
+The pages under [API reference](../api/) (`docs/api/`) are written from the docstrings by `scripts/api_docs.py`. Each module
+has a page with its public classes, methods and functions: the signature, then the NumPy-style docstring as Markdown. Names
+that begin with an underscore are left out. The script reads the source as text, so it needs neither Qt nor a display.
+
+```bash
+python scripts/api_docs.py          # rewrite docs/api
+python scripts/api_docs.py --check  # list the pages that are out of date, and change nothing
+```
+
+GitHub Pages cannot run the script, so the generated pages are committed. When you change a docstring or a public signature,
+run it and commit the pages with the change. `tests/test_api_docs.py` fails when they are out of date, so a forgotten run is
+caught by the tests, the pre-push hook and the pull request.
 
 ## Reporting problems
 
