@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QPointF, Qt
+from PySide6.QtCore import QPointF, QSize, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPen, QTransform
 from PySide6.QtWidgets import QSizePolicy, QWidget
 
@@ -30,6 +30,10 @@ _KEY_POSITIONS = {
     ("tenor", 1): "F3 C4 G3 D4 A3 E4 B3", ("tenor", -1): "B3 E4 A3 D4 G3 C4 F3",
 }
 KEY_STEP = 13.0  # horizontal spacing between key-signature accidentals
+# A staff with few notes should not stretch across a wide window: each column of notes gets at most this much width, and the
+# staff is never made narrower than MIN_COLUMNS columns would need.
+MAX_STEP = 120.0
+MIN_COLUMNS = 3
 
 # Grand staff layout, in staff gaps: margin above/below the pair and the distance between them.
 GRAND_BETWEEN = 3.5
@@ -62,12 +66,15 @@ def draw_key_signature(p: QPainter, clef: str, key: int, x: float, bottom: float
 
 
 class StaffWidget(QWidget):
-    def __init__(self, parent=None, gap: float = 14.0, side: float = 20.0, note_offset: float = 100.0,
-                 margin: float = 8.0, compact: bool = False):
+    def __init__(self, parent=None, gap: float = 16.0, side: float = 20.0, note_offset: float = 100.0,
+                 margin: float = 8.0, compact: bool = False, max_step: float | None = None):
         """`gap` is the distance between staff lines in pixels; `margin` is the space (in gaps) kept above
-        and below the staff for ledger lines; `compact` sizes the widget to fit instead of the 220 px default."""
+        and below the staff for ledger lines; `compact` sizes the widget to fit instead of the 220 px default.
+        `max_step`, if given, is the most width each column of notes may take: the staff then stops growing once
+        its notes would be spread wider than that, so a few notes stay easy to read in a wide window."""
         super().__init__(parent)
         self.GAP, self.side, self.note_offset, self.margin, self.compact = gap, side, note_offset, margin, compact
+        self.max_step = max_step
         self.clef = "treble"
         self.columns: list[list[Note]] = []
         self.note_color: QColor | None = None  # None draws notes in the style's ink
@@ -81,7 +88,22 @@ class StaffWidget(QWidget):
         self.columns, self.clef, self.key, self.value = columns, clef, key, value
         self.note_color = None
         self._fit_height(clef)
+        self._fit_width()
         self.update()
+
+    def _fit_width(self) -> None:
+        """Cap the width so that no column of notes is spread wider than `max_step` (see __init__)."""
+        if self.max_step is None:
+            return
+        left = self.side + (18.0 if self.clef == "grand" else 0.0)  # the same left edge the drawing uses
+        columns = max(len(self.columns), MIN_COLUMNS)
+        self.setMaximumWidth(round(left + self.note_offset + KEY_STEP * abs(self.key) + columns * self.max_step + self.side))
+
+    def sizeHint(self) -> QSize:
+        """A capped staff asks for its full capped width, so a layout that centres it gives it that much."""
+        if self.max_step is None:
+            return super().sizeHint()
+        return QSize(self.maximumWidth(), self.minimumHeight())
 
     def _fit_height(self, clef: str) -> None:
         grand_height = 2 * self.margin + 8 + GRAND_BETWEEN  # in gaps
@@ -163,7 +185,7 @@ class StaffWidget(QWidget):
                 if note.accidental != key_accidental(note.letter, self.key):
                     ax = x - gap * (2.3 + 1.2 * (acc_slot % 3))
                     if font:
-                        engraving.draw_accidental(p, font, note.accidental, ax, y, gap, fg)
+                        engraving.draw_accidental(p, font, note.accidental, ax, y, gap, nfg)
                     else:
                         sign = ACCIDENTAL_SYMBOLS[note.accidental] or "♮"
                         p.setFont(QFont("DejaVu Sans", int(gap * 2.0)))

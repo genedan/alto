@@ -9,7 +9,7 @@ from ..audio import sounds
 from ..exercises.base import Question
 from ..settings import spell
 from .keyboard import KeyboardWidget
-from .staff import StaffWidget
+from .staff import MAX_STEP, StaffWidget
 
 
 class QuestionPreview(QDialog):
@@ -33,11 +33,11 @@ class QuestionPreview(QDialog):
 
         q = question
         if q.staff or q.show_staff or q.construct is not None:
-            staff = StaffWidget()
+            staff = StaffWidget(max_step=MAX_STEP)
             # a "place this note" question shows the note that was the answer
             notes = q.staff or ([[q.construct]] if q.construct is not None else [])
             staff.show_notes(notes, q.clef, q.key, q.value)
-            lay.addWidget(staff)
+            lay.addWidget(staff, alignment=Qt.AlignmentFlag.AlignHCenter)
         if q.keyboard is not None:
             if q.key_staff:
                 key_staff = StaffWidget(gap=8.0, side=12.0, note_offset=70.0, margin=3.6, compact=True)

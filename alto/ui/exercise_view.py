@@ -27,7 +27,7 @@ from .colors import blend
 from .icons import SLIDERS, SPEAKER_MUTED, SPEAKER_ON, svg_icon
 from .keyboard import KeyboardWidget
 from .settings_panel import settings_panel_for
-from .staff import StaffWidget
+from .staff import MAX_STEP, StaffWidget
 from .staff_input import StaffInput
 from .widgets import HelpButton, SidebarToggle
 
@@ -50,7 +50,7 @@ class ExerciseView(QWidget):
         self.score = QLabel()
         self.prompt = QLabel()
         self.prompt.setStyleSheet("font-size: 16pt;")
-        self.staff = StaffWidget()
+        self.staff = StaffWidget(max_step=MAX_STEP)
         self.keyboard = KeyboardWidget()
         self.input_staff = StaffInput()  # for 'place this note' questions
         self.input_staff.placed.connect(self._place)
@@ -105,8 +105,8 @@ class ExerciseView(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
         lay.addLayout(top)
         lay.addWidget(self.prompt)
-        lay.addWidget(self.staff)
-        lay.addWidget(self.input_staff)
+        lay.addWidget(self.staff, alignment=Qt.AlignmentFlag.AlignHCenter)  # a capped staff sits in the middle
+        lay.addWidget(self.input_staff, alignment=Qt.AlignmentFlag.AlignHCenter)
         lay.addWidget(self.accidental_row)
         lay.addWidget(self.key_staff, alignment=Qt.AlignmentFlag.AlignHCenter)
         lay.addWidget(self.keyboard)
@@ -375,9 +375,7 @@ class ExerciseView(QWidget):
         ok = q.check(choice)
         self._record(ok, choice)
         if ok:
-            self.answered = True
-            for b in self.buttons:
-                b.setEnabled(False)
+            self.answered = True  # the other buttons stay as they are; only the one pressed animates
             self._flash(button, "#2e7d32", staff=True)
             notes = q.staff or q.play or ([[q.keyboard]] if q.keyboard else [])
             if notes:

@@ -164,3 +164,11 @@ def test_a_note_construction_question_shows_the_note_that_was_asked_for(app, mon
 def test_a_question_with_nothing_to_play_has_no_play_button(app):
     dialog = QuestionPreview("Key signatures", Question("How many?", ["one", "two"], "two"))
     assert not [b for b in dialog.findChildren(QPushButton) if b.text() == "Play"]
+
+
+def test_the_staff_in_the_preview_is_capped_like_the_one_in_the_exercise(app):
+    from alto.ui.staff import StaffWidget
+
+    dialog = QuestionPreview("Note", Question("", ["C"], "C", [[Note(4, 0)]]))
+    staff = dialog.findChildren(StaffWidget)[0]
+    assert staff.max_step is not None and staff.maximumWidth() < 1000

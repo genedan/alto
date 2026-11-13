@@ -310,3 +310,55 @@ def test_the_sidebar_button_and_help_button(app):
     assert second is not None and second is not popup
     second.close()
     button.hide()
+
+
+# -- a staff with few notes does not stretch across a wide window ----------------------------------------------------
+
+
+def test_a_capped_staff_gets_a_share_of_width_for_each_column_of_notes(app):
+    from alto.ui.staff import KEY_STEP, MAX_STEP, MIN_COLUMNS, StaffWidget
+
+    staff = StaffWidget(max_step=MAX_STEP)
+    staff.show_notes([[Note(4, 0)]], "treble")
+    one = staff.maximumWidth()
+    assert one == round(2 * staff.side + staff.note_offset + MIN_COLUMNS * MAX_STEP) and staff.sizeHint().width() == one
+    staff.show_notes([[Note(4, i)] for i in range(7)], "treble")
+    assert staff.maximumWidth() == one + round((7 - MIN_COLUMNS) * MAX_STEP)  # more notes, more room
+    staff.show_notes([[Note(4, 0)]], "treble", key=7)
+    assert staff.maximumWidth() == one + round(7 * KEY_STEP)  # the key signature needs room too
+    staff.show_notes([[Note(4, 0)]], "grand")
+    assert staff.maximumWidth() == one + 18  # and so does the brace of a grand staff
+    staff.show_notes([], "treble")
+    assert staff.maximumWidth() == one  # an empty staff (just a clef and a key signature) is the narrowest it gets
+
+
+def test_a_staff_without_a_cap_is_left_as_it_was(app):
+    from alto.ui.staff import StaffWidget
+
+    staff = StaffWidget()
+    staff.show_notes([[Note(4, 0)]], "treble")
+    assert staff.maximumWidth() == 16777215 and staff.max_step is None
+    small = StaffWidget(gap=6.5, side=8.0, note_offset=44.0, margin=3.2, compact=True)
+    small.setFixedWidth(214)
+    small.show_notes([[Note(4, 0)]], "treble")
+    assert small.maximumWidth() == 214  # the small previews in the settings keep their fixed width
+
+
+def test_a_capped_staff_in_a_narrow_space_shrinks_to_fit_and_in_a_wide_one_is_centred(app):
+    from alto.ui.staff import MAX_STEP, StaffWidget
+    from PySide6.QtWidgets import QVBoxLayout, QWidget
+
+    holder = QWidget()
+    lay = QVBoxLayout(holder)
+    lay.setContentsMargins(0, 0, 0, 0)
+    staff = StaffWidget(max_step=MAX_STEP)
+    lay.addWidget(staff, alignment=Qt.AlignmentFlag.AlignHCenter)
+    staff.show_notes([[Note(4, 0)]], "treble")
+    holder.show()
+    holder.resize(300, 300)
+    QTest.qWait(30)
+    assert staff.width() == 300 < staff.maximumWidth()  # not wide enough for the cap: the staff takes all there is
+    holder.resize(1600, 300)
+    QTest.qWait(30)
+    assert staff.width() == staff.maximumWidth() and abs(staff.x() - (1600 - staff.width()) // 2) <= 1
+    holder.hide()
