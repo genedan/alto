@@ -23,7 +23,12 @@ CLEF_RANGES = {  # inclusive diatonic range that sits comfortably on the staff
 }
 
 
-def _random_note(rng: random.Random, clef: str, accidentals: bool, span: tuple[int, int] | None = None) -> Note:
+def _random_note(
+    rng: random.Random,
+    clef: str,
+    accidentals: bool,
+    span: tuple[int, int] | None = None,
+) -> Note:
     """Random note; `span` is an inclusive diatonic range (default: the clef's comfortable range)."""
     lo, hi = span or (CLEF_RANGES[clef][0].diatonic, CLEF_RANGES[clef][1].diatonic)
     d = rng.randint(lo, hi)
@@ -83,7 +88,17 @@ class NoteNames(Exercise):
             expl.append(f"{MAJOR_KEYS[key]} major has {format_key_signature(key)}.")
         if acc != in_key:
             expl.append("The accidental on the note overrides the key signature.")
-        return Question("", choices, name, [[note]], clef, " ".join(expl), key, value, grid)
+        return Question(
+            "",
+            choices,
+            name,
+            [[note]],
+            clef,
+            " ".join(expl),
+            key,
+            value,
+            grid,
+        )
 
 
 @register
@@ -101,7 +116,16 @@ class IntervalNames(Exercise):
             "d (diminished)."
         )
 
-    QUALITIES = {1: "P A d", 2: "M m A d", 3: "M m A d", 4: "P A d", 5: "P A d", 6: "M m A d", 7: "M m A d", 8: "P"}
+    QUALITIES = {
+        1: "P A d",
+        2: "M m A d",
+        3: "M m A d",
+        4: "P A d",
+        5: "P A d",
+        6: "M m A d",
+        7: "M m A d",
+        8: "P",
+    }
 
     def generate(self, rng):
         clef = rng.choice(("treble", "bass"))
@@ -114,9 +138,21 @@ class IntervalNames(Exercise):
             return self.generate(rng)
         pool = [f"{q}{n}" for n, qs in self.QUALITIES.items() if n > 1 for q in qs.split()]
         near = [f"{q}{number}" for q in self.QUALITIES[number].split()]
-        choices = pick_distractors(iv.short, near + pool, 5, rng)
+        choices = pick_distractors(
+            iv.short,
+            near + pool,
+            5,
+            rng,
+        )
         expl = f"{low} to {high}: {QUALITY_NAMES[quality]} {number}, {iv.semitones} semitones."
-        return Question("", choices, iv.short, [[low], [high]], clef, expl)
+        return Question(
+            "",
+            choices,
+            iv.short,
+            [[low], [high]],
+            clef,
+            expl,
+        )
 
 
 def _scale_name(mode: str) -> str:
@@ -152,24 +188,56 @@ class KeySignatures(Exercise):
         count = rng.choice(cfg.active_keys())
         tonic = mode_tonic(count, mode)
         if kind == "count":
-            return self._count_question(tonic, mode, count, rng)
-        return self._read_question(tonic, mode, count, rng.choice(cfg.active_clefs()), rng)
+            return self._count_question(
+                tonic,
+                mode,
+                count,
+                rng,
+            )
+        return self._read_question(
+            tonic,
+            mode,
+            count,
+            rng.choice(cfg.active_clefs()),
+            rng,
+        )
 
     @staticmethod
-    def _count_question(tonic: Note, mode: str, count: int, rng: random.Random) -> Question:
+    def _count_question(
+        tonic: Note,
+        mode: str,
+        count: int,
+        rng: random.Random,
+    ) -> Question:
         """'How many sharps or flats are in D Dorian?': the key is named, the signature is the answer."""
         correct = format_key_signature(count)
         near = [format_key_signature(c) for c in range(count - 2, count + 3) if abs(c) <= 7]
-        choices = pick_distractors(correct, near, 3, rng)
+        choices = pick_distractors(
+            correct,
+            near,
+            3,
+            rng,
+        )
         return Question(f"How many sharps or flats are in {tonic.name} {_scale_name(mode)}?", choices, correct)
 
     @staticmethod
-    def _read_question(tonic: Note, mode: str, count: int, clef: str, rng: random.Random) -> Question:
+    def _read_question(
+        tonic: Note,
+        mode: str,
+        count: int,
+        clef: str,
+        rng: random.Random,
+    ) -> Question:
         """A key signature on a staff: press the tonic of the scale of the kind asked, which has that signature."""
         correct = tonic.name
         near = [mode_tonic(c, mode).name for c in range(count - 2, count + 3) if abs(c) <= 7]
         everyone = [mode_tonic(c, mode).name for c in range(-7, 8)]
-        choices = pick_distractors(correct, near + everyone, 5, rng)
+        choices = pick_distractors(
+            correct,
+            near + everyone,
+            5,
+            rng,
+        )
         word = MODE_WORDS.get(mode, f"{mode} scale")
         notes = [*build(tonic, SCALES[mode]), tonic.transpose(Interval(8, "P"))]  # the scale, up to its octave
         scale = _scale_name(mode)
@@ -209,7 +277,12 @@ class ScaleDegrees(Exercise):
         target = notes[degree - 1]
         pool = [Note(4, l, a).name for l in range(7) for a in (-1, 0, 1)]
         near = [Note.from_diatonic(target.diatonic, a).name for a in (-1, 0, 1)]
-        choices = pick_distractors(target.name, near + pool, 5, rng)
+        choices = pick_distractors(
+            target.name,
+            near + pool,
+            5,
+            rng,
+        )
         spelled = " ".join(n.name for n in notes)
         return Question(
             f"In {tonic.name} {scale}, what is scale degree {degree}?",
@@ -240,9 +313,21 @@ class ChordQualities(Exercise):
         chord = build(root, CHORDS[quality])
         if any(abs(n.accidental) > 1 for n in chord) or chord[-1].diatonic > hi.diatonic + 3:
             return self.generate(rng)
-        choices = pick_distractors(quality, list(CHORDS), 4, rng)
+        choices = pick_distractors(
+            quality,
+            list(CHORDS),
+            4,
+            rng,
+        )
         expl = f"{root.name} {quality}: " + " ".join(n.name for n in chord)
-        return Question("", choices, quality, [chord], clef, expl)
+        return Question(
+            "",
+            choices,
+            quality,
+            [chord],
+            clef,
+            expl,
+        )
 
 
 # Where the lowest and highest note of an arpeggio may sit on each clef (up to two ledger lines either side of the staff).
@@ -285,7 +370,12 @@ class ArpeggioNames(Exercise):
             clef = rng.choice(cfg.active_clefs())
             key = rng.choice(cfg.active_keys()) if cfg.key_signature else 0
             root = Note(4, rng.randrange(7), rng.choice((-1, 0, 1)))
-            if (root.letter, root.accidental) in ((2, 1), (6, 1), (0, -1), (3, -1)):  # E♯ B♯ C♭ F♭ are not worth asking
+            if (root.letter, root.accidental) in (
+                (2, 1),
+                (6, 1),
+                (0, -1),
+                (3, -1),
+            ):  # E♯ B♯ C♭ F♭ are not worth asking
                 continue
             notes = arpeggio(root, CHORDS[chord_type], inversion)
             if any(abs(n.accidental) > 1 for n in notes):  # no double sharps or flats
@@ -296,11 +386,27 @@ class ArpeggioNames(Exercise):
                 continue
             shift = rng.choice(fits) // 7
             notes = [Note(n.octave + shift, n.letter, n.accidental) for n in notes]
-            return self._question(chord_type, inversion, root, notes, clef, key, cfg)
+            return self._question(
+                chord_type,
+                inversion,
+                root,
+                notes,
+                clef,
+                key,
+                cfg,
+            )
         raise RuntimeError("no arpeggio fits the chosen settings")
 
     @staticmethod
-    def _question(chord_type, inversion, root, notes, clef, key, cfg) -> Question:
+    def _question(
+        chord_type,
+        inversion,
+        root,
+        notes,
+        clef,
+        key,
+        cfg,
+    ) -> Question:
         joiner = " \u00b7 "
         types = cfg.active_types()
         inversions = sorted({i for t in types for i in cfg.inversions_for(t)})
@@ -324,8 +430,22 @@ class ArpeggioNames(Exercise):
 
 
 # Black keys: pitch class -> (letter, accidental) for the sharp name and for the flat name.
-_BLACK_KEY_NAMES = {1: ((0, 1), (1, -1)), 3: ((1, 1), (2, -1)), 6: ((3, 1), (4, -1)), 8: ((4, 1), (5, -1)), 10: ((5, 1), (6, -1))}
-_WHITE_KEY_LETTER = {0: 0, 2: 1, 4: 2, 5: 3, 7: 4, 9: 5, 11: 6}
+_BLACK_KEY_NAMES = {
+    1: ((0, 1), (1, -1)),
+    3: ((1, 1), (2, -1)),
+    6: ((3, 1), (4, -1)),
+    8: ((4, 1), (5, -1)),
+    10: ((5, 1), (6, -1)),
+}
+_WHITE_KEY_LETTER = {
+    0: 0,
+    2: 1,
+    4: 2,
+    5: 3,
+    7: 4,
+    9: 5,
+    11: 6,
+}
 
 
 def _key_tonic(count: int) -> Note:
@@ -334,7 +454,10 @@ def _key_tonic(count: int) -> Note:
     return Note(4, "CDEFGAB".index(name[0]), 1 if "♯" in name else -1 if "♭" in name else 0)
 
 
-def _key_spellings(pc: int, count: int | None) -> list[tuple[int, int]]:
+def _key_spellings(
+    pc: int,
+    count: int | None,
+) -> list[tuple[int, int]]:
     """The (letter, accidental) names that are correct for a key of pitch class `pc` in a key signature.
 
     Notes of the key keep the spelling the key gives them (the F key is E♯ in C♯ major). Other white keys use
@@ -356,7 +479,11 @@ def _key_spellings(pc: int, count: int | None) -> list[tuple[int, int]]:
     return [sharp, flat]
 
 
-def _spelled(midi: int, letter: int, accidental: int) -> Note:
+def _spelled(
+    midi: int,
+    letter: int,
+    accidental: int,
+) -> Note:
     """The Note that sounds as `midi` when written with this letter name (B3 written as C♭ is C♭4)."""
     return Note((midi - accidental - NATURAL_SEMITONES[letter]) // 12 - 1, letter, accidental)
 

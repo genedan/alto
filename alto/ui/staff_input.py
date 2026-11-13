@@ -7,7 +7,12 @@ from ..settings import RANGE_LIMITS
 from ..theory.pitch import Note, key_accidental
 from .staff import BOTTOM_LINE, MAX_STEP, MIDDLE_C, StaffWidget
 
-PREVIEW = QColor(53, 132, 228, 170)  # the note that follows the pointer
+PREVIEW = QColor(
+    53,
+    132,
+    228,
+    170,
+)  # the note that follows the pointer
 
 
 class StaffInput(StaffWidget):
@@ -24,7 +29,11 @@ class StaffInput(StaffWidget):
         self.setMouseTracking(True)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
-    def reset(self, clef: str, key: int = 0) -> None:
+    def reset(
+        self,
+        clef: str,
+        key: int = 0,
+    ) -> None:
         """Clear the staff for a new question, drawing the key signature `key` (sharps +, flats -)."""
         self.accidental, self.locked = None, False
         self.show_notes([], clef, key)
@@ -49,7 +58,11 @@ class StaffInput(StaffWidget):
         accidental = self.accidental if self.accidental is not None else key_accidental(diatonic % 7, self.key)
         return Note.from_diatonic(diatonic, accidental)
 
-    def show_note(self, note: Note | None, color: QColor | None = None) -> None:
+    def show_note(
+        self,
+        note: Note | None,
+        color: QColor | None = None,
+    ) -> None:
         self.columns = [[note]] if note else []
         self.note_color = QColor(color) if color else None
         self.update()

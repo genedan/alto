@@ -7,14 +7,25 @@ from alto.learning import Database, Learner, stats
 from alto.theory.pitch import Note
 
 DAY = 86400.0
-NOW = datetime(2026, 11, 12, 15, 0).timestamp()
+NOW = datetime(
+    2026,
+    11,
+    12,
+    15,
+    0,
+).timestamp()
 
 
 class A(Exercise):
     name, par_seconds = "A", 4.0
 
     def generate(self, rng):
-        return Question("", ["x", "y"], "x", [[Note.from_diatonic(rng.randint(14, 60))]])
+        return Question(
+            "",
+            ["x", "y"],
+            "x",
+            [[Note.from_diatonic(rng.randint(14, 60))]],
+        )
 
 
 class B(A):
@@ -29,13 +40,53 @@ def fill():
     qa, qb = a.generate(rng), b.generate(rng)
     la, lb = Learner(db, ada), Learner(db, ben)
     # Ada, two days ago: A right first time (2 s), A wrong then right (4 s then 3 s)
-    la.record(a, qa, "x", True, 1, 2.0, now=NOW - 2 * DAY)
-    la.record(a, qb, "y", False, 1, 4.0, now=NOW - 2 * DAY + 10)
-    la.record(a, qb, "x", True, 2, 3.0, now=NOW - 2 * DAY + 20)
+    la.record(
+        a,
+        qa,
+        "x",
+        True,
+        1,
+        2.0,
+        now=NOW - 2 * DAY,
+    )
+    la.record(
+        a,
+        qb,
+        "y",
+        False,
+        1,
+        4.0,
+        now=NOW - 2 * DAY + 10,
+    )
+    la.record(
+        a,
+        qb,
+        "x",
+        True,
+        2,
+        3.0,
+        now=NOW - 2 * DAY + 20,
+    )
     # Ada, today: exercise B wrong
-    la.record(b, qb, "y", False, 1, 6.0, now=NOW - 60)
+    la.record(
+        b,
+        qb,
+        "y",
+        False,
+        1,
+        6.0,
+        now=NOW - 60,
+    )
     # Ben, 20 days ago: A right
-    lb.record(a, qa, "x", True, 1, 8.0, now=NOW - 20 * DAY)
+    lb.record(
+        a,
+        qa,
+        "x",
+        True,
+        1,
+        8.0,
+        now=NOW - 20 * DAY,
+    )
     return db, ada, ben
 
 
@@ -51,9 +102,19 @@ def test_collects_first_attempt_accuracy_and_extra_attempts():
 
 def test_filters_by_exercise_and_by_timeframe():
     db, ada, _ = fill()
-    only_b = stats.collect(db, [ada.id], exercise="B", now=NOW)
+    only_b = stats.collect(
+        db,
+        [ada.id],
+        exercise="B",
+        now=NOW,
+    )
     assert (only_b.questions, only_b.first_right) == (1, 0)
-    recent = stats.collect(db, [ada.id], since=NOW - DAY, now=NOW)
+    recent = stats.collect(
+        db,
+        [ada.id],
+        since=NOW - DAY,
+        now=NOW,
+    )
     assert recent.questions == 1
 
 
@@ -67,7 +128,12 @@ def test_collection_wide_counts_every_profile():
 
 def test_buckets_run_without_gaps_from_first_answer_to_now():
     db, ada, _ = fill()
-    s = stats.collect(db, [ada.id], since=NOW - 7 * DAY, now=NOW)
+    s = stats.collect(
+        db,
+        [ada.id],
+        since=NOW - 7 * DAY,
+        now=NOW,
+    )
     assert s.granularity == "day" and len(s.buckets) == 8
     assert sum(b.questions for b in s.buckets) == s.questions
     assert [b.questions for b in s.buckets][-3:] == [2, 0, 1]  # two days ago, yesterday (empty), today
@@ -76,9 +142,33 @@ def test_buckets_run_without_gaps_from_first_answer_to_now():
 def test_long_spans_use_coarser_buckets():
     db, ada, _ = fill()
     assert stats.collect(db, None, now=NOW).granularity == "day"  # 20 days
-    assert stats.collect(db, None, since=NOW - 120 * DAY, now=NOW).granularity == "week"
-    assert stats.collect(db, None, since=NOW - 400 * DAY, now=NOW).granularity == "month"
-    assert stats.collect(db, [ada.id], since=NOW - 3600 * 5, now=NOW).granularity == "hour"
+    assert (
+        stats.collect(
+            db,
+            None,
+            since=NOW - 120 * DAY,
+            now=NOW,
+        ).granularity
+        == "week"
+    )
+    assert (
+        stats.collect(
+            db,
+            None,
+            since=NOW - 400 * DAY,
+            now=NOW,
+        ).granularity
+        == "month"
+    )
+    assert (
+        stats.collect(
+            db,
+            [ada.id],
+            since=NOW - 3600 * 5,
+            now=NOW,
+        ).granularity
+        == "hour"
+    )
 
 
 def test_by_exercise_and_hardest_questions():
@@ -104,6 +194,31 @@ def test_daily_counts_count_first_answers_per_local_day_and_follow_the_exercise(
     everything = stats.daily_counts(learner.db, [learner.profile.id], now=now)
     assert everything and datetime.fromtimestamp(now).date() >= max(everything)
     total = sum(everything.values())
-    assert total == stats.collect(learner.db, [learner.profile.id], None, None, now).questions
-    assert stats.daily_counts(learner.db, [learner.profile.id], "NoSuchExercise", now=now) == {}
-    assert stats.daily_counts(learner.db, [learner.profile.id], weeks=1, now=now + 400 * 86400) == {}  # a year on: all too old
+    assert (
+        total
+        == stats.collect(
+            learner.db,
+            [learner.profile.id],
+            None,
+            None,
+            now,
+        ).questions
+    )
+    assert (
+        stats.daily_counts(
+            learner.db,
+            [learner.profile.id],
+            "NoSuchExercise",
+            now=now,
+        )
+        == {}
+    )
+    assert (
+        stats.daily_counts(
+            learner.db,
+            [learner.profile.id],
+            weeks=1,
+            now=now + 400 * 86400,
+        )
+        == {}
+    )  # a year on: all too old

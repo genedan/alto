@@ -106,7 +106,14 @@ def test_note_names_key_signature_values_and_naming():
     from alto.theory.pitch import key_accidental
 
     cfg = settings.note_names
-    old = (set(cfg.clefs), dict(cfg.ranges), set(cfg.key_signatures), set(cfg.note_values), cfg.naming, cfg.accidentals)
+    old = (
+        set(cfg.clefs),
+        dict(cfg.ranges),
+        set(cfg.key_signatures),
+        set(cfg.note_values),
+        cfg.naming,
+        cfg.accidentals,
+    )
     try:
         cfg.clefs, cfg.ranges = {"treble"}, {}
         cfg.key_signatures, cfg.note_values = {2, -3}, {"half", "eighth"}
@@ -122,10 +129,30 @@ def test_note_names_key_signature_values_and_naming():
                 if not accidentals:  # with no explicit signs the key signature decides the accidental
                     assert note.accidental == key_accidental(note.letter, q.key)
             if naming == "solfege":
-                assert all(c[:2] in ("Do", "Re", "Mi", "Fa", "So", "La", "Si") for q in qs for c in q.choices)
+                assert all(
+                    c[:2]
+                    in (
+                        "Do",
+                        "Re",
+                        "Mi",
+                        "Fa",
+                        "So",
+                        "La",
+                        "Si",
+                    )
+                    for q in qs
+                    for c in q.choices
+                )
         assert {q.key for q in qs} == {2, -3}
     finally:
-        (cfg.clefs, cfg.ranges, cfg.key_signatures, cfg.note_values, cfg.naming, cfg.accidentals) = old
+        (
+            cfg.clefs,
+            cfg.ranges,
+            cfg.key_signatures,
+            cfg.note_values,
+            cfg.naming,
+            cfg.accidentals,
+        ) = old
 
 
 def test_keyboard_exercise():
@@ -157,7 +184,12 @@ def test_keyboard_range_and_octave_answers():
     from alto.exercises.library import KeyboardNotes
 
     cfg = settings.keyboard
-    old = (cfg.black_keys, cfg.require_octave, cfg.low, cfg.high)
+    old = (
+        cfg.black_keys,
+        cfg.require_octave,
+        cfg.low,
+        cfg.high,
+    )
     try:
         rng = random.Random(6)
         cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = True, False, 48, 72
@@ -191,7 +223,14 @@ def test_keyboard_key_signature_requires_the_right_spelling():
     from alto.exercises.library import KeyboardNotes
 
     cfg = settings.keyboard
-    old = (cfg.key_signature, cfg.keys, cfg.black_keys, cfg.require_octave, cfg.low, cfg.high)
+    old = (
+        cfg.key_signature,
+        cfg.keys,
+        cfg.black_keys,
+        cfg.require_octave,
+        cfg.low,
+        cfg.high,
+    )
     try:
         cfg.key_signature, cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = True, True, False, 60, 71
         rng = random.Random(8)
@@ -285,7 +324,12 @@ def test_note_construction_key_signature():
     from alto.theory.pitch import key_accidental
 
     cfg = settings.construction
-    old = (set(cfg.clefs), cfg.accidentals, cfg.key_signature, set(cfg.keys))
+    old = (
+        set(cfg.clefs),
+        cfg.accidentals,
+        cfg.key_signature,
+        set(cfg.keys),
+    )
     try:
         rng = random.Random(12)
         cfg.clefs, cfg.key_signature, cfg.keys, cfg.accidentals = {"treble"}, True, {2, -3}, False

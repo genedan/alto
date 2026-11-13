@@ -33,7 +33,13 @@ HEAD_CENTRE = {  # centre of the note head, from the glyph's origin
 FLAGS = {"eighth": 1, "sixteenth": 2, "thirty_second": 3}
 STEM_LEFT, STEM_RIGHT = 43.09, 46.55  # the stem of the stem-up quarter note
 FLAG_CLIP = 46.9  # flags are the part of a glyph to the right of this
-STEM_TOP = {"half": -134.2, "quarter": -134.2, "eighth": -134.2, "sixteenth": -134.2, "thirty_second": -153.5}
+STEM_TOP = {
+    "half": -134.2,
+    "quarter": -134.2,
+    "eighth": -134.2,
+    "sixteenth": -134.2,
+    "thirty_second": -153.5,
+}
 
 _glyphs: dict[str, QPainterPath] = {}
 _shapes: dict[tuple[str, bool], QPainterPath] = {}
@@ -45,19 +51,70 @@ def _square_breve() -> QPainterPath:
     read like the serifs of a capital I. 1.65 staff spaces wide and 1.45 tall."""
     s = STAFF_SPACE
 
-    def rect(x0: float, y0: float, x1: float, y1: float, r: float = 0.0) -> QPainterPath:
+    def rect(
+        x0: float,
+        y0: float,
+        x1: float,
+        y1: float,
+        r: float = 0.0,
+    ) -> QPainterPath:
         path = QPainterPath()
         if r:
-            path.addRoundedRect(QRectF(x0 * s, y0 * s, (x1 - x0) * s, (y1 - y0) * s), r * s, r * s)
+            path.addRoundedRect(
+                QRectF(
+                    x0 * s,
+                    y0 * s,
+                    (x1 - x0) * s,
+                    (y1 - y0) * s,
+                ),
+                r * s,
+                r * s,
+            )
         else:
-            path.addRect(QRectF(x0 * s, y0 * s, (x1 - x0) * s, (y1 - y0) * s))
+            path.addRect(
+                QRectF(
+                    x0 * s,
+                    y0 * s,
+                    (x1 - x0) * s,
+                    (y1 - y0) * s,
+                ),
+            )
         return path
 
     outer, inner = 0.825, 0.655  # the uprights run from `inner` to `outer`, either side of the middle
-    shape = rect(-outer, -0.62, outer, 0.62)  # the heavy bars above and below the slot
-    shape = shape.united(rect(-outer, -0.725, -inner, 0.725, 0.03))  # the uprights, a little taller than the bars
-    shape = shape.united(rect(inner, -0.725, outer, 0.725, 0.03))
-    return shape.subtracted(rect(-inner, -0.16, inner, 0.16, 0.10))  # the slot between the uprights
+    shape = rect(
+        -outer,
+        -0.62,
+        outer,
+        0.62,
+    )  # the heavy bars above and below the slot
+    shape = shape.united(
+        rect(
+            -outer,
+            -0.725,
+            -inner,
+            0.725,
+            0.03,
+        ),
+    )  # the uprights, a little taller than the bars
+    shape = shape.united(
+        rect(
+            inner,
+            -0.725,
+            outer,
+            0.725,
+            0.03,
+        ),
+    )
+    return shape.subtracted(
+        rect(
+            -inner,
+            -0.16,
+            inner,
+            0.16,
+            0.10,
+        ),
+    )  # the slot between the uprights
 
 
 def _glyph(value: str) -> QPainterPath:
@@ -67,7 +124,12 @@ def _glyph(value: str) -> QPainterPath:
             path = _glyphs[value] = _square_breve()
         else:
             path = _glyphs[value] = QPainterPath()
-            path.addText(0, 0, QFont("Noto Music", 100), GLYPHS[value])
+            path.addText(
+                0,
+                0,
+                QFont("Noto Music", 100),
+                GLYPHS[value],
+            )
     return path
 
 
@@ -83,10 +145,24 @@ def _stem_down_shape(value: str) -> QPainterPath:
         extra = STEM_TOP["quarter"] - STEM_TOP[value]  # the 32nd note's stem is longer than the quarter's
         if extra:
             stem = QPainterPath()
-            stem.addRect(QRectF(left, 2 * hy - STEM_TOP["quarter"] - 1, right - left, -extra + 1))
+            stem.addRect(
+                QRectF(
+                    left,
+                    2 * hy - STEM_TOP["quarter"] - 1,
+                    right - left,
+                    -extra + 1,
+                ),
+            )
             shape = shape.united(stem)
         beside = QPainterPath()
-        beside.addRect(QRectF(FLAG_CLIP, -300, 200, 400))
+        beside.addRect(
+            QRectF(
+                FLAG_CLIP,
+                -300,
+                200,
+                400,
+            ),
+        )
         flags = _glyph(value).intersected(beside)
         move = QTransform()
         move.translate(right - 0.3 - FLAG_CLIP, 0)  # the flag's root meets the new stem
@@ -96,7 +172,10 @@ def _stem_down_shape(value: str) -> QPainterPath:
     return shape
 
 
-def note_shape(value: str, stem_down: bool = False) -> QPainterPath:
+def note_shape(
+    value: str,
+    stem_down: bool = False,
+) -> QPainterPath:
     """The outline of a note of this value (see the module docstring); stems only exist from the half note on."""
     stem_down = stem_down and value not in ("breve", "whole")
     key = (value, stem_down)
@@ -105,7 +184,15 @@ def note_shape(value: str, stem_down: bool = False) -> QPainterPath:
     return _shapes[key]
 
 
-def draw_note(p: QPainter, value: str, x: float, y: float, gap: float, colour: QColor, stem_down: bool = False) -> None:
+def draw_note(
+    p: QPainter,
+    value: str,
+    x: float,
+    y: float,
+    gap: float,
+    colour: QColor,
+    stem_down: bool = False,
+) -> None:
     """Draw a note with its head centred on (x, y); `gap` is the distance between staff lines (the head's height)."""
     hx, hy = HEAD_CENTRE[value]
     k = gap / STAFF_SPACE

@@ -17,13 +17,28 @@ NEW = ("soprano", "mezzo", "baritone")
 
 
 def test_each_c_clef_puts_middle_c_on_its_own_line():
-    lines_up = {"soprano": 0, "mezzo": 1, "alto": 2, "tenor": 3, "baritone": 4}  # lines above the bottom one
+    lines_up = {
+        "soprano": 0,
+        "mezzo": 1,
+        "alto": 2,
+        "tenor": 3,
+        "baritone": 4,
+    }  # lines above the bottom one
     for clef, lines in lines_up.items():
         assert MIDDLE_C - BOTTOM_LINE[clef] == 2 * lines, clef
 
 
 def test_the_clefs_are_grouped_into_the_grand_staff_the_everyday_clefs_and_the_rest():
-    assert settings.CLEF_GROUPS == (("grand",), ("treble", "bass", "alto", "tenor"), ("soprano", "mezzo", "baritone"))
+    assert settings.CLEF_GROUPS == (
+        ("grand",),
+        (
+            "treble",
+            "bass",
+            "alto",
+            "tenor",
+        ),
+        ("soprano", "mezzo", "baritone"),
+    )
     assert sorted(c for g in settings.CLEF_GROUPS for c in g) == sorted(settings.RANGE_KEYS)  # each clef in one group
     for clef in settings.RANGE_KEYS:
         assert clef in CLEF_NAMES and clef in settings.DEFAULT_RANGES and clef in settings.RANGE_LIMITS
@@ -55,7 +70,10 @@ def test_every_signature_sits_on_the_staff_in_every_clef(clef):
 
 
 @pytest.mark.parametrize("clef", settings.CLEFS)
-def test_a_staff_with_notes_and_a_key_signature_draws_in_every_clef(app, clef):
+def test_a_staff_with_notes_and_a_key_signature_draws_in_every_clef(
+    app,
+    clef,
+):
     staff = StaffWidget()
     staff.resize(500, 300)
     low = Note.from_diatonic(BOTTOM_LINE[clef])
@@ -85,7 +103,12 @@ def test_the_exercises_ask_on_the_new_clefs(clef):
 
 
 def test_the_arpeggio_windows_sit_the_same_way_on_every_clef_but_the_treble():
-    for clef in (*NEW, "bass", "alto", "tenor"):
+    for clef in (
+        *NEW,
+        "bass",
+        "alto",
+        "tenor",
+    ):
         lo, hi = ARPEGGIO_WINDOWS[clef]
         assert (lo.diatonic - BOTTOM_LINE[clef], hi.diatonic - BOTTOM_LINE[clef]) == (-4, 12), clef
 
@@ -99,7 +122,12 @@ def test_the_arpeggio_windows_sit_the_same_way_on_every_clef_but_the_treble():
         (sp.KeySignatureSettingsPanel, settings.key_signatures, False),
     ],
 )
-def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(app, panel_class, config, expect_grand):
+def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(
+    app,
+    panel_class,
+    config,
+    expect_grand,
+):
     panel = panel_class(config)
     panel.resize(272, 800)
     panel.show()
@@ -137,7 +165,10 @@ def _ink(widget) -> bytes:
     return bytes(image.constBits())
 
 
-def test_the_baritone_clef_is_an_f_clef_unless_the_c_clef_is_chosen(app, baritone):
+def test_the_baritone_clef_is_an_f_clef_unless_the_c_clef_is_chosen(
+    app,
+    baritone,
+):
     assert baritone.DEFAULT_BARITONE == "f" and baritone.baritone_clef() == "f"
     assert baritone.clef_shape("baritone") == "baritone_f" and baritone.clef_shape("alto") == "alto"
     staff = StaffWidget()
@@ -170,7 +201,11 @@ def test_the_baritone_clef_choice_is_saved_and_read_back(baritone):
 
 
 @pytest.mark.parametrize("font", ["finalemaestro", "noto"])
-def test_both_baritone_clefs_draw_in_a_music_font_and_in_the_built_in_one(app, baritone, font):
+def test_both_baritone_clefs_draw_in_a_music_font_and_in_the_built_in_one(
+    app,
+    baritone,
+    font,
+):
     baritone.set_style(font)
     try:
         for kind in ("f", "c"):
@@ -183,7 +218,10 @@ def test_both_baritone_clefs_draw_in_a_music_font_and_in_the_built_in_one(app, b
         baritone.set_style("finalemaestro")
 
 
-def test_the_settings_dialog_offers_both_ways_of_writing_the_baritone_clef(app, baritone):
+def test_the_settings_dialog_offers_both_ways_of_writing_the_baritone_clef(
+    app,
+    baritone,
+):
     from alto.ui.app_settings import AppSettingsDialog
 
     dialog = AppSettingsDialog()

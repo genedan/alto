@@ -10,7 +10,11 @@ from alto.ui.staff import BOTTOM_LINE
 from alto.ui.staff_input import StaffInput
 
 
-def y_of(staff: StaffInput, clef: str, diatonic: int) -> float:
+def y_of(
+    staff: StaffInput,
+    clef: str,
+    diatonic: int,
+) -> float:
     return staff.staff_bottoms()[clef] - (diatonic - BOTTOM_LINE[clef]) * staff.GAP / 2
 
 
@@ -45,11 +49,22 @@ def test_every_staff_draws_clefs_notes_and_key_signatures(app):
     from alto.settings import NOTE_VALUES
     from PySide6.QtGui import QPixmap
 
-    for clef in ("treble", "bass", "alto", "tenor", "grand"):
+    for clef in (
+        "treble",
+        "bass",
+        "alto",
+        "tenor",
+        "grand",
+    ):
         for value in NOTE_VALUES:
             staff = StaffInput()
             staff.resize(500, 360)
-            staff.show_notes([[Note(4, 0)]], clef, 3, value)
+            staff.show_notes(
+                [[Note(4, 0)]],
+                clef,
+                3,
+                value,
+            )
             image = QPixmap(staff.size())
             staff.render(image)
             assert not image.isNull()

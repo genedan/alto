@@ -31,7 +31,12 @@ def test_the_home_screen_has_a_card_for_each_exercise_and_reports_the_one_clicke
 def test_the_cards_are_laid_out_in_as_many_columns_as_fit(app):
     home = HomePage(REGISTRY)
     widths = {}
-    for width in (300, 700, 1100, 2000):
+    for width in (
+        300,
+        700,
+        1100,
+        2000,
+    ):
         home.resize(width, 600)
         home.show()
         QTest.qWait(10)
@@ -66,7 +71,10 @@ def test_an_exercise_with_no_icon_of_its_own_gets_the_default(app):
 
 
 @pytest.fixture
-def window(app, practised_learner):
+def window(
+    app,
+    practised_learner,
+):
     w = MainWindow(practised_learner(10))
     w.show()
     yield w
@@ -185,12 +193,20 @@ def test_the_statistics_and_database_pages_replace_the_current_page_and_back_ret
     assert window._overlay is None and window.stack.currentWidget() is exercise
 
 
-def test_switching_profile_changes_who_is_practising_and_goes_home(window, monkeypatch):
+def test_switching_profile_changes_who_is_practising_and_goes_home(
+    window,
+    monkeypatch,
+):
     db = window.learner.db
     ben = db.add_profile("Ben")
 
     class Chooses:
-        def __init__(self, db, current, parent):
+        def __init__(
+            self,
+            db,
+            current,
+            parent,
+        ):
             self.chosen = ben
 
         def exec(self):
@@ -214,7 +230,12 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(window, monke
     assert window.learner.profile == ben  # nothing changed
 
     class SameAgain(Chooses):
-        def __init__(self, db, current, parent):
+        def __init__(
+            self,
+            db,
+            current,
+            parent,
+        ):
             self.chosen = ben
 
     monkeypatch.setattr(mw, "ProfileDialog", SameAgain)
@@ -223,7 +244,10 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(window, monke
     assert isinstance(window.stack.currentWidget(), ExerciseView)  # the same profile again: stay where you are
 
 
-def test_changing_the_theme_in_settings_opens_a_fresh_window(window, monkeypatch):
+def test_changing_the_theme_in_settings_opens_a_fresh_window(
+    window,
+    monkeypatch,
+):
     rebuilt = []
     monkeypatch.setattr(window, "rebuild", lambda: rebuilt.append(1))
 
@@ -244,9 +268,17 @@ def test_changing_the_theme_in_settings_opens_a_fresh_window(window, monkeypatch
     assert rebuilt == [1]
 
 
-def test_a_rebuilt_window_takes_the_old_ones_place(app, practised_learner):
+def test_a_rebuilt_window_takes_the_old_ones_place(
+    app,
+    practised_learner,
+):
     old = MainWindow(practised_learner(5))
-    old.setGeometry(120, 80, 900, 600)
+    old.setGeometry(
+        120,
+        80,
+        900,
+        600,
+    )
     old.show()
     old.rebuild()
     fresh = cast(Any, QApplication.instance()).main_window  # set by rebuild()
@@ -255,7 +287,10 @@ def test_a_rebuilt_window_takes_the_old_ones_place(app, practised_learner):
     fresh.close()
 
 
-def test_restarting_starts_a_new_copy_then_quits(window, monkeypatch):
+def test_restarting_starts_a_new_copy_then_quits(
+    window,
+    monkeypatch,
+):
     started, quit_calls = [], []
     monkeypatch.setattr(mw.QProcess, "startDetached", lambda program, args: started.append((program, args)) or True)
     monkeypatch.setattr(mw.QApplication, "quit", lambda: quit_calls.append(1))
@@ -270,7 +305,12 @@ def test_the_menu_has_the_shortcuts(window):
     actions = {a.text(): a for a in window.menu_button.menu().actions() if a.text()}
     assert actions["Settings…"].shortcut() == QKeySequence("Ctrl+Alt+S")
     assert actions["Restart"].shortcut() == QKeySequence("Ctrl+R")
-    assert {"Home", "Statistics", "Browse database", "Quit"} <= set(actions)
+    assert {
+        "Home",
+        "Statistics",
+        "Browse database",
+        "Quit",
+    } <= set(actions)
     actions["Home"].trigger()
     assert window.stack.currentWidget() is window.home
     actions["Statistics"].trigger()
@@ -303,7 +343,11 @@ class FakeApp:
         return lambda *a: self.calls.append(name)
 
 
-def test_the_app_opens_a_window_for_the_chosen_profile(app, monkeypatch, tmp_path):
+def test_the_app_opens_a_window_for_the_chosen_profile(
+    app,
+    monkeypatch,
+    tmp_path,
+):
     from alto import __main__ as entry
 
     db_profile = Database().add_profile("Ada")
@@ -316,7 +360,10 @@ def test_the_app_opens_a_window_for_the_chosen_profile(app, monkeypatch, tmp_pat
     shown[0].close()
 
 
-def test_the_app_quits_quietly_if_no_profile_is_chosen(app, monkeypatch):
+def test_the_app_quits_quietly_if_no_profile_is_chosen(
+    app,
+    monkeypatch,
+):
     from alto import __main__ as entry
 
     monkeypatch.setattr(entry, "QApplication", FakeApp)

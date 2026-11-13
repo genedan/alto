@@ -25,7 +25,11 @@ class SidebarToggle(QToolButton):
 class HelpButton(QToolButton):
     """A "?" button that opens a small popover with help text. Click anywhere else to close it."""
 
-    def __init__(self, text_provider, parent=None):
+    def __init__(
+        self,
+        text_provider,
+        parent=None,
+    ):
         super().__init__(parent)
         self._text = text_provider  # called each time, so the text can follow the current settings
         self.setAutoRaise(True)
@@ -45,10 +49,20 @@ class HelpButton(QToolButton):
         label.setTextFormat(Qt.TextFormat.RichText)
         label.setFixedWidth(340)
         inner = QVBoxLayout(card)
-        inner.setContentsMargins(16, 14, 16, 14)
+        inner.setContentsMargins(
+            16,
+            14,
+            16,
+            14,
+        )
         inner.addWidget(label)
         outer = QVBoxLayout(popup)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.addWidget(card)
         popup.adjustSize()
         # right-aligned under the button

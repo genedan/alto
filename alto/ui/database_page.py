@@ -53,7 +53,11 @@ class RowsModel(QAbstractTableModel):
     def columnCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         return 0 if parent.isValid() else len(self.headers)
 
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole):
+    def data(
+        self,
+        index: QModelIndex | QPersistentModelIndex,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ):
         if role == ROW_ROLE:
             return self.extras[index.row()]
         text, value = self.rows[index.row()][index.column()]
@@ -65,7 +69,12 @@ class RowsModel(QAbstractTableModel):
             return int(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         return None
 
-    def headerData(self, section: int, orientation: Qt.Orientation, role: int = Qt.ItemDataRole.DisplayRole):
+    def headerData(
+        self,
+        section: int,
+        orientation: Qt.Orientation,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ):
         if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return self.headers[section]
         return None
@@ -80,7 +89,11 @@ class DatabasePage(QWidget):
 
     back = Signal()
 
-    def __init__(self, learner: Learner, parent: QWidget | None = None):
+    def __init__(
+        self,
+        learner: Learner,
+        parent: QWidget | None = None,
+    ):
         super().__init__(parent)
         self.learner = learner
         self._names = {cls.__name__: cls.name for cls in REGISTRY}
@@ -147,7 +160,12 @@ class DatabasePage(QWidget):
 
     # -- tables ---------------------------------------------------------------------------------------------------------
 
-    def _question_text(self, exercise: str, key: str, payload: str | None) -> str:
+    def _question_text(
+        self,
+        exercise: str,
+        key: str,
+        payload: str | None,
+    ) -> str:
         """What the question was, for a row. Questions whose record is gone show their key."""
         if payload is None:
             return "(no longer stored)"
@@ -196,7 +214,20 @@ class DatabasePage(QWidget):
             if total > ROW_LIMIT
             else f"{total:,} answers by {who}."
         )
-        model = RowsModel(["When", "Exercise", "Question", "Answer given", "Result", "Attempt", "Time"], rows, {5, 6}, extras)
+        model = RowsModel(
+            [
+                "When",
+                "Exercise",
+                "Question",
+                "Answer given",
+                "Result",
+                "Attempt",
+                "Time",
+            ],
+            rows,
+            {5, 6},
+            extras,
+        )
         return model, note
 
     def _questions(self) -> tuple[RowsModel, str]:
@@ -231,9 +262,24 @@ class DatabasePage(QWidget):
                 ],
             )
         model = RowsModel(
-            ["Exercise", "Question", "Strain", "Answered", "Right first time", "Missed", "Typical time", "Last seen"],
+            [
+                "Exercise",
+                "Question",
+                "Strain",
+                "Answered",
+                "Right first time",
+                "Missed",
+                "Typical time",
+                "Last seen",
+            ],
             rows,
-            {2, 3, 4, 5, 6},
+            {
+                2,
+                3,
+                4,
+                5,
+                6,
+            },
             extras,
         )
         return model, (
@@ -252,7 +298,16 @@ class DatabasePage(QWidget):
             for r in self.learner.db.profile_rows()
         ]
         return (
-            RowsModel(["Name", "Created", "Answers", "Questions"], rows, {2, 3}),
+            RowsModel(
+                [
+                    "Name",
+                    "Created",
+                    "Answers",
+                    "Questions",
+                ],
+                rows,
+                {2, 3},
+            ),
             f"{len(rows)} profile{'s' if len(rows) != 1 else ''}.",
         )
 
@@ -283,7 +338,12 @@ class DatabasePage(QWidget):
         except (ValueError, KeyError, TypeError):
             return
         name = str(self._names.get(extra["exercise"], extra["exercise"]))
-        QuestionPreview(name, question, extra.get("details"), self).exec()
+        QuestionPreview(
+            name,
+            question,
+            extra.get("details"),
+            self,
+        ).exec()
 
     def _show_count(self) -> None:
         shown, total = self.proxy.rowCount(), self.model.rowCount()

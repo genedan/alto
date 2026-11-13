@@ -39,12 +39,22 @@ def test_a_profile_with_no_answers_gets_an_invitation_not_numbers(app):
     assert page.grab().width() > 0
 
 
-def test_the_numbers_come_from_the_active_profiles_answers(app, practised_learner):
+def test_the_numbers_come_from_the_active_profiles_answers(
+    app,
+    practised_learner,
+):
     learner = practised_learner()
     other = learner.db.add_profile("Someone else")
     other_learner = Learner(learner.db, other)
     ex = REGISTRY[0]()
-    other_learner.record(ex, ex.generate(random.Random(1)), "x", False, 1, 3.0)
+    other_learner.record(
+        ex,
+        ex.generate(random.Random(1)),
+        "x",
+        False,
+        1,
+        3.0,
+    )
     page = StatsPage(learner)
     page.timeframe.setCurrentIndex(page.timeframe.findText("All time"))
     total = int(page.tiles["questions"].value.text())
@@ -58,7 +68,10 @@ def test_the_numbers_come_from_the_active_profiles_answers(app, practised_learne
     assert page.grab().width() > 0
 
 
-def test_every_timeframe_and_exercise_can_be_chosen(app, practised_learner):
+def test_every_timeframe_and_exercise_can_be_chosen(
+    app,
+    practised_learner,
+):
     page = StatsPage(practised_learner())
     counts = {}
     for i in range(page.timeframe.count()):
@@ -78,7 +91,10 @@ def test_every_timeframe_and_exercise_can_be_chosen(app, practised_learner):
     assert page.volume.title.endswith(("hour", "day"))
 
 
-def test_back_is_offered_by_a_button_and_by_escape(app, practised_learner):
+def test_back_is_offered_by_a_button_and_by_escape(
+    app,
+    practised_learner,
+):
     page = StatsPage(practised_learner(30))
     spy = QSignalSpy(page.back)
     page.back_button.click()
@@ -88,7 +104,10 @@ def test_back_is_offered_by_a_button_and_by_escape(app, practised_learner):
     assert spy.count() == 2
 
 
-def test_a_name_is_kept_for_exercises_the_page_no_longer_knows(app, practised_learner):
+def test_a_name_is_kept_for_exercises_the_page_no_longer_knows(
+    app,
+    practised_learner,
+):
     page = StatsPage(practised_learner(30))
     assert page._names()[REGISTRY[0].__name__] == REGISTRY[0].name
     assert stats_dialog.Tile("caption").caption.text() == "caption"

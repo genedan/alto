@@ -44,7 +44,13 @@ def _isolated_state():
     from alto import settings
     from alto.audio import sounds
 
-    names = ("note_names", "keyboard", "construction", "arpeggio", "key_signatures")
+    names = (
+        "note_names",
+        "keyboard",
+        "construction",
+        "arpeggio",
+        "key_signatures",
+    )
     before = {n: copy.deepcopy(getattr(settings, n).__dict__) for n in names}
     muted = sounds.enabled
     sounds.enabled = False
@@ -78,7 +84,11 @@ def practised_learner():
     from alto.exercises import REGISTRY
     from alto.learning import Database, Learner
 
-    def make(days=120, name="Ada", db=None):
+    def make(
+        days=120,
+        name="Ada",
+        db=None,
+    ):
         db = db or Database()
         learner = Learner(db, db.add_profile(name))
         rng, now = random.Random(3), time.time()
@@ -88,10 +98,34 @@ def practised_learner():
                 q = ex.generate(rng)
                 at = now - day * 86400.0 - rng.randint(0, 3000)
                 if rng.random() < 0.4:
-                    learner.record(ex, q, "wrong", False, 1, rng.uniform(1, 9), now=at)
-                    learner.record(ex, q, q.answer, True, 2, 2.0, now=at + 5)
+                    learner.record(
+                        ex,
+                        q,
+                        "wrong",
+                        False,
+                        1,
+                        rng.uniform(1, 9),
+                        now=at,
+                    )
+                    learner.record(
+                        ex,
+                        q,
+                        q.answer,
+                        True,
+                        2,
+                        2.0,
+                        now=at + 5,
+                    )
                 else:
-                    learner.record(ex, q, q.answer, True, 1, rng.uniform(0.5, 12), now=at)
+                    learner.record(
+                        ex,
+                        q,
+                        q.answer,
+                        True,
+                        1,
+                        rng.uniform(0.5, 12),
+                        now=at,
+                    )
         return learner
 
     return make
@@ -105,7 +139,11 @@ def _close_databases(monkeypatch):
     opened = []
     original = Database.__init__
 
-    def tracking(self, *args, **kwargs):
+    def tracking(
+        self,
+        *args,
+        **kwargs,
+    ):
         original(self, *args, **kwargs)
         opened.append(self)
 

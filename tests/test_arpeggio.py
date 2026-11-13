@@ -50,7 +50,12 @@ def test_the_question_names_the_type_and_the_inversion(cfg):
 
 def test_every_answer_the_exercise_can_give_is_one_of_its_buttons(cfg):
     cfg.types = set(settings.ARPEGGIO_TYPES)
-    cfg.clefs = {"treble", "bass", "alto", "tenor"}
+    cfg.clefs = {
+        "treble",
+        "bass",
+        "alto",
+        "tenor",
+    }
     rng = random.Random(5)
     for _ in range(400):
         q = ArpeggioNames().generate(rng)
@@ -73,7 +78,12 @@ def test_the_inversion_buttons_are_only_those_that_can_be_asked(cfg):
     cfg.types, cfg.inversions = {"major", "dominant 7th"}, {0, 2}
     q = ArpeggioNames().generate(random.Random(2))
     assert q.octaves == ["root position", "2nd inversion"]
-    cfg.inversions = {0, 1, 2, 3}
+    cfg.inversions = {
+        0,
+        1,
+        2,
+        3,
+    }
     cfg.types = {"major"}
     assert ArpeggioNames().generate(random.Random(2)).octaves == list(INVERSION_NAMES[:3])  # a triad stops at the 2nd
 
@@ -81,7 +91,12 @@ def test_the_inversion_buttons_are_only_those_that_can_be_asked(cfg):
 def test_the_notes_sit_on_the_chosen_staff(cfg):
     cfg.types = set(settings.ARPEGGIO_TYPES)
     rng = random.Random(7)
-    for clef in ("treble", "bass", "alto", "tenor"):
+    for clef in (
+        "treble",
+        "bass",
+        "alto",
+        "tenor",
+    ):
         cfg.clefs = {clef}
         low, high = (n.diatonic for n in ARPEGGIO_WINDOWS[clef])
         for _ in range(150):
@@ -128,15 +143,27 @@ class FakeStore:
     def __init__(self, values=None):
         self.values = dict(values or {})
 
-    def setValue(self, key, value):
+    def setValue(
+        self,
+        key,
+        value,
+    ):
         self.values[key] = value
 
-    def value(self, key, default=None):
+    def value(
+        self,
+        key,
+        default=None,
+    ):
         return self.values.get(key, default)
 
 
 @pytest.fixture
-def view(app, cfg, monkeypatch):
+def view(
+    app,
+    cfg,
+    monkeypatch,
+):
     from alto.audio import sounds
     from alto.ui import settings_panel
     from alto.ui.exercise_view import ExerciseView
@@ -154,7 +181,10 @@ def view(app, cfg, monkeypatch):
     QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
 
-def press(view, text):
+def press(
+    view,
+    text,
+):
     next(b for b in view.buttons if b.text() == text).click()
 
 
@@ -190,7 +220,11 @@ def test_the_inversion_row_is_labelled_inversion(view):
     assert [w.text() for w in labels if isinstance(w, QLabel)] == ["Inversion"]
 
 
-def test_the_settings_panel_edits_and_saves_the_settings(view, cfg, monkeypatch):
+def test_the_settings_panel_edits_and_saves_the_settings(
+    view,
+    cfg,
+    monkeypatch,
+):
     from alto.ui import settings_panel
 
     saved = FakeStore()
@@ -210,7 +244,10 @@ def test_the_settings_panel_edits_and_saves_the_settings(view, cfg, monkeypatch)
     assert panel.inversions_row.value.text() == "Root"
 
 
-def test_the_saved_settings_are_read_back(cfg, monkeypatch):
+def test_the_saved_settings_are_read_back(
+    cfg,
+    monkeypatch,
+):
     from alto.ui import settings_panel
 
     monkeypatch.setattr(

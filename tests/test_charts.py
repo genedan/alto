@@ -7,7 +7,10 @@ from PySide6.QtGui import QMouseEvent
 from PySide6.QtTest import QTest
 
 
-def ink(widget, size=(560, 260)) -> int:
+def ink(
+    widget,
+    size=(560, 260),
+) -> int:
     widget.resize(*size)
     image = widget.grab().toImage()
     return sum(
@@ -16,7 +19,12 @@ def ink(widget, size=(560, 260)) -> int:
 
 
 def test_ticks_are_round_numbers_up_to_just_above_the_top():
-    assert charts.nice_ticks(13) == [0, 5, 10, 15]
+    assert charts.nice_ticks(13) == [
+        0,
+        5,
+        10,
+        15,
+    ]
     assert charts.nice_ticks(0) == [0.0, 1.0] and charts.nice_ticks(-3) == [0.0, 1.0]
     assert charts.nice_ticks(100)[-1] >= 100 and charts.nice_ticks(0.07)[-1] >= 0.07
     ticks = charts.nice_ticks(8)
@@ -25,7 +33,37 @@ def test_ticks_are_round_numbers_up_to_just_above_the_top():
 
 def test_the_stacked_bar_chart_draws_bars_and_axes(app):
     chart = charts.StackedBarChart("Questions")
-    chart.set_data([f"d{i}" for i in range(12)], [3, 0, 5, 2, 0, 0, 8, 1, 4, 0, 2, 6], [1, 2, 0, 0, 0, 4, 1, 0, 0, 0, 3, 0])
+    chart.set_data(
+        [f"d{i}" for i in range(12)],
+        [
+            3,
+            0,
+            5,
+            2,
+            0,
+            0,
+            8,
+            1,
+            4,
+            0,
+            2,
+            6,
+        ],
+        [
+            1,
+            2,
+            0,
+            0,
+            0,
+            4,
+            1,
+            0,
+            0,
+            0,
+            3,
+            0,
+        ],
+    )
     with_bars = ink(chart)
     chart.set_data(["a"], [0], [0])  # nothing answered: only a message
     assert ink(chart) < with_bars
@@ -33,7 +71,10 @@ def test_the_stacked_bar_chart_draws_bars_and_axes(app):
     assert ink(chart) > 0  # the title and the message
 
 
-def test_a_bar_names_itself_when_hovered(app, monkeypatch):
+def test_a_bar_names_itself_when_hovered(
+    app,
+    monkeypatch,
+):
     shown = []
     monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
     hidden = []
@@ -95,17 +136,35 @@ def test_a_bar_names_itself_when_hovered(app, monkeypatch):
 
 
 @pytest.mark.parametrize("fixed", [None, 100.0])
-def test_the_line_chart_breaks_the_line_where_there_are_no_answers(app, fixed):
+def test_the_line_chart_breaks_the_line_where_there_are_no_answers(
+    app,
+    fixed,
+):
     chart = charts.LineChart("Accuracy", lambda v: f"{v:.0f}%", fixed_top=fixed)
     chart.set_data(["a", "b"], [None, None])
     message_only = ink(chart)  # nothing answered: only the title and a message
-    chart.set_data([f"d{i}" for i in range(8)], [50.0, 60.0, None, 80.0, None, None, 90.0, 95.0])
+    chart.set_data(
+        [f"d{i}" for i in range(8)],
+        [
+            50.0,
+            60.0,
+            None,
+            80.0,
+            None,
+            None,
+            90.0,
+            95.0,
+        ],
+    )
     assert ink(chart) > message_only
     chart.set_data([f"d{i}" for i in range(60)], [float(i) for i in range(60)])  # many points: smaller dots
     assert ink(chart) > message_only
 
 
-def test_a_line_chart_point_names_itself_when_hovered(app, monkeypatch):
+def test_a_line_chart_point_names_itself_when_hovered(
+    app,
+    monkeypatch,
+):
     shown = []
     monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
     chart = charts.LineChart("Speed", lambda v: f"{v:.1f} s")
@@ -175,7 +234,10 @@ def test_the_heatmap_shades_days_by_how_busy_they_were(app):
     assert ink(chart, (760, 190)) > 0 and ink(chart, (760, 190)) != busy  # still drawn, with a message
 
 
-def test_the_heatmap_names_the_day_under_the_pointer(app, monkeypatch):
+def test_the_heatmap_names_the_day_under_the_pointer(
+    app,
+    monkeypatch,
+):
     from datetime import date
 
     shown, hidden = [], []
@@ -187,7 +249,10 @@ def test_the_heatmap_names_the_day_under_the_pointer(app, monkeypatch):
     chart.set_data({today: 3}, today)
     cell, (x0, y0) = chart._cell(), chart._origin()
 
-    def move(x, y):
+    def move(
+        x,
+        y,
+    ):
         pt = QPointF(x, y)
         chart.mouseMoveEvent(
             QMouseEvent(

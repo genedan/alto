@@ -105,7 +105,12 @@ class InstrumentPicker(QWidget):
         page = QWidget()
         page.setObjectName("instrumentPage")
         lay = QVBoxLayout(page)
-        lay.setContentsMargins(18, 16, 12, 10)
+        lay.setContentsMargins(
+            18,
+            16,
+            12,
+            10,
+        )
         lay.setSpacing(10)
         lay.addWidget(self.title)
         lay.addLayout(self.chips)
@@ -125,16 +130,31 @@ class InstrumentPicker(QWidget):
         self.card = card = QFrame()  # the summary sits in a card; the buttons stay in view below the scrolling details
         card.setObjectName("helpCard")
         right = QVBoxLayout(card)
-        right.setContentsMargins(0, 0, 0, 0)
+        right.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         right.setSpacing(0)
         right.addWidget(scroll, 1)
         right.addWidget(self.divider)
         bar = QWidget()
         bar.setLayout(self.action_rows)
-        self.action_rows.setContentsMargins(18, 12, 18, 14)
+        self.action_rows.setContentsMargins(
+            18,
+            12,
+            18,
+            14,
+        )
         right.addWidget(bar)
         outer = QHBoxLayout(self)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.setSpacing(14)
         outer.addWidget(self.list)
         outer.addWidget(card, 1)
@@ -199,7 +219,11 @@ class InstrumentPicker(QWidget):
             elif item.layout() is not None:
                 InstrumentPicker._clear(item.layout())
 
-    def _chip(self, text: str, kind: str = "") -> QLabel:
+    def _chip(
+        self,
+        text: str,
+        kind: str = "",
+    ) -> QLabel:
         """A small rounded tag. kind is 'accent', 'good', 'warn', 'bad', or empty for a plain outlined one."""
         t = tokens(self)
         chip = QLabel(text)
@@ -210,10 +234,20 @@ class InstrumentPicker(QWidget):
         chip.setStyleSheet(colours + " border-radius: 10px; padding: 2px 10px;")
         return chip
 
-    def _link(self, url: str, text: str) -> str:
+    def _link(
+        self,
+        url: str,
+        text: str,
+    ) -> str:
         return f'<a href="{url}"><span style="color: {tokens(self)["accent"]};">{text}</span></a>'
 
-    def _fact(self, row: int, label: str, value: str, link: bool = False) -> None:
+    def _fact(
+        self,
+        row: int,
+        label: str,
+        value: str,
+        link: bool = False,
+    ) -> None:
         name = QLabel(label)
         name.setStyleSheet(f"color: {tokens(self)['muted']};")
         name.setFixedWidth(84)
@@ -223,11 +257,19 @@ class InstrumentPicker(QWidget):
         text.setTextFormat(Qt.TextFormat.RichText if link else Qt.TextFormat.PlainText)
         text.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
         text.setOpenExternalLinks(True)
-        self.facts.addWidget(name, row, 0, Qt.AlignmentFlag.AlignTop)
+        self.facts.addWidget(
+            name,
+            row,
+            0,
+            Qt.AlignmentFlag.AlignTop,
+        )
         self.facts.addWidget(text, row, 1)
 
     @staticmethod
-    def _per_way(members: list[Instrument], values: list[str]) -> str:
+    def _per_way(
+        members: list[Instrument],
+        values: list[str],
+    ) -> str:
         """One value if the ways of playing agree, else a line for each, led by its name."""
         shown = [(m, v) for m, v in zip(members, values) if v]
         if not shown:
@@ -300,7 +342,12 @@ class InstrumentPicker(QWidget):
             ("About", self._per_way(members, [i.note for i in infos]), False),
         ]
         for row, (label, value, link) in enumerate(r for r in rows if r[1]):
-            self._fact(row, label, value, link)
+            self._fact(
+                row,
+                label,
+                value,
+                link,
+            )
 
         # One row of buttons for each way of playing the instrument.
         self._clear(self.action_rows)

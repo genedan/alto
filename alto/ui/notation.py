@@ -19,17 +19,72 @@ class NotationStyle:
 
 
 STYLES = (
-    NotationStyle("finalemaestro", "Finale Maestro", "The look of Finale, the long-time publishing standard.", "finalemaestro"),
-    NotationStyle("leland", "Leland", "MuseScore 4's font. Light and modern, modelled on SCORE.", "leland"),
-    NotationStyle("bravura", "Bravura", "The reference font of the SMuFL standard. Dorico's default.", "bravura"),
-    NotationStyle("noto", "Noto Music", "Google's engraved look.", None),
-    NotationStyle("sebastian", "Sebastian", "A classic engraved face with generous proportions.", "sebastian"),
-    NotationStyle("leipzig", "Leipzig", "The default of Verovio. Crisp and compact.", "leipzig"),
-    NotationStyle("eugene", "Eugene", "Inspired by hand-engraved Parisian scores of the early 1900s.", "eugene"),
-    NotationStyle("goldenage", "Golden Age", "A heavy, old-fashioned plate-engraved look.", "goldenage"),
-    NotationStyle("petaluma", "Petaluma", "Handwritten look, as in jazz real books.", "petaluma"),
-    NotationStyle("musejazz", "MuseJazz", "Brush-pen hand, like MuseScore's jazz template.", "musejazz"),
-    NotationStyle("finalebroadway", "Finale Broadway", "Bold copyist's hand, as in Broadway scores.", "finalebroadway"),
+    NotationStyle(
+        "finalemaestro",
+        "Finale Maestro",
+        "The look of Finale, the long-time publishing standard.",
+        "finalemaestro",
+    ),
+    NotationStyle(
+        "leland",
+        "Leland",
+        "MuseScore 4's font. Light and modern, modelled on SCORE.",
+        "leland",
+    ),
+    NotationStyle(
+        "bravura",
+        "Bravura",
+        "The reference font of the SMuFL standard. Dorico's default.",
+        "bravura",
+    ),
+    NotationStyle(
+        "noto",
+        "Noto Music",
+        "Google's engraved look.",
+        None,
+    ),
+    NotationStyle(
+        "sebastian",
+        "Sebastian",
+        "A classic engraved face with generous proportions.",
+        "sebastian",
+    ),
+    NotationStyle(
+        "leipzig",
+        "Leipzig",
+        "The default of Verovio. Crisp and compact.",
+        "leipzig",
+    ),
+    NotationStyle(
+        "eugene",
+        "Eugene",
+        "Inspired by hand-engraved Parisian scores of the early 1900s.",
+        "eugene",
+    ),
+    NotationStyle(
+        "goldenage",
+        "Golden Age",
+        "A heavy, old-fashioned plate-engraved look.",
+        "goldenage",
+    ),
+    NotationStyle(
+        "petaluma",
+        "Petaluma",
+        "Handwritten look, as in jazz real books.",
+        "petaluma",
+    ),
+    NotationStyle(
+        "musejazz",
+        "MuseJazz",
+        "Brush-pen hand, like MuseScore's jazz template.",
+        "musejazz",
+    ),
+    NotationStyle(
+        "finalebroadway",
+        "Finale Broadway",
+        "Bold copyist's hand, as in Broadway scores.",
+        "finalebroadway",
+    ),
 )
 DEFAULT = "finalemaestro"
 BY_KEY = {s.key: s for s in STYLES}

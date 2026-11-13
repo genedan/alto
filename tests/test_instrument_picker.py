@@ -13,7 +13,10 @@ from PySide6.QtTest import QTest
 
 
 @pytest.fixture
-def picker(app, monkeypatch):
+def picker(
+    app,
+    monkeypatch,
+):
     """A picker that never touches the saved settings, and puts the instrument back afterwards."""
     monkeypatch.setattr(instrument_picker, "save_instrument", lambda: None)
     before = sounds.instrument
@@ -36,7 +39,14 @@ def row_labels(picker):
 
 
 def test_every_instrument_is_listed_once_and_the_one_in_use_is_selected_and_ticked(picker):
-    assert rows(picker) == ["Piano", "Flute", "French Horn", "Viola", "Marimba", "Vibraphone"]
+    assert rows(picker) == [
+        "Piano",
+        "Flute",
+        "French Horn",
+        "Viola",
+        "Marimba",
+        "Vibraphone",
+    ]
     assert picker.list.currentItem().data(Qt.ItemDataRole.UserRole) == "Piano"
     assert "✓" in picker.list.item(0).text()
     assert picker.title.text() == "Piano"
@@ -80,7 +90,10 @@ def test_using_an_instrument_switches_to_it_and_ticks_it(picker):
     assert ticked == ["Marimba"]
 
 
-def test_an_instrument_with_no_recordings_cannot_be_chosen(picker, monkeypatch):
+def test_an_instrument_with_no_recordings_cannot_be_chosen(
+    picker,
+    monkeypatch,
+):
     real = sounds.recordings
     monkeypatch.setattr(sounds, "recordings", lambda inst: {} if inst.key == "vibraphone" else real(inst))
     picker.select("vibraphone")
@@ -91,10 +104,19 @@ def test_an_instrument_with_no_recordings_cannot_be_chosen(picker, monkeypatch):
     assert sounds.instrument == "piano"
 
 
-def test_hear_it_plays_a_short_arpeggio_in_that_instrument(picker, monkeypatch):
+def test_hear_it_plays_a_short_arpeggio_in_that_instrument(
+    picker,
+    monkeypatch,
+):
     played = []
 
-    def record(midi, volume=1.0, instrument=None, force=False, **kwargs):
+    def record(
+        midi,
+        volume=1.0,
+        instrument=None,
+        force=False,
+        **kwargs,
+    ):
         played.append((midi, instrument, force))
 
     monkeypatch.setattr(sounds, "play_midi", record)

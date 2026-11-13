@@ -12,7 +12,10 @@ from PySide6.QtWidgets import QApplication
 
 
 @pytest.fixture
-def dialog(app, monkeypatch):
+def dialog(
+    app,
+    monkeypatch,
+):
     """A settings dialog that never touches the saved settings."""
     monkeypatch.setattr(app_settings, "saved_theme", lambda: "dark")
     dlg = AppSettingsDialog()
@@ -51,7 +54,10 @@ def test_a_palette_change_restyles_the_segmented_control(dialog):
     assert dialog.segments.styleSheet() == before  # same palette, same style: redrawn without error
 
 
-def test_choosing_a_theme_saves_and_applies_it(dialog, monkeypatch):
+def test_choosing_a_theme_saves_and_applies_it(
+    dialog,
+    monkeypatch,
+):
     from alto.ui import theme
 
     applied = []
@@ -107,7 +113,10 @@ def test_the_builder_has_a_chip_for_every_material_and_none_for_optional_parts(d
     assert keyboard_styles.current().key == "custom"
 
 
-def test_the_builder_opens_the_colour_picker_and_keeps_a_chosen_colour(dialog, monkeypatch):
+def test_the_builder_opens_the_colour_picker_and_keeps_a_chosen_colour(
+    dialog,
+    monkeypatch,
+):
     from alto.ui import keyboard_styles
     from PySide6.QtGui import QColor
 

@@ -18,9 +18,27 @@ def test_speed_term_runs_from_bonus_to_penalty():
 
 
 def test_quick_correct_answer_ends_up_easier_than_slow_one():
-    quick = scheduler.update_strain(2.0, True, 1, 0.5, 4.0)
-    steady = scheduler.update_strain(2.0, True, 1, 4.0, 4.0)
-    slow = scheduler.update_strain(2.0, True, 1, 40.0, 4.0)
+    quick = scheduler.update_strain(
+        2.0,
+        True,
+        1,
+        0.5,
+        4.0,
+    )
+    steady = scheduler.update_strain(
+        2.0,
+        True,
+        1,
+        4.0,
+        4.0,
+    )
+    slow = scheduler.update_strain(
+        2.0,
+        True,
+        1,
+        40.0,
+        4.0,
+    )
     assert quick < steady < 2.0 < slow  # even a correct answer is held against you if it took too long
 
 
@@ -28,19 +46,52 @@ def test_every_extra_attempt_adds_strain():
     s = 1.5
     for _ in range(3):
         before = s
-        s = scheduler.update_strain(s, False, 1, 2.0, 4.0)
+        s = scheduler.update_strain(
+            s,
+            False,
+            1,
+            2.0,
+            4.0,
+        )
         assert s > before
     assert s == scheduler.STRAIN_MAX or s > 1.5 + 2 * scheduler.WRONG_PENALTY
 
 
 def test_strain_stays_in_bounds():
-    assert scheduler.update_strain(0.1, True, 1, 0.1, 4.0) == 0.0
-    assert scheduler.update_strain(5.9, False, 1, 1.0, 4.0) == scheduler.STRAIN_MAX
+    assert (
+        scheduler.update_strain(
+            0.1,
+            True,
+            1,
+            0.1,
+            4.0,
+        )
+        == 0.0
+    )
+    assert (
+        scheduler.update_strain(
+            5.9,
+            False,
+            1,
+            1.0,
+            4.0,
+        )
+        == scheduler.STRAIN_MAX
+    )
 
 
 def test_weight_grows_with_strain_and_new_questions_beat_mastered_ones():
     later = 10_000.0
-    weights = [scheduler.weight(s, 0.0, later) for s in (0.0, 1.0, 2.0, 4.0, 6.0)]
+    weights = [
+        scheduler.weight(s, 0.0, later)
+        for s in (
+            0.0,
+            1.0,
+            2.0,
+            4.0,
+            6.0,
+        )
+    ]
     assert weights == sorted(weights)
     assert scheduler.weight(None, None, later) > scheduler.weight(0.0, 0.0, later)
 
@@ -83,10 +134,19 @@ class Stub(Exercise):
 
     def generate(self, rng):
         n = Note.from_diatonic(rng.randint(14, 60))
-        return Question("", ["A", "B"], "A", [[n]])
+        return Question(
+            "",
+            ["A", "B"],
+            "A",
+            [[n]],
+        )
 
 
-def distinct(ex, count, rng):
+def distinct(
+    ex,
+    count,
+    rng,
+):
     """`count` questions that are all different from each other."""
     found = {}
     while len(found) < count:
@@ -103,9 +163,33 @@ def make_learner():
 def test_every_answer_is_recorded_including_the_wrong_ones():
     learner, ex = make_learner()
     q = ex.generate(random.Random(1))
-    learner.record(ex, q, "B", False, 1, 2.0, now=100.0)
-    learner.record(ex, q, "B", False, 2, 1.0, now=102.0)
-    learner.record(ex, q, "A", True, 3, 1.5, now=104.0)
+    learner.record(
+        ex,
+        q,
+        "B",
+        False,
+        1,
+        2.0,
+        now=100.0,
+    )
+    learner.record(
+        ex,
+        q,
+        "B",
+        False,
+        2,
+        1.0,
+        now=102.0,
+    )
+    learner.record(
+        ex,
+        q,
+        "A",
+        True,
+        3,
+        1.5,
+        now=104.0,
+    )
     rows = learner.db.attempts(learner.profile.id)
     assert [(r["attempt_no"], r["answer"], r["correct"]) for r in rows] == [(1, "B", 0), (2, "B", 0), (3, "A", 1)]
     item = learner.db.get_item(learner.profile.id, "Stub", q.item_key())
@@ -117,19 +201,75 @@ def test_more_attempts_and_slower_answers_leave_a_question_more_strained():
     learner, ex = make_learner()
     rng = random.Random(2)
     clean, fumbled, slow, quick = distinct(ex, 4, rng)
-    learner.record(ex, clean, "A", True, 1, 4.0, now=1.0)
-    learner.record(ex, fumbled, "B", False, 1, 4.0, now=1.0)
-    learner.record(ex, fumbled, "B", False, 2, 4.0, now=2.0)
-    learner.record(ex, fumbled, "A", True, 3, 4.0, now=3.0)
-    learner.record(ex, slow, "A", True, 1, 30.0, now=1.0)
-    learner.record(ex, quick, "A", True, 1, 0.5, now=1.0)
+    learner.record(
+        ex,
+        clean,
+        "A",
+        True,
+        1,
+        4.0,
+        now=1.0,
+    )
+    learner.record(
+        ex,
+        fumbled,
+        "B",
+        False,
+        1,
+        4.0,
+        now=1.0,
+    )
+    learner.record(
+        ex,
+        fumbled,
+        "B",
+        False,
+        2,
+        4.0,
+        now=2.0,
+    )
+    learner.record(
+        ex,
+        fumbled,
+        "A",
+        True,
+        3,
+        4.0,
+        now=3.0,
+    )
+    learner.record(
+        ex,
+        slow,
+        "A",
+        True,
+        1,
+        30.0,
+        now=1.0,
+    )
+    learner.record(
+        ex,
+        quick,
+        "A",
+        True,
+        1,
+        0.5,
+        now=1.0,
+    )
 
     def strain_of(q):
         item = learner.db.get_item(learner.profile.id, "Stub", q.item_key())
         assert item is not None
         return item.strain
 
-    strain = {n: strain_of(q) for n, q in (("clean", clean), ("fumbled", fumbled), ("slow", slow), ("quick", quick))}
+    strain = {
+        n: strain_of(q)
+        for n, q in (
+            ("clean", clean),
+            ("fumbled", fumbled),
+            ("slow", slow),
+            ("quick", quick),
+        )
+    }
     assert strain["fumbled"] > strain["slow"] > strain["clean"] > strain["quick"]
 
 
@@ -138,9 +278,25 @@ def test_a_hard_question_comes_back_far_more_often_than_a_mastered_one():
     rng = random.Random(3)
     hard, easy = distinct(ex, 2, rng)
     for attempt in (1, 2, 3):
-        learner.record(ex, hard, "B", False, attempt, 8.0, now=0.0)
+        learner.record(
+            ex,
+            hard,
+            "B",
+            False,
+            attempt,
+            8.0,
+            now=0.0,
+        )
     for _ in range(3):
-        learner.record(ex, easy, "A", True, 1, 0.5, now=0.0)
+        learner.record(
+            ex,
+            easy,
+            "A",
+            True,
+            1,
+            0.5,
+            now=0.0,
+        )
     later = 3600.0  # an hour on, so neither is being held back
     counts = {"hard": 0, "easy": 0}
     for _ in range(400):
@@ -156,9 +312,25 @@ def test_pick_never_repeats_the_question_just_asked():
     learner, ex = make_learner()
     rng = random.Random(4)
     last = ex.generate(rng)
-    learner.record(ex, last, "B", False, 1, 9.0, now=0.0)
+    learner.record(
+        ex,
+        last,
+        "B",
+        False,
+        1,
+        9.0,
+        now=0.0,
+    )
     for _ in range(100):
-        assert learner.pick(ex, rng, avoid=last.item_key(), now=1e6).item_key() != last.item_key()
+        assert (
+            learner.pick(
+                ex,
+                rng,
+                avoid=last.item_key(),
+                now=1e6,
+            ).item_key()
+            != last.item_key()
+        )
 
 
 def test_stored_questions_are_only_asked_again_under_the_same_settings():
@@ -166,7 +338,15 @@ def test_stored_questions_are_only_asked_again_under_the_same_settings():
     rng = random.Random(5)
     q = ex.generate(rng)
     for attempt in (1, 2, 3):
-        learner.record(ex, q, "B", False, attempt, 8.0, now=0.0)
+        learner.record(
+            ex,
+            q,
+            "B",
+            False,
+            attempt,
+            8.0,
+            now=0.0,
+        )
     assert any(i.item_key == q.item_key() for i in learner.db.replay_candidates(learner.profile.id, "Stub", ""))
     assert learner.db.replay_candidates(learner.profile.id, "Stub", "other settings") == []
 
@@ -176,7 +356,15 @@ def test_each_profile_has_its_own_history():
     ada, ben = db.add_profile("Ada"), db.add_profile("Ben")
     ex = Stub()
     q = ex.generate(random.Random(6))
-    Learner(db, ada).record(ex, q, "B", False, 1, 5.0, now=0.0)
+    Learner(db, ada).record(
+        ex,
+        q,
+        "B",
+        False,
+        1,
+        5.0,
+        now=0.0,
+    )
     assert db.get_item(ben.id, "Stub", q.item_key()) is None
     assert len(db.attempts(ben.id)) == 0 and len(db.attempts(ada.id)) == 1
 

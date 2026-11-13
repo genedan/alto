@@ -35,20 +35,45 @@ from .theme import THEMES, apply_theme, save_theme, saved_theme
 class StyleCard(QPushButton):
     """A selectable tile that previews a notation style: a short phrase on a staff, drawn in that style."""
 
-    def __init__(self, style: notation.NotationStyle, parent=None):
+    def __init__(
+        self,
+        style: notation.NotationStyle,
+        parent=None,
+    ):
         super().__init__(parent)
         self.style_key = style.key
         self.setCheckable(True)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedSize(232, 150)
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(8, 8, 8, 6)
+        lay.setContentsMargins(
+            8,
+            8,
+            8,
+            6,
+        )
         lay.setSpacing(4)
-        self.staff = StaffWidget(gap=6.5, side=8.0, note_offset=44.0, margin=3.2, compact=True)
+        self.staff = StaffWidget(
+            gap=6.5,
+            side=8.0,
+            note_offset=44.0,
+            margin=3.2,
+            compact=True,
+        )
         self.staff.notation_style = style
         self.staff.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.staff.setFixedWidth(214)
-        self.staff.show_notes([[Note(4, 2)], [Note(4, 4)], [Note(5, 0)], [Note(4, 6)]], "treble", key=1, value="quarter")
+        self.staff.show_notes(
+            [
+                [Note(4, 2)],
+                [Note(4, 4)],
+                [Note(5, 0)],
+                [Note(4, 6)],
+            ],
+            "treble",
+            key=1,
+            value="quarter",
+        )
         name = QLabel(f"<b>{style.label}</b>")
         name.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         blurb = QLabel(style.note)
@@ -66,14 +91,23 @@ RIM = "rgba(136, 136, 136, 0.5)"  # the faint outline of the builder's swatches 
 class KeyboardCard(QPushButton):
     """A selectable tile that previews a keyboard style: a short stretch of keys drawn in that style."""
 
-    def __init__(self, style: keyboard_styles.KeyboardStyle, parent=None):
+    def __init__(
+        self,
+        style: keyboard_styles.KeyboardStyle,
+        parent=None,
+    ):
         super().__init__(parent)
         self.style_key = style.key
         self.setCheckable(True)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFixedSize(232, 222)
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(8, 8, 8, 6)
+        lay.setContentsMargins(
+            8,
+            8,
+            8,
+            6,
+        )
         lay.setSpacing(4)
         self.keys = KeyboardWidget()
         self.keys.style_override = style
@@ -86,7 +120,12 @@ class KeyboardCard(QPushButton):
         holder.setFixedHeight(int(2 * 6 + 30 + 16 * 6.2))  # room for the tallest strip above the keys
         holder.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         holder_lay = QVBoxLayout(holder)
-        holder_lay.setContentsMargins(0, 0, 0, 0)
+        holder_lay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         holder_lay.addWidget(self.keys, 0, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         name = QLabel(f"<b>{style.label}</b>")
         name.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
@@ -114,7 +153,12 @@ class KeyboardBuilder(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(0, 8, 0, 0)
+        lay.setContentsMargins(
+            0,
+            8,
+            0,
+            0,
+        )
         lay.setSpacing(6)
         lay.addWidget(QLabel("<b>Build your own</b>"))
         about = QLabel(
@@ -155,7 +199,10 @@ class KeyboardBuilder(QFrame):
         self.refresh()
 
     @staticmethod
-    def _chip(tip: str, colour: str | None) -> QToolButton:
+    def _chip(
+        tip: str,
+        colour: str | None,
+    ) -> QToolButton:
         chip = QToolButton()
         chip.setFixedSize(20, 20)
         chip.setToolTip(tip)
@@ -177,12 +224,20 @@ class KeyboardBuilder(QFrame):
                 else f"QPushButton {{ border: 1px dashed {RIM}; border-radius: 6px; color: gray; }}",
             )
 
-    def _set(self, part: str, colour: str | None) -> None:
+    def _set(
+        self,
+        part: str,
+        colour: str | None,
+    ) -> None:
         keyboard_styles.set_custom_colour(part, colour)
         self.refresh()
         self.changed.emit()
 
-    def _pick(self, part: str, title: str) -> None:
+    def _pick(
+        self,
+        part: str,
+        title: str,
+    ) -> None:
         current = keyboard_styles.custom_colours()[part] or "#ffffff"
         colour = QColorDialog.getColor(QColor(current), self, f"Colour for the {title.lower()}")
         if colour.isValid():
@@ -211,7 +266,13 @@ class ThemeCard(QPushButton):
         tint="#22364f",
     )
 
-    def __init__(self, key: str, label: str, note: str, parent=None):
+    def __init__(
+        self,
+        key: str,
+        label: str,
+        note: str,
+        parent=None,
+    ):
         super().__init__(parent)
         self.theme_key = key
         self.setCheckable(True)
@@ -222,7 +283,12 @@ class ThemeCard(QPushButton):
         self.preview.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.preview.paintEvent = self._paint_preview
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(8, 8, 8, 6)
+        lay.setContentsMargins(
+            8,
+            8,
+            8,
+            6,
+        )
         lay.setSpacing(4)
         name = QLabel(f"<b>{label}</b>")
         name.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
@@ -238,7 +304,12 @@ class ThemeCard(QPushButton):
     def _paint_preview(self, _event) -> None:
         p = QPainter(self.preview)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
-        r = QRectF(self.preview.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
+        r = QRectF(self.preview.rect()).adjusted(
+            0.5,
+            0.5,
+            -0.5,
+            -0.5,
+        )
         clip = QPainterPath()
         clip.addRoundedRect(r, 8, 8)
         p.setClipPath(clip)
@@ -261,24 +332,66 @@ class ThemeCard(QPushButton):
             self._mock(p, r, self.LIGHT if self.theme_key == "light" else self.DARK)
         p.setClipping(False)  # an outline, so the dark preview shows against a dark window
         p.setBrush(Qt.BrushStyle.NoBrush)
-        p.setPen(QPen(QColor(128, 128, 128, 150), 1))
+        p.setPen(
+            QPen(
+                QColor(
+                    128,
+                    128,
+                    128,
+                    150,
+                ),
+                1,
+            ),
+        )
         p.drawRoundedRect(r, 8, 8)
 
     @staticmethod
-    def _mock(p: QPainter, r: QRectF, c: dict) -> None:
+    def _mock(
+        p: QPainter,
+        r: QRectF,
+        c: dict,
+    ) -> None:
         """A small drawing of the settings window: a list on the left, a staff with notes and a button on the right."""
         p.fillRect(r, QColor(c["window"]))
-        side = QRectF(r.left() + 6, r.top() + 6, 40, r.height() - 12)
+        side = QRectF(
+            r.left() + 6,
+            r.top() + 6,
+            40,
+            r.height() - 12,
+        )
         p.setPen(QPen(QColor(c["line"]), 1))
         p.setBrush(QColor(c["panel"]))
         p.drawRoundedRect(side, 5, 5)
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor(c["tint"]))
-        p.drawRoundedRect(QRectF(side.left() + 4, side.top() + 5, side.width() - 8, 9), 3, 3)
+        p.drawRoundedRect(
+            QRectF(
+                side.left() + 4,
+                side.top() + 5,
+                side.width() - 8,
+                9,
+            ),
+            3,
+            3,
+        )
         p.setBrush(QColor(c["faint"]))
         for i in range(2):
-            p.drawRoundedRect(QRectF(side.left() + 6, side.top() + 22 + i * 12, side.width() - 20 - i * 6, 4), 2, 2)
-        card = QRectF(side.right() + 8, r.top() + 6, r.right() - side.right() - 14, r.height() - 12)
+            p.drawRoundedRect(
+                QRectF(
+                    side.left() + 6,
+                    side.top() + 22 + i * 12,
+                    side.width() - 20 - i * 6,
+                    4,
+                ),
+                2,
+                2,
+            )
+        card = QRectF(
+            side.right() + 8,
+            r.top() + 6,
+            r.right() - side.right() - 14,
+            r.height() - 12,
+        )
         p.setPen(QPen(QColor(c["line"]), 1))
         p.setBrush(QColor(c["panel"]))
         p.drawRoundedRect(card, 5, 5)
@@ -288,10 +401,24 @@ class ThemeCard(QPushButton):
             p.drawLine(QPointF(card.left() + 6, top + i * 5), QPointF(card.right() - 6, top + i * 5))
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor(c["ink"]))
-        for x, row in ((20, 4), (38, 3), (56, 1), (74, 2)):
+        for x, row in (
+            (20, 4),
+            (38, 3),
+            (56, 1),
+            (74, 2),
+        ):
             p.drawEllipse(QPointF(card.left() + x, top + row * 2.5), 3.2, 2.5)
         p.setBrush(QColor(c["accent"]))
-        p.drawRoundedRect(QRectF(card.left() + 6, card.bottom() - 17, 30, 10), 4, 4)
+        p.drawRoundedRect(
+            QRectF(
+                card.left() + 6,
+                card.bottom() - 17,
+                30,
+                10,
+            ),
+            4,
+            4,
+        )
 
 
 class AppSettingsDialog(QDialog):
@@ -331,12 +458,21 @@ class AppSettingsDialog(QDialog):
     def _page() -> tuple[QWidget, QVBoxLayout]:
         page = QWidget()
         lay = QVBoxLayout(page)
-        lay.setContentsMargins(4, 4, 4, 4)
+        lay.setContentsMargins(
+            4,
+            4,
+            4,
+            4,
+        )
         lay.setSpacing(10)
         return page, lay
 
     @staticmethod
-    def _heading(lay: QVBoxLayout, title: str, about: str) -> None:
+    def _heading(
+        lay: QVBoxLayout,
+        title: str,
+        about: str,
+    ) -> None:
         lay.addWidget(QLabel(f"<h3>{title}</h3>"))
         text = QLabel(about)
         text.setStyleSheet("color: gray;")
@@ -370,7 +506,12 @@ class AppSettingsDialog(QDialog):
         self.segments = QFrame()
         self.segments.setObjectName("segments")
         row = QHBoxLayout(self.segments)
-        row.setContentsMargins(3, 3, 3, 3)
+        row.setContentsMargins(
+            3,
+            3,
+            3,
+            3,
+        )
         row.setSpacing(2)
         group = QButtonGroup(self)
         group.setExclusive(True)
@@ -395,7 +536,12 @@ class AppSettingsDialog(QDialog):
     def _style_segments(self) -> None:
         """A rounded track with the chosen segment raised and tinted, from the current palette."""
         pal = self.palette()
-        roles = (QPalette.ColorRole.Window, QPalette.ColorRole.Text, QPalette.ColorRole.Base, QPalette.ColorRole.Highlight)
+        roles = (
+            QPalette.ColorRole.Window,
+            QPalette.ColorRole.Text,
+            QPalette.ColorRole.Base,
+            QPalette.ColorRole.Highlight,
+        )
         window, text, base, accent = (pal.color(r) for r in roles)
         track = blend(window, text, 0.07)
         self.segments.setStyleSheet(

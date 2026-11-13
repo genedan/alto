@@ -9,7 +9,11 @@ from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
 
 
-def dark_pixels(widget, size=(520, 220), step=2) -> int:
+def dark_pixels(
+    widget,
+    size=(520, 220),
+    step=2,
+) -> int:
     """How many pixels of the widget are dark: a blank drawing has none."""
     widget.resize(*size)
     image: QImage = widget.grab().toImage()
@@ -24,29 +28,68 @@ def dark_pixels(widget, size=(520, 220), step=2) -> int:
 # -- the staff ------------------------------------------------------------------------------------------------------
 
 # ledger lines above and below, accidentals, and a chord
-COLUMNS = [[Note(4, 0)], [Note(5, 4, 1)], [Note(3, 2, -1)], [Note(6, 0), Note(5, 5)], [Note(2, 6)]]
+COLUMNS = [
+    [Note(4, 0)],
+    [Note(5, 4, 1)],
+    [Note(3, 2, -1)],
+    [Note(6, 0), Note(5, 5)],
+    [Note(2, 6)],
+]
 
 
 @pytest.mark.parametrize("style", notation.STYLES, ids=lambda s: s.key)
-def test_a_staff_is_drawn_in_every_notation_style(app, style):
+def test_a_staff_is_drawn_in_every_notation_style(
+    app,
+    style,
+):
     from alto.ui.staff import StaffWidget
 
     staff = StaffWidget()
     staff.notation_style = style
-    for clef in ("treble", "bass", "alto", "tenor", "grand"):
+    for clef in (
+        "treble",
+        "bass",
+        "alto",
+        "tenor",
+        "grand",
+    ):
         for key in (0, 3, -4):
-            staff.show_notes(COLUMNS, clef, key, "quarter")
+            staff.show_notes(
+                COLUMNS,
+                clef,
+                key,
+                "quarter",
+            )
             assert dark_pixels(staff) > 300, (style.key, clef, key)
 
 
-@pytest.mark.parametrize("value", ["breve", "whole", "half", "quarter", "eighth", "sixteenth", "thirty_second"])
-def test_every_note_value_is_drawn(app, value):
+@pytest.mark.parametrize(
+    "value",
+    [
+        "breve",
+        "whole",
+        "half",
+        "quarter",
+        "eighth",
+        "sixteenth",
+        "thirty_second",
+    ],
+)
+def test_every_note_value_is_drawn(
+    app,
+    value,
+):
     from alto.ui.staff import StaffWidget
 
     staff = StaffWidget()
     for style in notation.STYLES:
         staff.notation_style = style
-        staff.show_notes([[Note(4, 2)], [Note(4, 6)]], "treble", 0, value)
+        staff.show_notes(
+            [[Note(4, 2)], [Note(4, 6)]],
+            "treble",
+            0,
+            value,
+        )
         assert dark_pixels(staff) > 300
 
 
@@ -85,7 +128,13 @@ def test_a_staff_without_the_music_font_still_draws_with_the_built_in_shapes(app
 
     staff = StaffWidget()
     staff.notation_style = notation.BY_KEY["noto"]  # read from the system, so it has no SMuFL font here
-    for clef in ("treble", "bass", "alto", "tenor", "grand"):
+    for clef in (
+        "treble",
+        "bass",
+        "alto",
+        "tenor",
+        "grand",
+    ):
         staff.show_notes(COLUMNS, clef, 2)
         assert dark_pixels(staff) > 300
 
@@ -93,7 +142,13 @@ def test_a_staff_without_the_music_font_still_draws_with_the_built_in_shapes(app
 def test_a_compact_staff_sizes_itself(app):
     from alto.ui.staff import StaffWidget
 
-    small = StaffWidget(gap=6.5, side=8.0, note_offset=44.0, margin=3.2, compact=True)
+    small = StaffWidget(
+        gap=6.5,
+        side=8.0,
+        note_offset=44.0,
+        margin=3.2,
+        compact=True,
+    )
     small.show_notes([[Note(4, 2)]], "treble")
     one = small.height()
     small.show_notes([[Note(4, 2)]], "grand")
@@ -103,7 +158,15 @@ def test_a_compact_staff_sizes_itself(app):
 def test_note_shapes(app):
     from alto.ui import notes
 
-    for value in ("breve", "whole", "half", "quarter", "eighth", "sixteenth", "thirty_second"):
+    for value in (
+        "breve",
+        "whole",
+        "half",
+        "quarter",
+        "eighth",
+        "sixteenth",
+        "thirty_second",
+    ):
         up, down = notes.note_shape(value), notes.note_shape(value, stem_down=True)
         assert not up.isEmpty() and not down.isEmpty()
         assert up.boundingRect() != down.boundingRect() or value in ("breve", "whole")
@@ -131,7 +194,11 @@ def test_clicking_the_staff_places_the_nearest_note(app):
     staff.hide()
 
 
-def move(widget, x, y):
+def move(
+    widget,
+    x,
+    y,
+):
     """Move the pointer over the widget (sent as an event, so it does not depend on the real pointer)."""
     point = QPointF(x, y)
     QApplication.sendEvent(
@@ -147,7 +214,10 @@ def move(widget, x, y):
     )
 
 
-def test_the_staff_input_previews_and_locks(app, monkeypatch):
+def test_the_staff_input_previews_and_locks(
+    app,
+    monkeypatch,
+):
     from alto.ui.staff_input import StaffInput
 
     staff = StaffInput()
@@ -199,7 +269,13 @@ def test_the_keyboard_highlights_a_key_and_changes_its_range(app):
 
     keyboard = KeyboardWidget()
     keyboard.resize(700, 140)
-    for midi, span in ((60, (48, 72)), (61, (48, 72)), (21, None), (108, None), (None, (60, 72))):
+    for midi, span in (
+        (60, (48, 72)),
+        (61, (48, 72)),
+        (21, None),
+        (108, None),
+        (None, (60, 72)),
+    ):
         keyboard.show_key(midi, span)
         assert dark_pixels(keyboard, (700, 140)) > 200
     keyboard.max_key_width = 30.0
@@ -210,7 +286,10 @@ def test_the_keyboard_highlights_a_key_and_changes_its_range(app):
 
 
 @pytest.mark.parametrize("style", [*keyboard_styles.STYLES, keyboard_styles.custom_style()], ids=lambda s: s.key)
-def test_a_keyboard_is_drawn_in_every_style(app, style):
+def test_a_keyboard_is_drawn_in_every_style(
+    app,
+    style,
+):
     from alto.ui.keyboard import KeyboardSpan, KeyboardWidget
 
     keyboard = KeyboardWidget()
@@ -291,9 +370,21 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app):
     heard: list[tuple[int, int]] = []
     span.dragged.connect(lambda lo, hi: (heard.append((lo, hi)), span.set_span(lo, hi)))
 
-    def send(kind, x, y=50.0, button=Qt.MouseButton.LeftButton):
+    def send(
+        kind,
+        x,
+        y=50.0,
+        button=Qt.MouseButton.LeftButton,
+    ):
         pos = QPointF(x, y)
-        event = QMouseEvent(kind, pos, span.mapToGlobal(pos), button, button, Qt.KeyboardModifier.NoModifier)
+        event = QMouseEvent(
+            kind,
+            pos,
+            span.mapToGlobal(pos),
+            button,
+            button,
+            Qt.KeyboardModifier.NoModifier,
+        )
         {
             QEvent.Type.MouseButtonPress: span.mousePressEvent,
             QEvent.Type.MouseMove: span.mouseMoveEvent,
@@ -301,12 +392,30 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app):
         }[kind](event)
 
     def x_of(midi):  # the middle of a white key
-        whites = [m for m in range(21, 109) if m % 12 in (0, 2, 4, 5, 7, 9, 11)]
+        whites = [
+            m
+            for m in range(21, 109)
+            if m % 12
+            in (
+                0,
+                2,
+                4,
+                5,
+                7,
+                9,
+                11,
+            )
+        ]
         return 4 + (whites.index(midi) + 0.5) * (880 - 8) / len(whites)
 
     left, right = span._edges()
     cursors = {}
-    for name, x in (("lo", left), ("hi", right), ("pan", (left + right) / 2), ("new", 20.0)):
+    for name, x in (
+        ("lo", left),
+        ("hi", right),
+        ("pan", (left + right) / 2),
+        ("new", 20.0),
+    ):
         send(QEvent.Type.MouseMove, x)  # hovering shows what a press would do
         cursors[name] = span.cursor().shape()
     assert cursors["lo"] == cursors["hi"] == Qt.CursorShape.SizeHorCursor
@@ -368,19 +477,56 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app):
 def test_the_settings_pictures_draw_and_make_icons(app):
     from alto.ui import pictures
 
-    clefs = pictures.ClefPictures(["treble", "bass", "alto", "tenor", "grand"])
+    clefs = pictures.ClefPictures(
+        [
+            "treble",
+            "bass",
+            "alto",
+            "tenor",
+            "grand",
+        ],
+    )
     clefs.set_clefs(["grand"])
-    values = pictures.ValuePictures(["whole", "quarter", "eighth", "breve"], centre_stemless=True)
+    values = pictures.ValuePictures(
+        [
+            "whole",
+            "quarter",
+            "eighth",
+            "breve",
+        ],
+        centre_stemless=True,
+    )
     values.set_values(["half", "sixteenth", "thirty_second"])
-    keys = [pictures.KeySignaturePicture(k) for k in (0, 1, 7, -1, -7)]
+    keys = [
+        pictures.KeySignaturePicture(k)
+        for k in (
+            0,
+            1,
+            7,
+            -1,
+            -7,
+        )
+    ]
     ranges = pictures.RangePictures(
-        [("treble", 28, 41), ("bass", 16, 29), ("grand", 14, 42), ("alto", 21, 35), ("tenor", 19, 33)],
+        [
+            ("treble", 28, 41),
+            ("bass", 16, 29),
+            ("grand", 14, 42),
+            ("alto", 21, 35),
+            ("tenor", 19, 33),
+        ],
     )
     assert dark_pixels(ranges, ranges.sizeHint().toTuple(), step=1) > 0
     ranges.set_items([("treble", 20, 45), ("bass", 10, 16), ("alto", 31, 35)])  # below, above and inside the staff
     names = pictures.NamePicture("letters")
     names.set_naming("solfege")
-    for widget in (clefs, values, *keys, ranges, names):
+    for widget in (
+        clefs,
+        values,
+        *keys,
+        ranges,
+        names,
+    ):
         widget.resize(widget.sizeHint())
         assert dark_pixels(widget, widget.size().toTuple(), step=1) > 0, type(widget).__name__
     for icon in (
@@ -503,7 +649,13 @@ def test_a_staff_without_a_cap_is_left_as_it_was(app):
     staff = StaffWidget()
     staff.show_notes([[Note(4, 0)]], "treble")
     assert staff.maximumWidth() == 16777215 and staff.max_step is None
-    small = StaffWidget(gap=6.5, side=8.0, note_offset=44.0, margin=3.2, compact=True)
+    small = StaffWidget(
+        gap=6.5,
+        side=8.0,
+        note_offset=44.0,
+        margin=3.2,
+        compact=True,
+    )
     small.setFixedWidth(214)
     small.show_notes([[Note(4, 0)]], "treble")
     assert small.maximumWidth() == 214  # the small previews in the settings keep their fixed width
@@ -515,7 +667,12 @@ def test_a_capped_staff_in_a_narrow_space_shrinks_to_fit_and_in_a_wide_one_is_ce
 
     holder = QWidget()
     lay = QVBoxLayout(holder)
-    lay.setContentsMargins(0, 0, 0, 0)
+    lay.setContentsMargins(
+        0,
+        0,
+        0,
+        0,
+    )
     staff = StaffWidget(max_step=MAX_STEP)
     lay.addWidget(staff, alignment=Qt.AlignmentFlag.AlignHCenter)
     staff.show_notes([[Note(4, 0)]], "treble")

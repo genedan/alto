@@ -15,13 +15,26 @@ from .colors import blend
 GOOD, BAD = QColor("#2e7d32"), QColor("#c62828")  # the same greens and reds the exercise feedback uses
 
 
-def nice_ticks(top: float, count: int = 4) -> list[float]:
+def nice_ticks(
+    top: float,
+    count: int = 4,
+) -> list[float]:
     """Round tick values from 0 up to just above `top`, e.g. 0, 5, 10, 15 for a top of 13."""
     if top <= 0:
         return [0.0, 1.0]
     raw = top / count
     magnitude = 10 ** math.floor(math.log10(raw))
-    step = next(m * magnitude for m in (1, 2, 2.5, 5, 10) if m * magnitude >= raw)
+    step = next(
+        m * magnitude
+        for m in (
+            1,
+            2,
+            2.5,
+            5,
+            10,
+        )
+        if m * magnitude >= raw
+    )
     n = math.ceil(top / step - 1e-9)
     return [i * step for i in range(n + 1)]
 
@@ -31,7 +44,12 @@ class _Chart(QWidget):
 
     LEFT, RIGHT, TOP, BOTTOM = 40, 12, 34, 26
 
-    def __init__(self, title: str, empty: str = "Nothing to show for this selection.", parent=None):
+    def __init__(
+        self,
+        title: str,
+        empty: str = "Nothing to show for this selection.",
+        parent=None,
+    ):
         super().__init__(parent)
         self.title, self.empty = title, empty
         self.labels: list[str] = []
@@ -66,14 +84,33 @@ class _Chart(QWidget):
         title_font = QFont(self.font())
         title_font.setBold(True)
         p.setFont(title_font)
-        p.drawText(QRectF(0, 4, self.width(), 22), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, self.title)
+        p.drawText(
+            QRectF(
+                0,
+                4,
+                self.width(),
+                22,
+            ),
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+            self.title,
+        )
         p.setFont(self.font())
 
-    def _message(self, p: QPainter, text: str) -> None:
+    def _message(
+        self,
+        p: QPainter,
+        text: str,
+    ) -> None:
         p.setPen(self._soft())
         p.drawText(self._plot(), Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap, text)
 
-    def _value_axis(self, p: QPainter, ticks: Sequence[float], top: float, fmt: Callable[[float], str]) -> None:
+    def _value_axis(
+        self,
+        p: QPainter,
+        ticks: Sequence[float],
+        top: float,
+        fmt: Callable[[float], str],
+    ) -> None:
         plot = self._plot()
         small = QFont(self.font())
         small.setPointSizeF(max(small.pointSizeF() - 1, 7))
@@ -83,10 +120,24 @@ class _Chart(QWidget):
             p.setPen(QPen(self._grid(), 1))
             p.drawLine(QPointF(plot.left(), round(y) + 0.5), QPointF(plot.right(), round(y) + 0.5))
             p.setPen(self._soft())
-            p.drawText(QRectF(0, y - 8, self.LEFT - 6, 16), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, fmt(t))
+            p.drawText(
+                QRectF(
+                    0,
+                    y - 8,
+                    self.LEFT - 6,
+                    16,
+                ),
+                Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
+                fmt(t),
+            )
         p.setFont(self.font())
 
-    def _category_axis(self, p: QPainter, centres: Sequence[float], labels: Sequence[str]) -> None:
+    def _category_axis(
+        self,
+        p: QPainter,
+        centres: Sequence[float],
+        labels: Sequence[str],
+    ) -> None:
         """Label some of the positions along the bottom, skipping as many as needed so none overlap."""
         if not labels:
             return
@@ -97,16 +148,35 @@ class _Chart(QWidget):
         widest = max(p.fontMetrics().horizontalAdvance(s) for s in labels) + 10
         every = max(1, math.ceil(widest / max(self._plot().width() / len(labels), 1)))
         for i in range(len(labels) - 1, -1, -every):  # count back from the latest, so the newest label is always there
-            label_box = QRectF(centres[i] - widest / 2, self._plot().bottom() + 5, widest, 16)
+            label_box = QRectF(
+                centres[i] - widest / 2,
+                self._plot().bottom() + 5,
+                widest,
+                16,
+            )
             p.drawText(label_box, Qt.AlignmentFlag.AlignCenter, labels[i])
         p.setFont(self.font())
 
-    def _hover(self, event, centres: Sequence[float], texts: Sequence[str]) -> None:
+    def _hover(
+        self,
+        event,
+        centres: Sequence[float],
+        texts: Sequence[str],
+    ) -> None:
         if not centres:
             return
         x = event.position().x()
         i = min(range(len(centres)), key=lambda k: abs(centres[k] - x))
-        if self._plot().adjusted(-4, -4, 4, 4).contains(event.position()):
+        if (
+            self._plot()
+            .adjusted(
+                -4,
+                -4,
+                4,
+                4,
+            )
+            .contains(event.position())
+        ):
             QToolTip.showText(event.globalPosition().toPoint(), texts[i], self)
         else:
             QToolTip.hideText()
@@ -115,12 +185,21 @@ class _Chart(QWidget):
 class StackedBarChart(_Chart):
     """Questions per period, the first-try right ones in green with the missed ones stacked above in red."""
 
-    def __init__(self, title: str, parent=None):
+    def __init__(
+        self,
+        title: str,
+        parent=None,
+    ):
         super().__init__(title, parent=parent)
         self.right: list[int] = []
         self.wrong: list[int] = []
 
-    def set_data(self, labels: Sequence[str], right: Sequence[int], wrong: Sequence[int]) -> None:
+    def set_data(
+        self,
+        labels: Sequence[str],
+        right: Sequence[int],
+        wrong: Sequence[int],
+    ) -> None:
         self.labels, self.right, self.wrong = list(labels), list(right), list(wrong)
         self.update()
 
@@ -137,7 +216,12 @@ class StackedBarChart(_Chart):
             return
         ticks = nice_ticks(max(totals))
         top = ticks[-1]
-        self._value_axis(p, ticks, top, lambda v: f"{v:g}")
+        self._value_axis(
+            p,
+            ticks,
+            top,
+            lambda v: f"{v:g}",
+        )
         plot, n = self._plot(), len(self.labels)
         slot = plot.width() / n
         bar = min(max(slot * 0.68, 2.0), 38.0)
@@ -146,9 +230,27 @@ class StackedBarChart(_Chart):
         for cx, r, w in zip(centres, self.right, self.wrong):
             h_right, h_wrong = plot.height() * r / top, plot.height() * w / top
             p.setBrush(GOOD)
-            p.drawRoundedRect(QRectF(cx - bar / 2, plot.bottom() - h_right, bar, h_right), 2, 2) if r else None
+            p.drawRoundedRect(
+                QRectF(
+                    cx - bar / 2,
+                    plot.bottom() - h_right,
+                    bar,
+                    h_right,
+                ),
+                2,
+                2,
+            ) if r else None
             p.setBrush(BAD)
-            p.drawRoundedRect(QRectF(cx - bar / 2, plot.bottom() - h_right - h_wrong, bar, h_wrong), 2, 2) if w else None
+            p.drawRoundedRect(
+                QRectF(
+                    cx - bar / 2,
+                    plot.bottom() - h_right - h_wrong,
+                    bar,
+                    h_wrong,
+                ),
+                2,
+                2,
+            ) if w else None
         self._category_axis(p, centres, self.labels)
 
     def mouseMoveEvent(self, event):
@@ -165,12 +267,22 @@ class StackedBarChart(_Chart):
 class LineChart(_Chart):
     """A value per period joined by a line. Periods with no answers leave a gap rather than a zero."""
 
-    def __init__(self, title: str, fmt: Callable[[float], str], fixed_top: float | None = None, parent=None):
+    def __init__(
+        self,
+        title: str,
+        fmt: Callable[[float], str],
+        fixed_top: float | None = None,
+        parent=None,
+    ):
         super().__init__(title, parent=parent)
         self.fmt, self.fixed_top = fmt, fixed_top
         self.values: list[float | None] = []
 
-    def set_data(self, labels: Sequence[str], values: Sequence[float | None]) -> None:
+    def set_data(
+        self,
+        labels: Sequence[str],
+        values: Sequence[float | None],
+    ) -> None:
         self.labels, self.values = list(labels), list(values)
         self.update()
 
@@ -193,7 +305,12 @@ class LineChart(_Chart):
             self._message(p, self.empty)
             return
         top, ticks = self._top_and_ticks()
-        self._value_axis(p, ticks, top, self.fmt)
+        self._value_axis(
+            p,
+            ticks,
+            top,
+            self.fmt,
+        )
         plot, centres = self._plot(), self._centres()
         points = [
             QPointF(cx, plot.bottom() - plot.height() * min(v, top) / top) if v is not None else None
@@ -209,7 +326,15 @@ class LineChart(_Chart):
                 path = QPainterPath(run[0])
                 for q in run[1:]:
                     path.lineTo(q)
-                p.setPen(QPen(accent, 2.2, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+                p.setPen(
+                    QPen(
+                        accent,
+                        2.2,
+                        Qt.PenStyle.SolidLine,
+                        Qt.PenCapStyle.RoundCap,
+                        Qt.PenJoinStyle.RoundJoin,
+                    ),
+                )
                 p.setBrush(Qt.BrushStyle.NoBrush)
                 p.drawPath(path)
             run = []
@@ -234,7 +359,11 @@ class HBarChart(_Chart):
 
     ROW = 26
 
-    def __init__(self, title: str, parent=None):
+    def __init__(
+        self,
+        title: str,
+        parent=None,
+    ):
         super().__init__(title, parent=parent)
         self.rows: list[tuple[str, float, str]] = []
 
@@ -257,17 +386,49 @@ class HBarChart(_Chart):
             y = self.TOP + i * self.ROW
             p.setPen(self._ink())
             p.drawText(
-                QRectF(0, y, label_w - 8, self.ROW - 6),
+                QRectF(
+                    0,
+                    y,
+                    label_w - 8,
+                    self.ROW - 6,
+                ),
                 Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
                 p.fontMetrics().elidedText(name, Qt.TextElideMode.ElideRight, int(label_w - 8)),
             )
             p.setPen(Qt.PenStyle.NoPen)
             p.setBrush(self._grid())
-            p.drawRoundedRect(QRectF(x0, y + 4, x1 - x0, self.ROW - 14), 4, 4)
+            p.drawRoundedRect(
+                QRectF(
+                    x0,
+                    y + 4,
+                    x1 - x0,
+                    self.ROW - 14,
+                ),
+                4,
+                4,
+            )
             p.setBrush(self.palette().color(QPalette.ColorRole.Highlight))
-            p.drawRoundedRect(QRectF(x0, y + 4, max((x1 - x0) * value / 100, 3), self.ROW - 14), 4, 4)
+            p.drawRoundedRect(
+                QRectF(
+                    x0,
+                    y + 4,
+                    max((x1 - x0) * value / 100, 3),
+                    self.ROW - 14,
+                ),
+                4,
+                4,
+            )
             p.setPen(self._soft())
-            p.drawText(QRectF(x1 + 6, y, value_w, self.ROW - 6), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, text)
+            p.drawText(
+                QRectF(
+                    x1 + 6,
+                    y,
+                    value_w,
+                    self.ROW - 6,
+                ),
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+                text,
+            )
 
 
 class HeatmapChart(_Chart):
@@ -276,14 +437,23 @@ class HeatmapChart(_Chart):
     LEVELS = 4  # shades above "none"
     LEFT, TOP, BOTTOM = 34, 44, 30
 
-    def __init__(self, title: str, parent=None):
+    def __init__(
+        self,
+        title: str,
+        parent=None,
+    ):
         super().__init__(title, parent=parent)
         self.counts: dict[date, int] = {}
         self.today = date.today()
         self.weeks = 53
         self.setMinimumSize(260, 190)
 
-    def set_data(self, counts: dict[date, int], today: date, weeks: int = 53) -> None:
+    def set_data(
+        self,
+        counts: dict[date, int],
+        today: date,
+        weeks: int = 53,
+    ) -> None:
         self.counts, self.today, self.weeks = dict(counts), today, weeks
         self.update()
 
@@ -330,7 +500,12 @@ class HeatmapChart(_Chart):
         first = self.first_day()
         p.setPen(self._soft())
         for row, name in ((0, "Mon"), (2, "Wed"), (4, "Fri")):
-            label_box = QRectF(0, y0 + row * cell, self.LEFT - 6, cell)
+            label_box = QRectF(
+                0,
+                y0 + row * cell,
+                self.LEFT - 6,
+                cell,
+            )
             p.drawText(label_box, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, name)
         last_month_label = -99.0
         p.setPen(Qt.PenStyle.NoPen)
@@ -341,7 +516,12 @@ class HeatmapChart(_Chart):
             x = x0 + col * cell
             if (monday.day <= 7 or col == 0) and x - last_month_label >= 30:  # label the week a month starts in
                 p.setPen(self._soft())
-                month_box = QRectF(x, y0 - 20, 40, 16)
+                month_box = QRectF(
+                    x,
+                    y0 - 20,
+                    40,
+                    16,
+                )
                 p.drawText(month_box, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, monday.strftime("%b"))
                 p.setPen(Qt.PenStyle.NoPen)
                 last_month_label = x
@@ -350,24 +530,69 @@ class HeatmapChart(_Chart):
                 if day > self.today:
                     break
                 p.setBrush(self._shade(self.level(self.counts.get(day, 0))))
-                p.drawRoundedRect(QRectF(x, y0 + row * cell, cell - gap, cell - gap), 2, 2)
+                p.drawRoundedRect(
+                    QRectF(
+                        x,
+                        y0 + row * cell,
+                        cell - gap,
+                        cell - gap,
+                    ),
+                    2,
+                    2,
+                )
         # the legend, bottom right: Less [squares] More
         y = y0 + 7 * cell + 8
         box = 11.0
         right = self.width() - self.RIGHT
         p.setPen(self._soft())
         more_w = p.fontMetrics().horizontalAdvance("More")
-        p.drawText(QRectF(right - more_w, y - 2, more_w, 16), Qt.AlignmentFlag.AlignVCenter, "More")
+        p.drawText(
+            QRectF(
+                right - more_w,
+                y - 2,
+                more_w,
+                16,
+            ),
+            Qt.AlignmentFlag.AlignVCenter,
+            "More",
+        )
         p.setPen(Qt.PenStyle.NoPen)
         for i in range(self.LEVELS, -1, -1):
             p.setBrush(self._shade(i))
-            p.drawRoundedRect(QRectF(right - more_w - 6 - (self.LEVELS + 1 - i) * (box + 3) + 3, y, box, box), 2, 2)
+            p.drawRoundedRect(
+                QRectF(
+                    right - more_w - 6 - (self.LEVELS + 1 - i) * (box + 3) + 3,
+                    y,
+                    box,
+                    box,
+                ),
+                2,
+                2,
+            )
         p.setPen(self._soft())
         left_edge = right - more_w - 6 - (self.LEVELS + 1) * (box + 3)
-        p.drawText(QRectF(left_edge - 40, y - 2, 36, 16), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, "Less")
+        p.drawText(
+            QRectF(
+                left_edge - 40,
+                y - 2,
+                36,
+                16,
+            ),
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
+            "Less",
+        )
         if not self.counts:
             p.setFont(self.font())
-            p.drawText(QRectF(x0, y + 0, left_edge - 50 - x0, 16), Qt.AlignmentFlag.AlignVCenter, self.empty)
+            p.drawText(
+                QRectF(
+                    x0,
+                    y + 0,
+                    left_edge - 50 - x0,
+                    16,
+                ),
+                Qt.AlignmentFlag.AlignVCenter,
+                self.empty,
+            )
 
     def mouseMoveEvent(self, event):
         day = self.day_at(event.position())

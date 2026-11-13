@@ -14,7 +14,12 @@ from PySide6.QtTest import QSignalSpy
 
 
 def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app):
-    model = RowsModel(["Name", "Count"], [[("b", "b"), ("10", 10)], [("a", "a"), ("2", 2)]], {1}, [{"x": 1}, {"x": 2}])
+    model = RowsModel(
+        ["Name", "Count"],
+        [[("b", "b"), ("10", 10)], [("a", "a"), ("2", 2)]],
+        {1},
+        [{"x": 1}, {"x": 2}],
+    )
     first = model.index(0, 1)
     assert model.rowCount() == 2 and model.columnCount() == 2
     assert model.rowCount(first) == 0 and model.columnCount(first) == 0  # a table has no children
@@ -30,24 +35,42 @@ def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app)
     assert RowsModel(["A"], [[("x", 1)]]).extras == [{}]  # rows with nothing hidden get an empty note each
 
 
-def test_the_answers_table_lists_every_answer_newest_first(app, practised_learner):
+def test_the_answers_table_lists_every_answer_newest_first(
+    app,
+    practised_learner,
+):
     learner = practised_learner(30)
     page = DatabasePage(learner)
     total = learner.db.count_attempts(learner.profile.id)
     assert page.proxy.rowCount() == total and f"{total:,} answers by Ada." in page.note.text()
     assert page.proxy.index(0, 0).data() >= page.proxy.index(total - 1, 0).data()  # sorted by time, newest at the top
     headers = [page.model.headers[c] for c in range(7)]
-    assert headers == ["When", "Exercise", "Question", "Answer given", "Result", "Attempt", "Time"]
+    assert headers == [
+        "When",
+        "Exercise",
+        "Question",
+        "Answer given",
+        "Result",
+        "Attempt",
+        "Time",
+    ]
     assert page.grab().width() > 0
 
 
-def test_a_long_history_says_how_much_of_it_is_shown(app, practised_learner, monkeypatch):
+def test_a_long_history_says_how_much_of_it_is_shown(
+    app,
+    practised_learner,
+    monkeypatch,
+):
     monkeypatch.setattr(database_page, "ROW_LIMIT", 5)
     page = DatabasePage(practised_learner(60))
     assert page.proxy.rowCount() == 5 and "Showing the newest 5." in page.note.text()
 
 
-def test_the_questions_and_profiles_tables(app, practised_learner):
+def test_the_questions_and_profiles_tables(
+    app,
+    practised_learner,
+):
     learner = practised_learner(30)
     Learner(learner.db, learner.db.add_profile("Ben"))
     page = DatabasePage(learner)
@@ -63,7 +86,10 @@ def test_the_questions_and_profiles_tables(app, practised_learner):
     assert only.note.text() == "1 profile."
 
 
-def test_searching_narrows_every_table_and_says_so(app, practised_learner):
+def test_searching_narrows_every_table_and_says_so(
+    app,
+    practised_learner,
+):
     learner = practised_learner(60)
     page = DatabasePage(learner)
     everything = page.proxy.rowCount()
@@ -76,24 +102,70 @@ def test_searching_narrows_every_table_and_says_so(app, practised_learner):
     assert page.proxy.rowCount() == everything and "match the search" not in page.note.text()
 
 
-def test_questions_whose_record_is_gone_or_unreadable_are_labelled(app, practised_learner):
+def test_questions_whose_record_is_gone_or_unreadable_are_labelled(
+    app,
+    practised_learner,
+):
     learner = practised_learner(3)
     pid = learner.profile.id
     db = learner.db
-    db.add_attempt(pid, "NoteNames", "ghost", 1, "C", True, 1000, 99.0)  # an answer to a question that is no longer stored
-    db.save_item(pid, "NoteNames", "broken", ItemRecord(1.0, 1, 1, 0, 0, 1.0, "", "{not json", "broken"))
-    db.add_attempt(pid, "NoteNames", "broken", 1, "C", True, 1000, 98.0)
+    db.add_attempt(
+        pid,
+        "NoteNames",
+        "ghost",
+        1,
+        "C",
+        True,
+        1000,
+        99.0,
+    )  # an answer to a question that is no longer stored
+    db.save_item(
+        pid,
+        "NoteNames",
+        "broken",
+        ItemRecord(
+            1.0,
+            1,
+            1,
+            0,
+            0,
+            1.0,
+            "",
+            "{not json",
+            "broken",
+        ),
+    )
+    db.add_attempt(
+        pid,
+        "NoteNames",
+        "broken",
+        1,
+        "C",
+        True,
+        1000,
+        98.0,
+    )
     page = DatabasePage(learner)
     texts = [page.proxy.index(r, 2).data() for r in range(page.proxy.rowCount())]
     assert "(no longer stored)" in texts and "(unreadable)" in texts
     assert page._question_text("NoteNames", "broken", "{not json") == "(unreadable)"  # remembered, not parsed again
 
 
-def test_double_clicking_a_row_shows_the_question_it_is_about(app, practised_learner, monkeypatch):
+def test_double_clicking_a_row_shows_the_question_it_is_about(
+    app,
+    practised_learner,
+    monkeypatch,
+):
     opened = []
 
     class Preview:
-        def __init__(self, name, question, details, parent):
+        def __init__(
+            self,
+            name,
+            question,
+            details,
+            parent,
+        ):
             opened.append((name, question, details))
 
         def exec(self):
@@ -116,16 +188,43 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(app, practised_lea
     page._preview(page.proxy.index(0, 0))  # profiles have no question
     page._preview(QModelIndex())
     assert opened == []
-    oddball = ItemRecord(1, 1, 1, 0, 0, 1.0, "", json.dumps({"bad": 1}), "oddball")
-    learner.db.save_item(learner.profile.id, "NoteNames", "oddball", oddball)
-    learner.db.add_attempt(learner.profile.id, "NoteNames", "oddball", 1, "x", False, 500, 200.0)
+    oddball = ItemRecord(
+        1,
+        1,
+        1,
+        0,
+        0,
+        1.0,
+        "",
+        json.dumps({"bad": 1}),
+        "oddball",
+    )
+    learner.db.save_item(
+        learner.profile.id,
+        "NoteNames",
+        "oddball",
+        oddball,
+    )
+    learner.db.add_attempt(
+        learner.profile.id,
+        "NoteNames",
+        "oddball",
+        1,
+        "x",
+        False,
+        500,
+        200.0,
+    )
     page.tabs["answers"].click()
     row = next(r for r in range(page.proxy.rowCount()) if page.proxy.index(r, 3).data() == "x")
     page._preview(page.proxy.index(row, 0))  # the stored question cannot be read: nothing opens
     assert opened == []
 
 
-def test_back_is_offered_by_a_button_and_by_escape(app, practised_learner):
+def test_back_is_offered_by_a_button_and_by_escape(
+    app,
+    practised_learner,
+):
     page = DatabasePage(practised_learner(3))
     spy = QSignalSpy(page.back)
     back = next(b for b in page.findChildren(type(page.tabs["answers"])) if b.text().endswith("Back"))

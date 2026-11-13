@@ -55,7 +55,17 @@ def test_the_keyboard_settings_are_saved_and_read_back_and_bad_ones_ignored():
     sp.save_keyboard()
     cfg.__init__()
     sp.load_keyboard()
-    assert (cfg.black_keys, cfg.require_octave, cfg.low, cfg.high) == (False, True, 40, 80)
+    assert (
+        cfg.black_keys,
+        cfg.require_octave,
+        cfg.low,
+        cfg.high,
+    ) == (
+        False,
+        True,
+        40,
+        80,
+    )
     assert cfg.key_signature and cfg.keys == {-1, 2}
     store().setValue("keyboard/low", 90)
     store().setValue("keyboard/high", 50)  # backwards: not used
@@ -82,7 +92,15 @@ def test_the_construction_settings_are_read_back_and_bad_ones_ignored():
     s.setValue("construction/keys", "99")
     cfg.__init__()
     sp.load_construction()
-    assert cfg.clefs == {"treble", "bass"} and cfg.keys == {-3, -2, -1, 0, 1, 2, 3}
+    assert cfg.clefs == {"treble", "bass"} and cfg.keys == {
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+    }
 
 
 # -- the small parts --------------------------------------------------------------------------------------------------
@@ -376,7 +394,12 @@ def test_the_arpeggio_pane_opens_each_page_and_back_returns(app):
     panel = sp.ArpeggioSettingsPanel(settings.arpeggio)
     panel.resize(290, 600)
     panel.show()
-    for row, index in ((panel.staff_row, 1), (panel.types_row, 2), (panel.inversions_row, 3), (panel.keys_row, 4)):
+    for row, index in (
+        (panel.staff_row, 1),
+        (panel.types_row, 2),
+        (panel.inversions_row, 3),
+        (panel.keys_row, 4),
+    ):
         row.click()
         slide()
         assert panel.stack.currentIndex() == index

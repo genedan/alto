@@ -158,7 +158,12 @@ class MainWindow(QMainWindow):
         self.title_label = QLabel(self.APP_TITLE)
         self.title_label.setStyleSheet("font-size: 14pt; font-weight: bold;")
         buttons = QHBoxLayout()
-        buttons.setContentsMargins(0, 0, 0, 0)
+        buttons.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         buttons.addWidget(self.menu_button)
         self.stats_button = QToolButton()  # a quick way to the statistics, beside the menu
         self.stats_button.setIcon(svg_icon(icons.CHART, self.palette().color(QPalette.ColorRole.WindowText)))
@@ -177,8 +182,18 @@ class MainWindow(QMainWindow):
         self.database_button.clicked.connect(self.open_database)
         buttons.addWidget(self.database_button)
         bar = QGridLayout()
-        bar.addLayout(buttons, 0, 0, Qt.AlignmentFlag.AlignLeft)
-        bar.addWidget(self.title_label, 0, 1, Qt.AlignmentFlag.AlignCenter)
+        bar.addLayout(
+            buttons,
+            0,
+            0,
+            Qt.AlignmentFlag.AlignLeft,
+        )
+        bar.addWidget(
+            self.title_label,
+            0,
+            1,
+            Qt.AlignmentFlag.AlignCenter,
+        )
         bar.setColumnStretch(0, 1)
         bar.setColumnStretch(2, 1)
         lay.addLayout(bar)
@@ -214,7 +229,11 @@ class MainWindow(QMainWindow):
         """The user's button: slide the list closed, or back open. Remembered for next time."""
         self._set_sidebar(self.sidebar_width() == 0, user=True)
 
-    def _set_sidebar(self, show: bool, user: bool = False):
+    def _set_sidebar(
+        self,
+        show: bool,
+        user: bool = False,
+    ):
         """Slide the exercise list open or closed. Only a user's choice changes the saved preference."""
         if self._sidebar_anim:
             self._sidebar_anim.stop()
@@ -291,7 +310,11 @@ class MainWindow(QMainWindow):
         if self.learner:
             self._open_overlay(DatabasePage(self.learner), "Database")
 
-    def _open_overlay(self, page: StatsPage | DatabasePage, title: str):
+    def _open_overlay(
+        self,
+        page: StatsPage | DatabasePage,
+        title: str,
+    ):
         """Show `page` (which has a `back` signal) in place of the current page; Back returns to it."""
         self.close_overlay()
         self._overlay_return = (self.stack.currentWidget(), self.title_label.text())

@@ -13,7 +13,10 @@ import numpy as np
 SAMPLE_RATE = 44100
 
 
-def synth_piano(midi: int, duration: float = 1.6) -> np.ndarray:
+def synth_piano(
+    midi: int,
+    duration: float = 1.6,
+) -> np.ndarray:
     """Additive piano model: stretched partials, per-partial decay, detuned string pair, hammer thump."""
     rng = np.random.default_rng(midi)  # deterministic per note
     f0 = 440.0 * 2 ** ((midi - 69) / 12)
@@ -56,12 +59,49 @@ class Instrument:
 
 INSTRUMENTS = (
     Instrument("piano", "Piano", "piano"),
-    Instrument("flute", "Flute", "samples/flute", 0.85, sustained=True),
-    Instrument("horn", "French Horn", "samples/horn", 0.85, sustained=True),
-    Instrument("viola_bowed", "Viola (Arco)", "samples/viola_bowed", 0.85, sustained=True, family="Viola", variant="Arco"),
-    Instrument("viola_plucked", "Viola (Pizzicato)", "samples/viola_plucked", 0.85, family="Viola", variant="Pizzicato"),
-    Instrument("marimba", "Marimba", "samples/marimba", 0.85),
-    Instrument("vibraphone", "Vibraphone", "samples/vibraphone", 0.85),
+    Instrument(
+        "flute",
+        "Flute",
+        "samples/flute",
+        0.85,
+        sustained=True,
+    ),
+    Instrument(
+        "horn",
+        "French Horn",
+        "samples/horn",
+        0.85,
+        sustained=True,
+    ),
+    Instrument(
+        "viola_bowed",
+        "Viola (Arco)",
+        "samples/viola_bowed",
+        0.85,
+        sustained=True,
+        family="Viola",
+        variant="Arco",
+    ),
+    Instrument(
+        "viola_plucked",
+        "Viola (Pizzicato)",
+        "samples/viola_plucked",
+        0.85,
+        family="Viola",
+        variant="Pizzicato",
+    ),
+    Instrument(
+        "marimba",
+        "Marimba",
+        "samples/marimba",
+        0.85,
+    ),
+    Instrument(
+        "vibraphone",
+        "Vibraphone",
+        "samples/vibraphone",
+        0.85,
+    ),
 )
 INSTRUMENT_BY_KEY = {i.key: i for i in INSTRUMENTS}
 
@@ -80,14 +120,20 @@ def read_wav(path: Path) -> tuple[np.ndarray, int]:
         return np.frombuffer(w.readframes(w.getnframes()), dtype="<i2").astype(np.float64) / 32768, w.getframerate()
 
 
-def shift_pitch(samples: np.ndarray, semitones: float) -> np.ndarray:
+def shift_pitch(
+    samples: np.ndarray,
+    semitones: float,
+) -> np.ndarray:
     """Change pitch by resampling (it also changes the length, which is fine for a few semitones)."""
     ratio = 2 ** (semitones / 12)
     positions = np.arange(0, len(samples) - 1, ratio)
     return np.interp(positions, np.arange(len(samples)), samples)
 
 
-def to_wav_bytes(samples: np.ndarray, rate: int = SAMPLE_RATE) -> bytes:
+def to_wav_bytes(
+    samples: np.ndarray,
+    rate: int = SAMPLE_RATE,
+) -> bytes:
     buf = io.BytesIO()
     with wave.open(buf, "wb") as w:
         w.setnchannels(1)
@@ -127,7 +173,11 @@ class Sounds:
         """The notes this instrument has a recording for on disk, as MIDI note -> file."""
         return self._samples(inst)
 
-    def _note_file(self, inst: Instrument, midi: int) -> Path:
+    def _note_file(
+        self,
+        inst: Instrument,
+        midi: int,
+    ) -> Path:
         """A WAV for this note: the recording if there is one, else the nearest recording pitch-shifted."""
         samples = self._samples(inst)
         if midi in samples:
@@ -144,7 +194,11 @@ class Sounds:
 
     FADE_MS = 70  # how quickly a sustained note dies away when the next one begins
 
-    def _effect(self, inst: Instrument, midi: int):
+    def _effect(
+        self,
+        inst: Instrument,
+        midi: int,
+    ):
         """The sound effect for this note, created the first time it is needed."""
         key = (inst.key, midi)
         fx = self._effects.get(key)
@@ -215,21 +269,49 @@ class Sounds:
                 fx.setVolume(0.0)
                 fx.stop()
 
-    def preview(self, key: str, midis, step_ms: int = 300) -> None:
+    def preview(
+        self,
+        key: str,
+        midis,
+        step_ms: int = 300,
+    ) -> None:
         """Play these notes one after another in an instrument, even while muted, to hear what it sounds like.
         Starting a preview silences the one before it."""
         self.stop_all()
-        self._play_sequence(key, [([m], 0.9) for m in midis], step_ms, force=True)
+        self._play_sequence(
+            key,
+            [([m], 0.9) for m in midis],
+            step_ms,
+            force=True,
+        )
 
-    def _play_column(self, midis, volume: float, key: str | None = None, force: bool = False) -> None:
+    def _play_column(
+        self,
+        midis,
+        volume: float,
+        key: str | None = None,
+        force: bool = False,
+    ) -> None:
         """Start the notes of one column together, first ending any sustained notes still ringing."""
         inst = INSTRUMENT_BY_KEY.get(key or self.instrument, INSTRUMENTS[0])
         if inst.sustained and (self.enabled or force):
             self._release_sounding()
         for midi in midis:
-            self.play_midi(midi, volume, instrument=key, force=force, release_previous=False)
+            self.play_midi(
+                midi,
+                volume,
+                instrument=key,
+                force=force,
+                release_previous=False,
+            )
 
-    def _play_sequence(self, key: str, steps: list[tuple[list[int], float]], gap_ms: int, force: bool = False) -> None:
+    def _play_sequence(
+        self,
+        key: str,
+        steps: list[tuple[list[int], float]],
+        gap_ms: int,
+        force: bool = False,
+    ) -> None:
         """Play `steps` (the notes of each column, and their volume) one after another, `gap_ms` apart.
 
         The rhythm has to be even, so the notes are loaded first (making a sound effect the first time it is needed
@@ -261,7 +343,12 @@ class Sounds:
             if run != self._sequence_run:
                 return
             midis, volume = steps[i]
-            self._play_column(midis, volume, key, force)
+            self._play_column(
+                midis,
+                volume,
+                key,
+                force,
+            )
             if i + 1 < len(steps):  # the next one is due a full gap after this one has started, however long that took
                 QTimer.singleShot(gap_ms, lambda: step(i + 1))
 
@@ -275,7 +362,11 @@ class Sounds:
 
         wait()
 
-    def play_notes(self, columns, gap_ms: int = 450) -> None:
+    def play_notes(
+        self,
+        columns,
+        gap_ms: int = 450,
+    ) -> None:
         """Play staff columns left to right, evenly spaced; the notes within a column sound together."""
         self._play_sequence(
             self.instrument,
@@ -285,7 +376,16 @@ class Sounds:
 
     def play_correct(self, streak: int) -> None:
         """Climb the C major scale (C5..C6) as the streak grows, then wrap."""
-        scale = (72, 74, 76, 77, 79, 81, 83, 84)
+        scale = (
+            72,
+            74,
+            76,
+            77,
+            79,
+            81,
+            83,
+            84,
+        )
         self.play_midi(scale[(max(streak, 1) - 1) % len(scale)])
 
 

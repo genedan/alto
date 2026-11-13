@@ -8,7 +8,15 @@ from ..settings import KEYBOARD_DEFAULT, KEYBOARD_FULL
 from . import keyboard_styles
 from .keyboard_styles import KeyboardStyle
 
-WHITE_PITCH_CLASSES = (0, 2, 4, 5, 7, 9, 11)
+WHITE_PITCH_CLASSES = (
+    0,
+    2,
+    4,
+    5,
+    7,
+    9,
+    11,
+)
 EDGE_REACH = 11.0  # px either side of a span's edge that grabs it
 PAD = 10.0  # frame padding
 
@@ -16,21 +24,51 @@ PAD = 10.0  # frame padding
 # Real piano proportions, in units of one white key's width (23.5 mm): a white key is about 6.2 units long,
 # a black key 0.58 wide and 0.63 as long as a white one. Black keys do not sit on the boundary between
 # white keys: in each group they are spread a little, so these are their centres within an octave.
-WHITE_INDEX = {0: 0, 2: 1, 4: 2, 5: 3, 7: 4, 9: 5, 11: 6}
-BLACK_CENTER = {1: 0.93, 3: 2.07, 6: 3.86, 8: 5.0, 10: 6.14}
+WHITE_INDEX = {
+    0: 0,
+    2: 1,
+    4: 2,
+    5: 3,
+    7: 4,
+    9: 5,
+    11: 6,
+}
+BLACK_CENTER = {
+    1: 0.93,
+    3: 2.07,
+    6: 3.86,
+    8: 5.0,
+    10: 6.14,
+}
 KEY_LENGTH, BLACK_WIDTH, BLACK_LENGTH = 6.2, 0.58, 0.63
 MAX_KEY_WIDTH = 38.0  # px; keeps a short range from making a keyboard taller than the window
 
 
-def _bottom_rounded(x: float, y: float, w: float, h: float, r: float) -> QPainterPath:
+def _bottom_rounded(
+    x: float,
+    y: float,
+    w: float,
+    h: float,
+    r: float,
+) -> QPainterPath:
     """A rectangle with square top corners and rounded bottom corners."""
     path = QPainterPath()
     path.moveTo(x, y)
     path.lineTo(x + w, y)
     path.lineTo(x + w, y + h - r)
-    path.quadTo(x + w, y + h, x + w - r, y + h)
+    path.quadTo(
+        x + w,
+        y + h,
+        x + w - r,
+        y + h,
+    )
     path.lineTo(x + r, y + h)
-    path.quadTo(x, y + h, x, y + h - r)
+    path.quadTo(
+        x,
+        y + h,
+        x,
+        y + h - r,
+    )
     path.closeSubpath()
     return path
 
@@ -76,7 +114,11 @@ class KeyboardWidget(QWidget):
         super().resizeEvent(event)
         self._fit_height()
 
-    def show_key(self, midi: int | None, span: tuple[int, int] | None = None) -> None:
+    def show_key(
+        self,
+        midi: int | None,
+        span: tuple[int, int] | None = None,
+    ) -> None:
         """Highlight a key. `span` is the range of keys to show; it is widened to whole white keys."""
         if span:
             self.lo, self.hi = span
@@ -112,10 +154,26 @@ class KeyboardWidget(QWidget):
         p.setPen(Qt.PenStyle.NoPen)
         if style.case:
             p.setBrush(QColor(style.case))
-            p.drawRoundedRect(QRectF(left - pad, 0, n * kw + 2 * pad, top + kh + pad), 14, 14)
+            p.drawRoundedRect(
+                QRectF(
+                    left - pad,
+                    0,
+                    n * kw + 2 * pad,
+                    top + kh + pad,
+                ),
+                14,
+                14,
+            )
         if style.felt:
             p.setBrush(QColor(style.felt))
-            p.drawRect(QRectF(left, top - 5, n * kw, 4))
+            p.drawRect(
+                QRectF(
+                    left,
+                    top - 5,
+                    n * kw,
+                    4,
+                ),
+            )
         if style.knobs:
             count = max(3, int(n * kw / 56))
             for i in range(count):
@@ -132,9 +190,32 @@ class KeyboardWidget(QWidget):
         edge = 2.5 if style.thick else 1.0
         for i, midi in enumerate(whites):
             on = midi == self.highlight
-            path = _bottom_rounded(left + i * kw + style.gap / 2, top, kw - style.gap, kh, radius)
-            self._outline(p, path, style, midi, False, edge)
-            p.setBrush(self.highlight_color if on else keyboard_styles.key_brush(style, midi, False, top, kh))
+            path = _bottom_rounded(
+                left + i * kw + style.gap / 2,
+                top,
+                kw - style.gap,
+                kh,
+                radius,
+            )
+            self._outline(
+                p,
+                path,
+                style,
+                midi,
+                False,
+                edge,
+            )
+            p.setBrush(
+                self.highlight_color
+                if on
+                else keyboard_styles.key_brush(
+                    style,
+                    midi,
+                    False,
+                    top,
+                    kh,
+                ),
+            )
             p.drawPath(path)
             if style.dot and midi % 12 == 0:
                 p.setPen(Qt.PenStyle.NoPen)
@@ -149,21 +230,60 @@ class KeyboardWidget(QWidget):
             centre = 7 * (midi // 12) + BLACK_CENTER[midi % 12]
             x = left + (centre - first) * kw - bw / 2
             on = midi == self.highlight
-            path = _bottom_rounded(x, top - 1, bw, bh + 1, min(4.0, bw * 0.2))
-            self._outline(p, path, style, midi, True, edge)
-            p.setBrush(self.highlight_color if on else keyboard_styles.key_brush(style, midi, True, top, bh))
+            path = _bottom_rounded(
+                x,
+                top - 1,
+                bw,
+                bh + 1,
+                min(4.0, bw * 0.2),
+            )
+            self._outline(
+                p,
+                path,
+                style,
+                midi,
+                True,
+                edge,
+            )
+            p.setBrush(
+                self.highlight_color
+                if on
+                else keyboard_styles.key_brush(
+                    style,
+                    midi,
+                    True,
+                    top,
+                    bh,
+                ),
+            )
             p.drawPath(path)
             if style.cap:  # a bone cap over the darker wood
                 p.setPen(Qt.PenStyle.NoPen)
                 p.setBrush(QColor(style.cap))
-                p.drawRoundedRect(QRectF(x + 2, top, bw - 4, bh - 6), 1.5, 1.5)
+                p.drawRoundedRect(
+                    QRectF(
+                        x + 2,
+                        top,
+                        bw - 4,
+                        bh - 6,
+                    ),
+                    1.5,
+                    1.5,
+                )
             if style.ink:
                 p.setPen(QPen(QColor(style.white[0]), 0.8))
                 for step in range(3):
                     p.drawLine(QPointF(x + 2, top + 8 + step * 5), QPointF(x + bw - 2, top + 8 + step * 5))
 
     @staticmethod
-    def _outline(p: QPainter, path: QPainterPath, style: KeyboardStyle, midi: int, black: bool, width: float) -> None:
+    def _outline(
+        p: QPainter,
+        path: QPainterPath,
+        style: KeyboardStyle,
+        midi: int,
+        black: bool,
+        width: float,
+    ) -> None:
         """Set the pen for a key's outline; a style with a glow first draws a wide faint halo of it."""
         colour = keyboard_styles.edge_color(style, midi, black)
         if style.glow:
@@ -181,7 +301,12 @@ class KeyboardSpan(QWidget):
 
     dragged = Signal(int, int)
 
-    def __init__(self, parent=None, compact: bool = False, size: tuple[int, int] = (124, 26)):
+    def __init__(
+        self,
+        parent=None,
+        compact: bool = False,
+        size: tuple[int, int] = (124, 26),
+    ):
         """`compact` makes a fixed-size version (`size` in pixels), for a summary in a menu row."""
         super().__init__(parent)
         self.lo, self.hi = KEYBOARD_DEFAULT
@@ -271,7 +396,11 @@ class KeyboardSpan(QWidget):
         self._mode = None
         self.mouseMoveEvent(event)  # refresh the cursor for where the pointer now is
 
-    def set_span(self, lo: int, hi: int) -> None:
+    def set_span(
+        self,
+        lo: int,
+        hi: int,
+    ) -> None:
         self.lo, self.hi = lo, hi
         self.update()
 
@@ -285,27 +414,77 @@ class KeyboardSpan(QWidget):
         style = keyboard_styles.current()
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QColor(style.case or keyboard_styles.DEFAULT_CASE))  # the miniature always sits on a case
-        p.drawRoundedRect(QRectF(0, 0, w, h), 8, 8)
+        p.drawRoundedRect(
+            QRectF(
+                0,
+                0,
+                w,
+                h,
+            ),
+            8,
+            8,
+        )
         index_of = {}
         for i, midi in enumerate(whites):
             index_of[midi] = i
             on = self.lo <= midi <= self.hi
-            p.setBrush(accent if on else keyboard_styles.key_brush(style, midi, False, 4, h - 8))
-            p.drawRect(QRectF(4 + i * (w - 8) / len(whites), 4, (w - 8) / len(whites) - 0.6, h - 8))
+            p.setBrush(
+                accent
+                if on
+                else keyboard_styles.key_brush(
+                    style,
+                    midi,
+                    False,
+                    4,
+                    h - 8,
+                ),
+            )
+            p.drawRect(
+                QRectF(
+                    4 + i * (w - 8) / len(whites),
+                    4,
+                    (w - 8) / len(whites) - 0.6,
+                    h - 8,
+                ),
+            )
         kw = (w - 8) / len(whites)
         for midi in range(first, last + 1):
             if midi % 12 in WHITE_PITCH_CLASSES or midi - 1 not in index_of:
                 continue
             on = self.lo <= midi <= self.hi
-            p.setBrush(accent.darker(150) if on else keyboard_styles.key_brush(style, midi, True, 4, (h - 8) * 0.6))
-            p.drawRect(QRectF(4 + (index_of[midi - 1] + 1) * kw - kw * 0.3, 4, kw * 0.6, (h - 8) * 0.6))
+            p.setBrush(
+                accent.darker(150)
+                if on
+                else keyboard_styles.key_brush(
+                    style,
+                    midi,
+                    True,
+                    4,
+                    (h - 8) * 0.6,
+                ),
+            )
+            p.drawRect(
+                QRectF(
+                    4 + (index_of[midi - 1] + 1) * kw - kw * 0.3,
+                    4,
+                    kw * 0.6,
+                    (h - 8) * 0.6,
+                ),
+            )
         # the two edges of the span: a line, and (on the full-size one) a round knob with a chevron to grab
         left_edge, right_edge = self._edges()
         line = accent.lighter(150)
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(line)
         for x in (left_edge, right_edge):
-            p.drawRect(QRectF(x - 1, 4, 2, h - 8))
+            p.drawRect(
+                QRectF(
+                    x - 1,
+                    4,
+                    2,
+                    h - 8,
+                ),
+            )
         if self._compact:
             return
         mid, radius = h / 2, 11.0
@@ -317,6 +496,14 @@ class KeyboardSpan(QWidget):
             chevron.moveTo(x - direction * 2.5, mid - 5)
             chevron.lineTo(x + direction * 2.5, mid)
             chevron.lineTo(x - direction * 2.5, mid + 5)
-            p.setPen(QPen(accent.darker(180), 2, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+            p.setPen(
+                QPen(
+                    accent.darker(180),
+                    2,
+                    Qt.PenStyle.SolidLine,
+                    Qt.PenCapStyle.RoundCap,
+                    Qt.PenJoinStyle.RoundJoin,
+                ),
+            )
             p.setBrush(Qt.BrushStyle.NoBrush)
             p.drawPath(chevron)

@@ -33,7 +33,10 @@ MIN_RECENCY = 0.02
 T = TypeVar("T")
 
 
-def speed_term(seconds: float, par_seconds: float) -> float:
+def speed_term(
+    seconds: float,
+    par_seconds: float,
+) -> float:
     """The strain change for how long the first answer took: negative when quick, positive when slow."""
     ratio = seconds / par_seconds
     if ratio <= VERY_FAST:
@@ -43,7 +46,13 @@ def speed_term(seconds: float, par_seconds: float) -> float:
     return min(SLOW_PENALTY, SLOW_PENALTY * (ratio - 1.0) / (VERY_SLOW - 1.0))
 
 
-def update_strain(strain: float, correct: bool, attempt_no: int, seconds: float, par_seconds: float) -> float:
+def update_strain(
+    strain: float,
+    correct: bool,
+    attempt_no: int,
+    seconds: float,
+    par_seconds: float,
+) -> float:
     """The question's strain after one more answer. `seconds` only matters for the first attempt."""
     if not correct:
         strain += WRONG_PENALTY
@@ -54,7 +63,11 @@ def update_strain(strain: float, correct: bool, attempt_no: int, seconds: float,
     return min(max(strain, 0.0), STRAIN_MAX)
 
 
-def weight(strain: float | None, last_seen: float | None, now: float) -> float:
+def weight(
+    strain: float | None,
+    last_seen: float | None,
+    now: float,
+) -> float:
     """How likely a question is to be picked, relative to the others. `strain` is None for one never answered.
 
     A question just seen is held back for a while, long for an easy one and short for a hard one, so what you have
@@ -67,5 +80,9 @@ def weight(strain: float | None, last_seen: float | None, now: float) -> float:
     return math.exp(WEIGHT_SLOPE * strain) * max(recency, MIN_RECENCY)
 
 
-def choose(options: Sequence[T], weights: Sequence[float], rng: random.Random) -> T:
+def choose(
+    options: Sequence[T],
+    weights: Sequence[float],
+    rng: random.Random,
+) -> T:
     return rng.choices(options, weights=weights, k=1)[0]

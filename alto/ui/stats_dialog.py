@@ -40,10 +40,22 @@ TIMEFRAMES = (
 )
 
 
-def since_for(span: str | int | None, now: float) -> float | None:
+def since_for(
+    span: str | int | None,
+    now: float,
+) -> float | None:
     """The timestamp a timeframe starts from: midnight for today, so many days back for the rest, None for all time."""
     if span == "today":
-        return datetime.fromtimestamp(now).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+        return (
+            datetime.fromtimestamp(now)
+            .replace(
+                hour=0,
+                minute=0,
+                second=0,
+                microsecond=0,
+            )
+            .timestamp()
+        )
     return None if span is None else now - int(span) * DAY
 
 
@@ -57,7 +69,11 @@ def format_duration(seconds: float) -> str:
 class Tile(QFrame):
     """One headline number with its caption."""
 
-    def __init__(self, caption: str, parent=None):
+    def __init__(
+        self,
+        caption: str,
+        parent=None,
+    ):
         super().__init__(parent)
         self.setObjectName("keyGroup")  # the same bordered box used elsewhere in the settings
         lay = QVBoxLayout(self)
@@ -78,7 +94,11 @@ class StatsPage(QWidget):
 
     back = Signal()
 
-    def __init__(self, learner: Learner, parent: QWidget | None = None):
+    def __init__(
+        self,
+        learner: Learner,
+        parent: QWidget | None = None,
+    ):
         super().__init__(parent)
         self.learner = learner
         outer = QVBoxLayout(self)
@@ -110,7 +130,12 @@ class StatsPage(QWidget):
 
         body = QWidget()
         lay = QVBoxLayout(body)
-        lay.setContentsMargins(0, 6, 8, 6)
+        lay.setContentsMargins(
+            0,
+            6,
+            8,
+            6,
+        )
         lay.setSpacing(14)
         self.note = QLabel()
         self.note.setStyleSheet("color: gray;")
@@ -140,7 +165,14 @@ class StatsPage(QWidget):
         self.by_exercise = HBarChart("Right first time, by exercise")
         charts = QGridLayout()
         charts.setSpacing(14)
-        for i, chart in enumerate((self.volume, self.accuracy, self.speed, self.by_exercise)):
+        for i, chart in enumerate(
+            (
+                self.volume,
+                self.accuracy,
+                self.speed,
+                self.by_exercise,
+            ),
+        ):
             charts.addWidget(chart, i // 2, i % 2)
         lay.addLayout(charts)
 
@@ -152,7 +184,14 @@ class StatsPage(QWidget):
 
         lay.addWidget(QLabel("<b>Questions that need practice</b>"))
         self.table = QTableWidget(0, 4)
-        self.table.setHorizontalHeaderLabels(["Exercise", "Question", "Missed", "Answered"])
+        self.table.setHorizontalHeaderLabels(
+            [
+                "Exercise",
+                "Question",
+                "Missed",
+                "Answered",
+            ],
+        )
         self.table.verticalHeader().hide()
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
@@ -204,7 +243,12 @@ class StatsPage(QWidget):
         self.tiles["time"].show_value(format_duration(s.practice_seconds))
 
         labels = [b.label for b in s.buckets]
-        per = {"hour": "hour", "day": "day", "week": "week", "month": "month"}[s.granularity]
+        per = {
+            "hour": "hour",
+            "day": "day",
+            "week": "week",
+            "month": "month",
+        }[s.granularity]
         self.volume.title = f"Questions answered per {per}"
         self.volume.set_data(labels, [b.first_right for b in s.buckets], [b.questions - b.first_right for b in s.buckets])
         self.accuracy.title = f"Right first time, per {per}"
@@ -222,12 +266,24 @@ class StatsPage(QWidget):
             ],
         )
 
-        counts = stats.daily_counts(self.learner.db, profiles, self.exercise.currentData(), now=now)
+        counts = stats.daily_counts(
+            self.learner.db,
+            profiles,
+            self.exercise.currentData(),
+            now=now,
+        )
         self.heatmap.set_data(counts, datetime.fromtimestamp(now).date())
 
         self.table.setRowCount(len(s.hardest))
         for row, h in enumerate(s.hardest):
-            for col, text in enumerate((names.get(h.exercise, h.exercise), h.text, str(h.wrong), str(h.seen))):
+            for col, text in enumerate(
+                (
+                    names.get(h.exercise, h.exercise),
+                    h.text,
+                    str(h.wrong),
+                    str(h.seen),
+                ),
+            ):
                 item = QTableWidgetItem(text)
                 if col >= 2:
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)

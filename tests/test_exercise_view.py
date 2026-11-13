@@ -18,7 +18,11 @@ from alto.ui.exercise_view import ExerciseView
 from PySide6.QtTest import QTest
 
 
-def view_of(exercise, seed=1, **kw):
+def view_of(
+    exercise,
+    seed=1,
+    **kw,
+):
     return ExerciseView(exercise, random.Random(seed), **kw)
 
 
@@ -117,7 +121,12 @@ def test_right_click_steps_through_the_signs(construction):
     for _ in range(4):
         construction.input_staff.accidental_cycled.emit()
         seen.append(construction.input_staff.accidental)
-    assert seen == [1, -1, None, 1]  # with no key signature, a natural is the same as no sign
+    assert seen == [
+        1,
+        -1,
+        None,
+        1,
+    ]  # with no key signature, a natural is the same as no sign
     construction.question.key = 2
     construction.input_staff.accidental = -1
     construction.input_staff.accidental_cycled.emit()

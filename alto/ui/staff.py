@@ -46,11 +46,48 @@ MIDDLE_C = Note(4, 0).diatonic
 # Where each key-signature accidental sits, in order of appearance. Each is a fourth up or a fifth down from the one before
 # (sharps: F C G D A E B, flats: B E A D G C F), and the pattern is chosen so that all seven stay on the staff, or one step
 # above or below it. This gives the usual signatures for the treble, bass, alto and tenor clefs, and works out the rest.
-_SHARP_PATTERNS = ((-3, 4, -3, -3, 4, -3), (4, -3, 4, -3, 4, -3))
-_FLAT_PATTERNS = ((3, -4, 3, -4, 3, -4), (-4, 3, -4, 3, -4, 3))
+_SHARP_PATTERNS = (
+    (
+        -3,
+        4,
+        -3,
+        -3,
+        4,
+        -3,
+    ),
+    (
+        4,
+        -3,
+        4,
+        -3,
+        4,
+        -3,
+    ),
+)
+_FLAT_PATTERNS = (
+    (
+        3,
+        -4,
+        3,
+        -4,
+        3,
+        -4,
+    ),
+    (
+        -4,
+        3,
+        -4,
+        3,
+        -4,
+        3,
+    ),
+)
 
 
-def key_signature_positions(clef: str, sign: int) -> list[str]:
+def key_signature_positions(
+    clef: str,
+    sign: int,
+) -> list[str]:
     """The notes the sharps (sign 1) or flats (sign -1) of a key signature are written on in this clef."""
     bottom = BOTTOM_LINE[clef]
     first, patterns = ("F", _SHARP_PATTERNS) if sign > 0 else ("B", _FLAT_PATTERNS)
@@ -97,7 +134,16 @@ def draw_key_signature(
         positions = _KEY_POSITIONS[(clef, 1 if key > 0 else -1)].split()
         for i, name in enumerate(positions[: abs(key)]):
             y = bottom - (Note.parse(name).diatonic - BOTTOM_LINE[clef]) * gap / 2
-            engraving.draw_accidental(p, font, 1 if key > 0 else -1, x + i * step, y, gap, color, fit=step - 1)
+            engraving.draw_accidental(
+                p,
+                font,
+                1 if key > 0 else -1,
+                x + i * step,
+                y,
+                gap,
+                color,
+                fit=step - 1,
+            )
         return
     sign = "♯" if key > 0 else "♭"
     positions = _KEY_POSITIONS[(clef, 1 if key > 0 else -1)].split()
@@ -213,12 +259,35 @@ class StaffWidget(QWidget):
         for clef, bottom in staves.items():
             for i in range(5):
                 p.drawLine(QPointF(left, bottom - i * gap), QPointF(right, bottom - i * gap))
-            self._draw_clef(p, clef, left + 8, bottom, gap, fg, font)
-            self._draw_key_signature(p, clef, left + 56, bottom, gap, fg, font)
+            self._draw_clef(
+                p,
+                clef,
+                left + 8,
+                bottom,
+                gap,
+                fg,
+                font,
+            )
+            self._draw_key_signature(
+                p,
+                clef,
+                left + 56,
+                bottom,
+                gap,
+                fg,
+                font,
+            )
         if grand:
             ys = list(staves.values())
             p.drawLine(QPointF(left, ys[0] - 4 * gap), QPointF(left, ys[1]))
-            self._brace(p, left - 3, ys[0] - 4 * gap, ys[1], fg, font=font)
+            self._brace(
+                p,
+                left - 3,
+                ys[0] - 4 * gap,
+                ys[1],
+                fg,
+                font=font,
+            )
 
         if self.caption:
             caption_font = QFont(self.font())
@@ -227,7 +296,12 @@ class StaffWidget(QWidget):
             p.setPen(fg)
             top = max(staves.values()) + 2.5 * gap  # below the lowest staff, clear of its ledger lines
             p.drawText(
-                QRectF(left, top, right - left, max(self.height() - top - gap, gap * 2)),
+                QRectF(
+                    left,
+                    top,
+                    right - left,
+                    max(self.height() - top - gap, gap * 2),
+                ),
                 Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter,
                 self.caption,
             )
@@ -248,19 +322,46 @@ class StaffWidget(QWidget):
                 p.setPen(QPen(fg, engraving.ledger_width(font, gap) if font else line))
                 if steps < 0:
                     for s in range(-2, steps - 1, -2):
-                        self._ledger(p, x, bottom - s * gap / 2, gap)
+                        self._ledger(
+                            p,
+                            x,
+                            bottom - s * gap / 2,
+                            gap,
+                        )
                 elif steps > 8:
                     for s in range(10, steps + 1, 2):
-                        self._ledger(p, x, bottom - s * gap / 2, gap)
+                        self._ledger(
+                            p,
+                            x,
+                            bottom - s * gap / 2,
+                            gap,
+                        )
                 p.setPen(Qt.PenStyle.NoPen)
                 value = self.value if len(col) == 1 else "whole"  # stems are only drawn for single notes
-                self._note(p, x, y, gap, nfg, value, stem_down=steps >= 4, font=font)
+                self._note(
+                    p,
+                    x,
+                    y,
+                    gap,
+                    nfg,
+                    value,
+                    stem_down=steps >= 4,
+                    font=font,
+                )
                 p.setPen(QPen(nfg, 1.4))
                 # A sign is written only where the note differs from what the key signature already says.
                 if note.accidental != key_accidental(note.letter, self.key):
                     ax = x - gap * (2.3 + 1.2 * (acc_slot % 3))
                     if font:
-                        engraving.draw_accidental(p, font, note.accidental, ax, y, gap, nfg)
+                        engraving.draw_accidental(
+                            p,
+                            font,
+                            note.accidental,
+                            ax,
+                            y,
+                            gap,
+                            nfg,
+                        )
                     else:
                         sign = ACCIDENTAL_SYMBOLS[note.accidental] or "♮"
                         p.setFont(QFont("DejaVu Sans", int(gap * 2.0)))
@@ -277,7 +378,16 @@ class StaffWidget(QWidget):
         color: QColor,
         font: str | None = None,
     ) -> None:
-        draw_key_signature(p, clef, self.key, x, bottom, gap, color, font=font)
+        draw_key_signature(
+            p,
+            clef,
+            self.key,
+            x,
+            bottom,
+            gap,
+            color,
+            font=font,
+        )
 
     @staticmethod
     def _note(
@@ -292,11 +402,34 @@ class StaffWidget(QWidget):
     ) -> None:
         """Draw a note of the given value; the head is centred on (x, y)."""
         if font and value != "breve":  # the breve is always the square form, whatever the music font
-            engraving.draw_note(p, font, value, x, y, gap, color, stem_down)
+            engraving.draw_note(
+                p,
+                font,
+                value,
+                x,
+                y,
+                gap,
+                color,
+                stem_down,
+            )
         elif value == "whole":
-            StaffWidget._whole_note(p, x, y, gap, color)
+            StaffWidget._whole_note(
+                p,
+                x,
+                y,
+                gap,
+                color,
+            )
         else:
-            draw_note(p, value, x, y, gap, color, stem_down)
+            draw_note(
+                p,
+                value,
+                x,
+                y,
+                gap,
+                color,
+                stem_down,
+            )
 
     @staticmethod
     def _draw_clef(
@@ -311,11 +444,24 @@ class StaffWidget(QWidget):
         """Draw the clef: from a SMuFL font if given, else as a Noto Music path scaled to its extent in gaps."""
         clef = clef_shape(clef)  # the baritone clef is an F clef or a C clef, as chosen in the settings
         if font:
-            engraving.draw_clef(p, font, clef, x, bottom, gap, color)
+            engraving.draw_clef(
+                p,
+                font,
+                clef,
+                x,
+                bottom,
+                gap,
+                color,
+            )
             return
         top, bot = CLEF_EXTENT[clef]
         path = QPainterPath()
-        path.addText(0, 0, QFont("Noto Music", 100), CLEF_GLYPH[clef])
+        path.addText(
+            0,
+            0,
+            QFont("Noto Music", 100),
+            CLEF_GLYPH[clef],
+        )
         r = path.boundingRect()
         scale = (top - bot) * gap / r.height()
         t = QTransform()
@@ -329,18 +475,62 @@ class StaffWidget(QWidget):
         p.restore()
 
     @staticmethod
-    def _brace(p: QPainter, x: float, y0: float, y1: float, color: QColor, wd: float = 11.0, font: str | None = None) -> None:
+    def _brace(
+        p: QPainter,
+        x: float,
+        y0: float,
+        y1: float,
+        color: QColor,
+        wd: float = 11.0,
+        font: str | None = None,
+    ) -> None:
         """A curly brace whose point faces left, spanning y0..y1 with its right edge at x: the music font's brace if
         it has one, else a drawn one."""
-        if font and engraving.draw_brace(p, font, x, y0, y1, color, wd * 1.25):
+        if font and engraving.draw_brace(
+            p,
+            font,
+            x,
+            y0,
+            y1,
+            color,
+            wd * 1.25,
+        ):
             return
         mid = (y0 + y1) / 2
         path = QPainterPath()
         path.moveTo(x, y0)
-        path.cubicTo(x - wd, y0 + (mid - y0) * 0.25, x, mid - (mid - y0) * 0.35, x - wd, mid)
-        path.cubicTo(x, mid + (y1 - mid) * 0.35, x - wd, y1 - (y1 - mid) * 0.25, x, y1)
-        path.cubicTo(x - wd * 0.4, y1 - (y1 - mid) * 0.25, x - wd * 1.4, mid + (y1 - mid) * 0.3, x - wd * 1.4, mid)
-        path.cubicTo(x - wd * 1.4, mid - (mid - y0) * 0.3, x - wd * 0.4, y0 + (mid - y0) * 0.25, x, y0)
+        path.cubicTo(
+            x - wd,
+            y0 + (mid - y0) * 0.25,
+            x,
+            mid - (mid - y0) * 0.35,
+            x - wd,
+            mid,
+        )
+        path.cubicTo(
+            x,
+            mid + (y1 - mid) * 0.35,
+            x - wd,
+            y1 - (y1 - mid) * 0.25,
+            x,
+            y1,
+        )
+        path.cubicTo(
+            x - wd * 0.4,
+            y1 - (y1 - mid) * 0.25,
+            x - wd * 1.4,
+            mid + (y1 - mid) * 0.3,
+            x - wd * 1.4,
+            mid,
+        )
+        path.cubicTo(
+            x - wd * 1.4,
+            mid - (mid - y0) * 0.3,
+            x - wd * 0.4,
+            y0 + (mid - y0) * 0.25,
+            x,
+            y0,
+        )
         p.save()
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(color)
@@ -348,7 +538,13 @@ class StaffWidget(QWidget):
         p.restore()
 
     @staticmethod
-    def _whole_note(p: QPainter, x: float, y: float, gap: float, color: QColor = QColor("black")) -> None:
+    def _whole_note(
+        p: QPainter,
+        x: float,
+        y: float,
+        gap: float,
+        color: QColor = QColor("black"),
+    ) -> None:
         """Whole note: black oval with a tilted white hole."""
         outer = QPainterPath()
         outer.addEllipse(QPointF(0, 0), gap * 0.74, gap * 0.5)
@@ -365,6 +561,11 @@ class StaffWidget(QWidget):
         p.restore()
 
     @staticmethod
-    def _ledger(p: QPainter, x: float, y: float, gap: float) -> None:
+    def _ledger(
+        p: QPainter,
+        x: float,
+        y: float,
+        gap: float,
+    ) -> None:
         """Ledger line, a little wider than the note head (which is about 0.74 gap either side of centre)."""
         p.drawLine(QPointF(x - gap, y), QPointF(x + gap, y))

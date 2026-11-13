@@ -87,10 +87,18 @@ def _granularity(span_days: float) -> str:
     return "month"
 
 
-def _floor(t: datetime, gran: str) -> datetime:
+def _floor(
+    t: datetime,
+    gran: str,
+) -> datetime:
     if gran == "hour":
         return t.replace(minute=0, second=0, microsecond=0)
-    day = t.replace(hour=0, minute=0, second=0, microsecond=0)
+    day = t.replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
     if gran == "week":
         return day - timedelta(days=day.weekday())
     if gran == "month":
@@ -98,7 +106,10 @@ def _floor(t: datetime, gran: str) -> datetime:
     return day
 
 
-def _next(t: datetime, gran: str) -> datetime:
+def _next(
+    t: datetime,
+    gran: str,
+) -> datetime:
     if gran == "hour":
         return t + timedelta(hours=1)
     if gran == "week":
@@ -108,7 +119,10 @@ def _next(t: datetime, gran: str) -> datetime:
     return t + timedelta(days=1)
 
 
-def _label(t: datetime, gran: str) -> str:
+def _label(
+    t: datetime,
+    gran: str,
+) -> str:
     if gran == "hour":
         return t.strftime("%H:%M")
     if gran == "month":
@@ -207,15 +221,34 @@ def collect(
         out.median_seconds = statistics.median(times) if times else None
         out.by_exercise = sorted(
             (
-                ExerciseStats(name, len(v), 100.0 * sum(ok for ok, _ in v) / len(v), statistics.median(t for _, t in v))
+                ExerciseStats(
+                    name,
+                    len(v),
+                    100.0 * sum(ok for ok, _ in v) / len(v),
+                    statistics.median(t for _, t in v),
+                )
                 for name, v in per_exercise.items()
             ),
             key=lambda e: e.exercise,
         )
-    for r in db.strained_items(profile_ids, exercise, since, min_strain=scheduler.NEW_STRAIN, limit=hardest):
+    for r in db.strained_items(
+        profile_ids,
+        exercise,
+        since,
+        min_strain=scheduler.NEW_STRAIN,
+        limit=hardest,
+    ):
         try:
             text = describe(Question.from_dict(json.loads(r["payload"])))
         except (ValueError, KeyError, TypeError):
             continue
-        out.hardest.append(HardQuestion(r["exercise"], text, r["strain"], r["seen"], r["wrong"]))
+        out.hardest.append(
+            HardQuestion(
+                r["exercise"],
+                text,
+                r["strain"],
+                r["seen"],
+                r["wrong"],
+            ),
+        )
     return out

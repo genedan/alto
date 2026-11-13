@@ -8,9 +8,26 @@ from .theory.pitch import ACCIDENTAL_SYMBOLS, LETTERS, Note
 
 # The clefs with a single staff. The C clefs differ only in the line the clef sits on: soprano on the bottom line, mezzo-soprano
 # on the second, alto on the middle, tenor on the fourth and baritone on the top line.
-CLEFS = ("treble", "bass", "alto", "tenor", "soprano", "mezzo", "baritone")
+CLEFS = (
+    "treble",
+    "bass",
+    "alto",
+    "tenor",
+    "soprano",
+    "mezzo",
+    "baritone",
+)
 # How the clefs are grouped on the settings pages: the grand staff, the four in everyday use, and the three rarer ones.
-CLEF_GROUPS = (("grand",), ("treble", "bass", "alto", "tenor"), ("soprano", "mezzo", "baritone"))
+CLEF_GROUPS = (
+    ("grand",),
+    (
+        "treble",
+        "bass",
+        "alto",
+        "tenor",
+    ),
+    ("soprano", "mezzo", "baritone"),
+)
 RANGE_KEYS = (*CLEFS, "grand")  # clefs that can have a note range
 # Inclusive diatonic range of notes that may be asked, per clef (defaults sit comfortably on the staff).
 DEFAULT_RANGES = {
@@ -27,9 +44,25 @@ DEFAULT_RANGES = {
 MIN_DIATONIC, MAX_DIATONIC = Note(1, 0).diatonic, Note(7, 0).diatonic
 
 
-NOTE_VALUES = ("breve", "whole", "half", "quarter", "eighth", "sixteenth", "thirty_second")
+NOTE_VALUES = (
+    "breve",
+    "whole",
+    "half",
+    "quarter",
+    "eighth",
+    "sixteenth",
+    "thirty_second",
+)
 NAMINGS = {"letters": "Letters (C D E)", "solfege": "Solfège (Do Re Mi)"}
-SOLFEGE = ("Do", "Re", "Mi", "Fa", "Sol", "La", "Si")
+SOLFEGE = (
+    "Do",
+    "Re",
+    "Mi",
+    "Fa",
+    "Sol",
+    "La",
+    "Si",
+)
 
 
 # How far the range arrows may go: up to 5 ledger lines (10 steps) beyond the staff.
@@ -54,7 +87,10 @@ RANGE_LIMITS["treble"] = DEFAULT_RANGES["treble"]
 RANGE_LIMITS["bass"] = DEFAULT_RANGES["bass"]
 
 
-def spell(note: Note, naming: str = "letters") -> str:
+def spell(
+    note: Note,
+    naming: str = "letters",
+) -> str:
     """Pitch-class name of `note` in the chosen naming system, e.g. 'F♯' or 'Fa♯'."""
     base = SOLFEGE[note.letter] if naming == "solfege" else LETTERS[note.letter]
     return base + ACCIDENTAL_SYMBOLS[note.accidental]
@@ -94,7 +130,20 @@ note_names = NoteNameSettings()
 # Keyboard exercise: the whole piano is A0..C8 (MIDI 21..108); by default it asks C3..C5.
 KEYBOARD_FULL = (21, 108)
 KEYBOARD_DEFAULT = (48, 72)
-_SHARP_NAMES = ("C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B")
+_SHARP_NAMES = (
+    "C",
+    "C♯",
+    "D",
+    "D♯",
+    "E",
+    "F",
+    "F♯",
+    "G",
+    "G♯",
+    "A",
+    "A♯",
+    "B",
+)
 
 
 def key_name(midi: int) -> str:
@@ -109,7 +158,17 @@ class KeyboardSettings:
     low: int = KEYBOARD_DEFAULT[0]  # lowest and highest key asked (MIDI numbers, inclusive)
     high: int = KEYBOARD_DEFAULT[1]
     key_signature: bool = False  # show a key signature, and require the name that fits it (no enharmonic spelling)
-    keys: set[int] = field(default_factory=lambda: {-3, -2, -1, 0, 1, 2, 3})  # sharps (+) / flats (-) to draw from
+    keys: set[int] = field(
+        default_factory=lambda: {
+            -3,
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+        },
+    )  # sharps (+) / flats (-) to draw from
 
     def active_keys(self) -> list[int]:
         return sorted(self.keys) or [0]
@@ -123,7 +182,17 @@ class ConstructionSettings:
     clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of RANGE_KEYS, so "grand" is allowed
     accidentals: bool = False  # also ask for sharps and flats, which the answer then has to include
     key_signature: bool = False  # draw a key signature; it applies to the note unless you give the note its own sign
-    keys: set[int] = field(default_factory=lambda: {-3, -2, -1, 0, 1, 2, 3})  # sharps (+) / flats (-) to draw from
+    keys: set[int] = field(
+        default_factory=lambda: {
+            -3,
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+        },
+    )  # sharps (+) / flats (-) to draw from
 
     def active_clefs(self) -> list[str]:
         return [c for c in RANGE_KEYS if c in self.clefs] or ["treble"]
@@ -136,19 +205,52 @@ construction = ConstructionSettings()
 
 
 # Arpeggio exercise. The chord types are the names in theory.scales.CHORDS, triads first and then seventh chords.
-ARPEGGIO_TRIADS = ("major", "minor", "diminished", "augmented")
-ARPEGGIO_SEVENTHS = ("dominant 7th", "major 7th", "minor 7th", "half-diminished 7th", "diminished 7th")
+ARPEGGIO_TRIADS = (
+    "major",
+    "minor",
+    "diminished",
+    "augmented",
+)
+ARPEGGIO_SEVENTHS = (
+    "dominant 7th",
+    "major 7th",
+    "minor 7th",
+    "half-diminished 7th",
+    "diminished 7th",
+)
 ARPEGGIO_TYPES = ARPEGGIO_TRIADS + ARPEGGIO_SEVENTHS
-INVERSIONS = (0, 1, 2, 3)  # root position, 1st, 2nd and 3rd inversion (the 3rd only exists for seventh chords)
+INVERSIONS = (
+    0,
+    1,
+    2,
+    3,
+)  # root position, 1st, 2nd and 3rd inversion (the 3rd only exists for seventh chords)
 
 
 @dataclass
 class ArpeggioSettings:
     clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of CLEFS
-    types: set[str] = field(default_factory=lambda: {"major", "minor", "dominant 7th", "diminished 7th"})
+    types: set[str] = field(
+        default_factory=lambda: {
+            "major",
+            "minor",
+            "dominant 7th",
+            "diminished 7th",
+        },
+    )
     inversions: set[int] = field(default_factory=lambda: set(INVERSIONS))
     key_signature: bool = False  # draw a key signature, so the arpeggio only gets signs where it differs from it
-    keys: set[int] = field(default_factory=lambda: {-3, -2, -1, 0, 1, 2, 3})  # sharps (+) / flats (-) to draw from
+    keys: set[int] = field(
+        default_factory=lambda: {
+            -3,
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+        },
+    )  # sharps (+) / flats (-) to draw from
 
     def active_clefs(self) -> list[str]:
         return [c for c in CLEFS if c in self.clefs] or ["treble"]
@@ -174,7 +276,15 @@ arpeggio = ArpeggioSettings()
 
 # Key signature exercise: read the signature on a staff and name the key, or count its sharps and flats.
 KEY_QUESTIONS = {"read": "Name the key from its signature", "count": "Count the sharps or flats"}
-KEY_MODES = ("Major (Ionian)", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Natural minor (Aeolian)", "Locrian")
+KEY_MODES = (
+    "Major (Ionian)",
+    "Dorian",
+    "Phrygian",
+    "Lydian",
+    "Mixolydian",
+    "Natural minor (Aeolian)",
+    "Locrian",
+)
 MODE_LABELS = {
     "Major (Ionian)": "Major (Ionian)",
     "Dorian": "Dorian",

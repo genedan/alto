@@ -60,7 +60,13 @@ ACCIDENTALS = {
     1: "accidentalSharp",
     2: "accidentalDoubleSharp",
 }
-STEM_LENGTH = {"half": 3.5, "quarter": 3.5, "eighth": 3.5, "sixteenth": 4.0, "thirty_second": 4.5}  # staff spaces
+STEM_LENGTH = {
+    "half": 3.5,
+    "quarter": 3.5,
+    "eighth": 3.5,
+    "sixteenth": 4.0,
+    "thirty_second": 4.5,
+}  # staff spaces
 
 _family: dict[str, str] = {}
 
@@ -84,22 +90,37 @@ def _family_of(font: str) -> str:
 
 
 @cache
-def _outline(font: str, name: str) -> QPainterPath:
+def _outline(
+    font: str,
+    name: str,
+) -> QPainterPath:
     """The glyph as a path in font units (100 per em), with its origin at (0, 0) and y pointing down."""
     f = QFont(_family_of(font))
     f.setPixelSize(int(_PX))
     path = QPainterPath()
-    path.addText(0, 0, f, chr(CODEPOINTS[name]))
+    path.addText(
+        0,
+        0,
+        f,
+        chr(CODEPOINTS[name]),
+    )
     return path
 
 
-def _ink(font: str, name: str) -> tuple[float, float, float, float]:
+def _ink(
+    font: str,
+    name: str,
+) -> tuple[float, float, float, float]:
     """The glyph's drawn extent as (left, bottom, right, top) in staff spaces, measured up from its origin."""
     r = _outline(font, name).boundingRect()
     return r.left() / _SPACE, -r.bottom() / _SPACE, r.right() / _SPACE, -r.top() / _SPACE
 
 
-def _anchor(font: str, name: str, anchor: str) -> tuple[float, float]:
+def _anchor(
+    font: str,
+    name: str,
+    anchor: str,
+) -> tuple[float, float]:
     """A stem anchor from the font's metadata, or where one would normally sit if the font does not give it."""
     given = _metrics(font)["anchors"].get(name, {}).get(anchor)
     if given:
@@ -108,22 +129,38 @@ def _anchor(font: str, name: str, anchor: str) -> tuple[float, float]:
     return {"stemUpSE": (right, 0.17), "stemDownNW": (left, -0.17)}.get(anchor, (0.0, 0.0))
 
 
-def _place(path: QPainterPath, x: float, y: float, gap: float, scale: float = 1.0) -> QPainterPath:
+def _place(
+    path: QPainterPath,
+    x: float,
+    y: float,
+    gap: float,
+    scale: float = 1.0,
+) -> QPainterPath:
     t = QTransform()
     t.translate(x, y)
     t.scale(gap / _SPACE * scale, gap / _SPACE * scale)
     return t.map(path)
 
 
-def staff_line_width(font: str, gap: float) -> float:
+def staff_line_width(
+    font: str,
+    gap: float,
+) -> float:
     return max(_metrics(font)["staffLine"] * gap, 1.0)
 
 
-def ledger_width(font: str, gap: float) -> float:
+def ledger_width(
+    font: str,
+    gap: float,
+) -> float:
     return max(_metrics(font)["ledger"] * gap, 1.2)
 
 
-def _fill(p: QPainter, path: QPainterPath, colour: QColor) -> None:
+def _fill(
+    p: QPainter,
+    path: QPainterPath,
+    colour: QColor,
+) -> None:
     p.save()
     p.setPen(Qt.PenStyle.NoPen)
     p.setBrush(colour)
@@ -145,7 +182,16 @@ def draw_note(
     head_name = HEADS.get(value, "noteheadBlack")
     left, _, right, _ = _ink(font, head_name)
     ox, oy = x - (left + right) / 2 * gap, y  # the head's origin, with the drawn head centred on the line or space
-    _fill(p, _place(_outline(font, head_name), ox, oy, gap), colour)
+    _fill(
+        p,
+        _place(
+            _outline(font, head_name),
+            ox,
+            oy,
+            gap,
+        ),
+        colour,
+    )
     if value in ("breve", "whole"):
         return
     stem_down = bool(stem_down)
@@ -159,16 +205,40 @@ def draw_note(
     p.save()
     p.setPen(Qt.PenStyle.NoPen)
     p.setBrush(colour)
-    p.drawRect(QRectF(left, top, thick, bottom - top))
+    p.drawRect(
+        QRectF(
+            left,
+            top,
+            thick,
+            bottom - top,
+        ),
+    )
     p.restore()
     if value in FLAGS:
         name = f"flag{FLAGS[value]}{'Down' if stem_down else 'Up'}"
         fx, fy = _anchor(font, name, "stemDownSW" if stem_down else "stemUpNW")
         # put the flag's anchor on the stem's far end, on the side the stem's outer edge is on
-        _fill(p, _place(_outline(font, name), left - fx * gap, end + fy * gap, gap), colour)
+        _fill(
+            p,
+            _place(
+                _outline(font, name),
+                left - fx * gap,
+                end + fy * gap,
+                gap,
+            ),
+            colour,
+        )
 
 
-def draw_clef(p: QPainter, font: str, clef: str, x: float, bottom: float, gap: float, colour: QColor) -> None:
+def draw_clef(
+    p: QPainter,
+    font: str,
+    clef: str,
+    x: float,
+    bottom: float,
+    gap: float,
+    colour: QColor,
+) -> None:
     """The clef with its left edge at x; `bottom` is the y of the staff's bottom line."""
     # `line` is how many gaps above the bottom staff line the clef's reference line (the G, F or middle C) is
     name, line = {
@@ -181,7 +251,16 @@ def draw_clef(p: QPainter, font: str, clef: str, x: float, bottom: float, gap: f
         "baritone_c": ("cClef", 4),
         "baritone_f": ("fClef", 2),
     }[clef]
-    _fill(p, _place(_outline(font, name), x, bottom - line * gap, gap), colour)
+    _fill(
+        p,
+        _place(
+            _outline(font, name),
+            x,
+            bottom - line * gap,
+            gap,
+        ),
+        colour,
+    )
 
 
 def draw_accidental(
@@ -200,11 +279,29 @@ def draw_accidental(
     left, _, right, _ = _ink(font, name)
     width = (right - left) * gap
     k = min(1.0, fit / width) if fit else 1.0
-    _fill(p, _place(_outline(font, name), x - left * gap * k, y, gap, k), colour)
+    _fill(
+        p,
+        _place(
+            _outline(font, name),
+            x - left * gap * k,
+            y,
+            gap,
+            k,
+        ),
+        colour,
+    )
     return width * k
 
 
-def draw_brace(p: QPainter, font: str, x: float, y0: float, y1: float, colour: QColor, width: float) -> bool:
+def draw_brace(
+    p: QPainter,
+    font: str,
+    x: float,
+    y0: float,
+    y1: float,
+    colour: QColor,
+    width: float,
+) -> bool:
     """The font's brace stretched to span y0..y1, `width` wide, with its right edge at x. Returns False (and draws
     nothing) if the font has no brace."""
     outline = _outline(font, "brace")

@@ -48,8 +48,19 @@ SHOTS = (
 def main() -> int:
     ap = argparse.ArgumentParser(description=(__doc__ or "").split("\n")[0])
     ap.add_argument("--theme", choices=THEMES, help="only this theme (default: both)")
-    ap.add_argument("--only", nargs="+", choices=SHOTS, metavar="NAME", help=f"only these pictures: {', '.join(SHOTS)}")
-    ap.add_argument("--out", type=Path, default=OUT, help="folder to write to (default: docs/assets/img)")
+    ap.add_argument(
+        "--only",
+        nargs="+",
+        choices=SHOTS,
+        metavar="NAME",
+        help=f"only these pictures: {', '.join(SHOTS)}",
+    )
+    ap.add_argument(
+        "--out",
+        type=Path,
+        default=OUT,
+        help="folder to write to (default: docs/assets/img)",
+    )
     args = ap.parse_args()
     names = tuple(args.only or SHOTS)
     args.out.mkdir(parents=True, exist_ok=True)
@@ -61,14 +72,27 @@ def main() -> int:
         with tempfile.TemporaryDirectory() as tmp:
             env = dict(os.environ, XDG_CONFIG_HOME=f"{tmp}/config", XDG_DATA_HOME=f"{tmp}/data")
             env.setdefault("QT_QPA_PLATFORM", "xcb" if os.environ.get("DISPLAY") else "offscreen")
-            cmd = [sys.executable, str(Path(__file__).resolve()), "--theme", theme, "--out", str(args.out), "--only", *names]
+            cmd = [
+                sys.executable,
+                str(Path(__file__).resolve()),
+                "--theme",
+                theme,
+                "--out",
+                str(args.out),
+                "--only",
+                *names,
+            ]
             if subprocess.run(cmd, env=env, cwd=ROOT).returncode:
                 return 1
     print(f"wrote {len(names) * len(THEMES)} pictures to {args.out}")
     return 0
 
 
-def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
+def capture(
+    theme: str,
+    names: tuple[str, ...],
+    out: Path,
+) -> None:
     import json
     import random
     import time
@@ -106,7 +130,11 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
         while time.time() < end:
             app.processEvents()
 
-    def save(widget, name: str, width: int = 1400) -> None:
+    def save(
+        widget,
+        name: str,
+        width: int = 1400,
+    ) -> None:
         if name not in names:
             return
         wait(250)
@@ -131,7 +159,15 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
             seconds = max(0.7, rng.gauss(ex.par_seconds * (1.7 - (34 - day) * 0.018), 1))
             while True:
                 ok = rng.random() < accuracy if attempt == 1 else True
-                learner.record(ex, q, q.answer if ok else "?", ok, attempt, seconds, now=t + attempt * 5)
+                learner.record(
+                    ex,
+                    q,
+                    q.answer if ok else "?",
+                    ok,
+                    attempt,
+                    seconds,
+                    now=t + attempt * 5,
+                )
                 if ok:
                     break
                 attempt += 1
@@ -144,12 +180,32 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
         chance = 0.22 if month in (6, 7) else 0.55
         if old.random() > chance:
             continue
-        for _ in range(old.choice((3, 6, 10, 14, 20, 28, 38))):
+        for _ in range(
+            old.choice(
+                (
+                    3,
+                    6,
+                    10,
+                    14,
+                    20,
+                    28,
+                    38,
+                ),
+            ),
+        ):
             ex = old.choice(REGISTRY)()
             q = ex.generate(old)
             t = now - day * 86400 - old.randint(0, 20000)
             ok = old.random() < 0.5 + 0.3 * (364 - day) / 330
-            learner.record(ex, q, q.answer if ok else "?", ok, 1, max(0.7, old.gauss(ex.par_seconds * 1.5, 1)), now=t)
+            learner.record(
+                ex,
+                q,
+                q.answer if ok else "?",
+                ok,
+                1,
+                max(0.7, old.gauss(ex.par_seconds * 1.5, 1)),
+                now=t,
+            )
 
     window = MainWindow(learner)
     window.resize(1100, 720)

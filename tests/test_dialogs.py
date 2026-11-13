@@ -87,7 +87,10 @@ class Decides:
         return QDialog.DialogCode.Rejected
 
 
-def test_it_opens_with_the_profile_used_last_time(app, monkeypatch):
+def test_it_opens_with_the_profile_used_last_time(
+    app,
+    monkeypatch,
+):
     db = Database()
     db.add_profile("Ada")
     ben = db.add_profile("Ben")
@@ -96,7 +99,10 @@ def test_it_opens_with_the_profile_used_last_time(app, monkeypatch):
     assert startup_profile(db) == ben
 
 
-def test_a_single_profile_is_used_without_asking_but_several_are_asked_about(app, monkeypatch):
+def test_a_single_profile_is_used_without_asking_but_several_are_asked_about(
+    app,
+    monkeypatch,
+):
     db = Database()
     ada = db.add_profile("Ada")
     asked = Decides("Cleo")
@@ -108,7 +114,10 @@ def test_a_single_profile_is_used_without_asking_but_several_are_asked_about(app
     assert int(store().value("profile/last")) == chosen.id  # and the choice is remembered
 
 
-def test_with_no_profile_a_new_one_is_made_or_the_start_is_cancelled(app, monkeypatch):
+def test_with_no_profile_a_new_one_is_made_or_the_start_is_cancelled(
+    app,
+    monkeypatch,
+):
     monkeypatch.setattr(profile_dialog, "ProfileDialog", Decides("Ada"))
     first = startup_profile(Database())
     assert first is not None and first.name == "Ada"
@@ -123,7 +132,10 @@ def texts(dialog):
     return " ".join(label.text() for label in dialog.findChildren(QLabel))
 
 
-def test_a_staff_question_shows_its_notes_answer_choices_and_explanation(app, monkeypatch):
+def test_a_staff_question_shows_its_notes_answer_choices_and_explanation(
+    app,
+    monkeypatch,
+):
     played = []
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     q = Question(
@@ -148,21 +160,42 @@ def test_a_staff_question_shows_its_notes_answer_choices_and_explanation(app, mo
 
 
 @pytest.mark.parametrize("key_staff", [False, True])
-def test_a_keyboard_question_shows_the_key(app, key_staff, monkeypatch):
+def test_a_keyboard_question_shows_the_key(
+    app,
+    key_staff,
+    monkeypatch,
+):
     played = []
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
-    q = Question("", ["C", "D"], "C", keyboard=Note(4, 0), key=2, key_staff=key_staff, keyboard_range=(48, 72))
+    q = Question(
+        "",
+        ["C", "D"],
+        "C",
+        keyboard=Note(4, 0),
+        key=2,
+        key_staff=key_staff,
+        keyboard_range=(48, 72),
+    )
     dialog = QuestionPreview("Keyboard", q)
     assert dialog.grab().width() > 0
     next(b for b in dialog.findChildren(QPushButton) if b.text() == "Play").click()
     assert played == [[[Note(4, 0)]]]
 
 
-def test_a_note_construction_question_shows_the_note_that_was_asked_for(app, monkeypatch):
+def test_a_note_construction_question_shows_the_note_that_was_asked_for(
+    app,
+    monkeypatch,
+):
     played = []
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     settings.note_names.naming = "solfege"
-    q = Question("Place Sol", [], "", clef="bass", construct=Note(3, 4))
+    q = Question(
+        "Place Sol",
+        [],
+        "",
+        clef="bass",
+        construct=Note(3, 4),
+    )
     dialog = QuestionPreview("Construction", q)
     assert "<b>Answer:</b> Sol3" in texts(dialog)
     next(b for b in dialog.findChildren(QPushButton) if b.text() == "Play").click()
@@ -177,6 +210,14 @@ def test_a_question_with_nothing_to_play_has_no_play_button(app):
 def test_the_staff_in_the_preview_is_capped_like_the_one_in_the_exercise(app):
     from alto.ui.staff import StaffWidget
 
-    dialog = QuestionPreview("Note", Question("", ["C"], "C", [[Note(4, 0)]]))
+    dialog = QuestionPreview(
+        "Note",
+        Question(
+            "",
+            ["C"],
+            "C",
+            [[Note(4, 0)]],
+        ),
+    )
     staff = dialog.findChildren(StaffWidget)[0]
     assert staff.max_step is not None and staff.maximumWidth() < 1000

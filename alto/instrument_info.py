@@ -130,4 +130,9 @@ def coverage(midis: Iterable[int]) -> Coverage:
     have = sorted(set(midis))
     if not have:
         return Coverage(0)
-    return Coverage(len(have), have[0], have[-1], gaps=(have[-1] - have[0] + 1) - len(have))
+    return Coverage(
+        len(have),
+        have[0],
+        have[-1],
+        gaps=(have[-1] - have[0] + 1) - len(have),
+    )

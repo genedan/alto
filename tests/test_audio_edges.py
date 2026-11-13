@@ -10,7 +10,11 @@ from alto.theory.pitch import Note
 class Effect:
     """Stands in for QSoundEffect."""
 
-    def __init__(self, playing=False, loading=False):
+    def __init__(
+        self,
+        playing=False,
+        loading=False,
+    ):
         self.playing, self.loading, self.volume_set, self.stopped = playing, loading, [], 0
 
     def isPlaying(self):
@@ -97,10 +101,16 @@ def test_stop_all_silences_what_is_playing_and_cancels_fades():
     assert loud.stopped == 1 and loud.volume_set == [0.0] and quiet.stopped == 0
 
 
-def test_a_failure_in_the_sound_system_is_reported_not_raised(monkeypatch, capsys):
+def test_a_failure_in_the_sound_system_is_reported_not_raised(
+    monkeypatch,
+    capsys,
+):
     s = Sounds()
 
-    def broken(inst, midi):
+    def broken(
+        inst,
+        midi,
+    ):
         raise RuntimeError("no sound card")
 
     monkeypatch.setattr(s, "_effect", broken)
@@ -115,7 +125,10 @@ def test_an_unknown_instrument_is_reported_not_raised(capsys):
     assert "audio unavailable" in capsys.readouterr().out
 
 
-def test_a_sequence_waiting_for_its_notes_to_load_gives_way_to_a_newer_one(monkeypatch, app):
+def test_a_sequence_waiting_for_its_notes_to_load_gives_way_to_a_newer_one(
+    monkeypatch,
+    app,
+):
     from PySide6.QtTest import QTest
 
     s = Sounds()

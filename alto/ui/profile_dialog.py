@@ -24,7 +24,12 @@ class ProfileDialog(QDialog):
     """On first launch (no profiles yet) it asks for a name. Afterwards it lists the profiles to switch between and
     lets you add another."""
 
-    def __init__(self, db: Database, current: Profile | None = None, parent: QWidget | None = None):
+    def __init__(
+        self,
+        db: Database,
+        current: Profile | None = None,
+        parent: QWidget | None = None,
+    ):
         super().__init__(parent)
         self.db = db
         self.chosen: Profile | None = None

@@ -58,17 +58,29 @@ def major_key_tonic(count: int) -> Note:
     return Note(4, letter, {"": 0, "♯": 1, "♭": -1}[name[1:]])
 
 
-def mode_tonic(count: int, mode: str) -> Note:
+def mode_tonic(
+    count: int,
+    mode: str,
+) -> Note:
     """The note a scale in this mode starts on when its key signature has `count` sharps (+) or flats (-).
     The notes of a mode are those of a major scale, started from another degree."""
     return build(major_key_tonic(count), SCALES["Major (Ionian)"])[MODE_DEGREE[mode]]
 
 
-INVERSION_NAMES = ("root position", "1st inversion", "2nd inversion", "3rd inversion")
+INVERSION_NAMES = (
+    "root position",
+    "1st inversion",
+    "2nd inversion",
+    "3rd inversion",
+)
 OCTAVE = Interval(8, "P")
 
 
-def arpeggio(root: Note, intervals: list[Interval], inversion: int = 0) -> list[Note]:
+def arpeggio(
+    root: Note,
+    intervals: list[Interval],
+    inversion: int = 0,
+) -> list[Note]:
     """A chord broken and rising from its lowest note, then that note again an octave higher. `inversion` is how many of
     the lowest chord tones are moved up an octave first (0 = root position, 1 = the third at the bottom ...)."""
     tones = build(root, intervals)
@@ -77,11 +89,17 @@ def arpeggio(root: Note, intervals: list[Interval], inversion: int = 0) -> list[
     return tones + [tones[0].transpose(OCTAVE)]
 
 
-def build(tonic: Note, intervals: list[Interval]) -> list[Note]:
+def build(
+    tonic: Note,
+    intervals: list[Interval],
+) -> list[Note]:
     return [tonic.transpose(iv) for iv in intervals]
 
 
-def key_signature(tonic_name: str, scale: str = "Major (Ionian)") -> int:
+def key_signature(
+    tonic_name: str,
+    scale: str = "Major (Ionian)",
+) -> int:
     """Signed accidental count: +n sharps, -n flats, for the given tonic + scale."""
     tonic = Note.parse(tonic_name + "4")
     notes = build(tonic, SCALES[scale])

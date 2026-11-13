@@ -35,7 +35,13 @@ from .widgets import HelpButton, SidebarToggle
 class ExerciseView(QWidget):
     PANE_WIDTH = 290
 
-    def __init__(self, exercise: Exercise, rng: random.Random | None = None, parent=None, learner: Learner | None = None):
+    def __init__(
+        self,
+        exercise: Exercise,
+        rng: random.Random | None = None,
+        parent=None,
+        learner: Learner | None = None,
+    ):
         super().__init__(parent)
         self.exercise = exercise
         self.learner = learner  # records every answer and chooses what to ask next; None asks at random
@@ -57,7 +63,12 @@ class ExerciseView(QWidget):
         self.input_staff.accidental_cycled.connect(self._cycle_accidental)
         self.accidental_row = QWidget()  # sharp / natural / flat, for questions that need an accidental
         arow = QHBoxLayout(self.accidental_row)
-        arow.setContentsMargins(0, 4, 0, 0)
+        arow.setContentsMargins(
+            0,
+            4,
+            0,
+            0,
+        )
         arow.addWidget(QLabel("Accidental"))
         self.accidental_group = QButtonGroup(self)
         self.accidental_group.setExclusive(False)
@@ -70,7 +81,13 @@ class ExerciseView(QWidget):
             b.clicked.connect(lambda _=False, a=acc: self._pick_accidental(a))
             self.accidental_buttons[acc] = b
             arow.addWidget(b, 1)
-        self.key_staff = StaffWidget(gap=8.0, side=12.0, note_offset=70.0, margin=3.6, compact=True)  # key signature only
+        self.key_staff = StaffWidget(
+            gap=8.0,
+            side=12.0,
+            note_offset=70.0,
+            margin=3.6,
+            compact=True,
+        )  # key signature only
         self.key_staff.setFixedWidth(210)
         self.choice_box = QGridLayout()
         self._advance = QTimer(self)
@@ -102,7 +119,12 @@ class ExerciseView(QWidget):
             top.addWidget(self.gear)
         main = QWidget()
         lay = QVBoxLayout(main)
-        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         lay.addLayout(top)
         lay.addWidget(self.prompt)
         lay.addWidget(self.staff, alignment=Qt.AlignmentFlag.AlignHCenter)  # a capped staff sits in the middle
@@ -113,7 +135,12 @@ class ExerciseView(QWidget):
         lay.addLayout(self.choice_box)
         self.octave_row = QWidget()  # shown only when the answer needs an octave as well as a name
         self.octave_box = QHBoxLayout(self.octave_row)
-        self.octave_box.setContentsMargins(0, 4, 0, 0)
+        self.octave_box.setContentsMargins(
+            0,
+            4,
+            0,
+            0,
+        )
         lay.addWidget(self.octave_row)
         lay.addStretch()
         outer = QHBoxLayout(self)
@@ -193,7 +220,13 @@ class ExerciseView(QWidget):
         self.key_staff.show_notes([], "treble", q.key)
         self.keyboard.max_key_width = 30.0 if q.key_staff else 38.0  # leave room for the staff above
         self.keyboard.show_key(q.keyboard.midi if q.keyboard else None, q.keyboard_range)
-        self.staff.show_notes(q.staff, q.clef, q.key, q.value, q.caption)
+        self.staff.show_notes(
+            q.staff,
+            q.clef,
+            q.key,
+            q.value,
+            q.caption,
+        )
         for b in self.buttons:
             b.deleteLater()
         self.buttons = []
@@ -236,7 +269,12 @@ class ExerciseView(QWidget):
     def _style(color: QColor) -> str:
         return f"QPushButton, QPushButton:disabled {{ background: {color.name()}; color: white; }}"
 
-    def _flash(self, button: QPushButton, target: str, staff: bool = False):
+    def _flash(
+        self,
+        button: QPushButton,
+        target: str,
+        staff: bool = False,
+    ):
         """Animate from the staff ink to `target` over a short time."""
         end, start = QColor(target), QColor("black")
         anim = QVariantAnimation(self)
@@ -272,7 +310,16 @@ class ExerciseView(QWidget):
         """Right click on the staff: no sign, sharp, flat, and (under a key signature) natural, then round again."""
         q = self.question
         if q and q.construct is not None and q.accidentals:
-            order = [None, 1, -1, 0] if q.key else [None, 1, -1]  # without a key a natural is the same as no sign
+            order = (
+                [
+                    None,
+                    1,
+                    -1,
+                    0,
+                ]
+                if q.key
+                else [None, 1, -1]
+            )  # without a key a natural is the same as no sign
             current = self.input_staff.accidental
             self._set_accidental(order[(order.index(current) + 1) % len(order)] if current in order else None)
 
@@ -317,18 +364,34 @@ class ExerciseView(QWidget):
             QTimer.singleShot(900, retry)
         self._update_score()
 
-    def _record(self, ok: bool, choice: str = ""):
+    def _record(
+        self,
+        ok: bool,
+        choice: str = "",
+    ):
         self._attempts += 1
         now = time.monotonic()
         seconds, self._clock = now - self._clock, now  # the first answer is timed from the question appearing
         if self.learner and self.question:
-            self.learner.record(self.exercise, self.question, choice, ok, self._attempts, seconds)
+            self.learner.record(
+                self.exercise,
+                self.question,
+                choice,
+                ok,
+                self._attempts,
+                seconds,
+            )
         if not self.missed:  # only the first attempt counts toward the score
             self.total += 1
             self.correct += ok
             self.streak = self.streak + 1 if ok else 0
 
-    def _pick(self, part: str, text: str, button: QPushButton):
+    def _pick(
+        self,
+        part: str,
+        text: str,
+        button: QPushButton,
+    ):
         """Two-part answer: choose a name and then an octave (or a chord type and an inversion), in either order; the
         answer is checked once both are set."""
         if self.answered or self._busy:
@@ -369,7 +432,11 @@ class ExerciseView(QWidget):
 
         QTimer.singleShot(700, reset)
 
-    def submit(self, choice: str, button: QPushButton):
+    def submit(
+        self,
+        choice: str,
+        button: QPushButton,
+    ):
         if self.answered or not self.question or not button.isEnabled():
             return
         q = self.question

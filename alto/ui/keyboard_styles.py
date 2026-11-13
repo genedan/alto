@@ -291,7 +291,10 @@ def set_style(key: str) -> None:
     _redraw()
 
 
-def set_custom_colour(part: str, colour: str | None) -> None:
+def set_custom_colour(
+    part: str,
+    colour: str | None,
+) -> None:
     """Colour one part of the custom keyboard (None leaves an optional part out) and use the custom style."""
     _custom[part] = colour
     store().setValue(f"ui/keyboardCustom/{part}", colour or "none")
@@ -311,11 +314,20 @@ def _redraw() -> None:
 # -- colours --------------------------------------------------------------------------------------------------------
 
 
-def reversed_key(style: KeyboardStyle, midi: int) -> bool:
+def reversed_key(
+    style: KeyboardStyle,
+    midi: int,
+) -> bool:
     return style.reverse_below is not None and midi < style.reverse_below
 
 
-def key_brush(style: KeyboardStyle, midi: int, black: bool, y: float, height: float) -> QBrush:
+def key_brush(
+    style: KeyboardStyle,
+    midi: int,
+    black: bool,
+    y: float,
+    height: float,
+) -> QBrush:
     """The fill of a key whose top edge is at `y` and which is `height` tall."""
     pitch = midi % 12
     if style.hue:
@@ -329,5 +341,9 @@ def key_brush(style: KeyboardStyle, midi: int, black: bool, y: float, height: fl
     return QBrush(gradient)
 
 
-def edge_color(style: KeyboardStyle, midi: int, black: bool) -> QColor:
+def edge_color(
+    style: KeyboardStyle,
+    midi: int,
+    black: bool,
+) -> QColor:
     return QColor(style.black_edge if black != reversed_key(style, midi) else style.white_edge)

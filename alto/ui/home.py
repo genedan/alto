@@ -30,7 +30,12 @@ class ExerciseCard(QPushButton):
         self.setFixedSize(CARD_W, CARD_H)
         self.setToolTip(cls.description)
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(12, 14, 12, 12)
+        lay.setContentsMargins(
+            12,
+            14,
+            12,
+            12,
+        )
         lay.setSpacing(6)
         icon = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
         color = self.palette().color(QPalette.ColorRole.WindowText)
@@ -43,7 +48,12 @@ class ExerciseCard(QPushButton):
         about = QLabel(cls.description, alignment=Qt.AlignmentFlag.AlignCenter)
         about.setWordWrap(True)
         about.setStyleSheet("color: gray; font-size: 9pt;")
-        for label in (icon, category, name, about):
+        for label in (
+            icon,
+            category,
+            name,
+            about,
+        ):
             label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         lay.addWidget(icon)
         lay.addWidget(category)
@@ -56,10 +66,19 @@ class HomePage(QWidget):
 
     exercise_chosen = Signal(object)  # the Exercise class
 
-    def __init__(self, registry, parent=None):
+    def __init__(
+        self,
+        registry,
+        parent=None,
+    ):
         super().__init__(parent)
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         self.cards = []
         for cls in registry:
             card = ExerciseCard(cls)
@@ -67,7 +86,12 @@ class HomePage(QWidget):
             self.cards.append(card)
         body = QWidget()  # scrolls when the window is shorter than all the rows
         self.rows = QVBoxLayout(body)  # one centred row of cards at a time
-        self.rows.setContentsMargins(28, 12, 28, 12)
+        self.rows.setContentsMargins(
+            28,
+            12,
+            28,
+            12,
+        )
         self.rows.setSpacing(GAP)
         self._columns = 0
         scroll = QScrollArea()

@@ -17,7 +17,13 @@ class QuestionPreview(QDialog):
     """`question` as it appeared (the notes on the staff, or the highlighted key), then what the answer is.
     `details` are extra lines, such as what was answered and how long it took."""
 
-    def __init__(self, exercise_name: str, question: Question, details: list[str] | None = None, parent: QWidget | None = None):
+    def __init__(
+        self,
+        exercise_name: str,
+        question: Question,
+        details: list[str] | None = None,
+        parent: QWidget | None = None,
+    ):
         super().__init__(parent)
         self.question = question
         self.setWindowTitle(exercise_name)
@@ -37,11 +43,23 @@ class QuestionPreview(QDialog):
             staff = StaffWidget(max_step=MAX_STEP)
             # a "place this note" question shows the note that was the answer
             notes = q.staff or ([[q.construct]] if q.construct is not None else [])
-            staff.show_notes(notes, q.clef, q.key, q.value, q.caption)
+            staff.show_notes(
+                notes,
+                q.clef,
+                q.key,
+                q.value,
+                q.caption,
+            )
             lay.addWidget(staff, alignment=Qt.AlignmentFlag.AlignHCenter)
         if q.keyboard is not None:
             if q.key_staff:
-                key_staff = StaffWidget(gap=8.0, side=12.0, note_offset=70.0, margin=3.6, compact=True)
+                key_staff = StaffWidget(
+                    gap=8.0,
+                    side=12.0,
+                    note_offset=70.0,
+                    margin=3.6,
+                    compact=True,
+                )
                 key_staff.setFixedWidth(210)
                 key_staff.show_notes([], "treble", q.key)
                 lay.addWidget(key_staff, alignment=Qt.AlignmentFlag.AlignHCenter)

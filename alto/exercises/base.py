@@ -136,7 +136,12 @@ def register(cls: type[Exercise]) -> type[Exercise]:
     return cls
 
 
-def pick_distractors(correct: str, pool: list[str], n: int, rng: random.Random) -> list[str]:
+def pick_distractors(
+    correct: str,
+    pool: list[str],
+    n: int,
+    rng: random.Random,
+) -> list[str]:
     others = [p for p in dict.fromkeys(pool) if p != correct]
     rng.shuffle(others)
     choices = others[:n] + [correct]

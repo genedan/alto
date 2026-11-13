@@ -94,7 +94,10 @@ def save_note_names() -> None:
     s.setValue("noteNames/ranges", ",".join(f"{k}:{lo}-{hi}" for k, (lo, hi) in cfg.ranges.items()))
 
 
-def _guard_last(boxes, enabled: bool = True) -> None:
+def _guard_last(
+    boxes,
+    enabled: bool = True,
+) -> None:
     """Disable the only checked box so at least one choice always stays selected."""
     checked = [b for b in boxes if b.isChecked()]
     for box in boxes:
@@ -105,7 +108,10 @@ def _key_label(count: int) -> str:
     return f"{MAJOR_KEYS[count]}  ·  " + ("none" if count == 0 else f"{abs(count)}{'♯' if count > 0 else '♭'}")
 
 
-def _arrow(kind: Qt.ArrowType, tip: str) -> QToolButton:
+def _arrow(
+    kind: Qt.ArrowType,
+    tip: str,
+) -> QToolButton:
     btn = QToolButton()
     btn.setArrowType(kind)
     btn.setProperty("arrowButton", True)  # styled with a visible border (see style.py)
@@ -122,7 +128,13 @@ class RangeEditor(QWidget):
 
     edited = Signal(str, int, int)  # clef key, low, high (diatonic)
 
-    def __init__(self, key: str, low: int, high: int, parent=None):
+    def __init__(
+        self,
+        key: str,
+        low: int,
+        high: int,
+        parent=None,
+    ):
         super().__init__(parent)
         self.key, self.low, self.high = key, low, high
         self.limits = RANGE_LIMITS[key]
@@ -130,11 +142,22 @@ class RangeEditor(QWidget):
         self.caption_text.setStyleSheet("font-size: 12pt;")
         self.caption = QWidget()  # the clef as a picture, then the lowest and highest note
         caption_row = QHBoxLayout(self.caption)
-        caption_row.setContentsMargins(0, 0, 0, 0)
+        caption_row.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         caption_row.addWidget(ClefPictures([key], 0.9))
         caption_row.addWidget(self.caption_text)
         caption_row.addStretch()
-        self.staff = StaffWidget(gap=9.0, side=18.0, note_offset=62.0, margin=8.0, compact=True)
+        self.staff = StaffWidget(
+            gap=9.0,
+            side=18.0,
+            note_offset=62.0,
+            margin=8.0,
+            compact=True,
+        )
         self.staff.setFixedWidth(168)
         self.low_up = _arrow(Qt.ArrowType.UpArrow, "Raise the lowest note")
         self.low_down = _arrow(Qt.ArrowType.DownArrow, "Lower the lowest note")
@@ -146,7 +169,12 @@ class RangeEditor(QWidget):
         self.high_down.clicked.connect(lambda: self._move(high=-1))
 
         row = QHBoxLayout()
-        row.setContentsMargins(0, 0, 0, 0)
+        row.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         row.addStretch()  # keep the staff and its arrows together, centred in the pane
         for column, buttons in ((0, (self.low_up, self.low_down)), (2, (self.high_up, self.high_down))):
             col = QVBoxLayout()
@@ -162,13 +190,22 @@ class RangeEditor(QWidget):
                 row.addLayout(col)
         row.addStretch()
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(0, 8, 0, 16)  # space between one clef's block and the next
+        lay.setContentsMargins(
+            0,
+            8,
+            0,
+            16,
+        )  # space between one clef's block and the next
         lay.setSpacing(8)
         lay.addWidget(self.caption)
         lay.addLayout(row)
         self._refresh()
 
-    def _move(self, low: int = 0, high: int = 0):
+    def _move(
+        self,
+        low: int = 0,
+        high: int = 0,
+    ):
         self.low = min(max(self.low + low, self.limits[0]), self.high)  # the lower bound can't pass the upper
         self.high = max(min(self.high + high, self.limits[1]), self.low)
         self._refresh()
@@ -189,7 +226,11 @@ class KeyDiagram(QWidget):
 
     DOT, PITCH, ROW_GAP, PAD = 4.4, 12.6, 13.0, 1.5  # dot radius and spacing, in pixels
 
-    def __init__(self, keys: set[int] | None = None, parent=None):
+    def __init__(
+        self,
+        keys: set[int] | None = None,
+        parent=None,
+    ):
         super().__init__(parent)
         self.keys: set[int] = set(keys or ())
         self.first_column = self.PAD + 2 * self.DOT + 7 + self.DOT  # x of the 1-sharp / 1-flat dots
@@ -235,7 +276,11 @@ class KeyDiagram(QWidget):
 ROW_PICTURE_WIDTH = 238  # room for a picture on its own line in a menu row (pane width less margins)
 
 
-def _label_with_picture(button: QAbstractButton, picture, name: str) -> None:
+def _label_with_picture(
+    button: QAbstractButton,
+    picture,
+    name: str,
+) -> None:
     """Label a checkbox or radio button with a picture (a clef, a note value ...) instead of text. The name stays
     as the tooltip and the accessible name."""
     button.setIcon(picture.to_icon())
@@ -244,13 +289,20 @@ def _label_with_picture(button: QAbstractButton, picture, name: str) -> None:
     button.setAccessibleName(name)
 
 
-def _label_with_clef(button: QAbstractButton, clef: str, scale: float = 1.4) -> None:
+def _label_with_clef(
+    button: QAbstractButton,
+    clef: str,
+    scale: float = 1.4,
+) -> None:
     """A clef's picture, with its name written to the right of it."""
     _label_with_picture(button, ClefPictures([clef], scale), CLEF_NAMES[clef])
     button.setText(CLEF_NAMES[clef])
 
 
-def _clef_box(clef: str, scale: float = 1.4) -> QCheckBox:
+def _clef_box(
+    clef: str,
+    scale: float = 1.4,
+) -> QCheckBox:
     box = QCheckBox()
     _label_with_clef(box, clef, scale)
     return box
@@ -262,7 +314,12 @@ def _clef_list(boxes: dict[str, QCheckBox]) -> QWidget:
     list is indented under its heading."""
     widget = QWidget()
     lay = QVBoxLayout(widget)
-    lay.setContentsMargins(24, 0, 0, 0)
+    lay.setContentsMargins(
+        24,
+        0,
+        0,
+        0,
+    )
     lay.setSpacing(8)
     groups = [[boxes[c] for c in group if c in boxes] for group in settings.CLEF_GROUPS]
     for i, group in enumerate([g for g in groups if g]):
@@ -277,7 +334,12 @@ def _clef_list(boxes: dict[str, QCheckBox]) -> QWidget:
     return widget
 
 
-def _show_keys(row: _Row, diagram: KeyDiagram, enabled: bool, keys: set[int]) -> None:
+def _show_keys(
+    row: _Row,
+    diagram: KeyDiagram,
+    enabled: bool,
+    keys: set[int],
+) -> None:
     """Show the selected keys as a circle of fifths in the row, or 'Off' when key signatures are switched off."""
     diagram.set_keys(keys)
     diagram.setVisible(enabled)
@@ -288,7 +350,12 @@ class _Row(QPushButton):
     """A menu row: title on the left, current value and a chevron on the right. A `tall` row puts a picture on a
     second line of its own, using the full width, for summaries that need room to be readable."""
 
-    def __init__(self, title: str, chevron: bool = True, tall: bool = False):
+    def __init__(
+        self,
+        title: str,
+        chevron: bool = True,
+        tall: bool = False,
+    ):
         super().__init__()
         self.tall = tall
         self._contents: QBoxLayout  # the layout inside the row
@@ -302,7 +369,12 @@ class _Row(QPushButton):
         arrow.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         if tall:
             outer = QVBoxLayout(self)
-            outer.setContentsMargins(11, 8, 11, 8)
+            outer.setContentsMargins(
+                11,
+                8,
+                11,
+                8,
+            )
             outer.setSpacing(4)
             top = QHBoxLayout()
             top.addWidget(self.title)
@@ -317,7 +389,12 @@ class _Row(QPushButton):
         self.setMinimumHeight(48)
         lay = QHBoxLayout(self)
         self._contents = lay
-        lay.setContentsMargins(11, 4, 11, 4)  # leaves room for a small diagram in the row
+        lay.setContentsMargins(
+            11,
+            4,
+            11,
+            4,
+        )  # leaves room for a small diagram in the row
         lay.addWidget(self.title)
         lay.addWidget(self.value, 1)
         if chevron:
@@ -416,11 +493,21 @@ class _ToggleRow(_Row):
         self.switch.setChecked(on)
 
 
-def _subpage(title: str, body: QWidget, back, fill: bool = False) -> QWidget:
+def _subpage(
+    title: str,
+    body: QWidget,
+    back,
+    fill: bool = False,
+) -> QWidget:
     """A second-layer page: a Back button and title above `body`."""
     page = QWidget()
     lay = QVBoxLayout(page)
-    lay.setContentsMargins(0, 0, 0, 0)
+    lay.setContentsMargins(
+        0,
+        0,
+        0,
+        0,
+    )
     head = QHBoxLayout()
     btn = QToolButton()
     btn.setText("‹ Back")
@@ -454,7 +541,12 @@ class SlideStack(QStackedWidget):
         assert old is not None and new is not None
         w = self.width()
         sign = 1 if index > self.currentIndex() else -1
-        new.setGeometry(0, 0, w, self.height())
+        new.setGeometry(
+            0,
+            0,
+            w,
+            self.height(),
+        )
         new.move(sign * w, 0)
         new.show()
         new.raise_()
@@ -487,18 +579,32 @@ class ExerciseSettingsPanel(QWidget):
 class NoteNameSettingsPanel(ExerciseSettingsPanel):
     """Two-layer settings: a menu (Clefs, Range) leading to a page for each. Edits are live."""
 
-    def __init__(self, cfg: NoteNameSettings, parent=None):
+    def __init__(
+        self,
+        cfg: NoteNameSettings,
+        parent=None,
+    ):
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.addWidget(self.stack)
 
         # layer 1: menu
         menu = QWidget()
         mlay = QVBoxLayout(menu)
-        mlay.setContentsMargins(0, 0, 0, 0)
+        mlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         mlay.addWidget(QLabel("<h3>Settings</h3>"))
         self.clefs_row, self.range_row = _Row("Clefs"), _Row("Range", tall=True)
         self.keys_row, self.values_row, self.names_row = _Row("Key signatures"), _Row("Note values"), _Row("Note names")
@@ -512,7 +618,16 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.values_row.attach(self.value_pictures)
         self.name_picture = NamePicture()
         self.names_row.attach(self.name_picture)
-        for index, row in enumerate((self.clefs_row, self.range_row, self.keys_row, self.values_row, self.names_row), 1):
+        for index, row in enumerate(
+            (
+                self.clefs_row,
+                self.range_row,
+                self.keys_row,
+                self.values_row,
+                self.names_row,
+            ),
+            1,
+        ):
             row.clicked.connect(lambda _=False, i=index: self._go(i))
             mlay.addWidget(row)
         self.accidentals_row = _ToggleRow("Accidentals")
@@ -526,7 +641,12 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.boxes = {c: _clef_box(c) for c in settings.RANGE_KEYS}
         body = QWidget()
         blay = QVBoxLayout(body)
-        blay.setContentsMargins(0, 0, 0, 0)
+        blay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         hint = QLabel("One of the checked clefs is picked at random.")
         hint.setWordWrap(True)
         hint.setStyleSheet("color: gray;")
@@ -542,14 +662,24 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         # layer 2: range
         self.range_body = QWidget()
         self.range_lay = QVBoxLayout(self.range_body)
-        self.range_lay.setContentsMargins(6, 4, 10, 8)
+        self.range_lay.setContentsMargins(
+            6,
+            4,
+            10,
+            8,
+        )
         self.range_editors: dict[str, RangeEditor] = {}
         scroll = QScrollArea()
         scroll.setWidget(self.range_body)
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        range_page = _subpage("Range", scroll, lambda: self._go(0), fill=True)
+        range_page = _subpage(
+            "Range",
+            scroll,
+            lambda: self._go(0),
+            fill=True,
+        )
 
         # layer 2: key signatures, each drawn as it would be written (flats on the left, sharps on the right)
         self.key_list = KeyChecklist(cfg.key_signatures)
@@ -561,7 +691,12 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.value_boxes = {v: QCheckBox(VALUE_NAMES[v]) for v in NOTE_VALUES}
         values_body = QWidget()
         vlay = QVBoxLayout(values_body)
-        vlay.setContentsMargins(0, 0, 0, 0)
+        vlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         vlay.setSpacing(2)
         values_hint = QLabel("One of the checked values is picked at random.")
         values_hint.setWordWrap(True)
@@ -583,7 +718,12 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
             _label_with_picture(radio, NamePicture(k, 1.6), NAMINGS[k])
         names_body = QWidget()
         nlay = QVBoxLayout(names_body)
-        nlay.setContentsMargins(0, 0, 0, 0)
+        nlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         naming_group = QButtonGroup(self)
         for k, radio in self.naming_radios.items():
             naming_group.addButton(radio)
@@ -592,7 +732,14 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
             nlay.addWidget(radio)
         names_page = _subpage("Note names", names_body, lambda: self._go(0))
 
-        for page in (menu, clefs_page, range_page, keys_page, values_page, names_page):
+        for page in (
+            menu,
+            clefs_page,
+            range_page,
+            keys_page,
+            values_page,
+            names_page,
+        ):
             self.stack.addWidget(page)
         _guard_last(list(self.key_boxes.values()))
         _guard_last(list(self.value_boxes.values()))
@@ -616,7 +763,12 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.clef_pictures.set_clefs(keys)
         self.range_pictures.set_items([(k, *self.cfg.range_for(k)) for k in keys])
         self.range_row.fit()
-        _show_keys(self.keys_row, self.keys_diagram, True, set(self.cfg.active_keys()))
+        _show_keys(
+            self.keys_row,
+            self.keys_diagram,
+            True,
+            set(self.cfg.active_keys()),
+        )
         self.value_pictures.set_values(self.cfg.active_values())
         self.name_picture.set_naming(self.cfg.naming)
 
@@ -668,7 +820,12 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.range_lay.addWidget(reset)
         self.range_lay.addStretch()
 
-    def _range_edited(self, key: str, low: int, high: int):
+    def _range_edited(
+        self,
+        key: str,
+        low: int,
+        high: int,
+    ):
         self.cfg.ranges[key] = (low, high)
         self._save_and_emit()
 
@@ -714,7 +871,11 @@ class KeyChecklist(QWidget):
 
     changed = Signal()
 
-    def __init__(self, selected: set[int], parent=None):
+    def __init__(
+        self,
+        selected: set[int],
+        parent=None,
+    ):
         super().__init__(parent)
         self.boxes = {k: QCheckBox() for k in range(-7, 8)}
         for k, box in self.boxes.items():  # each key is labelled with its signature, as written after a treble clef
@@ -722,7 +883,12 @@ class KeyChecklist(QWidget):
             _label_with_picture(box, KeySignaturePicture(k, 1.15), description)
         # Two framed groups: C major on its own, and the keys with sharps or flats (flats left, sharps right).
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.setSpacing(10)
         natural = QFrame()
         natural.setObjectName("keyGroup")  # styled in style.py
@@ -754,10 +920,20 @@ class KeySignaturePage(QWidget):
 
     changed = Signal()
 
-    def __init__(self, enabled: bool, selected: set[int], parent=None):
+    def __init__(
+        self,
+        enabled: bool,
+        selected: set[int],
+        parent=None,
+    ):
         super().__init__(parent)
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         lay.setSpacing(10)
         self.switch_row = _ToggleRow("Use key signatures")
         self.switch_row.setOn(enabled)
@@ -784,18 +960,32 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
     """Settings for the keyboard exercise: a menu (Range, Black keys, Octave number) with a page for the range.
     Edits are live; emits `changed` after each one."""
 
-    def __init__(self, cfg: settings.KeyboardSettings, parent=None):
+    def __init__(
+        self,
+        cfg: settings.KeyboardSettings,
+        parent=None,
+    ):
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.addWidget(self.stack)
 
         # layer 1: menu
         menu = QWidget()
         mlay = QVBoxLayout(menu)
-        mlay.setContentsMargins(0, 0, 0, 0)
+        mlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         mlay.addWidget(QLabel("<h3>Settings</h3>"))
         self.range_row = _Row("Range", tall=True)
         self.range_row.clicked.connect(lambda: self._go(1))
@@ -814,14 +1004,24 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         self.keys_row.clicked.connect(lambda: self._go(2))
         self.keys_diagram = KeyDiagram()
         self.keys_row.attach(self.keys_diagram)
-        for row in (self.range_row, self.black_keys_row, self.octave_row, self.keys_row):
+        for row in (
+            self.range_row,
+            self.black_keys_row,
+            self.octave_row,
+            self.keys_row,
+        ):
             mlay.addWidget(row)
         mlay.addStretch()
 
         # layer 2: range
         body = QWidget()
         blay = QVBoxLayout(body)
-        blay.setContentsMargins(0, 0, 0, 0)
+        blay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         blay.setSpacing(10)
         blay.addWidget(QLabel("Keys that will be asked: click and drag on the keyboard to choose them."))
         self.span = KeyboardSpan()
@@ -880,7 +1080,11 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         self.range_keyboard.set_span(cfg.low, cfg.high)
         self.range_keyboard.setToolTip(f"{key_name(cfg.low)} to {key_name(cfg.high)}")
 
-    def _step(self, which: str, delta: int):
+    def _step(
+        self,
+        which: str,
+        delta: int,
+    ):
         low, high = self.cfg.low, self.cfg.high
         first, last = settings.KEYBOARD_FULL
         if which == "low":
@@ -889,7 +1093,11 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
             high = max(min(high + delta, last), low)
         self._set_range(low, high)
 
-    def _set_range(self, low: int, high: int):
+    def _set_range(
+        self,
+        low: int,
+        high: int,
+    ):
         if (low, high) == (self.cfg.low, self.cfg.high):
             return
         self.cfg.low, self.cfg.high = low, high
@@ -905,7 +1113,12 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         self._save_and_emit()
 
     def _show_keys(self):
-        _show_keys(self.keys_row, self.keys_diagram, self.cfg.key_signature, set(self.cfg.active_keys()))
+        _show_keys(
+            self.keys_row,
+            self.keys_diagram,
+            self.cfg.key_signature,
+            set(self.cfg.active_keys()),
+        )
 
     def _keys_edited(self):
         self.cfg.key_signature = self.key_page.enabled()
@@ -936,18 +1149,32 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
     """Settings for the note-construction exercise: a menu (Staff, Accidentals, Key signature, Keys) with a page for
     the staff choices and one for the keys. Edits are live; emits `changed` after each one."""
 
-    def __init__(self, cfg: settings.ConstructionSettings, parent=None):
+    def __init__(
+        self,
+        cfg: settings.ConstructionSettings,
+        parent=None,
+    ):
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.addWidget(self.stack)
 
         # layer 1: menu
         menu = QWidget()
         mlay = QVBoxLayout(menu)
-        mlay.setContentsMargins(0, 0, 0, 0)
+        mlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         mlay.addWidget(QLabel("<h3>Settings</h3>"))
         self.staff_row = _Row("Staff")
         self.staff_row.clicked.connect(lambda: self._go(1))
@@ -969,7 +1196,12 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
         # layer 2: staff choices
         body = QWidget()
         blay = QVBoxLayout(body)
-        blay.setContentsMargins(0, 0, 0, 0)
+        blay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         hint = QLabel("One of the checked choices is picked at random.")
         hint.setWordWrap(True)
         hint.setStyleSheet("color: gray;")
@@ -1021,7 +1253,12 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
         self._save_and_emit()
 
     def _show_keys(self):
-        _show_keys(self.keys_row, self.keys_diagram, self.cfg.key_signature, set(self.cfg.active_keys()))
+        _show_keys(
+            self.keys_row,
+            self.keys_diagram,
+            self.cfg.key_signature,
+            set(self.cfg.active_keys()),
+        )
 
     def _keys_edited(self):
         self.cfg.key_signature = self.key_page.enabled()
@@ -1054,11 +1291,21 @@ class ChoiceChecklist(QWidget):
 
     changed = Signal()
 
-    def __init__(self, groups: list[tuple[str, list[tuple[object, str]]]], selected: set, parent=None):
+    def __init__(
+        self,
+        groups: list[tuple[str, list[tuple[object, str]]]],
+        selected: set,
+        parent=None,
+    ):
         super().__init__(parent)
         self.boxes: dict[object, QCheckBox] = {}
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         lay.setSpacing(6)
         for title, items in groups:
             if title:
@@ -1081,25 +1328,44 @@ class ChoiceChecklist(QWidget):
         self.changed.emit()
 
 
-_INVERSION_SHORT = ("Root", "1st", "2nd", "3rd")
+_INVERSION_SHORT = (
+    "Root",
+    "1st",
+    "2nd",
+    "3rd",
+)
 
 
 class ArpeggioSettingsPanel(ExerciseSettingsPanel):
     """Settings for the arpeggio exercise: a menu (Staff, Arpeggio types, Inversions, Key signatures) with a page for
     each. Edits are live; emits `changed` after each one."""
 
-    def __init__(self, cfg: settings.ArpeggioSettings, parent=None):
+    def __init__(
+        self,
+        cfg: settings.ArpeggioSettings,
+        parent=None,
+    ):
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.addWidget(self.stack)
 
         # layer 1: menu
         menu = QWidget()
         mlay = QVBoxLayout(menu)
-        mlay.setContentsMargins(0, 0, 0, 0)
+        mlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         mlay.addWidget(QLabel("<h3>Settings</h3>"))
         self.staff_row = _Row("Staff")
         self.staff_row.clicked.connect(lambda: self._go(1))
@@ -1114,14 +1380,24 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         self.keys_row.clicked.connect(lambda: self._go(4))
         self.keys_diagram = KeyDiagram()
         self.keys_row.attach(self.keys_diagram)
-        for row in (self.staff_row, self.types_row, self.inversions_row, self.keys_row):
+        for row in (
+            self.staff_row,
+            self.types_row,
+            self.inversions_row,
+            self.keys_row,
+        ):
             mlay.addWidget(row)
         mlay.addStretch()
 
         # layer 2: the staff (the four clefs that have a single staff)
         body = QWidget()
         blay = QVBoxLayout(body)
-        blay.setContentsMargins(0, 0, 0, 0)
+        blay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         hint = QLabel("One of the checked choices is picked at random.")
         hint.setWordWrap(True)
         hint.setStyleSheet("color: gray;")
@@ -1152,7 +1428,12 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         note.setStyleSheet("color: gray;")
         inv_body = QWidget()
         inv_lay = QVBoxLayout(inv_body)
-        inv_lay.setContentsMargins(0, 0, 0, 0)
+        inv_lay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         inv_lay.addWidget(self.inversions)
         inv_lay.addWidget(note)
         inversions_page = _subpage("Inversions", inv_body, lambda: self._go(0))
@@ -1162,7 +1443,13 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         self.key_page.changed.connect(self._keys_edited)
         keys_page = _subpage("Key signatures", self.key_page, lambda: self._go(0))
 
-        for page in (menu, staff_page, types_page, inversions_page, keys_page):
+        for page in (
+            menu,
+            staff_page,
+            types_page,
+            inversions_page,
+            keys_page,
+        ):
             self.stack.addWidget(page)
         self._refresh_summaries()
 
@@ -1182,7 +1469,12 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         self.inversions_row.value.setText(
             "All" if len(inversions) == len(settings.INVERSIONS) else ", ".join(_INVERSION_SHORT[i] for i in inversions),
         )
-        _show_keys(self.keys_row, self.keys_diagram, cfg.key_signature, set(cfg.active_keys()))
+        _show_keys(
+            self.keys_row,
+            self.keys_diagram,
+            cfg.key_signature,
+            set(cfg.active_keys()),
+        )
 
     def _save_and_emit(self):
         saved_settings = store()
@@ -1210,7 +1502,12 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
     def _keys_edited(self):
         self.cfg.key_signature = self.key_page.enabled()
         self.cfg.keys = self.key_page.selected()
-        _show_keys(self.keys_row, self.keys_diagram, self.cfg.key_signature, set(self.cfg.active_keys()))
+        _show_keys(
+            self.keys_row,
+            self.keys_diagram,
+            self.cfg.key_signature,
+            set(self.cfg.active_keys()),
+        )
         self._save_and_emit()
 
 
@@ -1235,18 +1532,32 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
     """Settings for the key signature exercise: a menu (Questions, Staff, Scales, Key signatures) with a page for each.
     Edits are live; emits `changed` after each one."""
 
-    def __init__(self, cfg: settings.KeySignatureSettings, parent=None):
+    def __init__(
+        self,
+        cfg: settings.KeySignatureSettings,
+        parent=None,
+    ):
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         outer.addWidget(self.stack)
 
         # layer 1: menu
         menu = QWidget()
         mlay = QVBoxLayout(menu)
-        mlay.setContentsMargins(0, 0, 0, 0)
+        mlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         mlay.addWidget(QLabel("<h3>Settings</h3>"))
         self.questions_row = _Row("Questions")
         self.staff_row = _Row("Staff")
@@ -1256,7 +1567,15 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         self.staff_row.attach(self.clef_pictures)
         self.keys_diagram = KeyDiagram()
         self.keys_row.attach(self.keys_diagram)
-        for index, row in enumerate((self.questions_row, self.staff_row, self.modes_row, self.keys_row), 1):
+        for index, row in enumerate(
+            (
+                self.questions_row,
+                self.staff_row,
+                self.modes_row,
+                self.keys_row,
+            ),
+            1,
+        ):
             row.clicked.connect(lambda _=False, i=index: self._go(i))
             mlay.addWidget(row)
         mlay.addStretch()
@@ -1272,7 +1591,12 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         questions_note.setStyleSheet("color: gray;")
         questions_body = QWidget()
         qlay = QVBoxLayout(questions_body)
-        qlay.setContentsMargins(0, 0, 0, 0)
+        qlay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         qlay.addWidget(self.questions)
         qlay.addWidget(questions_note)
         questions_page = _subpage("Questions", questions_body, lambda: self._go(0))
@@ -1280,7 +1604,12 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         # layer 2: the clefs the signature is drawn on
         body = QWidget()
         blay = QVBoxLayout(body)
-        blay.setContentsMargins(0, 0, 0, 0)
+        blay.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         hint = QLabel("One of the checked choices is picked at random.")
         hint.setWordWrap(True)
         hint.setStyleSheet("color: gray;")
@@ -1304,7 +1633,12 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         modes_note.setStyleSheet("color: gray;")
         modes_body = QWidget()
         mlay2 = QVBoxLayout(modes_body)
-        mlay2.setContentsMargins(0, 0, 0, 0)
+        mlay2.setContentsMargins(
+            0,
+            0,
+            0,
+            0,
+        )
         mlay2.addWidget(self.modes)
         mlay2.addWidget(modes_note)
         modes_page = _subpage("Scales", modes_body, lambda: self._go(0))
@@ -1314,7 +1648,13 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         self.key_list.changed.connect(self._keys_edited)
         keys_page = _subpage("Key signatures", self.key_list, lambda: self._go(0))
 
-        for page in (menu, questions_page, staff_page, modes_page, keys_page):
+        for page in (
+            menu,
+            questions_page,
+            staff_page,
+            modes_page,
+            keys_page,
+        ):
             self.stack.addWidget(page)
         self._refresh_summaries()
 
@@ -1334,7 +1674,12 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         self.clef_pictures.set_clefs(cfg.active_clefs())
         modes = cfg.active_modes()
         self.modes_row.value.setText(f"{len(modes)} of {len(settings.KEY_MODES)}")
-        _show_keys(self.keys_row, self.keys_diagram, True, set(cfg.active_keys()))
+        _show_keys(
+            self.keys_row,
+            self.keys_diagram,
+            True,
+            set(cfg.active_keys()),
+        )
 
     def _save_and_emit(self):
         saved_settings = store()

@@ -19,7 +19,11 @@ from PySide6.QtWidgets import QPushButton, QToolButton
 MAJOR, MINOR = "Major (Ionian)", "Natural minor (Aeolian)"
 
 
-def questions(n=300, seed=1, **choose):
+def questions(
+    n=300,
+    seed=1,
+    **choose,
+):
     """`n` questions made with these settings (questions, clefs, modes, keys)."""
     for name, value in choose.items():
         setattr(settings.key_signatures, name, value)
@@ -28,7 +32,18 @@ def questions(n=300, seed=1, **choose):
 
 
 def test_each_mode_starts_where_its_signature_says():
-    assert [mode_tonic(2, m).name for m in (MAJOR, "Dorian", "Phrygian", "Lydian", "Mixolydian", MINOR, "Locrian")] == [
+    assert [
+        mode_tonic(2, m).name
+        for m in (
+            MAJOR,
+            "Dorian",
+            "Phrygian",
+            "Lydian",
+            "Mixolydian",
+            MINOR,
+            "Locrian",
+        )
+    ] == [
         "D",
         "E",
         "F♯",
@@ -61,7 +76,13 @@ def test_by_default_both_kinds_of_question_are_asked_about_major_and_minor_keys(
 
 
 def test_reading_a_signature_shows_a_staff_and_asks_for_the_tonic():
-    for q in questions(200, questions={"read"}, modes={"Dorian"}, clefs={"alto"}, keys={2}):
+    for q in questions(
+        200,
+        questions={"read"},
+        modes={"Dorian"},
+        clefs={"alto"},
+        keys={2},
+    ):
         assert q.show_staff and q.staff == [] and q.clef == "alto" and q.key == 2
         assert q.prompt == "Which Dorian scale has this key signature?"
         assert q.caption == "_ Dorian"  # written under the staff, where the tonic goes
@@ -71,13 +92,24 @@ def test_reading_a_signature_shows_a_staff_and_asks_for_the_tonic():
 
 
 def test_counting_names_the_key_and_asks_for_its_signature():
-    for q in questions(200, questions={"count"}, modes={"Lydian"}, keys={-2}):
+    for q in questions(
+        200,
+        questions={"count"},
+        modes={"Lydian"},
+        keys={-2},
+    ):
         assert not q.show_staff and q.prompt == "How many sharps or flats are in E♭ Lydian?"  # B♭ major's 4th degree: E♭
         assert q.answer == "2 flats" and q.answer in q.choices and len(q.choices) == 4
 
 
 def test_the_staffs_the_modes_and_the_keys_are_chosen_from_the_settings():
-    asked = questions(600, questions={"read"}, clefs={"treble", "tenor"}, modes={MAJOR, "Locrian"}, keys={-3, 0, 4})
+    asked = questions(
+        600,
+        questions={"read"},
+        clefs={"treble", "tenor"},
+        modes={MAJOR, "Locrian"},
+        keys={-3, 0, 4},
+    )
     assert {q.clef for q in asked} == {"treble", "tenor"} and {q.key for q in asked} == {-3, 0, 4}
     assert {q.prompt for q in asked} == {"Which major key has this key signature?", "Which Locrian scale has this key signature?"}
     major = next(q for q in asked if q.key == 4 and "major" in q.prompt)
@@ -87,7 +119,12 @@ def test_the_staffs_the_modes_and_the_keys_are_chosen_from_the_settings():
 def test_a_settings_choice_with_nothing_ticked_falls_back_to_something_sensible():
     cfg = settings.key_signatures
     cfg.questions, cfg.clefs, cfg.modes, cfg.keys = set(), set(), set(), set()
-    assert (cfg.active_questions(), cfg.active_clefs(), cfg.active_modes(), cfg.active_keys()) == (
+    assert (
+        cfg.active_questions(),
+        cfg.active_clefs(),
+        cfg.active_modes(),
+        cfg.active_keys(),
+    ) == (
         ["read"],
         ["treble"],
         [MAJOR],
@@ -108,14 +145,22 @@ def test_the_exercise_signature_follows_the_settings():
 
 
 def test_a_key_signature_question_is_described_by_its_signature_in_the_lists_of_hard_questions():
-    q = questions(1, questions={"read"}, keys={-3}, clefs={"bass"})[0]
+    q = questions(
+        1,
+        questions={"read"},
+        keys={-3},
+        clefs={"bass"},
+    )[0]
     assert stats.describe(q).startswith("Bass: 3 flats. Which ")
 
 
 # -- the exercise screen ----------------------------------------------------------------------------------------------
 
 
-def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(app, monkeypatch):
+def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(
+    app,
+    monkeypatch,
+):
     played = []
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_notes", lambda notes: played.append(notes))
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: played.append(streak))
@@ -132,7 +177,10 @@ def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(app, monkeypatch
     assert played == []  # neither a tone nor the ordinary chime
 
 
-def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(app, monkeypatch):
+def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(
+    app,
+    monkeypatch,
+):
     from alto.exercises.library import NoteNames
     from alto.ui.exercise_view import sounds
 
@@ -192,7 +240,12 @@ def back(panel):
 
 
 def test_the_pane_opens_each_page_and_back_returns(pane):
-    for row, index in ((pane.questions_row, 1), (pane.staff_row, 2), (pane.modes_row, 3), (pane.keys_row, 4)):
+    for row, index in (
+        (pane.questions_row, 1),
+        (pane.staff_row, 2),
+        (pane.modes_row, 3),
+        (pane.keys_row, 4),
+    ):
         row.click()
         QTest.qWait(300)
         assert pane.stack.currentIndex() == index
@@ -242,7 +295,12 @@ def test_the_saved_settings_are_read_back_and_bad_ones_ignored():
     cfg = settings.key_signatures
     assert cfg.questions == {"count"} and cfg.clefs == {"tenor", "bass"}
     assert cfg.modes == {"Lydian", "Locrian"} and cfg.keys == {-4, 3}
-    for name in ("questions", "clefs", "modes", "keys"):
+    for name in (
+        "questions",
+        "clefs",
+        "modes",
+        "keys",
+    ):
         s.setValue(f"keySignatures/{name}", "nonsense")
     s.setValue("keySignatures/keys", "99")
     sp.load_key_signatures()
@@ -255,7 +313,12 @@ def test_the_exercises_help_describes_both_kinds_of_question():
 
 
 def test_the_explanation_spells_the_scale_from_the_tonic_up_to_its_octave():
-    q = questions(1, questions={"read"}, keys={0}, modes={MAJOR})[0]
+    q = questions(
+        1,
+        questions={"read"},
+        keys={0},
+        modes={MAJOR},
+    )[0]
     assert q.explanation.endswith("C D E F G A B C")
 
 

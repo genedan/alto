@@ -24,13 +24,31 @@ def test_parse_and_midi():
         ("C4", "B#4", "A7"),
     ],
 )
-def test_between(low, high, expected):
+def test_between(
+    low,
+    high,
+    expected,
+):
     assert str(Interval.between(Note.parse(low), Note.parse(high))) == expected
 
 
 def test_transpose_roundtrip():
-    for tonic in ("C4", "F#4", "Eb4", "Bb3"):
-        for iv in ("m2", "M3", "P4", "A4", "d5", "m6", "M7", "P8"):
+    for tonic in (
+        "C4",
+        "F#4",
+        "Eb4",
+        "Bb3",
+    ):
+        for iv in (
+            "m2",
+            "M3",
+            "P4",
+            "A4",
+            "d5",
+            "m6",
+            "M7",
+            "P8",
+        ):
             n = Note.parse(tonic)
             up = n.transpose(Interval.parse(iv))
             assert Interval.between(n, up) == Interval.parse(iv)
@@ -38,9 +56,25 @@ def test_transpose_roundtrip():
 
 def test_scales():
     notes = build(Note.parse("D4"), SCALES["Major (Ionian)"])
-    assert [n.name for n in notes] == ["D", "E", "F♯", "G", "A", "B", "C♯"]
+    assert [n.name for n in notes] == [
+        "D",
+        "E",
+        "F♯",
+        "G",
+        "A",
+        "B",
+        "C♯",
+    ]
     notes = build(Note.parse("A4"), SCALES["Harmonic minor"])
-    assert [n.name for n in notes] == ["A", "B", "C", "D", "E", "F", "G♯"]
+    assert [n.name for n in notes] == [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G♯",
+    ]
 
 
 def test_key_signatures():
@@ -53,6 +87,16 @@ def test_key_signatures():
 
 def test_chords():
     notes = build(Note.parse("C4"), CHORDS["dominant 7th"])
-    assert [n.name for n in notes] == ["C", "E", "G", "B♭"]
+    assert [n.name for n in notes] == [
+        "C",
+        "E",
+        "G",
+        "B♭",
+    ]
     notes = build(Note.parse("B3"), CHORDS["diminished 7th"])
-    assert [n.name for n in notes] == ["B", "D", "F", "A♭"]
+    assert [n.name for n in notes] == [
+        "B",
+        "D",
+        "F",
+        "A♭",
+    ]

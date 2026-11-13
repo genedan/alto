@@ -14,11 +14,21 @@ from .database import Database, ItemRecord, Profile
 class Learner:
     FRESH = 10  # new questions generated for each pick, alongside the ones asked before
 
-    def __init__(self, db: Database, profile: Profile):
+    def __init__(
+        self,
+        db: Database,
+        profile: Profile,
+    ):
         self.db = db
         self.profile = profile
 
-    def pick(self, exercise: Exercise, rng: random.Random, avoid: str | None = None, now: float | None = None) -> Question:
+    def pick(
+        self,
+        exercise: Exercise,
+        rng: random.Random,
+        avoid: str | None = None,
+        now: float | None = None,
+    ) -> Question:
         """The next question: a mix of new ones and ones asked before under the same settings, drawn by weight.
 
         `avoid` is the key of the question just asked, so it does not come straight back."""
@@ -58,10 +68,25 @@ class Learner:
         """Log one answer and update what is known about the question."""
         now = time.time() if now is None else now
         name, key = type(exercise).__name__, question.item_key()
-        self.db.add_attempt(self.profile.id, name, key, attempt_no, answer, correct, round(seconds * 1000), now)
+        self.db.add_attempt(
+            self.profile.id,
+            name,
+            key,
+            attempt_no,
+            answer,
+            correct,
+            round(seconds * 1000),
+            now,
+        )
         old = self.db.get_item(self.profile.id, name, key)
         strain = old.strain if old else scheduler.NEW_STRAIN
-        strain = scheduler.update_strain(strain, correct, attempt_no, seconds, exercise.par_seconds)
+        strain = scheduler.update_strain(
+            strain,
+            correct,
+            attempt_no,
+            seconds,
+            exercise.par_seconds,
+        )
         first = attempt_no == 1
         self.db.save_item(
             self.profile.id,

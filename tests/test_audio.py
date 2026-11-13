@@ -6,7 +6,12 @@ from alto.audio import SAMPLE_RATE, synth_piano, to_wav_bytes
 
 
 def test_synth_is_normalized_and_finite():
-    for midi in (36, 60, 72, 84):
+    for midi in (
+        36,
+        60,
+        72,
+        84,
+    ):
         s = synth_piano(midi)
         assert np.isfinite(s).all()
         assert 0.5 < np.max(np.abs(s)) <= 0.8001
@@ -38,7 +43,15 @@ def test_every_instrument_has_recordings_and_covers_the_notes():
 
     assert len(INSTRUMENTS) >= 7 and INSTRUMENTS[0].key == "piano"
     # instruments whose recordings ship with Alto; any other is still being sourced
-    shipped = {"piano", "marimba", "vibraphone", "viola_bowed", "viola_plucked", "flute", "horn"}
+    shipped = {
+        "piano",
+        "marimba",
+        "vibraphone",
+        "viola_bowed",
+        "viola_plucked",
+        "flute",
+        "horn",
+    }
     sounds = Sounds()
     for inst in INSTRUMENTS:
         files = sounds._samples(inst)
@@ -49,7 +62,12 @@ def test_every_instrument_has_recordings_and_covers_the_notes():
             audio, rate = read_wav(path)
             assert np.isfinite(audio).all() and np.abs(audio).max() > 0.05 and len(audio) > rate // 2, (inst.key, midi)
         # any staff note gets a file: a recording or a pitch-shifted neighbour
-        for midi in (40, 61, 73, 90):
+        for midi in (
+            40,
+            61,
+            73,
+            90,
+        ):
             assert sounds._note_file(inst, midi).exists(), (inst.key, midi)
 
 
@@ -69,7 +87,11 @@ def test_pitch_shift_moves_the_frequency():
 class FakeEffect:
     """Stands in for QSoundEffect, so these tests need no audio hardware."""
 
-    def __init__(self, label, log):
+    def __init__(
+        self,
+        label,
+        log,
+    ):
         self.label, self.log, self._volume = label, log, 1.0
 
     def setVolume(self, v):
@@ -85,7 +107,10 @@ class FakeEffect:
         self.log.append(("stop", self.label))
 
 
-def engine(monkeypatch, instrument):
+def engine(
+    monkeypatch,
+    instrument,
+):
     from alto.audio import Sounds
 
     log, effects = [], {}
@@ -101,7 +126,12 @@ def test_only_bowed_and_blown_instruments_are_sustained():
 
     sustained = {k for k, i in INSTRUMENT_BY_KEY.items() if i.sustained}
     assert {"viola_bowed", "flute", "horn"} <= sustained
-    assert not sustained & {"piano", "marimba", "vibraphone", "viola_plucked"}
+    assert not sustained & {
+        "piano",
+        "marimba",
+        "vibraphone",
+        "viola_plucked",
+    }
 
 
 def test_a_bowed_note_ends_when_the_next_one_begins(monkeypatch):
@@ -112,7 +142,12 @@ def test_a_bowed_note_ends_when_the_next_one_begins(monkeypatch):
 
 
 def test_struck_and_plucked_notes_ring_on(monkeypatch):
-    for instrument in ("piano", "marimba", "vibraphone", "viola_plucked"):
+    for instrument in (
+        "piano",
+        "marimba",
+        "vibraphone",
+        "viola_plucked",
+    ):
         s, log = engine(monkeypatch, instrument)
         s.play_midi(60)
         s.play_midi(62)
@@ -126,7 +161,12 @@ def test_the_notes_of_a_chord_sound_together_and_end_together(monkeypatch):
     s.play_notes([[Note(4, 0), Note(4, 2), Note(4, 4)]])  # C4 E4 G4 at once
     assert log == [("play", 60), ("play", 64), ("play", 67)]  # none of them cuts off another
     s.play_notes([[Note(4, 1)]])
-    assert log[3:] == [("release", 60), ("release", 64), ("release", 67), ("play", 62)]
+    assert log[3:] == [
+        ("release", 60),
+        ("release", 64),
+        ("release", 67),
+        ("play", 62),
+    ]
 
 
 def test_a_melody_hands_over_from_note_to_note(monkeypatch):
@@ -141,7 +181,13 @@ def test_a_melody_hands_over_from_note_to_note(monkeypatch):
     s, log = engine(monkeypatch, "viola_bowed")
     s.play_notes([[Note(4, 0)], [Note(4, 1)], [Note(4, 2)]], gap_ms=30)
     QTest.qWait(250)
-    assert log == [("play", 60), ("release", 60), ("play", 62), ("release", 62), ("play", 64)]
+    assert log == [
+        ("play", 60),
+        ("release", 60),
+        ("play", 62),
+        ("release", 62),
+        ("play", 64),
+    ]
 
 
 def test_a_muted_engine_neither_plays_nor_releases(monkeypatch):
@@ -165,7 +211,10 @@ def test_the_two_ways_of_playing_the_viola_are_listed_together():
 # -- hearing an instrument (the preview in the settings) ------------------------------------------------------------
 
 
-def preview_engine(monkeypatch, instrument="viola_bowed"):
+def preview_engine(
+    monkeypatch,
+    instrument="viola_bowed",
+):
     """An engine whose notes are recorded with the time they were started."""
     import os
     import time
@@ -252,7 +301,11 @@ def test_a_note_that_is_slow_to_start_does_not_upset_the_rhythm(monkeypatch):
 
     s, started = preview_engine(monkeypatch)
 
-    def slow_start(midi, *args, **kwargs):  # the first note takes 60 ms to get going, as the first one can
+    def slow_start(
+        midi,
+        *args,
+        **kwargs,
+    ):  # the first note takes 60 ms to get going, as the first one can
         if not started:
             time.sleep(0.06)
         started.append((midi, time.monotonic()))

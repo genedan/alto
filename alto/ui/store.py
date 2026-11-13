@@ -16,7 +16,11 @@ def store() -> QSettings:
     return s
 
 
-def int_value(settings: QSettings, key: str, default: int) -> int:
+def int_value(
+    settings: QSettings,
+    key: str,
+    default: int,
+) -> int:
     """An integer setting. QSettings hands back whatever was saved (a number or its text); text that is not a number
     raises ValueError."""
     value = settings.value(key, default)
