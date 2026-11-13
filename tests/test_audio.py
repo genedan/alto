@@ -134,6 +134,7 @@ class FakeEffect:
         """
         self.label, self.log, self._volume = label, log, 1.0
 
+    # noinspection PyPep8Naming
     def setVolume(self, v: float) -> None:
         """
         Set the volume, as QSoundEffect does.
@@ -333,12 +334,8 @@ def test_the_two_ways_of_playing_the_viola_are_listed_together() -> None:
 
 
 # -- hearing an instrument (the preview in the settings) ------------------------------------------------------------
-
-
 def preview_engine(
     monkeypatch: pytest.MonkeyPatch,
-    *,
-    instrument: str = "viola_bowed",
 ) -> tuple[Sounds, list[tuple[int, float]]]:
     """
     Build an engine whose notes are recorded with the time they were started.
@@ -347,8 +344,6 @@ def preview_engine(
     ----------
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
-    instrument : str
-        The instrument to play.
 
     Returns
     -------
@@ -362,6 +357,7 @@ def preview_engine(
     from alto.audio import Sounds
     from PySide6.QtWidgets import QApplication
 
+    # noinspection PyGlobalUndefined
     global _preview_app
     _preview_app = QApplication.instance() or QApplication([])  # kept alive for the timers
     s, started = Sounds(), []
@@ -371,6 +367,7 @@ def preview_engine(
         An effect that never reports that it is still playing.
         """
 
+        # noinspection PyMethodMayBeStatic,PyPep8Naming
         def isPlaying(self) -> bool:
             """
             Say that the effect is not playing.
@@ -522,6 +519,7 @@ def test_a_note_that_is_slow_to_start_does_not_upset_the_rhythm(monkeypatch: pyt
         kwargs : object
             Ignored.
         """
+        del args, kwargs  # accepted to match what it stands in for, but not needed
         if not started:
             time.sleep(0.06)
         started.append((midi, time.monotonic()))

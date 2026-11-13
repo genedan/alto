@@ -10,7 +10,7 @@ _HOME = tempfile.mkdtemp(prefix="alto-doctests-")
 os.environ["XDG_CONFIG_HOME"] = f"{_HOME}/config"
 os.environ["XDG_DATA_HOME"] = f"{_HOME}/data"
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-atexit.register(shutil.rmtree, _HOME, ignore_errors=True)
+atexit.register(lambda: shutil.rmtree(_HOME, ignore_errors=True))
 
 import pytest  # noqa: E402
 
@@ -33,7 +33,8 @@ def _qt_application_for_doctests(
 
     Examples
     --------
-    >>> app.applicationName() == app.applicationName()  # `app` is a QApplication in every doctest
+    >>> from PySide6.QtWidgets import QApplication
+    >>> QApplication.instance() is not None  # the application `app` that every doctest can use
     True
     """
     if type(request.node).__name__ != "DoctestItem":
@@ -43,17 +44,12 @@ def _qt_application_for_doctests(
     doctest_namespace["app"] = QApplication.instance() or QApplication([])
 
 
-def pytest_sessionfinish(session: pytest.Session) -> None:
+def pytest_sessionfinish() -> None:
     """
     Delete every widget the run left behind, while Python and Qt are both still running.
 
     Examples make widgets they never close. Left to the interpreter's exit, PySide destroys them in an order that aborts the
     process after every test has passed, which fails the pre-push hook.
-
-    Parameters
-    ----------
-    session : pytest.Session
-        The finished run. Not used.
 
     Examples
     --------

@@ -235,7 +235,9 @@ def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_notes", lambda notes: played.append(notes))
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: played.append(streak))
     for kind in ({"read"}, {"count"}):
         settings.key_signatures.questions = kind
@@ -267,6 +269,7 @@ def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(
     from alto.exercises.library import NoteNames
     from alto.ui.exercise_view import sounds
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(sounds, "enabled", True)
     assert KeySignatures.has_sound is False and NoteNames.has_sound is True
     for exercise in (KeySignatures(), NoteNames()):

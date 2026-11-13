@@ -17,6 +17,8 @@ from alto.exercises.library import ARPEGGIO_WINDOWS, ArpeggioNames, KeySignature
 from alto.theory.pitch import Note
 from alto.ui import settings_panel as sp
 from alto.ui.pictures import CLEF_NAMES
+
+# noinspection PyProtectedMember
 from alto.ui.staff import _KEY_POSITIONS, BOTTOM_LINE, MIDDLE_C, StaffWidget
 from PySide6.QtWidgets import QApplication, QCheckBox
 

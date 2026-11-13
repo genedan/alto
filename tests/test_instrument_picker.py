@@ -207,6 +207,7 @@ def test_an_instrument_with_no_recordings_cannot_be_chosen(
         Replaces settings, functions or attributes for the length of the test.
     """
     real = sounds.recordings
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(sounds, "recordings", lambda inst: {} if inst.key == "vibraphone" else real(inst))
     picker.select("vibraphone")
     assert not picker.banner.isHidden() and "No recordings" in picker.banner.text()
@@ -255,8 +256,10 @@ def test_hear_it_plays_a_short_arpeggio_in_that_instrument(
         kwargs : object
             Ignored.
         """
+        del volume, kwargs  # accepted to match what it stands in for, but not needed
         played.append((midi, instrument, force))
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(sounds, "play_midi", record)
     picker.select("viola_bowed")
     picker.buttons["viola_bowed"][1].click()

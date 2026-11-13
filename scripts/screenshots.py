@@ -154,6 +154,7 @@ def capture(
     import alto.ui.exercise_view as ev  # the same questions in both themes, so the light and dark pictures match
 
     original = ev.ExerciseView.__init__
+    # noinspection PyShadowingNames
     ev.ExerciseView.__init__ = lambda self, exercise, *, rng=None, parent=None, learner=None: original(
         self,
         exercise,
@@ -179,6 +180,7 @@ def capture(
         while time.time() < end:
             app.processEvents()
 
+    # noinspection PyShadowingNames
     def save(
         widget: QWidget,
         *,
@@ -306,6 +308,7 @@ def capture(
         from alto.ui.stats_dialog import StatsPage
         from PySide6.QtWidgets import QScrollArea
 
+        # noinspection PyProtectedMember
         stats_page = window._overlay
         assert isinstance(stats_page, StatsPage)
         scroller = stats_page.findChild(QScrollArea)
@@ -316,12 +319,14 @@ def capture(
     window.open_database()
     wait(400)
     save(window, name="database")
+    # noinspection PyProtectedMember
     page = window._overlay
     assert isinstance(page, DatabasePage)
     page.tabs["answers"].click()
     wait(200)
     row = next(page.proxy.index(r, 0) for r in range(page.proxy.rowCount()) if "Chord" in page.proxy.index(r, 1).data())
     answer = row.data(ROW_ROLE)
+    # noinspection PyProtectedMember
     preview = QuestionPreview(
         page._names[answer["exercise"]],
         question=Question.from_dict(json.loads(answer["payload"])),

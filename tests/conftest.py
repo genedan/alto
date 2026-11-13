@@ -23,7 +23,7 @@ _HOME = tempfile.mkdtemp(prefix="alto-tests-")
 os.environ["XDG_CONFIG_HOME"] = f"{_HOME}/config"
 os.environ["XDG_DATA_HOME"] = f"{_HOME}/data"
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-atexit.register(shutil.rmtree, _HOME, ignore_errors=True)
+atexit.register(lambda: shutil.rmtree(_HOME, ignore_errors=True))
 
 import pytest  # noqa: E402
 
@@ -86,7 +86,9 @@ def _isolated_state() -> Iterator[None]:
     from alto.ui import keyboard_styles
 
     keyboard_styles._current = keyboard_styles.BY_KEY[keyboard_styles.DEFAULT]
+    # noinspection PyProtectedMember
     keyboard_styles._custom.clear()
+    # noinspection PyProtectedMember
     keyboard_styles._custom.update(keyboard_styles.DEFAULT_CUSTOM)
     for n in names:
         getattr(settings, n).__dict__.clear()
@@ -219,6 +221,7 @@ def _close_databases(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
         kwargs : str or Path
             The keyword arguments of `Database`.
         """
+        # noinspection PyTypeChecker
         original(self, *args, **kwargs)
         opened.append(self)
 

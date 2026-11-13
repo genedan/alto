@@ -256,8 +256,11 @@ def test_right_click_steps_through_the_signs(construction: ExerciseView) -> None
     assert construction.input_staff.accidental == 0  # under a key signature there is a natural too
     construction.input_staff.accidental_cycled.emit()
     assert construction.input_staff.accidental is None
+    # noinspection PyUnreachableCode
     construction.input_staff.accidental = 99  # something outside the cycle starts it again
+    # noinspection PyUnreachableCode
     construction.input_staff.accidental_cycled.emit()
+    # noinspection PyUnreachableCode
     assert construction.input_staff.accidental is None
 
 
@@ -333,6 +336,7 @@ def test_a_new_question_cancels_the_clearing_of_the_old_one(construction: Exerci
         The note construction view or panel under test.
     """
     q = asked(construction)
+    # noinspection PyUnresolvedReferences
     construction._place(Note(q.construct.octave, letter=(q.construct.letter + 2) % 7))
     construction.next_question()  # before the 900 ms are up
     assert not construction._busy

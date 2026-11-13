@@ -37,6 +37,7 @@ class Effect:
         """
         self.playing, self.loading, self.volume_set, self.stopped = playing, loading, [], 0
 
+    # noinspection PyPep8Naming
     def isPlaying(self) -> bool:
         """
         Say whether the effect is playing.
@@ -48,6 +49,7 @@ class Effect:
         """
         return self.playing
 
+    # noinspection PyPep8Naming
     def setVolume(self, v: float) -> None:
         """
         Record a volume that was set.
@@ -59,6 +61,7 @@ class Effect:
         """
         self.volume_set.append(v)
 
+    # noinspection PyMethodMayBeStatic
     def volume(self) -> float:
         """
         Return the volume.
@@ -164,6 +167,7 @@ def test_playing_a_note_again_cancels_its_fade() -> None:
         A fade-out that records when it is stopped.
         """
 
+        # noinspection PyMethodMayBeStatic
         def stop(self) -> None:
             """
             Record that the fade was cancelled.
@@ -190,6 +194,7 @@ def test_stop_all_silences_what_is_playing_and_cancels_fades() -> None:
         A fade-out that records when it is cancelled.
         """
 
+        # noinspection PyMethodMayBeStatic
         def stop(self) -> None:
             """
             Record that the fade was cancelled.
@@ -238,6 +243,7 @@ def test_a_failure_in_the_sound_system_is_reported_not_raised(
         midi : int
             The note.
         """
+        del inst, midi  # accepted to match what it stands in for, but not needed
         raise RuntimeError("no sound card")
 
     monkeypatch.setattr(s, "_effect", broken)

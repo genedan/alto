@@ -39,6 +39,7 @@ def dialog(
     AppSettingsDialog
         The dialog; it is closed afterwards.
     """
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(app_settings, "saved_theme", lambda: "dark")
     dlg = AppSettingsDialog()
     yield dlg
@@ -125,6 +126,7 @@ def test_choosing_a_theme_saves_and_applies_it(
     from alto.ui import theme
 
     applied = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(app_settings, "apply_theme", applied.append)
     assert not dialog.theme_changed
     dialog.theme_cards["light"].click()

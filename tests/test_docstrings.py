@@ -171,7 +171,8 @@ def problems(path: Path) -> list[str]:
         if any(isinstance(d, ast.Attribute) and d.attr in ("setter", "deleter") for d in node.decorator_list):
             continue
         a = node.args
-        params = [*a.posonlyargs, *a.args, *a.kwonlyargs] + [x for x in (a.vararg, a.kwarg) if x]
+        extras = [x for x in (a.vararg, a.kwarg) if x is not None]
+        params = [*a.posonlyargs, *a.args, *a.kwonlyargs, *extras]
         names = [p.arg for p in params]
         if names and names[0] in ("self", "cls"):
             names = names[1:]
