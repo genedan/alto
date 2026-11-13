@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QPushButton,
+    QRadioButton,
     QScrollArea,
     QStackedWidget,
     QToolButton,
@@ -26,6 +27,7 @@ from . import keyboard_styles, notation
 from .colors import blend
 from .instrument_picker import InstrumentPicker
 from .keyboard import KeyboardWidget
+from .pictures import ClefPictures
 from .staff import StaffWidget
 from .theme import THEMES, apply_theme, save_theme, saved_theme
 
@@ -415,12 +417,36 @@ class AppSettingsDialog(QDialog):
             card = StyleCard(st)
             card.setChecked(st.key == notation.current().key)
             group.addButton(card)
-            card.clicked.connect(lambda _=False, k=st.key: notation.set_style(k))
+            card.clicked.connect(lambda _=False, k=st.key: self._choose_notation(k))
             grid.addWidget(card, i // 3, i % 3)
         grid.setColumnStretch(3, 1)  # keep the cards at the left edge
         lay.addLayout(grid)
+
+        lay.addSpacing(8)
+        lay.addWidget(QLabel("<h3>Baritone clef</h3>"))
+        lay.addWidget(self._about("The baritone clef can be written two ways. The staff and the notes on it are the same."))
+        self.baritone_buttons = {}
+        baritone_group = QButtonGroup(self)
+        for kind, label in notation.BARITONE_CLEFS.items():
+            radio = QRadioButton(label)
+            radio.setChecked(kind == notation.baritone_clef())
+            baritone_group.addButton(radio)
+            radio.clicked.connect(lambda _=False, k=kind: notation.set_baritone_clef(k))
+            self.baritone_buttons[kind] = radio
+            lay.addWidget(radio)
+        self._draw_baritone_icons()
         lay.addStretch(1)
         return page
+
+    def _choose_notation(self, key: str) -> None:
+        notation.set_style(key)
+        self._draw_baritone_icons()  # the two baritone clefs are pictured in the font just chosen
+
+    def _draw_baritone_icons(self) -> None:
+        for kind, radio in self.baritone_buttons.items():
+            picture = ClefPictures([f"baritone_{kind}"], 1.4)
+            radio.setIcon(picture.to_icon())
+            radio.setIconSize(picture.size())
 
     def _keyboard_tab(self) -> QWidget:
         page, lay = self._page()

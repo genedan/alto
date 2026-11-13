@@ -13,7 +13,8 @@ A note is drawn on a staff. Press the button with its name.
 In the exercise settings you can choose:
 
 - **Clefs:** the grand staff, or any of the seven single-staff clefs, listed in three groups: treble, bass, alto and
-  tenor; then soprano, mezzo-soprano and baritone. Each clef is shown with its name beside it. The same list is used by every
+  tenor; then soprano, mezzo-soprano and baritone (written as an F clef, or as a C clef if you choose that in
+  [Settings]({{ '/settings/' | relative_url }})). Each clef is shown with its name beside it. The same list is used by every
   exercise that has a clef setting, apart from the grand staff, which only Note Identification and Note Construction use.
 - **Range:** the lowest and highest note that can appear, per clef.
 - **Key signatures:** which keys appear. When a key is on, the note's name has to agree with the signature.

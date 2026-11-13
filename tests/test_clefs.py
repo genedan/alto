@@ -117,3 +117,73 @@ def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(app, p
     gaps = [b - a for a, b in zip(ys, ys[1:])]
     assert max(gaps) > min(gaps)  # a larger gap where one group ends and the next begins
     assert ("grand" in boxes) == expect_grand and not hasattr(panel, "single")  # no "Single clef" switch
+
+
+@pytest.fixture
+def baritone():
+    """Put the baritone clef's style back to the default after the test."""
+    from alto.ui import notation
+    yield notation
+    notation.set_baritone_clef(notation.DEFAULT_BARITONE)
+
+
+def _ink(widget) -> bytes:
+    image = widget.grab().toImage()
+    return bytes(image.constBits())
+
+
+def test_the_baritone_clef_is_an_f_clef_unless_the_c_clef_is_chosen(app, baritone):
+    assert baritone.DEFAULT_BARITONE == "f" and baritone.baritone_clef() == "f"
+    assert baritone.clef_shape("baritone") == "baritone_f" and baritone.clef_shape("alto") == "alto"
+    staff = StaffWidget()
+    staff.resize(400, 300)
+    staff.show_notes([[Note(3, 3)]], "baritone", 0)
+    as_f = _ink(staff)
+    baritone.set_baritone_clef("c")
+    assert baritone.clef_shape("baritone") == "baritone_c"
+    assert _ink(staff) != as_f  # a staff already on screen is redrawn with the other clef
+    baritone.set_baritone_clef("f")
+    assert _ink(staff) == as_f
+    baritone.set_baritone_clef("sideways")  # not a choice: back to the default
+    assert baritone.baritone_clef() == "f"
+
+
+def test_the_baritone_clef_choice_is_saved_and_read_back(baritone):
+    from alto.ui.store import store
+    baritone.set_baritone_clef("c")
+    assert store().value("ui/baritoneClef") == "c"
+    baritone.set_baritone_clef("f")
+    baritone.load_style()
+    assert baritone.baritone_clef() == "f"
+    store().setValue("ui/baritoneClef", "c")
+    baritone.load_style()
+    assert baritone.baritone_clef() == "c"
+    store().setValue("ui/baritoneClef", "nonsense")
+    baritone.load_style()
+    assert baritone.baritone_clef() == "f"
+
+
+@pytest.mark.parametrize("font", ["finalemaestro", "noto"])
+def test_both_baritone_clefs_draw_in_a_music_font_and_in_the_built_in_one(app, baritone, font):
+    baritone.set_style(font)
+    try:
+        for kind in ("f", "c"):
+            baritone.set_baritone_clef(kind)
+            staff = StaffWidget()
+            staff.resize(400, 300)
+            staff.show_notes([[Note(3, 3)]], "baritone", -2)
+            assert staff.grab().width() == 400
+    finally:
+        baritone.set_style("finalemaestro")
+
+
+def test_the_settings_dialog_offers_both_ways_of_writing_the_baritone_clef(app, baritone):
+    from alto.ui.app_settings import AppSettingsDialog
+    dialog = AppSettingsDialog()
+    buttons = dialog.baritone_buttons
+    assert set(buttons) == {"f", "c"} and buttons["f"].isChecked() and not buttons["c"].isChecked()
+    buttons["c"].click()
+    assert baritone.baritone_clef() == "c"
+    buttons["f"].click()
+    assert baritone.baritone_clef() == "f"
+    dialog.choose_theme("light")  # unrelated pages still work

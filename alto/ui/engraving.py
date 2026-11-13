@@ -139,7 +139,7 @@ def draw_clef(p: QPainter, font: str, clef: str, x: float, bottom: float, gap: f
     """The clef with its left edge at x; `bottom` is the y of the staff's bottom line."""
     # `line` is how many gaps above the bottom staff line the clef's reference line (the G, F or middle C) is
     name, line = {"treble": ("gClef", 1), "bass": ("fClef", 3), "alto": ("cClef", 2), "tenor": ("cClef", 3),
-                  "soprano": ("cClef", 0), "mezzo": ("cClef", 1), "baritone": ("cClef", 4)}[clef]
+                  "soprano": ("cClef", 0), "mezzo": ("cClef", 1), "baritone_c": ("cClef", 4), "baritone_f": ("fClef", 2)}[clef]
     _fill(p, _place(_outline(font, name), x, bottom - line * gap, gap), colour)
 
 

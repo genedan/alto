@@ -17,7 +17,8 @@ from .notation import current as current_style
 from .staff import BOTTOM_LINE, MIDDLE_C, StaffWidget
 
 CLEF_NAMES = {"treble": "Treble", "bass": "Bass", "alto": "Alto", "tenor": "Tenor", "soprano": "Soprano",
-              "mezzo": "Mezzo-soprano", "baritone": "Baritone", "grand": "Grand staff"}
+              "mezzo": "Mezzo-soprano", "baritone": "Baritone", "grand": "Grand staff",
+              "baritone_f": "Baritone (F clef)", "baritone_c": "Baritone (C clef)"}  # the two ways of writing the baritone clef
 VALUE_NAMES = {"breve": "Breve", "whole": "Whole", "half": "Half", "quarter": "Quarter", "eighth": "Eighth",
                "sixteenth": "16th", "thirty_second": "32nd"}
 

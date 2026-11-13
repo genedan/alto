@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QSizePolicy, QWidget
 
 from ..theory.pitch import ACCIDENTAL_SYMBOLS, Note, key_accidental
 from . import engraving
-from .notation import NotationStyle
+from .notation import NotationStyle, clef_shape
 from .notation import current as current_style
 from .notes import draw_note
 
@@ -20,10 +20,11 @@ BOTTOM_LINE = {
     "mezzo": Note(3, 5).diatonic,     # A3
     "baritone": Note(2, 6).diatonic,  # B2
 }
-CLEF_GLYPH = {"treble": "𝄞", "bass": "𝄢", "alto": "𝄡", "tenor": "𝄡", "soprano": "𝄡", "mezzo": "𝄡", "baritone": "𝄡"}
+CLEF_GLYPH = {"treble": "𝄞", "bass": "𝄢", "alto": "𝄡", "tenor": "𝄡", "soprano": "𝄡", "mezzo": "𝄡", "baritone_c": "𝄡",
+              "baritone_f": "𝄢"}
 # (glyph top, glyph bottom) measured upward from the bottom staff line, in staff gaps
 CLEF_EXTENT = {"treble": (6.6, -2.2), "bass": (4.0, 0.7), "alto": (4.0, 0.0), "tenor": (5.0, 1.0),
-               "soprano": (2.0, -2.0), "mezzo": (3.0, -1.0), "baritone": (6.0, 2.0)}
+               "soprano": (2.0, -2.0), "mezzo": (3.0, -1.0), "baritone_c": (6.0, 2.0), "baritone_f": (3.0, -0.3)}
 MIDDLE_C = Note(4, 0).diatonic
 
 # Where each key-signature accidental sits, in order of appearance. Each is a fourth up or a fifth down from the one before
@@ -242,6 +243,7 @@ class StaffWidget(QWidget):
     def _draw_clef(p: QPainter, clef: str, x: float, bottom: float, gap: float, color: QColor = QColor("black"),
                    font: str | None = None) -> None:
         """Draw the clef: from a SMuFL font if given, else as a Noto Music path scaled to its extent in gaps."""
+        clef = clef_shape(clef)  # the baritone clef is an F clef or a C clef, as chosen in the settings
         if font:
             engraving.draw_clef(p, font, clef, x, bottom, gap, color)
             return
