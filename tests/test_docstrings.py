@@ -16,6 +16,13 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 DOCUMENTED = [
     "alto/theory",
+    "alto/learning",
+    "alto/exercises",
+    "alto/__init__.py",
+    "alto/__main__.py",
+    "alto/audio.py",
+    "alto/instrument_info.py",
+    "alto/settings.py",
 ]
 
 SECTION = re.compile(r"^(?P<title>[A-Z][A-Za-z ]+)\n-{3,}$", re.MULTILINE)
@@ -82,14 +89,14 @@ def python_files() -> list[Path]:
     Returns
     -------
     list of Path
-        Every .py file under each directory in `DOCUMENTED`, sorted.
+        Every .py file under each directory in `DOCUMENTED`, and each file listed there, sorted.
 
     Examples
     --------
     >>> all(p.suffix == ".py" for p in python_files())
     True
     """
-    return sorted(p for d in DOCUMENTED for p in (ROOT / d).rglob("*.py"))
+    return sorted(p for d in DOCUMENTED for p in ([ROOT / d] if (ROOT / d).is_file() else (ROOT / d).rglob("*.py")))
 
 
 def problems(path: Path) -> list[str]:
@@ -212,4 +219,4 @@ def test_there_are_documented_packages_to_check():
     -----
     A vacuous pass would be worse than a failure, so each package must contain source files.
     """
-    assert DOCUMENTED and all(list((ROOT / d).rglob("*.py")) for d in DOCUMENTED)
+    assert DOCUMENTED and all((ROOT / d).is_file() or list((ROOT / d).rglob("*.py")) for d in DOCUMENTED)

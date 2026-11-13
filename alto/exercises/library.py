@@ -1,3 +1,16 @@
+"""
+The exercises: note names, intervals, key signatures, scales, chords, arpeggios, keyboard keys and note construction.
+
+Each class makes one kind of `Question` and registers itself with `@register`, so importing this module is what adds
+the exercises to the home screen.
+
+Examples
+--------
+>>> from alto.exercises import REGISTRY
+>>> [cls.name for cls in REGISTRY][:3]
+['Note Identification', 'Keyboard Identification', 'Note Construction']
+"""
+
 from __future__ import annotations
 
 import random
@@ -30,7 +43,30 @@ def _random_note(
     accidentals: bool,
     span: tuple[int, int] | None = None,
 ) -> Note:
-    """Random note; `span` is an inclusive diatonic range (default: the clef's comfortable range)."""
+    """
+    Return a random note, optionally with an accidental.
+
+    Parameters
+    ----------
+    rng : random.Random
+        The random number generator.
+    clef : str
+        "treble" or "bass", which decides the default range. Keyword-only.
+    accidentals : bool
+        Give the note a random sharp, flat or natural; otherwise it is natural. Keyword-only.
+    span : tuple of (int, int) or None, default None
+        An inclusive range of staff steps (`Note.diatonic`); the clef's comfortable range if None. Keyword-only.
+
+    Returns
+    -------
+    Note
+        The note.
+
+    Examples
+    --------
+    >>> str(_random_note(random.Random(1), clef="treble", accidentals=False, span=(28, 28)))
+    'C4'
+    """
     lo, hi = span or (CLEF_RANGES[clef][0].diatonic, CLEF_RANGES[clef][1].diatonic)
     d = rng.randint(lo, hi)
     return Note.from_diatonic(d, accidental=rng.choice((-1, 0, 1)) if accidentals else 0)
@@ -38,25 +74,93 @@ def _random_note(
 
 @register
 class NoteNames(Exercise):
+    """
+    Name the note shown on a staff.
+
+    Examples
+    --------
+    >>> q = NoteNames().generate(random.Random(1))
+    >>> len(q.staff), q.answer in q.choices
+    (1, True)
+    """
+
     name = "Note Identification"
     category = "Notation"
     description = "Identify notes on the grand staff or on any of seven clefs, from treble to baritone."
     par_seconds = 3.0
 
     def settings_signature(self) -> str:
+        """
+        Return what identifies the settings that shape these questions.
+
+        Returns
+        -------
+        str
+            The clefs, ranges, key signatures, note values and naming in force, and whether accidentals are asked.
+
+        Examples
+        --------
+        >>> NoteNames().settings_signature() != NoteNames(accidentals=True).settings_signature()
+        True
+        """
         return signature(settings.note_names, self.accidentals)
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML.
+
+        Examples
+        --------
+        >>> "Press the button with its name" in NoteNames().instructions()
+        True
+        """
         return (
             "<b>Note Identification</b><br>A note is shown on the staff. Press the button with its name.<br><br>"
             "Use the sliders button to choose the clefs, the range of notes, key signatures (the name then has to "
             "match the signature), note values, letter or solfège names, and whether sharps, flats and naturals appear."
         )
 
-    def __init__(self, accidentals: bool = False):
+    def __init__(self, accidentals: bool = False) -> None:
+        """
+        Create the exercise.
+
+        Parameters
+        ----------
+        accidentals : bool, default False
+            Ask notes with explicit sharps, flats and naturals, whatever the settings say.
+
+        Examples
+        --------
+        >>> NoteNames(accidentals=True).accidentals
+        True
+        """
         self.accidentals = accidentals
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make a note to name, on one of the chosen clefs, in a chosen key.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            The note drawn on a staff, with one button for each name that could be the answer.
+
+        Examples
+        --------
+        >>> q = NoteNames().generate(random.Random(2))
+        >>> q.clef in ("treble", "bass", "alto", "tenor", "soprano", "mezzo", "baritone", "grand")
+        True
+        """
         cfg = settings.note_names
         clef = rng.choice(cfg.active_clefs())
         key = rng.choice(cfg.active_keys())
@@ -104,12 +208,40 @@ class NoteNames(Exercise):
 
 @register
 class IntervalNames(Exercise):
+    """
+    Name the interval between two notes, up to an octave.
+
+    Attributes
+    ----------
+    QUALITIES : dict of int to str
+        For each interval number, the qualities that can occur, separated by spaces.
+
+    Examples
+    --------
+    >>> q = IntervalNames().generate(random.Random(3))
+    >>> len(q.staff), q.answer in q.choices
+    (2, True)
+    """
+
     name = "Interval identification"
     category = "Intervals"
     description = "Name the interval between two notes (up to an octave)."
     par_seconds = 6.0
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML.
+
+        Examples
+        --------
+        >>> "quality followed by a number" in IntervalNames().instructions()
+        True
+        """
         return (
             "<b>Interval identification</b><br>Two notes are shown. Name the interval from the lower note to the "
             "higher one.<br><br>An interval has a quality followed by a number. The number counts the letter names it "
@@ -128,7 +260,26 @@ class IntervalNames(Exercise):
         8: "P",
     }
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make two notes whose interval is to be named.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            The lower and higher note on a staff, and the interval (such as 'M3' or 'P5') as the answer.
+
+        Examples
+        --------
+        >>> q = IntervalNames().generate(random.Random(4))
+        >>> q.answer[0] in "PMmAd" and q.answer[1:].isdigit()
+        True
+        """
         clef = rng.choice(("treble", "bass"))
         low = _random_note(rng, clef=clef, accidentals=True)
         number = rng.randint(2, 8)
@@ -157,12 +308,41 @@ class IntervalNames(Exercise):
 
 
 def _scale_name(mode: str) -> str:
-    """The mode as it follows a tonic: 'major', 'minor', 'Dorian'."""
+    """
+    Return the mode's name as it follows a tonic.
+
+    Parameters
+    ----------
+    mode : str
+        A key of `SCALES`.
+
+    Returns
+    -------
+    str
+        'major' or 'minor' for those two, otherwise the mode's own name such as 'Dorian'.
+
+    Examples
+    --------
+    >>> _scale_name("Natural minor (Aeolian)")
+    'minor'
+    >>> _scale_name("Dorian")
+    'Dorian'
+    """
     return {"Major (Ionian)": "major", "Natural minor (Aeolian)": "minor"}.get(mode, mode)
 
 
 @register
 class KeySignatures(Exercise):
+    """
+    Read a key signature, or count the sharps and flats of a named key.
+
+    Examples
+    --------
+    >>> q = KeySignatures().generate(random.Random(5))
+    >>> q.answer in q.choices
+    True
+    """
+
     name = "Key signatures"
     category = "Scales & keys"
     description = "Read a key signature, or count the sharps and flats of a key."
@@ -170,9 +350,35 @@ class KeySignatures(Exercise):
     has_sound = False
 
     def settings_signature(self) -> str:
+        """
+        Return what identifies the settings that shape these questions.
+
+        Returns
+        -------
+        str
+            The kinds of question, clefs, scales and key signatures in force.
+
+        Examples
+        --------
+        >>> KeySignatures().settings_signature().startswith("[")
+        True
+        """
         return signature(settings.key_signatures)
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML.
+
+        Examples
+        --------
+        >>> "Key signatures" in KeySignatures().instructions()
+        True
+        """
         return (
             "<b>Key signatures</b><br>Two kinds of question. In one a key signature is drawn on a staff: press the "
             "tonic of the scale it belongs to (the question says whether it is a major key, a minor key or a mode such "
@@ -182,7 +388,26 @@ class KeySignatures(Exercise):
             "<br><br>Use the sliders button to choose the kinds of question, the clefs, the scales and the key signatures."
         )
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make a key signature to read, or a key whose sharps and flats are to be counted.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            Either a signature on a staff (answer: the tonic) or a named key (answer: how many sharps or flats).
+
+        Examples
+        --------
+        >>> q = KeySignatures().generate(random.Random(6))
+        >>> q.show_staff or "How many sharps or flats" in q.prompt
+        True
+        """
         cfg = settings.key_signatures
         kind = rng.choice(cfg.active_questions())
         mode = rng.choice(cfg.active_modes())
@@ -211,7 +436,31 @@ class KeySignatures(Exercise):
         count: int,
         rng: random.Random,
     ) -> Question:
-        """'How many sharps or flats are in D Dorian?': the key is named, the signature is the answer."""
+        """
+        Ask how many sharps or flats a named key has.
+
+        Parameters
+        ----------
+        tonic : Note
+            The key's tonic.
+        mode : str
+            A key of `SCALES`, such as "Dorian". Keyword-only.
+        count : int
+            The key signature that the scale has: positive for sharps, negative for flats. Keyword-only.
+        rng : random.Random
+            The random number generator, used to choose the wrong answers. Keyword-only.
+
+        Returns
+        -------
+        Question
+            For example 'How many sharps or flats are in D Dorian?', answered 'no sharps or flats'.
+
+        Examples
+        --------
+        >>> q = KeySignatures._count_question(Note.parse("D4"), mode="Dorian", count=0, rng=random.Random(0))
+        >>> q.prompt, q.answer
+        ('How many sharps or flats are in D Dorian?', 'no sharps or flats')
+        """
         correct = format_key_signature(count)
         near = [format_key_signature(c) for c in range(count - 2, count + 3) if abs(c) <= 7]
         choices = pick_distractors(
@@ -231,7 +480,34 @@ class KeySignatures(Exercise):
         clef: str,
         rng: random.Random,
     ) -> Question:
-        """A key signature on a staff: press the tonic of the scale of the kind asked, which has that signature."""
+        """
+        Show a key signature on a staff and ask for the tonic of the scale that has it.
+
+        Parameters
+        ----------
+        tonic : Note
+            The tonic that is the right answer.
+        mode : str
+            A key of `SCALES`, such as "Major (Ionian)". Keyword-only.
+        count : int
+            The key signature to draw: positive for sharps, negative for flats. Keyword-only.
+        clef : str
+            The clef to draw it on. Keyword-only.
+        rng : random.Random
+            The random number generator, used to choose the wrong answers. Keyword-only.
+
+        Returns
+        -------
+        Question
+            A staff with only a clef and the signature, captioned '_ Major' (or '_ minor', '_ Dorian' and so on).
+
+        Examples
+        --------
+        >>> q = KeySignatures._read_question(Note.parse("G4"), mode="Major (Ionian)", count=1, clef="treble",
+        ...                                  rng=random.Random(0))
+        >>> q.answer, q.caption, q.show_staff
+        ('G', '_ Major', True)
+        """
         correct = tonic.name
         near = [mode_tonic(c, mode=mode).name for c in range(count - 2, count + 3) if abs(c) <= 7]
         everyone = [mode_tonic(c, mode=mode).name for c in range(-7, 8)]
@@ -259,18 +535,60 @@ class KeySignatures(Exercise):
 
 @register
 class ScaleDegrees(Exercise):
+    """
+    Spell a note of a scale or mode from its tonic.
+
+    Examples
+    --------
+    >>> q = ScaleDegrees().generate(random.Random(7))
+    >>> q.prompt.startswith("In ") and q.answer in q.choices
+    True
+    """
+
     name = "Scale spelling"
     category = "Scales & keys"
     description = "Spell a note of a scale or mode from its tonic."
     par_seconds = 8.0
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML.
+
+        Examples
+        --------
+        >>> "degree" in ScaleDegrees().instructions()
+        True
+        """
         return (
             "<b>Scale spelling</b><br>Work out the note at the given degree of the scale or mode and press its name. "
             "Each scale uses every letter name once, so use a sharp or flat where the pattern needs one."
         )
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make a question asking for one degree of a scale.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            For example 'In E♭ Dorian, what is scale degree 6?', answered 'C'.
+
+        Examples
+        --------
+        >>> q = ScaleDegrees().generate(random.Random(8))
+        >>> "scale degree" in q.prompt
+        True
+        """
         scale = rng.choice(list(SCALES))
         tonic = rng.choice([Note(4, letter=l, accidental=a) for l in range(7) for a in (-1, 0, 1)])
         degree = rng.randint(2, 7)
@@ -297,18 +615,60 @@ class ScaleDegrees(Exercise):
 
 @register
 class ChordQualities(Exercise):
+    """
+    Identify the quality of a triad or seventh chord in root position.
+
+    Examples
+    --------
+    >>> q = ChordQualities().generate(random.Random(9))
+    >>> len(q.staff[0]) in (3, 4) and q.answer in q.choices
+    True
+    """
+
     name = "Chord quality"
     category = "Chords"
     description = "Identify triads and seventh chords in root position."
     par_seconds = 6.0
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML.
+
+        Examples
+        --------
+        >>> "root position" in ChordQualities().instructions()
+        True
+        """
         return (
             "<b>Chord quality</b><br>A chord is shown in root position. Press its type. Check the size of the "
             "intervals stacked above the lowest note to tell the types apart."
         )
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make a chord in root position whose quality is to be named.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            The chord drawn as one stack of notes, with its type (such as 'minor 7th') as the answer.
+
+        Examples
+        --------
+        >>> q = ChordQualities().generate(random.Random(10))
+        >>> q.answer in CHORDS
+        True
+        """
         clef = rng.choice(("treble", "bass"))
         quality = rng.choice(list(CHORDS))
         root = _random_note(rng, clef=clef, accidentals=True)
@@ -347,15 +707,51 @@ ARPEGGIO_WINDOWS = {
 
 @register
 class ArpeggioNames(Exercise):
+    """
+    Name the type and the inversion of a broken chord.
+
+    Examples
+    --------
+    >>> q = ArpeggioNames().generate(random.Random(11))
+    >>> q.octaves is not None and len(q.staff) >= 4
+    True
+    """
+
     name = "Arpeggio identification"
     category = "Chords"
     description = "Name the type and the inversion of a broken chord."
     par_seconds = 9.0
 
     def settings_signature(self) -> str:
+        """
+        Return what identifies the settings that shape these questions.
+
+        Returns
+        -------
+        str
+            The clefs, chord types, inversions and key signatures in force.
+
+        Examples
+        --------
+        >>> ArpeggioNames().settings_signature().startswith("[")
+        True
+        """
         return signature(settings.arpeggio)
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML.
+
+        Examples
+        --------
+        >>> "inversion" in ArpeggioNames().instructions()
+        True
+        """
         return (
             "<b>Arpeggio identification</b><br>A chord is played one note at a time, rising from its lowest note to "
             "the same note an octave higher. Press its type, then its inversion.<br><br>"
@@ -365,7 +761,32 @@ class ArpeggioNames(Exercise):
             "Use the sliders button to choose the clefs, the types of arpeggio, the inversions and key signatures."
         )
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make an arpeggio on one of the chosen clefs, in a chosen position.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            The arpeggio's notes one after another on a staff; the answer is the chord type and inversion, such as
+            'major · 1st inversion'.
+
+        Raises
+        ------
+        RuntimeError
+            If no arpeggio fits the chosen clefs, chord types and inversions.
+
+        Examples
+        --------
+        >>> q = ArpeggioNames().generate(random.Random(12))
+        >>> " · " in q.answer
+        True
+        """
         cfg = settings.arpeggio
         for _ in range(500):
             chord_type = rng.choice(cfg.active_types())
@@ -402,15 +823,48 @@ class ArpeggioNames(Exercise):
 
     @staticmethod
     def _question(
-        chord_type,
+        chord_type: str,
         *,
-        inversion,
-        root,
-        notes,
-        clef,
-        key,
-        cfg,
+        inversion: int,
+        root: Note,
+        notes: list[Note],
+        clef: str,
+        key: int,
+        cfg: settings.ArpeggioSettings,
     ) -> Question:
+        """
+        Build the question for an arpeggio that has been chosen.
+
+        Parameters
+        ----------
+        chord_type : str
+            A key of `CHORDS`, such as "major".
+        inversion : int
+            0 for root position, 1 for the first inversion and so on. Keyword-only.
+        root : Note
+            The root of the chord. Keyword-only.
+        notes : list of Note
+            The arpeggio's notes, already moved to the right octave. Keyword-only.
+        clef : str
+            The clef to draw on. Keyword-only.
+        key : int
+            The key signature to draw. Keyword-only.
+        cfg : ArpeggioSettings
+            The settings, which decide which types and inversions have buttons. Keyword-only.
+
+        Returns
+        -------
+        Question
+            The notes drawn one after another, with a row of type buttons and a row of inversion buttons.
+
+        Examples
+        --------
+        >>> cfg = settings.ArpeggioSettings()
+        >>> notes = arpeggio(Note.parse("C4"), intervals=CHORDS["major"])
+        >>> q = ArpeggioNames._question("major", inversion=0, root=Note.parse("C4"), notes=notes, clef="treble", key=0, cfg=cfg)
+        >>> q.answer
+        'major · root position'
+        """
         joiner = " \u00b7 "
         types = cfg.active_types()
         inversions = sorted({i for t in types for i in cfg.inversions_for(t)})
@@ -453,7 +907,24 @@ _WHITE_KEY_LETTER = {
 
 
 def _key_tonic(count: int) -> Note:
-    """The major key with `count` sharps (+) or flats (-), as a Note."""
+    """
+    Return the tonic of a major key.
+
+    Parameters
+    ----------
+    count : int
+        Sharps (positive) or flats (negative) in the key signature, from -7 to 7.
+
+    Returns
+    -------
+    Note
+        The tonic, in octave 4.
+
+    Examples
+    --------
+    >>> str(_key_tonic(2)), str(_key_tonic(-3))
+    ('D4', 'E♭4')
+    """
     name = MAJOR_KEYS[count]
     return Note(4, letter="CDEFGAB".index(name[0]), accidental=1 if "♯" in name else -1 if "♭" in name else 0)
 
@@ -463,11 +934,33 @@ def _key_spellings(
     *,
     count: int | None,
 ) -> list[tuple[int, int]]:
-    """The (letter, accidental) names that are correct for a key of pitch class `pc` in a key signature.
+    """
+    Return the names that are correct for a piano key in a key signature.
 
-    Notes of the key keep the spelling the key gives them (the F key is E♯ in C♯ major). Other white keys use
-    their natural name. Other black keys are spelled with sharps in a sharp key and flats in a flat key; with
-    no signature (or none given) either name is right.
+    Notes of the key keep the spelling the key gives them (the F key is E♯ in C♯ major). Other white keys use their natural
+    name. Other black keys are spelled with sharps in a sharp key and flats in a flat key; with no signature (or none given)
+    either name is right.
+
+    Parameters
+    ----------
+    pc : int
+        The key's pitch class, 0 for C up to 11 for B.
+    count : int or None
+        The key signature: sharps if positive, flats if negative, 0 for none, or None for no key signature shown. Keyword-only.
+
+    Returns
+    -------
+    list of tuple of (int, int)
+        The correct (letter, accidental) pairs, most preferred first.
+
+    Examples
+    --------
+    >>> _key_spellings(6, count=None)  # a black key with no signature: F♯ or G♭
+    [(3, 1), (4, -1)]
+    >>> _key_spellings(6, count=-2)  # in B♭ major it is not in the key, so a flat key spells it with a flat
+    [(4, -1)]
+    >>> _key_spellings(0, count=None)
+    [(0, 0)]
     """
     diatonic = {}
     if count is not None:
@@ -490,21 +983,80 @@ def _spelled(
     letter: int,
     accidental: int,
 ) -> Note:
-    """The Note that sounds as `midi` when written with this letter name (B3 written as C♭ is C♭4)."""
+    """
+    Return the note that sounds as a MIDI number when written with a given letter name.
+
+    Parameters
+    ----------
+    midi : int
+        The MIDI note number.
+    letter : int
+        An index into `LETTERS`. Keyword-only.
+    accidental : int
+        The accidental it is written with. Keyword-only.
+
+    Returns
+    -------
+    Note
+        The note; B3 written as C♭ is C♭4.
+
+    Examples
+    --------
+    >>> str(_spelled(61, letter=1, accidental=-1))  # MIDI 61 written as D♭
+    'D♭4'
+    >>> str(_spelled(59, letter=0, accidental=-1))  # MIDI 59 written as C♭
+    'C♭4'
+    """
     return Note((midi - accidental - NATURAL_SEMITONES[letter]) // 12 - 1, letter=letter, accidental=accidental)
 
 
 @register
 class KeyboardNotes(Exercise):
+    """
+    Name the highlighted key on a piano keyboard.
+
+    Examples
+    --------
+    >>> q = KeyboardNotes().generate(random.Random(13))
+    >>> q.keyboard is not None and q.answer in q.choices
+    True
+    """
+
     name = "Keyboard Identification"
     category = "Notation"
     description = "Name the highlighted key on a piano keyboard."
     par_seconds = 3.0
 
     def settings_signature(self) -> str:
+        """
+        Return what identifies the settings that shape these questions.
+
+        Returns
+        -------
+        str
+            The keyboard range, black keys, octave and key signature settings, and the naming in force.
+
+        Examples
+        --------
+        >>> KeyboardNotes().settings_signature().startswith("[")
+        True
+        """
         return signature(settings.keyboard, settings.note_names.naming)
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML, with paragraphs added for the octave and key signature settings that are on.
+
+        Examples
+        --------
+        >>> "highlighted" in KeyboardNotes().instructions()
+        True
+        """
         cfg = settings.keyboard
         text = ["<b>Keyboard Identification</b><br>One key on the keyboard is highlighted. Press the button with its name."]
         if cfg.require_octave:
@@ -519,7 +1071,27 @@ class KeyboardNotes(Exercise):
             text.append("Black keys have two names, such as C♯ and D♭. Either one is accepted.")
         return "<br><br>".join(text)
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make a keyboard with one key highlighted.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            The keyboard, a grid of name buttons (and a row of octave buttons if octaves are asked), and the key's name as
+            the answer, with the other spelling of a black key accepted.
+
+        Examples
+        --------
+        >>> q = KeyboardNotes().generate(random.Random(14))
+        >>> q.keyboard_range[0] <= q.keyboard.midi <= q.keyboard_range[1]
+        True
+        """
         cfg = settings.keyboard
         naming = settings.note_names.naming
         lo, hi = min(cfg.low, cfg.high), max(cfg.low, cfg.high)
@@ -594,15 +1166,51 @@ class KeyboardNotes(Exercise):
 
 @register
 class NoteConstruction(Exercise):
+    """
+    Place a named note on the staff.
+
+    Examples
+    --------
+    >>> q = NoteConstruction().generate(random.Random(15))
+    >>> q.construct is not None and q.prompt.startswith("Place ")
+    True
+    """
+
     name = "Note Construction"
     category = "Notation"
     description = "Place the named note on the staff."
     par_seconds = 6.0
 
     def settings_signature(self) -> str:
+        """
+        Return what identifies the settings that shape these questions.
+
+        Returns
+        -------
+        str
+            The clefs, accidentals and key signature settings, and the naming in force.
+
+        Examples
+        --------
+        >>> NoteConstruction().settings_signature().startswith("[")
+        True
+        """
         return signature(settings.construction, settings.note_names.naming)
 
     def instructions(self) -> str:
+        """
+        Return the help text for the exercise.
+
+        Returns
+        -------
+        str
+            Simple HTML, with paragraphs added for the key signature and accidental settings that are on.
+
+        Examples
+        --------
+        >>> "Click the staff" in NoteConstruction().instructions()
+        True
+        """
         cfg = settings.construction
         text = [
             (
@@ -626,7 +1234,26 @@ class NoteConstruction(Exercise):
         text.append("A wrong click shows the note you placed so you can adjust and try again.")
         return "<br><br>".join(text)
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make a note name to be placed on the staff.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random number generator.
+
+        Returns
+        -------
+        Question
+            A prompt such as 'Place F♯4 on the staff.'; the answer is the note's name, and `construct` is the note to place.
+
+        Examples
+        --------
+        >>> q = NoteConstruction().generate(random.Random(16))
+        >>> q.answer in q.prompt
+        True
+        """
         cfg = settings.construction
         clef = rng.choice(cfg.active_clefs())
         lo, hi = settings.DEFAULT_RANGES[clef]

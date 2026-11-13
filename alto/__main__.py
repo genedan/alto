@@ -1,3 +1,11 @@
+"""
+Start Alto: `python -m alto` opens the main window for the profile that is practising.
+
+Examples
+--------
+>>> from alto.__main__ import main  # doctest: +SKIP
+"""
+
 import sys
 from pathlib import Path
 
@@ -12,6 +20,21 @@ from .ui.theme import apply_theme, saved_theme
 
 
 def main() -> int:
+    """
+    Run the application.
+
+    Opens the database in the user's data folder, asks for a profile name the first time, shows the main window and runs
+    the event loop until the window is closed.
+
+    Returns
+    -------
+    int
+        The exit code: 0 if the profile dialog was cancelled, otherwise what the event loop returned.
+
+    Examples
+    --------
+    >>> raise SystemExit(main())  # doctest: +SKIP
+    """
     app = QApplication(sys.argv)
     app.setApplicationName("Alto")
     app.setApplicationDisplayName("Alto - Music Theory")

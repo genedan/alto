@@ -82,13 +82,6 @@ convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
 # Not documented yet. Remove a line when that package has its docstrings and annotations.
-"alto/__init__.py" = ["D", "DOC", "ANN"]
-"alto/__main__.py" = ["D", "DOC", "ANN"]
-"alto/audio.py" = ["D", "DOC", "ANN"]
-"alto/instrument_info.py" = ["D", "DOC", "ANN"]
-"alto/settings.py" = ["D", "DOC", "ANN"]
-"alto/exercises/**" = ["D", "DOC", "ANN"]
-"alto/learning/**" = ["D", "DOC", "ANN"]
 "alto/ui/**" = ["D", "DOC", "ANN"]
 "tests/**" = ["D", "DOC", "ANN", "PLR0917"]  # PLR0917: pytest passes fixtures to test functions as plain parameters
 "scripts/**" = ["D", "DOC", "ANN"]
