@@ -1,5 +1,12 @@
 # <img src="docs/assets/img/icon.png" alt="" width="44" height="44" align="absmiddle"> Alto
 
+[![Tests](https://github.com/genedan/alto/actions/workflows/tests.yml/badge.svg)](https://github.com/genedan/alto/actions/workflows/tests.yml)
+[![Coverage](https://codecov.io/gh/genedan/alto/graph/badge.svg)](https://codecov.io/gh/genedan/alto)
+[![Pyright](https://github.com/genedan/alto/actions/workflows/pyright.yml/badge.svg)](https://github.com/genedan/alto/actions/workflows/pyright.yml)
+[![License: MIT](https://img.shields.io/github/license/genedan/alto)](LICENSE)
+[![Docs](https://img.shields.io/github/actions/workflow/status/genedan/alto/pages%2Fpages-build-deployment?branch=main&label=docs)](https://genedan.github.io/alto/)
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14%20%7C%203.15-blue)](https://github.com/genedan/alto/blob/main/.github/workflows/tests.yml)
+
 **Music theory practice for the Linux desktop that remembers what you get wrong.**
 
 Alto is a free music theory trainer. Read notes on any clef, name intervals, chords and arpeggios, spell scales, learn key
