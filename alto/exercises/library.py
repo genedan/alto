@@ -126,6 +126,7 @@ class KeySignatures(Exercise):
     category = "Scales & keys"
     description = "Read a key signature, or count the sharps and flats of a key."
     par_seconds = 5.0
+    has_sound = False
 
     def settings_signature(self) -> str:
         return signature(settings.key_signatures)

@@ -103,17 +103,39 @@ def test_a_key_signature_question_is_described_by_its_signature_in_the_lists_of_
 # -- the exercise screen ----------------------------------------------------------------------------------------------
 
 
-def test_a_signature_is_drawn_and_the_right_answer_plays_only_the_ordinary_chime(app, monkeypatch):
-    played, chimes = [], []
+def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(app, monkeypatch):
+    played = []
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_notes", lambda notes: played.append(notes))
-    monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: chimes.append(streak))
-    settings.key_signatures.questions = {"read"}
-    view = ExerciseView(KeySignatures(), random.Random(3))
-    q = view.question
-    assert q is not None and view.staff.isVisibleTo(view) and view.staff.key == q.key and view.staff.clef == q.clef
-    next(b for b in view.buttons if b.text() == q.answer).click()
-    assert played == [] and len(chimes) == 1  # no scale is played
-    view._advance.stop()
+    monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: played.append(streak))
+    for kind in ({"read"}, {"count"}):
+        settings.key_signatures.questions = kind
+        view = ExerciseView(KeySignatures(), random.Random(3))
+        q = view.question
+        assert q is not None
+        if "read" in kind:
+            assert view.staff.isVisibleTo(view) and view.staff.key == q.key and view.staff.clef == q.clef
+        next(b for b in view.buttons if b.text() == q.answer).click()
+        assert view.answered
+        view._advance.stop()
+    assert played == []  # neither a tone nor the ordinary chime
+
+
+def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(app, monkeypatch):
+    from alto.exercises.library import NoteNames
+    from alto.ui.exercise_view import sounds
+    monkeypatch.setattr(sounds, "enabled", True)
+    assert KeySignatures.has_sound is False and NoteNames.has_sound is True
+    for exercise in (KeySignatures(), NoteNames()):
+        view = ExerciseView(exercise, random.Random(3))
+        assert view.sound_btn.isEnabled() and view.sound_btn.toolTip().startswith("Sound on")
+        view.sound_btn.click()
+        assert not sounds.enabled and view.sound_btn.toolTip().startswith("Muted")
+        view.sound_btn.click()
+        assert sounds.enabled
+    muted = ExerciseView(KeySignatures(), random.Random(3))  # one exercise sees a mute made in another
+    sounds.enabled = False
+    muted._show_sound_state()
+    assert muted.sound_btn.toolTip().startswith("Muted") and muted.sound_btn.isEnabled()
 
 
 def test_a_counting_question_shows_no_staff(app):

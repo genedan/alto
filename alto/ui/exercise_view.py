@@ -298,7 +298,8 @@ class ExerciseView(QWidget):
         if ok:
             self.answered = True
             self._flash_note("#2e7d32")
-            sounds.play_notes([[q.construct]])
+            if self.exercise.has_sound:
+                sounds.play_notes([[q.construct]])
             self._advance.start(1200)
         else:
             self.missed = True
@@ -378,7 +379,9 @@ class ExerciseView(QWidget):
             self.answered = True  # the other buttons stay as they are; only the one pressed animates
             self._flash(button, "#2e7d32", staff=True)
             notes = q.staff or ([[q.keyboard]] if q.keyboard else [])
-            if notes:
+            if not self.exercise.has_sound:
+                pass  # no tone for this exercise
+            elif notes:
                 sounds.play_notes(notes)
             else:
                 sounds.play_correct(self.streak)

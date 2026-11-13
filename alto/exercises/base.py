@@ -96,6 +96,7 @@ class Exercise(ABC):
     category: str = ""
     description: str = ""
     par_seconds: float = 5.0  # how long a good first answer takes; much quicker earns credit, much slower counts against
+    has_sound: bool = True  # False for an exercise that makes no sound at all, whatever the sound button says
 
     def settings_signature(self) -> str:
         """Identifies the settings that shape the questions. A stored question is only asked again while this is unchanged."""

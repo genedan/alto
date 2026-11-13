@@ -66,6 +66,9 @@ Two kinds of question, asked at random:
 - **Count the sharps or flats.** A key is named, such as "How many sharps or flats are in D major?" or "... in E Dorian?",
   and you press how many it has.
 
+This exercise makes no sound: a right answer plays no tone. The speaker button is a mute for the whole app, so it works here
+as everywhere else, but has nothing to silence in this exercise.
+
 A mode uses the key signature of a major key and starts from another note of it, so D Dorian has the signature of C major
 (no sharps or flats), started from D. By default Alto asks major and natural minor keys, on the treble and bass staves.
 In the exercise settings you can choose:
