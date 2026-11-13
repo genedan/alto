@@ -82,11 +82,24 @@ convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
 # Not documented yet. Remove a line when that package has its docstrings and annotations.
-"alto/ui/**" = ["D", "DOC", "ANN"]
+"alto/ui/app_settings.py" = ["D", "DOC", "ANN"]
+"alto/ui/charts.py" = ["D", "DOC", "ANN"]
+"alto/ui/database_page.py" = ["D", "DOC", "ANN"]
+"alto/ui/engraving.py" = ["D", "DOC", "ANN"]
+"alto/ui/exercise_view.py" = ["D", "DOC", "ANN"]
+"alto/ui/icons.py" = ["E501"]  # E501: SVG path data
+"alto/ui/instrument_picker.py" = ["D", "DOC", "ANN"]
+"alto/ui/keyboard.py" = ["D", "DOC", "ANN"]
+"alto/ui/keyboard_styles.py" = ["D", "DOC", "ANN"]
+"alto/ui/main_window.py" = ["D", "DOC", "ANN"]
+"alto/ui/notes.py" = ["D", "DOC", "ANN"]
+"alto/ui/pictures.py" = ["D", "DOC", "ANN"]
+"alto/ui/settings_panel.py" = ["D", "DOC", "ANN"]
+"alto/ui/staff.py" = ["D", "DOC", "ANN"]
+"alto/ui/stats_dialog.py" = ["D", "DOC", "ANN"]
+"alto/ui/style.py" = ["E501"]  # E501: the stylesheet template
 "tests/**" = ["D", "DOC", "ANN", "PLR0917"]  # PLR0917: pytest passes fixtures to test functions as plain parameters
 "scripts/**" = ["D", "DOC", "ANN"]
-"alto/ui/icons.py" = ["E501"]  # SVG path data
-"alto/ui/style.py" = ["E501"]  # the stylesheet template
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["PySide6.QtGui.QColor", "PySide6.QtCore.QModelIndex"]  # defaults that are never mutated

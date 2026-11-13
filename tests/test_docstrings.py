@@ -23,6 +23,18 @@ DOCUMENTED = [
     "alto/audio.py",
     "alto/instrument_info.py",
     "alto/settings.py",
+    "alto/ui/__init__.py",
+    "alto/ui/colors.py",
+    "alto/ui/home.py",
+    "alto/ui/icons.py",
+    "alto/ui/profile_dialog.py",
+    "alto/ui/question_preview.py",
+    "alto/ui/staff_input.py",
+    "alto/ui/style.py",
+    "alto/ui/notation.py",
+    "alto/ui/store.py",
+    "alto/ui/theme.py",
+    "alto/ui/widgets.py",
 ]
 
 SECTION = re.compile(r"^(?P<title>[A-Z][A-Za-z ]+)\n-{3,}$", re.MULTILINE)

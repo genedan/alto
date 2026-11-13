@@ -1,4 +1,12 @@
-"""A popup showing a stored question the way the exercise showed it, with its answer."""
+"""
+A popup showing a stored question the way the exercise showed it, with its answer.
+
+Examples
+--------
+>>> question = Question("Name the note.", choices=["C", "D"], answer="C")
+>>> QuestionPreview("Note Identification", question=question).windowTitle()
+'Note Identification'
+"""
 
 from __future__ import annotations
 
@@ -14,8 +22,22 @@ from .staff import MAX_STEP, StaffWidget
 
 
 class QuestionPreview(QDialog):
-    """`question` as it appeared (the notes on the staff, or the highlighted key), then what the answer is.
-    `details` are extra lines, such as what was answered and how long it took."""
+    """
+    A question as it appeared (the notes on the staff, or the highlighted key), then what the answer is.
+
+    Attributes
+    ----------
+    question : Question
+        The question being shown.
+
+    Examples
+    --------
+    >>> from alto.theory.pitch import Note
+    >>> question = Question("Name the note.", choices=["C", "D"], answer="C", staff=[[Note.parse("C4")]])
+    >>> dialog = QuestionPreview("Note Identification", question=question, details=["You answered: D"])
+    >>> dialog.question.answer
+    'C'
+    """
 
     def __init__(
         self,
@@ -24,7 +46,28 @@ class QuestionPreview(QDialog):
         question: Question,
         details: list[str] | None = None,
         parent: QWidget | None = None,
-    ):
+    ) -> None:
+        """
+        Build the popup.
+
+        Parameters
+        ----------
+        exercise_name : str
+            The exercise's name, shown as the title.
+        question : Question
+            The question to show. Keyword-only.
+        details : list of str or None, default None
+            Extra lines of HTML, such as what was answered and how long it took. Keyword-only.
+        parent : QWidget or None, default None
+            The widget that owns the dialog. Keyword-only.
+
+        Examples
+        --------
+        >>> from alto.theory.pitch import Note
+        >>> question = Question("", choices=["C"], answer="C", keyboard=Note.parse("C4"))
+        >>> QuestionPreview("Keyboard Identification", question=question).minimumWidth()
+        560
+        """
         super().__init__(parent)
         self.question = question
         self.setWindowTitle(exercise_name)
@@ -93,6 +136,23 @@ class QuestionPreview(QDialog):
         lay.addWidget(buttons)
 
     def _answer_text(self) -> str:
+        """
+        Return the answer as it should be shown.
+
+        Returns
+        -------
+        str
+            The right answer; for a "place this note" question, the note's name and octave in the chosen naming.
+
+        Examples
+        --------
+        >>> QuestionPreview("Intervals", question=Question("?", choices=["M3"], answer="M3"))._answer_text()
+        'M3'
+        >>> from alto.theory.pitch import Note
+        >>> question = Question("Place C4.", choices=[], answer="C4", construct=Note.parse("C4"))
+        >>> QuestionPreview("Construction", question=question)._answer_text()
+        'C4'
+        """
         q = self.question
         if q.construct is not None:
             return f"{spell(q.construct, naming=app_settings.note_names.naming)}{q.construct.octave}"

@@ -1,4 +1,14 @@
-"""Small monochrome icons drawn from SVG, tinted with the current theme's text colour."""
+"""
+Small monochrome icons drawn from SVG, tinted with the current theme's text colour.
+
+Each icon is the inside of a 24 by 24 SVG, written with the word COLOR where the theme colour goes. `svg_icon` turns one
+into a `QIcon`.
+
+Examples
+--------
+>>> svg_icon(HELP, color=QColor("black")).isNull()
+False
+"""
 
 from __future__ import annotations
 
@@ -29,7 +39,31 @@ def svg_icon(
     size: int = 24,
     scale: float = 2.0,
 ) -> QIcon:
-    """Render 24x24 SVG shapes (using COLOR as the colour) to a crisp icon of `size` logical pixels."""
+    """
+    Render 24 by 24 SVG shapes into a crisp icon.
+
+    Parameters
+    ----------
+    inner : str
+        The SVG shapes, using COLOR wherever the colour goes.
+    color : QColor
+        The colour to draw in. Keyword-only.
+    size : int, default 24
+        The icon's size in logical pixels. Keyword-only.
+    scale : float, default 2.0
+        How many device pixels to render per logical pixel, so it stays sharp on high-resolution screens. Keyword-only.
+
+    Returns
+    -------
+    QIcon
+        The icon.
+
+    Examples
+    --------
+    >>> icon = svg_icon(PLAY, color=QColor("#336699"), size=16)
+    >>> icon.isNull()
+    False
+    """
     svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">{inner.replace("COLOR", color.name())}</svg>'
     renderer = QSvgRenderer(QByteArray(svg.encode()))
     px = QPixmap(int(size * scale), int(size * scale))
@@ -60,6 +94,30 @@ def _ring(
     rx: float = 3.3,
     ry: float = 2.3,
 ) -> str:
+    """
+    Return the SVG for an outlined oval, used as a note head.
+
+    Parameters
+    ----------
+    x : float
+        The centre's x position in the 24 by 24 drawing.
+    y : float
+        The centre's y position. Keyword-only.
+    rx : float, default 3.3
+        The horizontal radius. Keyword-only.
+    ry : float, default 2.3
+        The vertical radius. Keyword-only.
+
+    Returns
+    -------
+    str
+        An `<ellipse>` element.
+
+    Examples
+    --------
+    >>> _ring(13, y=18.5).startswith('<ellipse cx="13" cy="18.5"')
+    True
+    """
     return f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" {_LINE}/>'
 
 
@@ -125,6 +183,19 @@ _NOTE = 'fill="COLOR" stroke="COLOR" stroke-width="1" stroke-linejoin="round"'
 
 
 def _beamed_notes() -> str:
+    """
+    Return the SVG for three eighth notes rising under one beam, the arpeggio exercise's icon.
+
+    Returns
+    -------
+    str
+        Note heads, stems and a beam as SVG shapes.
+
+    Examples
+    --------
+    >>> _beamed_notes().count("<ellipse")
+    3
+    """
     heads = ((4.6, 19.0), (11.8, 15.0), (19.0, 11.0))  # note heads rise to the right
     beam_start, beam_end = (7.0, 6.2), (21.6, 2.2)  # the beam follows them
     out = []

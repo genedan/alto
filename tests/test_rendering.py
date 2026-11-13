@@ -3,7 +3,7 @@
 import pytest
 from alto.theory.pitch import Note
 from alto.ui import keyboard_styles, notation
-from PySide6.QtCore import QPoint, QPointF, Qt
+from PySide6.QtCore import QEvent, QPoint, QPointF, Qt
 from PySide6.QtGui import QImage, QMouseEvent
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
@@ -231,7 +231,7 @@ def test_the_staff_input_previews_and_locks(
     staff.accidental = 1
     staff.refresh_preview()  # e.g. after the accidental changes
     assert staff.columns[0][0].accidental == 1
-    staff.leaveEvent(None)
+    staff.leaveEvent(QEvent(QEvent.Type.Leave))
     assert staff.columns == []
     staff.locked = True
     move(staff, x=250, y=110)
@@ -239,7 +239,7 @@ def test_the_staff_input_previews_and_locks(
     staff.refresh_preview()
     assert staff.columns == []  # a locked staff ignores the mouse
     staff.show_note(Note(3, letter=0))
-    staff.leaveEvent(None)
+    staff.leaveEvent(QEvent(QEvent.Type.Leave))
     assert staff.columns != []  # and stays as it is when the pointer leaves
     staff.locked = False
     cycled = []
@@ -365,7 +365,7 @@ def test_a_keyboard_span_shows_the_range_in_miniature(app):
 
 def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app):
     from alto.ui.keyboard import KeyboardSpan
-    from PySide6.QtCore import QEvent, QPointF, Qt
+    from PySide6.QtCore import QPointF, Qt
     from PySide6.QtGui import QMouseEvent
 
     span = KeyboardSpan()
