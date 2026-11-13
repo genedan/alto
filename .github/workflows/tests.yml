@@ -1,6 +1,7 @@
 name: Tests
 
-# Run the test suite on every pull request and on every push to main, on the oldest Python Alto supports and a recent one.
+# Run the test suite on every pull request and on every push to main, on every Python version that has not reached
+# end of life (see https://devguide.python.org/versions/). When a version reaches end of life, drop it here and in pyproject.toml.
 on:
   push:
     branches: [main]
@@ -15,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.14"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
     steps:
       - uses: actions/checkout@v4
 

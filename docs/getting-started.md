@@ -5,7 +5,7 @@ permalink: /getting-started/
 ---
 ## What you need
 
-- Python 3.10 or newer.
+- Python 3.11 or newer.
 - A desktop operating system that runs Qt 6: Linux, macOS or Windows.
 - Alto installs [PySide6](https://doc.qt.io/qtforpython-6/) (6.8 or newer) and numpy for you.
 

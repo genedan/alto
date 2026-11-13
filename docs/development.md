@@ -41,7 +41,7 @@ pytest --cov --cov-report=term-missing
 ## Type checking
 
 [Pyright](https://github.com/microsoft/pyright) checks the types of `alto`, `tests` and `scripts`, in basic mode, as if
-for Python 3.10:
+for Python 3.11:
 
 ```bash
 sh scripts/typecheck.sh
