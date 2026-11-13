@@ -62,7 +62,7 @@ page in a wrapper. Because it is built on Qt it may also run on macOS and Window
 
 ## Get started
 
-You need Python 3.10 or newer.
+You need Python 3.11 or newer.
 
 ```bash
 git clone https://github.com/genedan/alto.git
