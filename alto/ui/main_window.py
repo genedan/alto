@@ -1,3 +1,15 @@
+"""
+The main window: a menu, the exercise list on the left that can be collapsed, and the page on the right.
+
+The page is the start screen, an exercise, or (while it is open) the statistics or the database browser.
+
+Examples
+--------
+>>> window = MainWindow()
+>>> window.title_label.text()
+'Alto - Music Theory'
+"""
+
 from __future__ import annotations
 
 import sys
@@ -22,6 +34,7 @@ from PySide6.QtWidgets import (
 )
 
 from ..exercises import REGISTRY
+from ..exercises.base import Exercise
 from ..learning import Learner
 from . import icons
 from .app_settings import AppSettingsDialog
@@ -40,10 +53,62 @@ from .store import int_value, store
 
 
 class MainWindow(QMainWindow):
+    """
+    The application window.
+
+    Attributes
+    ----------
+    SIDEBAR_MIN : int
+        The narrowest the exercise list can be before it collapses, in pixels.
+    SIDEBAR_DEFAULT : int
+        The list's width the first time.
+    APP_TITLE : str
+        The title shown on the start screen.
+    learner : Learner or None
+        Who is practising, and their history; None practises without recording.
+    nav : QListWidget
+        The exercise list.
+    stack : QStackedWidget
+        The pages: the start screen, then exercises and the statistics or database while they are open.
+    home : HomePage
+        The start screen.
+    splitter : QSplitter
+        Holds the list and the pages, so the list can be dragged narrower or wider.
+    title_label : QLabel
+        The title in the top bar.
+
+    Examples
+    --------
+    >>> from alto.exercises.library import NoteNames
+    >>> window = MainWindow()
+    >>> window.open_exercise(NoteNames)
+    >>> window.title_label.text()
+    'Note Identification'
+    >>> window.show_home()
+    """
+
     SIDEBAR_MIN, SIDEBAR_DEFAULT = 170, 240
     APP_TITLE = "Alto - Music Theory"
 
-    def __init__(self, learner: Learner | None = None):
+    def __init__(self, learner: Learner | None = None) -> None:
+        """
+        Build the window and load every saved setting.
+
+        Parameters
+        ----------
+        learner : Learner or None, default None
+            Who is practising. Without one, nothing is recorded and the statistics buttons are hidden.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> window = MainWindow(Learner(db, profile=db.add_profile("Ada")))
+        >>> window.stats_button.isVisibleTo(window)
+        True
+        >>> MainWindow().stats_button.isVisibleTo(window)  # no profile, no statistics
+        False
+        """
         super().__init__()
         self._overlay: StatsPage | DatabasePage | None = None  # the statistics or database page, while one is showing
         self._overlay_return: tuple[QWidget | None, str] | None = None  # the page and title to go back to
@@ -205,9 +270,37 @@ class MainWindow(QMainWindow):
 
     # exercise list: collapse / resize
     def sidebar_width(self) -> int:
+        """
+        Return how wide the exercise list is.
+
+        Returns
+        -------
+        int
+            The width in pixels; 0 when the list is collapsed, as it always is on the start screen.
+
+        Examples
+        --------
+        >>> MainWindow().sidebar_width()
+        0
+        """
         return self.splitter.sizes()[0]
 
-    def _sidebar_dragged(self, *_):
+    def _sidebar_dragged(self, *_: object) -> None:
+        """
+        Remember the list's new width after the splitter handle is dragged.
+
+        Parameters
+        ----------
+        *_ : object
+            What the splitter's signal passes (the handle's position and index); not used.
+
+        Examples
+        --------
+        >>> window = MainWindow()
+        >>> window._sidebar_dragged(0, 1)  # the list is collapsed, so it is remembered as hidden
+        >>> window._sidebar_pref
+        False
+        """
         width = self.sidebar_width()
         if width > 0:
             self._sidebar_width = width
@@ -215,21 +308,49 @@ class MainWindow(QMainWindow):
         self._save_sidebar()
         self._update_sidebar_button()
 
-    def _update_sidebar_button(self):
-        """Keep every page's toggle button (they live in the exercise headers) in step with the list."""
+    def _update_sidebar_button(self) -> None:
+        """
+        Keep every page's toggle button in step with the list.
+
+        The buttons live in the exercise headers.
+
+        Examples
+        --------
+        >>> MainWindow()._update_sidebar_button()
+        """
         is_open = self.sidebar_width() > 0
         for i in range(self.stack.count()):
             button = getattr(self.stack.widget(i), "sidebar_button", None)
             if button:
                 button.set_open(is_open)
 
-    def _save_sidebar(self):
+    def _save_sidebar(self) -> None:
+        """
+        Save the list's width and whether the user wants it shown.
+
+        Examples
+        --------
+        >>> window = MainWindow()
+        >>> window._sidebar_pref = False
+        >>> window._save_sidebar()
+        >>> str(store().value("ui/sidebarCollapsed"))
+        'true'
+        """
         s = store()
         s.setValue("ui/sidebarWidth", self._sidebar_width)
         s.setValue("ui/sidebarCollapsed", "false" if self._sidebar_pref else "true")
 
-    def toggle_sidebar(self):
-        """The user's button: slide the list closed, or back open. Remembered for next time."""
+    def toggle_sidebar(self) -> None:
+        """
+        Slide the list closed, or back open, for the user's button. The choice is remembered for next time.
+
+        Examples
+        --------
+        >>> window = MainWindow()
+        >>> window.toggle_sidebar()
+        >>> window._sidebar_pref
+        True
+        """
         self._set_sidebar(self.sidebar_width() == 0, user=True)
 
     def _set_sidebar(
@@ -237,8 +358,29 @@ class MainWindow(QMainWindow):
         show: bool,
         *,
         user: bool = False,
-    ):
-        """Slide the exercise list open or closed. Only a user's choice changes the saved preference."""
+    ) -> None:
+        """
+        Slide the exercise list open or closed.
+
+        Only a user's choice changes the saved preference.
+
+        Parameters
+        ----------
+        show : bool
+            True to open the list, False to close it.
+        user : bool, default False
+            True if the user asked for this (with the button), so it is remembered. Keyword-only.
+
+        Examples
+        --------
+        >>> window = MainWindow()
+        >>> window._set_sidebar(True, user=True)
+        >>> window._sidebar_pref
+        True
+        >>> window._set_sidebar(False)  # the start screen hides it without changing the preference
+        >>> window._sidebar_pref
+        True
+        """
         if self._sidebar_anim:
             self._sidebar_anim.stop()
         start = self.sidebar_width()
@@ -257,7 +399,14 @@ class MainWindow(QMainWindow):
         anim.setEndValue(end)
         anim.valueChanged.connect(lambda w: self.splitter.setSizes([int(w), total - int(w)]))
 
-        def done():
+        def done() -> None:
+            """
+            Finish the slide: restore the list's minimum width, set its final size and save it.
+
+            Examples
+            --------
+            >>> done()  # doctest: +SKIP
+            """
             self.nav.setMinimumWidth(self.SIDEBAR_MIN)
             self.splitter.setSizes([end, total - end])
             self._save_sidebar()
@@ -266,8 +415,23 @@ class MainWindow(QMainWindow):
         anim.finished.connect(done)
         anim.start()
 
-    def open_exercise(self, cls):
-        """Show an exercise (a no-op for category headings, which have no class)."""
+    def open_exercise(self, cls: type[Exercise]) -> None:
+        """
+        Show an exercise.
+
+        Parameters
+        ----------
+        cls : type of Exercise or None
+            The exercise class; None (a category heading in the list, which has no class) does nothing.
+
+        Examples
+        --------
+        >>> from alto.exercises.library import KeySignatures
+        >>> window = MainWindow()
+        >>> window.open_exercise(KeySignatures)
+        >>> window.title_label.text()
+        'Key signatures'
+        """
         if cls is None:
             return
         self.close_overlay()
@@ -284,14 +448,27 @@ class MainWindow(QMainWindow):
         if self._sidebar_pref:
             self._set_sidebar(True)  # the list appears once an exercise is chosen
 
-    def open_settings(self):
+    def open_settings(self) -> None:
+        """
+        Open the application settings, and rebuild the window if the theme was changed.
+
+        Examples
+        --------
+        >>> MainWindow().open_settings()  # doctest: +SKIP
+        """
         dialog = AppSettingsDialog(self)
         dialog.exec()
         if dialog.theme_changed:
             self.rebuild()
 
-    def rebuild(self):
-        """Open a fresh window in the same place, so every icon and colour is drawn in the new theme."""
+    def rebuild(self) -> None:
+        """
+        Open a fresh window in the same place, so every icon and colour is drawn in the new theme.
+
+        Examples
+        --------
+        >>> MainWindow().rebuild()  # doctest: +SKIP
+        """
         fresh = type(self)(self.learner)
         fresh.setGeometry(self.geometry())
         fresh.setWindowState(self.windowState())
@@ -301,16 +478,53 @@ class MainWindow(QMainWindow):
         fresh.show()
         self.close()
 
-    def _show_profile(self):
+    def _show_profile(self) -> None:
+        """
+        Show the profile's name in the menu, or hide that entry when there is no profile.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> window = MainWindow(Learner(db, profile=db.add_profile("Ada")))
+        >>> window.profile_action.text()
+        'Profile: Ada…'
+        """
         self.profile_action.setVisible(self.learner is not None)
         if self.learner:
             self.profile_action.setText(f"Profile: {self.learner.profile.name}…")
 
-    def open_stats(self):
+    def open_stats(self) -> None:
+        """
+        Show the statistics in place of the current page. Nothing happens without a profile.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> window = MainWindow(Learner(db, profile=db.add_profile("Ada")))
+        >>> window.open_stats()
+        >>> window.title_label.text()
+        'Statistics'
+        >>> window.close_overlay()
+        """
         if self.learner:
             self._open_overlay(StatsPage(self.learner), title="Statistics")
 
-    def open_database(self):
+    def open_database(self) -> None:
+        """
+        Show the database browser in place of the current page. Nothing happens without a profile.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> window = MainWindow(Learner(db, profile=db.add_profile("Ada")))
+        >>> window.open_database()
+        >>> window.title_label.text()
+        'Database'
+        >>> window.close_overlay()
+        """
         if self.learner:
             self._open_overlay(DatabasePage(self.learner), title="Database")
 
@@ -319,8 +533,28 @@ class MainWindow(QMainWindow):
         page: StatsPage | DatabasePage,
         *,
         title: str,
-    ):
-        """Show `page` (which has a `back` signal) in place of the current page; Back returns to it."""
+    ) -> None:
+        """
+        Show a page that has a `back` signal in place of the current page.
+
+        Parameters
+        ----------
+        page : StatsPage or DatabasePage
+            The page to show; its Back button returns to the page it replaced.
+        title : str
+            The title to show in the top bar while it is open. Keyword-only.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> learner = Learner(db, profile=db.add_profile("Ada"))
+        >>> window = MainWindow(learner)
+        >>> window._open_overlay(StatsPage(learner), title="Statistics")
+        >>> window.stack.currentWidget() is window._overlay
+        True
+        >>> window.close_overlay()
+        """
         self.close_overlay()
         self._overlay_return = (self.stack.currentWidget(), self.title_label.text())
         self._overlay = page
@@ -329,8 +563,20 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentWidget(page)
         self.title_label.setText(title)
 
-    def close_overlay(self):
-        """Leave the statistics or database page and show the page that was open before it."""
+    def close_overlay(self) -> None:
+        """
+        Leave the statistics or database page and show the page that was open before it.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> window = MainWindow(Learner(db, profile=db.add_profile("Ada")))
+        >>> window.open_stats()
+        >>> window.close_overlay()
+        >>> window.title_label.text()
+        'Alto - Music Theory'
+        """
         page, self._overlay = self._overlay, None
         if page is None or self._overlay_return is None:
             return
@@ -341,8 +587,17 @@ class MainWindow(QMainWindow):
         self.stack.removeWidget(page)
         page.deleteLater()
 
-    def switch_profile(self):
-        """Choose or add a profile. Their history and questions are kept apart; the next question comes from theirs."""
+    def switch_profile(self) -> None:
+        """
+        Choose or add a profile.
+
+        Their history and questions are kept apart; the next question comes from theirs.
+
+        Examples
+        --------
+        >>> window = MainWindow()
+        >>> window.switch_profile()  # without a profile there is nothing to switch
+        """
         if not self.learner:
             return
         dialog = ProfileDialog(self.learner.db, current=self.learner.profile, parent=self)
@@ -352,7 +607,19 @@ class MainWindow(QMainWindow):
             self._show_profile()
             self.show_home()
 
-    def show_home(self):
+    def show_home(self) -> None:
+        """
+        Go back to the start screen, closing the statistics or database and hiding the exercise list.
+
+        Examples
+        --------
+        >>> from alto.exercises.library import NoteNames
+        >>> window = MainWindow()
+        >>> window.open_exercise(NoteNames)
+        >>> window.show_home()
+        >>> window.title_label.text()
+        'Alto - Music Theory'
+        """
         self.close_overlay()
         old = self.stack.currentWidget()
         self.title_label.setText(self.APP_TITLE)
@@ -364,12 +631,36 @@ class MainWindow(QMainWindow):
         self._set_sidebar(False)  # the start screen has no list
         self.splitter.handle(1).setEnabled(False)
 
-    def _drop(self, old):
+    def _drop(self, old: QWidget | None) -> None:
+        """
+        Remove a page that is no longer showing, unless it is the start screen.
+
+        Parameters
+        ----------
+        old : QWidget or None
+            The page that was showing before; None does nothing.
+
+        Examples
+        --------
+        >>> window = MainWindow()
+        >>> window._drop(None)
+        >>> window._drop(window.home)  # the start screen is kept
+        >>> window.stack.indexOf(window.home)
+        0
+        """
+        if old is None:
+            return
         if old is not self.home and old is not self.stack.currentWidget():
             self.stack.removeWidget(old)
             old.deleteLater()
 
-    def restart_app(self):
-        """Launch a fresh copy of the app, then close this one."""
+    def restart_app(self) -> None:
+        """
+        Launch a fresh copy of the app, then close this one.
+
+        Examples
+        --------
+        >>> MainWindow().restart_app()  # doctest: +SKIP
+        """
         if QProcess.startDetached(sys.executable, ["-m", "alto"]):
             QApplication.quit()
