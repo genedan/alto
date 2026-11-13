@@ -25,7 +25,12 @@ CARD_W, CARD_H, GAP = 190, 185, 14
 class ExerciseCard(QPushButton):
     """A big button: icon on top, then the exercise name and a one-line description."""
 
-    def __init__(self, cls, parent=None):
+    def __init__(
+        self,
+        cls,
+        *,
+        parent=None,
+    ):
         super().__init__(parent)
         self.setFixedSize(CARD_W, CARD_H)
         self.setToolTip(cls.description)
@@ -40,7 +45,9 @@ class ExerciseCard(QPushButton):
         icon = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
         color = self.palette().color(QPalette.ColorRole.WindowText)
         icon.setPixmap(
-            icons.svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), color, size=56).pixmap(QSize(56, 56)),
+            icons.svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), color=color, size=56).pixmap(
+                QSize(56, 56),
+            ),
         )
         category = QLabel(cls.category.upper(), alignment=Qt.AlignmentFlag.AlignCenter)
         category.setStyleSheet("color: gray; font-size: 8pt; letter-spacing: 1px;")
@@ -69,6 +76,7 @@ class HomePage(QWidget):
     def __init__(
         self,
         registry,
+        *,
         parent=None,
     ):
         super().__init__(parent)

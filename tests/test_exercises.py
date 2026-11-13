@@ -30,7 +30,7 @@ def test_registering_an_exercise_puts_it_beside_the_others_of_its_category():
         name, category = "Extra", "Intervals"  # a category with exercises after it, not the last one
 
         def generate(self, rng):
-            return Question("?", ["a"], "a")
+            return Question("?", choices=["a"], answer="a")
 
     before = list(REGISTRY)
     try:
@@ -92,7 +92,7 @@ def test_note_names_respects_range_settings():
     old = (set(cfg.clefs), dict(cfg.ranges))
     try:
         cfg.clefs = {"treble"}
-        cfg.ranges = {"treble": (Note(4, 0).diatonic, Note(4, 2).diatonic)}  # C4..E4
+        cfg.ranges = {"treble": (Note(4, letter=0).diatonic, Note(4, letter=2).diatonic)}  # C4..E4
         rng = random.Random(3)
         got = {NoteNames().generate(rng).staff[0][0].name for _ in range(200)}
         assert got == {"C", "D", "E"}
@@ -125,9 +125,9 @@ def test_note_names_key_signature_values_and_naming():
                 note = q.staff[0][0]
                 assert q.key in (2, -3) and q.value in ("half", "eighth")
                 assert q.answer in q.choices and len(set(q.choices)) == len(q.choices)
-                assert q.answer == settings.spell(note, naming)
+                assert q.answer == settings.spell(note, naming=naming)
                 if not accidentals:  # with no explicit signs the key signature decides the accidental
-                    assert note.accidental == key_accidental(note.letter, q.key)
+                    assert note.accidental == key_accidental(note.letter, count=q.key)
             if naming == "solfege":
                 assert all(
                     c[:2]
@@ -282,7 +282,7 @@ def test_note_construction():
             assert q.answer in q.prompt  # the question shows the note's name and octave
         q = qs[0]
         assert q.check_placed(construct_of(q))
-        assert not q.check_placed(Note(construct_of(q).octave, construct_of(q).letter, 1))  # wrong accidental
+        assert not q.check_placed(Note(construct_of(q).octave, letter=construct_of(q).letter, accidental=1))  # wrong accidental
         assert not q.check_placed(Note.from_diatonic(construct_of(q).diatonic + 1))  # next line or space
 
         cfg.accidentals = True
@@ -290,7 +290,7 @@ def test_note_construction():
         assert any(construct_of(q).accidental for q in qs) and any(construct_of(q).accidental == 0 for q in qs)
         assert all(q.accidentals for q in qs)
         sharp = next(q for q in qs if construct_of(q).accidental == 1)  # G sharp is not A flat: same sound, wrong spelling
-        enharmonic = Note.from_diatonic(construct_of(sharp).diatonic + 1, -1)
+        enharmonic = Note.from_diatonic(construct_of(sharp).diatonic + 1, accidental=-1)
         assert enharmonic.midi == construct_of(sharp).midi and not sharp.check_placed(enharmonic)
     finally:
         cfg.clefs, cfg.accidentals = old
@@ -336,13 +336,13 @@ def test_note_construction_key_signature():
         qs = [NoteConstruction().generate(rng) for _ in range(400)]
         assert {q.key for q in qs} == {2, -3}
         # no extra signs: the note is exactly what the key signature makes of its letter
-        assert all(construct_of(q).accidental == key_accidental(construct_of(q).letter, q.key) for q in qs)
+        assert all(construct_of(q).accidental == key_accidental(construct_of(q).letter, count=q.key) for q in qs)
         f_in_d = next(q for q in qs if q.key == 2 and construct_of(q).letter == 3)
         assert construct_of(f_in_d).accidental == 1 and "F♯" in f_in_d.answer and "no sign" in f_in_d.explanation
 
         cfg.accidentals = True  # some notes now need their own sign (a natural cancels the key)
         qs = [NoteConstruction().generate(rng) for _ in range(600)]
-        differing = [q for q in qs if construct_of(q).accidental != key_accidental(construct_of(q).letter, q.key)]
+        differing = [q for q in qs if construct_of(q).accidental != key_accidental(construct_of(q).letter, count=q.key)]
         assert differing and len(differing) < len(qs)
         assert any(construct_of(q).accidental == 0 for q in differing)  # an explicit natural
         assert all("needs its own" in q.explanation for q in differing)

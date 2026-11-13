@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import KW_ONLY, dataclass
 
 from PySide6.QtWidgets import QApplication
 
@@ -12,6 +12,7 @@ from .store import store
 @dataclass(frozen=True)
 class NotationStyle:
     key: str
+    _: KW_ONLY
     label: str
     note: str  # a few words on where this look comes from
     font: str | None  # key in engraving.json, or None for the built-in Noto Music drawing
@@ -21,69 +22,69 @@ class NotationStyle:
 STYLES = (
     NotationStyle(
         "finalemaestro",
-        "Finale Maestro",
-        "The look of Finale, the long-time publishing standard.",
-        "finalemaestro",
+        label="Finale Maestro",
+        note="The look of Finale, the long-time publishing standard.",
+        font="finalemaestro",
     ),
     NotationStyle(
         "leland",
-        "Leland",
-        "MuseScore 4's font. Light and modern, modelled on SCORE.",
-        "leland",
+        label="Leland",
+        note="MuseScore 4's font. Light and modern, modelled on SCORE.",
+        font="leland",
     ),
     NotationStyle(
         "bravura",
-        "Bravura",
-        "The reference font of the SMuFL standard. Dorico's default.",
-        "bravura",
+        label="Bravura",
+        note="The reference font of the SMuFL standard. Dorico's default.",
+        font="bravura",
     ),
     NotationStyle(
         "noto",
-        "Noto Music",
-        "Google's engraved look.",
-        None,
+        label="Noto Music",
+        note="Google's engraved look.",
+        font=None,
     ),
     NotationStyle(
         "sebastian",
-        "Sebastian",
-        "A classic engraved face with generous proportions.",
-        "sebastian",
+        label="Sebastian",
+        note="A classic engraved face with generous proportions.",
+        font="sebastian",
     ),
     NotationStyle(
         "leipzig",
-        "Leipzig",
-        "The default of Verovio. Crisp and compact.",
-        "leipzig",
+        label="Leipzig",
+        note="The default of Verovio. Crisp and compact.",
+        font="leipzig",
     ),
     NotationStyle(
         "eugene",
-        "Eugene",
-        "Inspired by hand-engraved Parisian scores of the early 1900s.",
-        "eugene",
+        label="Eugene",
+        note="Inspired by hand-engraved Parisian scores of the early 1900s.",
+        font="eugene",
     ),
     NotationStyle(
         "goldenage",
-        "Golden Age",
-        "A heavy, old-fashioned plate-engraved look.",
-        "goldenage",
+        label="Golden Age",
+        note="A heavy, old-fashioned plate-engraved look.",
+        font="goldenage",
     ),
     NotationStyle(
         "petaluma",
-        "Petaluma",
-        "Handwritten look, as in jazz real books.",
-        "petaluma",
+        label="Petaluma",
+        note="Handwritten look, as in jazz real books.",
+        font="petaluma",
     ),
     NotationStyle(
         "musejazz",
-        "MuseJazz",
-        "Brush-pen hand, like MuseScore's jazz template.",
-        "musejazz",
+        label="MuseJazz",
+        note="Brush-pen hand, like MuseScore's jazz template.",
+        font="musejazz",
     ),
     NotationStyle(
         "finalebroadway",
-        "Finale Broadway",
-        "Bold copyist's hand, as in Broadway scores.",
-        "finalebroadway",
+        label="Finale Broadway",
+        note="Bold copyist's hand, as in Broadway scores.",
+        font="finalebroadway",
     ),
 )
 DEFAULT = "finalemaestro"

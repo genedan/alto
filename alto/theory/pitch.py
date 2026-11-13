@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import KW_ONLY, dataclass
 
 LETTERS = "CDEFGAB"
 NATURAL_SEMITONES = (
@@ -46,6 +46,7 @@ class Note:
     """A spelled pitch. `letter` is an index into LETTERS."""
 
     octave: int
+    _: KW_ONLY
     letter: int
     accidental: int = 0
 
@@ -74,9 +75,10 @@ class Note:
     def from_diatonic(
         cls,
         diatonic: int,
+        *,
         accidental: int = 0,
     ) -> Note:
-        return cls(diatonic // 7, diatonic % 7, accidental)
+        return cls(diatonic // 7, letter=diatonic % 7, accidental=accidental)
 
     @classmethod
     def parse(cls, text: str) -> Note:
@@ -86,11 +88,12 @@ class Note:
         octave = int(rest.lstrip("#bx"))
         acc_text = rest[: len(rest) - len(str(octave))]
         acc = {v: k for k, v in _ASCII.items()}[acc_text]
-        return cls(octave, letter, acc)
+        return cls(octave, letter=letter, accidental=acc)
 
     def transpose(
         self,
         interval: Interval,
+        *,
         descending: bool = False,
     ) -> Note:
         steps = interval.number - 1
@@ -99,7 +102,7 @@ class Note:
         target_midi = self.midi + (-semis if descending else semis)
         letter = d % 7
         natural = 12 * (d // 7 + 1) + NATURAL_SEMITONES[letter]
-        return Note(d // 7, letter, target_midi - natural)
+        return Note(d // 7, letter=letter, accidental=target_midi - natural)
 
 
 @dataclass(frozen=True)
@@ -107,6 +110,7 @@ class Interval:
     """A simple or compound interval. number: 1=unison, 8=octave, 9=ninth..."""
 
     number: int
+    _: KW_ONLY
     quality: str  # one of "dd d m M P A AA"
 
     @property
@@ -151,6 +155,7 @@ class Interval:
     def between(
         cls,
         low: Note,
+        *,
         high: Note,
     ) -> Interval:
         """Interval from `low` up to `high` (low must not be above high)."""
@@ -175,12 +180,12 @@ class Interval:
                 1: "A",
                 2: "AA",
             }
-        return cls(number, table[diff])
+        return cls(number, quality=table[diff])
 
     @classmethod
     def parse(cls, text: str) -> Interval:
         quality = text.rstrip("0123456789")
-        return cls(int(text[len(quality) :]), quality)
+        return cls(int(text[len(quality) :]), quality=quality)
 
 
 QUALITY_NAMES = {
@@ -234,6 +239,7 @@ MAJOR_KEYS = {
 
 def key_accidental(
     letter: int,
+    *,
     count: int,
 ) -> int:
     """Accidental the key signature `count` applies to `letter` (index into LETTERS)."""

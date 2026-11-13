@@ -17,6 +17,7 @@ class Learner:
     def __init__(
         self,
         db: Database,
+        *,
         profile: Profile,
     ):
         self.db = db
@@ -25,6 +26,7 @@ class Learner:
     def pick(
         self,
         exercise: Exercise,
+        *,
         rng: random.Random,
         avoid: str | None = None,
         now: float | None = None,
@@ -40,24 +42,28 @@ class Learner:
             key = q.item_key()
             if key in options or key == avoid:
                 continue
-            item = self.db.get_item(self.profile.id, name, key)
-            options[key] = (q, scheduler.weight(item.strain if item else None, item.last_seen if item else None, now))
-        for item in self.db.replay_candidates(self.profile.id, name, exercise.settings_signature()):
+            item = self.db.get_item(self.profile.id, exercise=name, item_key=key)
+            options[key] = (
+                q,
+                scheduler.weight(item.strain if item else None, last_seen=item.last_seen if item else None, now=now),
+            )
+        for item in self.db.replay_candidates(self.profile.id, exercise=name, signature=exercise.settings_signature()):
             if item.item_key in options or item.item_key == avoid:
                 continue
             try:
                 q = Question.from_dict(json.loads(item.payload))
             except (ValueError, KeyError, TypeError):
                 continue
-            options[item.item_key] = (q, scheduler.weight(item.strain, item.last_seen, now))
+            options[item.item_key] = (q, scheduler.weight(item.strain, last_seen=item.last_seen, now=now))
         if not options:  # every candidate was the question to avoid
             return exercise.generate(rng)
         questions, weights = zip(*options.values())
-        return scheduler.choose(questions, weights, rng)
+        return scheduler.choose(questions, weights=weights, rng=rng)
 
     def record(
         self,
         exercise: Exercise,
+        *,
         question: Question,
         answer: str,
         correct: bool,
@@ -70,29 +76,29 @@ class Learner:
         name, key = type(exercise).__name__, question.item_key()
         self.db.add_attempt(
             self.profile.id,
-            name,
-            key,
-            attempt_no,
-            answer,
-            correct,
-            round(seconds * 1000),
-            now,
+            exercise=name,
+            item_key=key,
+            attempt_no=attempt_no,
+            answer=answer,
+            correct=correct,
+            duration_ms=round(seconds * 1000),
+            answered_at=now,
         )
-        old = self.db.get_item(self.profile.id, name, key)
+        old = self.db.get_item(self.profile.id, exercise=name, item_key=key)
         strain = old.strain if old else scheduler.NEW_STRAIN
         strain = scheduler.update_strain(
             strain,
-            correct,
-            attempt_no,
-            seconds,
-            exercise.par_seconds,
+            correct=correct,
+            attempt_no=attempt_no,
+            seconds=seconds,
+            par_seconds=exercise.par_seconds,
         )
         first = attempt_no == 1
         self.db.save_item(
             self.profile.id,
-            name,
-            key,
-            ItemRecord(
+            exercise=name,
+            item_key=key,
+            item=ItemRecord(
                 strain=strain,
                 seen=(old.seen if old else 0) + (1 if first else 0),
                 first_try_right=(old.first_try_right if old else 0) + (1 if first and correct else 0),

@@ -18,7 +18,7 @@ class SidebarToggle(QToolButton):
 
     def set_open(self, is_open: bool) -> None:
         color = self.palette().color(QPalette.ColorRole.WindowText)  # same colour as the sound and settings icons
-        self.setIcon(svg_icon(SIDEBAR_OPEN if is_open else SIDEBAR_CLOSED, color))
+        self.setIcon(svg_icon(SIDEBAR_OPEN if is_open else SIDEBAR_CLOSED, color=color))
         self.setToolTip("Hide exercise list" if is_open else "Show exercise list")
 
 
@@ -28,12 +28,13 @@ class HelpButton(QToolButton):
     def __init__(
         self,
         text_provider,
+        *,
         parent=None,
     ):
         super().__init__(parent)
         self._text = text_provider  # called each time, so the text can follow the current settings
         self.setAutoRaise(True)
-        self.setIcon(svg_icon(HELP, self.palette().color(QPalette.ColorRole.WindowText)))
+        self.setIcon(svg_icon(HELP, color=self.palette().color(QPalette.ColorRole.WindowText)))
         self.setIconSize(QSize(24, 24))
         self.setToolTip("How this exercise works")
         self.clicked.connect(self.show_help)

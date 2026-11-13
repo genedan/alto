@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import KW_ONLY, dataclass
 
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QBrush, QColor, QLinearGradient
@@ -16,6 +16,7 @@ DEFAULT_CASE = "#2b2b30"
 @dataclass(frozen=True)
 class KeyboardStyle:
     key: str
+    _: KW_ONLY
     label: str
     note: str  # a few words on what it is modelled on
     white: tuple[str, str]  # natural keys: colour at the top and at the bottom
@@ -41,43 +42,43 @@ class KeyboardStyle:
 STYLES = (
     KeyboardStyle(
         "classic",
-        "Classic",
-        "The standard Alto look: white keys in a dark case.",
-        ("#fbfbfc", "#fbfbfc"),
-        "#9a9a9f",
-        ("#1c1c20", "#1c1c20"),
-        "#111114",
+        label="Classic",
+        note="The standard Alto look: white keys in a dark case.",
+        white=("#fbfbfc", "#fbfbfc"),
+        white_edge="#9a9a9f",
+        black=("#1c1c20", "#1c1c20"),
+        black_edge="#111114",
     ),
     KeyboardStyle(
         "modern",
-        "Modern piano",
-        "A current upright or grand, with the red felt under the fallboard.",
-        ("#fbfaf7", "#e9e6df"),
-        "#b9b6ae",
-        ("#34343a", "#0e0e10"),
-        "#000000",
+        label="Modern piano",
+        note="A current upright or grand, with the red felt under the fallboard.",
+        white=("#fbfaf7", "#e9e6df"),
+        white_edge="#b9b6ae",
+        black=("#34343a", "#0e0e10"),
+        black_edge="#000000",
         case="#0d0d0f",
         felt="#7d1f27",
     ),
     KeyboardStyle(
         "ivory",
-        "Antique ivory",
-        "Naturals aged to a warm yellow, in a rosewood case.",
-        ("#f1e5c6", "#dccb9e"),
-        "#a8946a",
-        ("#2d2420", "#120d0b"),
-        "#080605",
+        label="Antique ivory",
+        note="Naturals aged to a warm yellow, in a rosewood case.",
+        white=("#f1e5c6", "#dccb9e"),
+        white_edge="#a8946a",
+        black=("#2d2420", "#120d0b"),
+        black_edge="#080605",
         case="#4a2a1c",
         felt="#5f2a24",
     ),
     KeyboardStyle(
         "harpsichord-italian",
-        "Harpsichord, Italian",
-        "Boxwood naturals and dark sharps in a cypress case.",
-        ("#ead9aa", "#d6c088"),
-        "#9b8451",
-        ("#3a2b21", "#1b1410"),
-        "#0d0907",
+        label="Harpsichord, Italian",
+        note="Boxwood naturals and dark sharps in a cypress case.",
+        white=("#ead9aa", "#d6c088"),
+        white_edge="#9b8451",
+        black=("#3a2b21", "#1b1410"),
+        black_edge="#0d0907",
         case="#b98a55",
         narrow=0.87,
         gap=1.5,
@@ -85,12 +86,12 @@ STYLES = (
     ),
     KeyboardStyle(
         "harpsichord-french",
-        "Harpsichord, French",
-        "Reversed colours: ebony naturals, bone-topped sharps.",
-        ("#2a211c", "#120d0a"),
-        "#000000",
-        ("#4b3b30", "#2a2019"),
-        "#000000",
+        label="Harpsichord, French",
+        note="Reversed colours: ebony naturals, bone-topped sharps.",
+        white=("#2a211c", "#120d0a"),
+        white_edge="#000000",
+        black=("#4b3b30", "#2a2019"),
+        black_edge="#000000",
         case="#1b3a2a",
         cap="#eee3c8",
         narrow=0.87,
@@ -99,12 +100,12 @@ STYLES = (
     ),
     KeyboardStyle(
         "organ",
-        "Baroque pipe organ",
-        "Bone and ebony keys in an oak case, under a row of stop knobs.",
-        ("#f0e8d2", "#dccfae"),
-        "#a39470",
-        ("#2a211c", "#0e0a08"),
-        "#000000",
+        label="Baroque pipe organ",
+        note="Bone and ebony keys in an oak case, under a row of stop knobs.",
+        white=("#f0e8d2", "#dccfae"),
+        white_edge="#a39470",
+        black=("#2a211c", "#0e0a08"),
+        black_edge="#000000",
         case="#6b4a2c",
         narrow=0.92,
         gap=1.5,
@@ -114,36 +115,36 @@ STYLES = (
     ),
     KeyboardStyle(
         "tonewheel",
-        "Tonewheel organ",
-        "Plastic keys in a walnut case, with the lowest octave reversed.",
-        ("#f6f4ee", "#e4e1d8"),
-        "#aaa79e",
-        ("#2c2c30", "#0c0c0e"),
-        "#000000",
+        label="Tonewheel organ",
+        note="Plastic keys in a walnut case, with the lowest octave reversed.",
+        white=("#f6f4ee", "#e4e1d8"),
+        white_edge="#aaa79e",
+        black=("#2c2c30", "#0c0c0e"),
+        black_edge="#000000",
         case="#5a3320",
         reverse_below=60,
         round=2,
     ),
     KeyboardStyle(
         "flat",
-        "Flat and minimal",
-        "No case and no gradients. Reads well at small sizes.",
-        ("#fafafa", "#fafafa"),
-        "#d3d6db",
-        ("#25272c", "#25272c"),
-        "#25272c",
+        label="Flat and minimal",
+        note="No case and no gradients. Reads well at small sizes.",
+        white=("#fafafa", "#fafafa"),
+        white_edge="#d3d6db",
+        black=("#25272c", "#25272c"),
+        black_edge="#25272c",
         case=None,
         gap=2,
         rail=4,
     ),
     KeyboardStyle(
         "engraving",
-        "Engraving",
-        "Ink on paper, like a plate in an old method book.",
-        ("#f5efdf", "#f5efdf"),
-        "#2a2620",
-        ("#2a2620", "#2a2620"),
-        "#2a2620",
+        label="Engraving",
+        note="Ink on paper, like a plate in an old method book.",
+        white=("#f5efdf", "#f5efdf"),
+        white_edge="#2a2620",
+        black=("#2a2620", "#2a2620"),
+        black_edge="#2a2620",
         case="#efe7d1",
         gap=0,
         rail=4,
@@ -152,12 +153,12 @@ STYLES = (
     ),
     KeyboardStyle(
         "colour",
-        "Colour by note",
-        "One hue per semitone, so every C has the same colour.",
-        ("#ffffff", "#ffffff"),
-        "#44000000",
-        ("#222222", "#222222"),
-        "#66000000",
+        label="Colour by note",
+        note="One hue per semitone, so every C has the same colour.",
+        white=("#ffffff", "#ffffff"),
+        white_edge="#44000000",
+        black=("#222222", "#222222"),
+        black_edge="#66000000",
         case=None,
         gap=1.5,
         rail=4,
@@ -165,24 +166,24 @@ STYLES = (
     ),
     KeyboardStyle(
         "neon",
-        "Midnight neon",
-        "Dark keys with a cyan glow and magenta sharps.",
-        ("#1d2230", "#141824"),
-        "#35d6e8",
-        ("#241230", "#150a1e"),
-        "#ff4fd0",
+        label="Midnight neon",
+        note="Dark keys with a cyan glow and magenta sharps.",
+        white=("#1d2230", "#141824"),
+        white_edge="#35d6e8",
+        black=("#241230", "#150a1e"),
+        black_edge="#ff4fd0",
         case="#0a0c12",
         gap=2,
         glow=True,
     ),
     KeyboardStyle(
         "contrast",
-        "High contrast",
-        "Pure black and white with heavy outlines and a yellow dot on every C.",
-        ("#ffffff", "#ffffff"),
-        "#000000",
-        ("#000000", "#000000"),
-        "#000000",
+        label="High contrast",
+        note="Pure black and white with heavy outlines and a yellow dot on every C.",
+        white=("#ffffff", "#ffffff"),
+        white_edge="#000000",
+        black=("#000000", "#000000"),
+        black_edge="#000000",
         case="#000000",
         gap=2,
         rail=4,
@@ -247,8 +248,8 @@ def custom_style() -> KeyboardStyle:
     case, felt, cap = _custom["case"], _custom["felt"], _custom["caps"]
     return KeyboardStyle(
         CUSTOM,
-        "Custom",
-        "Your own colours, part by part.",
+        label="Custom",
+        note="Your own colours, part by part.",
         white=(naturals.name(), naturals.darker(106).name()),
         white_edge=naturals.darker(140).name(),
         black=(sharps.lighter(130).name(), sharps.name()),
@@ -293,6 +294,7 @@ def set_style(key: str) -> None:
 
 def set_custom_colour(
     part: str,
+    *,
     colour: str | None,
 ) -> None:
     """Colour one part of the custom keyboard (None leaves an optional part out) and use the custom style."""
@@ -316,6 +318,7 @@ def _redraw() -> None:
 
 def reversed_key(
     style: KeyboardStyle,
+    *,
     midi: int,
 ) -> bool:
     return style.reverse_below is not None and midi < style.reverse_below
@@ -323,6 +326,7 @@ def reversed_key(
 
 def key_brush(
     style: KeyboardStyle,
+    *,
     midi: int,
     black: bool,
     y: float,
@@ -332,7 +336,7 @@ def key_brush(
     pitch = midi % 12
     if style.hue:
         return QBrush(QColor.fromHslF(pitch / 12, 0.55 if black else 0.72, 0.34 if black else 0.76))
-    top, bottom = style.black if black != reversed_key(style, midi) else style.white
+    top, bottom = style.black if black != reversed_key(style, midi=midi) else style.white
     if top == bottom:
         return QBrush(QColor(top))
     gradient = QLinearGradient(QPointF(0, y), QPointF(0, y + height))
@@ -343,7 +347,8 @@ def key_brush(
 
 def edge_color(
     style: KeyboardStyle,
+    *,
     midi: int,
     black: bool,
 ) -> QColor:
-    return QColor(style.black_edge if black != reversed_key(style, midi) else style.white_edge)
+    return QColor(style.black_edge if black != reversed_key(style, midi=midi) else style.white_edge)

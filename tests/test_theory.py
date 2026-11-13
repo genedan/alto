@@ -29,7 +29,7 @@ def test_between(
     high,
     expected,
 ):
-    assert str(Interval.between(Note.parse(low), Note.parse(high))) == expected
+    assert str(Interval.between(Note.parse(low), high=Note.parse(high))) == expected
 
 
 def test_transpose_roundtrip():
@@ -51,11 +51,11 @@ def test_transpose_roundtrip():
         ):
             n = Note.parse(tonic)
             up = n.transpose(Interval.parse(iv))
-            assert Interval.between(n, up) == Interval.parse(iv)
+            assert Interval.between(n, high=up) == Interval.parse(iv)
 
 
 def test_scales():
-    notes = build(Note.parse("D4"), SCALES["Major (Ionian)"])
+    notes = build(Note.parse("D4"), intervals=SCALES["Major (Ionian)"])
     assert [n.name for n in notes] == [
         "D",
         "E",
@@ -65,7 +65,7 @@ def test_scales():
         "B",
         "C♯",
     ]
-    notes = build(Note.parse("A4"), SCALES["Harmonic minor"])
+    notes = build(Note.parse("A4"), intervals=SCALES["Harmonic minor"])
     assert [n.name for n in notes] == [
         "A",
         "B",
@@ -82,18 +82,18 @@ def test_key_signatures():
     assert key_signature("G") == 1
     assert key_signature("Eb") == -3
     assert key_signature("F#") == 6
-    assert key_signature("A", "Natural minor (Aeolian)") == 0
+    assert key_signature("A", scale="Natural minor (Aeolian)") == 0
 
 
 def test_chords():
-    notes = build(Note.parse("C4"), CHORDS["dominant 7th"])
+    notes = build(Note.parse("C4"), intervals=CHORDS["dominant 7th"])
     assert [n.name for n in notes] == [
         "C",
         "E",
         "G",
         "B♭",
     ]
-    notes = build(Note.parse("B3"), CHORDS["diminished 7th"])
+    notes = build(Note.parse("B3"), intervals=CHORDS["diminished 7th"])
     assert [n.name for n in notes] == [
         "B",
         "D",

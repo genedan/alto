@@ -55,16 +55,17 @@ def major_key_tonic(count: int) -> Note:
     """The tonic of the major key with this many sharps (+) or flats (-), in octave 4: 2 gives D, -3 gives E flat."""
     name = MAJOR_KEYS[count]
     letter = LETTERS.index(name[0])
-    return Note(4, letter, {"": 0, "♯": 1, "♭": -1}[name[1:]])
+    return Note(4, letter=letter, accidental={"": 0, "♯": 1, "♭": -1}[name[1:]])
 
 
 def mode_tonic(
     count: int,
+    *,
     mode: str,
 ) -> Note:
     """The note a scale in this mode starts on when its key signature has `count` sharps (+) or flats (-).
     The notes of a mode are those of a major scale, started from another degree."""
-    return build(major_key_tonic(count), SCALES["Major (Ionian)"])[MODE_DEGREE[mode]]
+    return build(major_key_tonic(count), intervals=SCALES["Major (Ionian)"])[MODE_DEGREE[mode]]
 
 
 INVERSION_NAMES = (
@@ -73,17 +74,18 @@ INVERSION_NAMES = (
     "2nd inversion",
     "3rd inversion",
 )
-OCTAVE = Interval(8, "P")
+OCTAVE = Interval(8, quality="P")
 
 
 def arpeggio(
     root: Note,
+    *,
     intervals: list[Interval],
     inversion: int = 0,
 ) -> list[Note]:
     """A chord broken and rising from its lowest note, then that note again an octave higher. `inversion` is how many of
     the lowest chord tones are moved up an octave first (0 = root position, 1 = the third at the bottom ...)."""
-    tones = build(root, intervals)
+    tones = build(root, intervals=intervals)
     for _ in range(inversion):
         tones.append(tones.pop(0).transpose(OCTAVE))
     return tones + [tones[0].transpose(OCTAVE)]
@@ -91,6 +93,7 @@ def arpeggio(
 
 def build(
     tonic: Note,
+    *,
     intervals: list[Interval],
 ) -> list[Note]:
     return [tonic.transpose(iv) for iv in intervals]
@@ -98,11 +101,12 @@ def build(
 
 def key_signature(
     tonic_name: str,
+    *,
     scale: str = "Major (Ionian)",
 ) -> int:
     """Signed accidental count: +n sharps, -n flats, for the given tonic + scale."""
     tonic = Note.parse(tonic_name + "4")
-    notes = build(tonic, SCALES[scale])
+    notes = build(tonic, intervals=SCALES[scale])
     return sum(n.accidental for n in notes)
 
 
@@ -114,7 +118,7 @@ def format_key_signature(count: int) -> str:
 
 def all_tonics(max_accidentals: int = 1) -> list[Note]:
     """Every spelled tonic (octave 4) with |accidental| <= max_accidentals."""
-    return [Note(4, letter, acc) for letter in range(7) for acc in range(-max_accidentals, max_accidentals + 1)]
+    return [Note(4, letter=letter, accidental=acc) for letter in range(7) for acc in range(-max_accidentals, max_accidentals + 1)]
 
 
 __all__ = [

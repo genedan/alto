@@ -46,6 +46,7 @@ class _Picture(QWidget):
     def __init__(
         self,
         scale: float = 1.0,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -55,6 +56,7 @@ class _Picture(QWidget):
     def _fit(
         self,
         width: float,
+        *,
         height: float,
     ) -> None:
         self.setFixedSize(round(width * self.scale), round(height * self.scale))
@@ -63,7 +65,7 @@ class _Picture(QWidget):
         """(ink, softer ink for staff lines), both readable against the background in light and dark themes."""
         pal = self.palette()
         text, base = pal.color(QPalette.ColorRole.Text), pal.color(QPalette.ColorRole.Base)
-        line = blend(base, text, 0.62)
+        line = blend(base, b=text, t=0.62)
         return text, line
 
     def _painter(self) -> QPainter:
@@ -77,6 +79,7 @@ class _Picture(QWidget):
     def _hline(
         self,
         p: QPainter,
+        *,
         x0: float,
         x1: float,
         y: float,
@@ -101,6 +104,7 @@ class _Picture(QWidget):
     def _vline(
         self,
         p: QPainter,
+        *,
         x: float,
         y0: float,
         y1: float,
@@ -137,6 +141,7 @@ class _Picture(QWidget):
     def _staff(
         self,
         p: QPainter,
+        *,
         x0: float,
         x1: float,
         bottom: float,
@@ -146,11 +151,11 @@ class _Picture(QWidget):
         for n in range(5):
             self._hline(
                 p,
-                x0,
-                x1,
-                bottom - n * gap,
-                colour,
-                0.65,
+                x0=x0,
+                x1=x1,
+                y=bottom - n * gap,
+                colour=colour,
+                width=0.65,
             )
 
 
@@ -164,17 +169,18 @@ class ClefPictures(_Picture):
     def __init__(
         self,
         clefs: list[str] | None = None,
+        *,
         scale: float = 1.0,
         parent=None,
     ):
-        super().__init__(scale, parent)
+        super().__init__(scale, parent=parent)
         self.clefs: list[str] = []
         self.set_clefs(clefs or [])
 
     def set_clefs(self, clefs: list[str]) -> None:
         self.clefs = list(clefs)
         count = max(len(self.clefs), 1)
-        self._fit(count * self.W + (count - 1) * self.SPACING, self.H)
+        self._fit(count * self.W + (count - 1) * self.SPACING, height=self.H)
         self.setToolTip(", ".join(CLEF_NAMES[c] for c in self.clefs))
         self.update()
 
@@ -182,9 +188,10 @@ class ClefPictures(_Picture):
     def icon(
         cls,
         clef: str,
+        *,
         scale: float = 1.8,
     ) -> QIcon:
-        return cls([clef], scale).to_icon()
+        return cls([clef], scale=scale).to_icon()
 
     def paintEvent(self, _):
         p = self._painter()
@@ -194,32 +201,33 @@ class ClefPictures(_Picture):
             if clef == "grand":
                 self._grand(
                     p,
-                    x,
-                    text,
-                    line,
+                    x=x,
+                    text=text,
+                    line=line,
                 )
                 continue
             self._staff(
                 p,
-                x + 1,
-                x + self.W - 1,
-                24.0,
-                self.GAP,
-                line,
+                x0=x + 1,
+                x1=x + self.W - 1,
+                bottom=24.0,
+                gap=self.GAP,
+                colour=line,
             )
             StaffWidget._draw_clef(
                 p,
-                clef,
-                x + 3,
-                24.0,
-                self.GAP,
-                text,
-                current_style().font,
+                clef=clef,
+                x=x + 3,
+                bottom=24.0,
+                gap=self.GAP,
+                color=text,
+                font=current_style().font,
             )
 
     def _grand(
         self,
         p: QPainter,
+        *,
         x: float,
         text: QColor,
         line: QColor,
@@ -229,35 +237,35 @@ class ClefPictures(_Picture):
             bottom = top + 4 * gap
             self._staff(
                 p,
-                x + 5,
-                x + self.W - 1,
-                bottom,
-                gap,
-                line,
+                x0=x + 5,
+                x1=x + self.W - 1,
+                bottom=bottom,
+                gap=gap,
+                colour=line,
             )
             StaffWidget._draw_clef(
                 p,
-                clef,
-                x + 8,
-                bottom,
-                gap,
-                text,
-                current_style().font,
+                clef=clef,
+                x=x + 8,
+                bottom=bottom,
+                gap=gap,
+                color=text,
+                font=current_style().font,
             )
         self._vline(
             p,
-            x + 5,
-            tops[0],
-            tops[1] + 4 * gap,
-            line,
-            0.65,
+            x=x + 5,
+            y0=tops[0],
+            y1=tops[1] + 4 * gap,
+            colour=line,
+            width=0.65,
         )
         StaffWidget._brace(
             p,
-            x + 4,
-            tops[0],
-            tops[1] + 4 * gap,
-            text,
+            x=x + 4,
+            y0=tops[0],
+            y1=tops[1] + 4 * gap,
+            color=text,
             wd=3.5,
             font=current_style().font,
         )
@@ -272,13 +280,14 @@ class ValuePictures(_Picture):
     def __init__(
         self,
         values: list[str] | None = None,
+        *,
         scale: float = 1.0,
         centre_stemless: bool = False,
         parent=None,
     ):
         """With `centre_stemless` the breve and whole note sit at the picture's vertical centre, so beside a line of
         text they line up with the middle of the text; the others keep their heads low so their stems fit above."""
-        super().__init__(scale, parent)
+        super().__init__(scale, parent=parent)
         self.centre_stemless = centre_stemless
         self.values: list[str] = []
         self.set_values(values or [])
@@ -286,7 +295,7 @@ class ValuePictures(_Picture):
     def set_values(self, values: list[str]) -> None:
         self.values = list(values)
         count = max(len(self.values), 1)
-        self._fit(count * self.W + (count - 1) * self.SPACING, self.H)
+        self._fit(count * self.W + (count - 1) * self.SPACING, height=self.H)
         self.setToolTip(", ".join(VALUE_NAMES[v] for v in self.values))
         self.update()
 
@@ -294,9 +303,10 @@ class ValuePictures(_Picture):
     def icon(
         cls,
         value: str,
+        *,
         scale: float = 1.7,
     ) -> QIcon:
-        return cls([value], scale).to_icon()
+        return cls([value], scale=scale).to_icon()
 
     def paintEvent(self, _):
         p = self._painter()
@@ -308,13 +318,13 @@ class ValuePictures(_Picture):
             # drawn by the same routine as the staff, so the symbol matches the one in the exercise
             StaffWidget._note(
                 p,
-                x + (self.W / 2 if wide else self.HEAD_X),
-                y,
-                self.GAP,
-                text,
-                value,
-                False,
-                current_style().font,
+                x=x + (self.W / 2 if wide else self.HEAD_X),
+                y=y,
+                gap=self.GAP,
+                color=text,
+                value=value,
+                stem_down=False,
+                font=current_style().font,
             )
 
 
@@ -329,12 +339,13 @@ class KeySignaturePicture(_Picture):
     def __init__(
         self,
         key: int = 0,
+        *,
         scale: float = 1.0,
         parent=None,
     ):
-        super().__init__(scale, parent)
+        super().__init__(scale, parent=parent)
         self.key = key
-        self._fit(4 + max(abs(key), 1) * self.STEP, self.H)
+        self._fit(4 + max(abs(key), 1) * self.STEP, height=self.H)
         names = "no sharps or flats" if key == 0 else f"{abs(key)} {'sharp' if key > 0 else 'flat'}{'s' if abs(key) > 1 else ''}"
         self.setToolTip(f"{MAJOR_KEYS[key]} major: {names}")
 
@@ -342,13 +353,15 @@ class KeySignaturePicture(_Picture):
     def icon(
         cls,
         key: int,
+        *,
         scale: float = 1.2,
     ) -> QIcon:
-        return cls(key, scale).to_icon()
+        return cls(key, scale=scale).to_icon()
 
     def _sign(
         self,
         p: QPainter,
+        *,
         sign: int,
         x: float,
         y: float,
@@ -359,12 +372,12 @@ class KeySignaturePicture(_Picture):
         if font:
             engraving.draw_accidental(
                 p,
-                font,
-                sign,
-                x,
-                y + 0.2 * self.GAP,
-                self.GAP,
-                colour,
+                font=font,
+                sign=sign,
+                x=x,
+                y=y + 0.2 * self.GAP,
+                gap=self.GAP,
+                colour=colour,
                 fit=self.STEP - 0.8,
             )
             return
@@ -381,10 +394,10 @@ class KeySignaturePicture(_Picture):
         if not self.key:
             self._sign(
                 p,
-                0,
-                2,
-                mid,
-                text,
+                sign=0,
+                x=2,
+                y=mid,
+                colour=text,
             )
             return
         kind = 1 if self.key > 0 else -1
@@ -392,10 +405,10 @@ class KeySignaturePicture(_Picture):
             steps = Note.parse(name).diatonic - BOTTOM_LINE["treble"]
             self._sign(
                 p,
-                kind,
-                2 + i * self.STEP,
-                mid - (steps - self.CENTRE[kind]) * self.GAP / 2,
-                text,
+                sign=kind,
+                x=2 + i * self.STEP,
+                y=mid - (steps - self.CENTRE[kind]) * self.GAP / 2,
+                colour=text,
             )
 
 
@@ -408,12 +421,13 @@ class RangePictures(_Picture):
     def __init__(
         self,
         items: list[tuple[str, int, int]] | None = None,
+        *,
         scale: float = 1.0,
         max_width: float | None = None,
         parent=None,
     ):
         """With `max_width` the picture is enlarged to use that width (up to MAX_SCALE) however many clefs there are."""
-        super().__init__(scale, parent)
+        super().__init__(scale, parent=parent)
         self.max_width = max_width
         self.items: list[tuple[str, int, int]] = []
         self.set_items(items or [])
@@ -425,7 +439,7 @@ class RangePictures(_Picture):
         natural = count * self.W + (count - 1) * self.SPACING
         if self.max_width:
             self.scale = min(self.MAX_SCALE, self.max_width / natural)
-        self._fit(natural, self.H)
+        self._fit(natural, height=self.H)
         tip = [
             f"{CLEF_NAMES[c]}: {Note.from_diatonic(lo).name}{Note.from_diatonic(lo).octave} to "
             f"{Note.from_diatonic(hi).name}{Note.from_diatonic(hi).octave}"
@@ -437,6 +451,7 @@ class RangePictures(_Picture):
     def _note_head(
         self,
         p: QPainter,
+        *,
         x: float,
         y: float,
         bottom: float,
@@ -454,22 +469,22 @@ class RangePictures(_Picture):
         for s_ in ledgers:
             self._hline(
                 p,
-                x - 4.2,
-                x + 4.2,
-                bottom - s_ * gap / 2,
-                colour,
-                0.65,
+                x0=x - 4.2,
+                x1=x + 4.2,
+                y=bottom - s_ * gap / 2,
+                colour=colour,
+                width=0.65,
             )
         # a whole note, a little larger than the staff gap so it reads
         StaffWidget._note(
             p,
-            x,
-            y,
-            gap * 1.45,
-            colour,
-            "whole",
-            False,
-            current_style().font,
+            x=x,
+            y=y,
+            gap=gap * 1.45,
+            color=colour,
+            value="whole",
+            stem_down=False,
+            font=current_style().font,
         )
 
     def paintEvent(self, _):
@@ -492,35 +507,35 @@ class RangePictures(_Picture):
                 for name, b in bottoms.items():
                     self._staff(
                         p,
-                        x + 6,
-                        x + self.W - 1,
-                        b,
-                        gap,
-                        line,
+                        x0=x + 6,
+                        x1=x + self.W - 1,
+                        bottom=b,
+                        gap=gap,
+                        colour=line,
                     )
                     StaffWidget._draw_clef(
                         p,
-                        name,
-                        x + 8,
-                        b,
-                        gap,
-                        text,
-                        current_style().font,
+                        clef=name,
+                        x=x + 8,
+                        bottom=b,
+                        gap=gap,
+                        color=text,
+                        font=current_style().font,
                     )
                 self._vline(
                     p,
-                    x + 6,
-                    7,
-                    29,
-                    line,
-                    0.65,
+                    x=x + 6,
+                    y0=7,
+                    y1=29,
+                    colour=line,
+                    width=0.65,
                 )
                 StaffWidget._brace(
                     p,
-                    x + 5,
-                    7,
-                    29,
-                    text,
+                    x=x + 5,
+                    y0=7,
+                    y1=29,
+                    color=text,
                     wd=3.0,
                     font=current_style().font,
                 )
@@ -529,20 +544,20 @@ class RangePictures(_Picture):
                 bottoms = {clef: 25.0}
                 self._staff(
                     p,
-                    x + 1,
-                    x + self.W - 1,
-                    25.0,
-                    gap,
-                    line,
+                    x0=x + 1,
+                    x1=x + self.W - 1,
+                    bottom=25.0,
+                    gap=gap,
+                    colour=line,
                 )
                 StaffWidget._draw_clef(
                     p,
-                    clef,
-                    x + 3,
-                    25.0,
-                    gap,
-                    text,
-                    current_style().font,
+                    clef=clef,
+                    x=x + 3,
+                    bottom=25.0,
+                    gap=gap,
+                    color=text,
+                    font=current_style().font,
                 )
             for note_x, d in ((x + 30, lo), (x + 40, hi)):
                 staff = "treble" if clef == "grand" and d >= MIDDLE_C else "bass" if clef == "grand" else clef
@@ -550,12 +565,12 @@ class RangePictures(_Picture):
                 y = bottoms[staff] - steps * gap / 2
                 self._note_head(
                     p,
-                    note_x,
-                    y,
-                    bottoms[staff],
-                    gap,
-                    text,
-                    steps,
+                    x=note_x,
+                    y=y,
+                    bottom=bottoms[staff],
+                    gap=gap,
+                    colour=text,
+                    steps=steps,
                 )
             p.restore()
 
@@ -569,11 +584,12 @@ class NamePicture(_Picture):
     def __init__(
         self,
         naming: str = "letters",
+        *,
         scale: float = 1.0,
         parent=None,
     ):
-        super().__init__(scale, parent)
-        self._fit(self.W, self.H)
+        super().__init__(scale, parent=parent)
+        self._fit(self.W, height=self.H)
         self.set_naming(naming)
 
     def set_naming(self, naming: str) -> None:
@@ -585,9 +601,10 @@ class NamePicture(_Picture):
     def icon(
         cls,
         naming: str,
+        *,
         scale: float = 1.6,
     ) -> QIcon:
-        return cls(naming, scale).to_icon()
+        return cls(naming, scale=scale).to_icon()
 
     def paintEvent(self, _):
         p = self._painter()
@@ -595,20 +612,20 @@ class NamePicture(_Picture):
         gap, bottom = 2.4, 17.0
         self._staff(
             p,
-            1,
-            self.W - 1,
-            bottom,
-            gap,
-            line,
+            x0=1,
+            x1=self.W - 1,
+            bottom=bottom,
+            gap=gap,
+            colour=line,
         )
         StaffWidget._draw_clef(
             p,
-            "treble",
-            2.5,
-            bottom,
-            gap,
-            text,
-            current_style().font,
+            clef="treble",
+            x=2.5,
+            bottom=bottom,
+            gap=gap,
+            color=text,
+            font=current_style().font,
         )
         names = self.SYLLABLES if self.naming == "solfege" else self.LETTERS
         font = QFont()
@@ -621,21 +638,21 @@ class NamePicture(_Picture):
             if steps == -2:
                 self._hline(
                     p,
-                    x - 3.4,
-                    x + 3.4,
-                    y,
-                    text,
-                    0.65,
+                    x0=x - 3.4,
+                    x1=x + 3.4,
+                    y=y,
+                    colour=text,
+                    width=0.65,
                 )
             StaffWidget._note(
                 p,
-                x,
-                y,
-                gap * 1.45,
-                text,
-                "whole",
-                False,
-                current_style().font,
+                x=x,
+                y=y,
+                gap=gap * 1.45,
+                color=text,
+                value="whole",
+                stem_down=False,
+                font=current_style().font,
             )
             p.setPen(QPen(text, 1.0))
             p.drawText(

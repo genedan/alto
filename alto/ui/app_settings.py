@@ -38,6 +38,7 @@ class StyleCard(QPushButton):
     def __init__(
         self,
         style: notation.NotationStyle,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -65,12 +66,12 @@ class StyleCard(QPushButton):
         self.staff.setFixedWidth(214)
         self.staff.show_notes(
             [
-                [Note(4, 2)],
-                [Note(4, 4)],
-                [Note(5, 0)],
-                [Note(4, 6)],
+                [Note(4, letter=2)],
+                [Note(4, letter=4)],
+                [Note(5, letter=0)],
+                [Note(4, letter=6)],
             ],
-            "treble",
+            clef="treble",
             key=1,
             value="quarter",
         )
@@ -94,6 +95,7 @@ class KeyboardCard(QPushButton):
     def __init__(
         self,
         style: keyboard_styles.KeyboardStyle,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -115,7 +117,7 @@ class KeyboardCard(QPushButton):
         self.keys.max_key_width = 16.0
         self.keys.setFixedWidth(2 * 6 + 10 * 16)  # ten white keys, C4 to E5
         self.keys.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self.keys.show_key(None, (60, 76))
+        self.keys.show_key(None, span=(60, 76))
         holder = QWidget()
         holder.setFixedHeight(int(2 * 6 + 30 + 16 * 6.2))  # room for the tallest strip above the keys
         holder.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
@@ -179,20 +181,20 @@ class KeyboardBuilder(QFrame):
             swatch.setFixedSize(46, 24)
             swatch.setCursor(Qt.CursorShape.PointingHandCursor)
             swatch.setToolTip(f"Pick a colour for the {label.lower()}")
-            swatch.clicked.connect(lambda _=False, p=part, t=label: self._pick(p, t))
+            swatch.clicked.connect(lambda _=False, p=part, t=label: self._pick(p, title=t))
             row.addWidget(swatch)
             row.addSpacing(6)
             self.swatches[part] = swatch
             if optional:
-                none = self._chip("None", None)
+                none = self._chip("None", colour=None)
                 none.setText("✕")
-                none.clicked.connect(lambda _=False, p=part: self._set(p, None))
+                none.clicked.connect(lambda _=False, p=part: self._set(p, colour=None))
                 row.addWidget(none)
             else:
                 row.addSpacing(24)  # line the chips up with the rows that have a None chip
             for material, colour in keyboard_styles.MATERIALS:
-                chip = self._chip(f"{material}  {colour}", colour)
-                chip.clicked.connect(lambda _=False, p=part, c=colour: self._set(p, c))
+                chip = self._chip(f"{material}  {colour}", colour=colour)
+                chip.clicked.connect(lambda _=False, p=part, c=colour: self._set(p, colour=c))
                 row.addWidget(chip)
             row.addStretch(1)
             lay.addLayout(row)
@@ -201,6 +203,7 @@ class KeyboardBuilder(QFrame):
     @staticmethod
     def _chip(
         tip: str,
+        *,
         colour: str | None,
     ) -> QToolButton:
         chip = QToolButton()
@@ -227,21 +230,23 @@ class KeyboardBuilder(QFrame):
     def _set(
         self,
         part: str,
+        *,
         colour: str | None,
     ) -> None:
-        keyboard_styles.set_custom_colour(part, colour)
+        keyboard_styles.set_custom_colour(part, colour=colour)
         self.refresh()
         self.changed.emit()
 
     def _pick(
         self,
         part: str,
+        *,
         title: str,
     ) -> None:
         current = keyboard_styles.custom_colours()[part] or "#ffffff"
         colour = QColorDialog.getColor(QColor(current), self, f"Colour for the {title.lower()}")
         if colour.isValid():
-            self._set(part, colour.name())
+            self._set(part, colour=colour.name())
 
 
 class ThemeCard(QPushButton):
@@ -269,6 +274,7 @@ class ThemeCard(QPushButton):
     def __init__(
         self,
         key: str,
+        *,
         label: str,
         note: str,
         parent=None,
@@ -314,7 +320,7 @@ class ThemeCard(QPushButton):
         clip.addRoundedRect(r, 8, 8)
         p.setClipPath(clip)
         if self.theme_key == "system":  # light on the left, dark on the right, split on a slant
-            self._mock(p, r, self.LIGHT)
+            self._mock(p, r=r, c=self.LIGHT)
             right = QPainterPath()
             right.addPolygon(
                 QPolygonF(
@@ -327,9 +333,9 @@ class ThemeCard(QPushButton):
                 ),
             )
             p.setClipPath(right.intersected(clip))
-            self._mock(p, r, self.DARK)
+            self._mock(p, r=r, c=self.DARK)
         else:
-            self._mock(p, r, self.LIGHT if self.theme_key == "light" else self.DARK)
+            self._mock(p, r=r, c=self.LIGHT if self.theme_key == "light" else self.DARK)
         p.setClipping(False)  # an outline, so the dark preview shows against a dark window
         p.setBrush(Qt.BrushStyle.NoBrush)
         p.setPen(
@@ -348,6 +354,7 @@ class ThemeCard(QPushButton):
     @staticmethod
     def _mock(
         p: QPainter,
+        *,
         r: QRectF,
         c: dict,
     ) -> None:
@@ -470,6 +477,7 @@ class AppSettingsDialog(QDialog):
     @staticmethod
     def _heading(
         lay: QVBoxLayout,
+        *,
         title: str,
         about: str,
     ) -> None:
@@ -543,7 +551,7 @@ class AppSettingsDialog(QDialog):
             QPalette.ColorRole.Highlight,
         )
         window, text, base, accent = (pal.color(r) for r in roles)
-        track = blend(window, text, 0.07)
+        track = blend(window, b=text, t=0.07)
         self.segments.setStyleSheet(
             f"QFrame#segments {{ background: {track.name()}; border-radius: 12px; }}"
             "QFrame#segments QPushButton { border: 0; border-radius: 9px; padding: 6px 18px; background: transparent; }"
@@ -568,7 +576,7 @@ class AppSettingsDialog(QDialog):
         self.theme_cards = {}
         current = saved_theme()
         for key, label in THEMES:
-            card = ThemeCard(key, label, self.THEME_NOTES.get(key, ""))
+            card = ThemeCard(key, label=label, note=self.THEME_NOTES.get(key, ""))
             card.setChecked(key == current)
             group.addButton(card)
             card.clicked.connect(lambda _=False, k=key: self.choose_theme(k))
@@ -617,7 +625,7 @@ class AppSettingsDialog(QDialog):
 
     def _draw_baritone_icons(self) -> None:
         for kind, radio in self.baritone_buttons.items():
-            picture = ClefPictures([f"baritone_{kind}"], 1.4)
+            picture = ClefPictures([f"baritone_{kind}"], scale=1.4)
             radio.setIcon(picture.to_icon())
             radio.setIconSize(picture.size())
 
@@ -655,8 +663,8 @@ class AppSettingsDialog(QDialog):
         page, lay = self._page()
         self._heading(
             lay,
-            "Instrument",
-            "The sound used for notes and for the correct-answer chime. Choose an instrument to see what it is "
+            title="Instrument",
+            about="The sound used for notes and for the correct-answer chime. Choose an instrument to see what it is "
             "made from, and press Hear it to listen.",
         )
         self.instruments = InstrumentPicker()

@@ -20,10 +20,11 @@ from PySide6.QtTest import QTest
 
 def view_of(
     exercise,
+    *,
     seed=1,
     **kw,
 ):
-    return ExerciseView(exercise, random.Random(seed), **kw)
+    return ExerciseView(exercise, rng=random.Random(seed), **kw)
 
 
 def asked(view):
@@ -162,7 +163,7 @@ def test_placing_the_right_note_scores_locks_the_staff_and_moves_on(construction
 
 def test_a_wrong_note_is_shown_then_cleared_for_another_try(construction):
     q = asked(construction)
-    wrong = Note(q.construct.octave, (q.construct.letter + 1) % 7)
+    wrong = Note(q.construct.octave, letter=(q.construct.letter + 1) % 7)
     construction._place(wrong)
     assert construction.missed and not construction.answered and construction._busy and construction.total == 1
     construction._place(q.construct)  # while the miss is showing, clicks are ignored
@@ -176,7 +177,7 @@ def test_a_wrong_note_is_shown_then_cleared_for_another_try(construction):
 
 def test_a_new_question_cancels_the_clearing_of_the_old_one(construction):
     q = asked(construction)
-    construction._place(Note(q.construct.octave, (q.construct.letter + 2) % 7))
+    construction._place(Note(q.construct.octave, letter=(q.construct.letter + 2) % 7))
     construction.next_question()  # before the 900 ms are up
     assert not construction._busy
     QTest.qWait(1000)  # the old timer fires and must leave the new question alone
@@ -185,7 +186,7 @@ def test_a_new_question_cancels_the_clearing_of_the_old_one(construction):
 
 def test_clicks_on_a_question_that_is_not_construction_are_ignored(app):
     view = view_of(KeySignatures())
-    view._place(Note(4, 0))
+    view._place(Note(4, letter=0))
     assert view.total == 0
 
 
@@ -250,7 +251,7 @@ def test_a_second_submit_after_the_question_is_answered_is_ignored(app):
     q = asked(view)
     right = next(b for b in view.buttons if b.text() == q.answer)
     right.click()
-    view.submit(q.answer, right)  # the button is disabled and the question answered
+    view.submit(q.answer, button=right)  # the button is disabled and the question answered
     assert (view.correct, view.total) == (1, 1)
     view._advance.stop()
 

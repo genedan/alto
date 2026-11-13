@@ -32,11 +32,12 @@ class StaffInput(StaffWidget):
     def reset(
         self,
         clef: str,
+        *,
         key: int = 0,
     ) -> None:
         """Clear the staff for a new question, drawing the key signature `key` (sharps +, flats -)."""
         self.accidental, self.locked = None, False
-        self.show_notes([], clef, key)
+        self.show_notes([], clef=clef, key=key)
 
     def note_at(self, y: float) -> Note:
         """The note on the line or space nearest to height `y`, within five ledger lines of the staff.
@@ -55,12 +56,13 @@ class StaffInput(StaffWidget):
         else:
             diatonic = BOTTOM_LINE[self.clef] + round((bottoms[self.clef] - y) / (gap / 2))
         diatonic = min(max(diatonic, low), high)
-        accidental = self.accidental if self.accidental is not None else key_accidental(diatonic % 7, self.key)
-        return Note.from_diatonic(diatonic, accidental)
+        accidental = self.accidental if self.accidental is not None else key_accidental(diatonic % 7, count=self.key)
+        return Note.from_diatonic(diatonic, accidental=accidental)
 
     def show_note(
         self,
         note: Note | None,
+        *,
         color: QColor | None = None,
     ) -> None:
         self.columns = [[note]] if note else []
@@ -70,11 +72,11 @@ class StaffInput(StaffWidget):
     def refresh_preview(self) -> None:
         """Redraw the pointer's note, e.g. after the accidental changes."""
         if not self.locked and self.underMouse():
-            self.show_note(self.note_at(self.mapFromGlobal(self.cursor().pos()).y()), PREVIEW)
+            self.show_note(self.note_at(self.mapFromGlobal(self.cursor().pos()).y()), color=PREVIEW)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if not self.locked:
-            self.show_note(self.note_at(event.position().y()), PREVIEW)
+            self.show_note(self.note_at(event.position().y()), color=PREVIEW)
 
     def leaveEvent(self, event) -> None:
         if not self.locked:

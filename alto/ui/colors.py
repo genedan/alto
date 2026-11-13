@@ -7,6 +7,7 @@ from PySide6.QtGui import QColor
 
 def blend(
     a: QColor,
+    *,
     b: QColor,
     t: float,
 ) -> QColor:
@@ -20,8 +21,9 @@ def blend(
 
 def blend_name(
     a: QColor,
+    *,
     b: QColor,
     t: float,
 ) -> str:
     """Hex name of `blend(a, b, t)`, for use in a stylesheet."""
-    return blend(a, b, t).name()
+    return blend(a, b=b, t=t).name()

@@ -53,6 +53,7 @@ def _square_breve() -> QPainterPath:
 
     def rect(
         x0: float,
+        *,
         y0: float,
         x1: float,
         y1: float,
@@ -84,35 +85,35 @@ def _square_breve() -> QPainterPath:
     outer, inner = 0.825, 0.655  # the uprights run from `inner` to `outer`, either side of the middle
     shape = rect(
         -outer,
-        -0.62,
-        outer,
-        0.62,
+        y0=-0.62,
+        x1=outer,
+        y1=0.62,
     )  # the heavy bars above and below the slot
     shape = shape.united(
         rect(
             -outer,
-            -0.725,
-            -inner,
-            0.725,
-            0.03,
+            y0=-0.725,
+            x1=-inner,
+            y1=0.725,
+            r=0.03,
         ),
     )  # the uprights, a little taller than the bars
     shape = shape.united(
         rect(
             inner,
-            -0.725,
-            outer,
-            0.725,
-            0.03,
+            y0=-0.725,
+            x1=outer,
+            y1=0.725,
+            r=0.03,
         ),
     )
     return shape.subtracted(
         rect(
             -inner,
-            -0.16,
-            inner,
-            0.16,
-            0.10,
+            y0=-0.16,
+            x1=inner,
+            y1=0.16,
+            r=0.10,
         ),
     )  # the slot between the uprights
 
@@ -174,6 +175,7 @@ def _stem_down_shape(value: str) -> QPainterPath:
 
 def note_shape(
     value: str,
+    *,
     stem_down: bool = False,
 ) -> QPainterPath:
     """The outline of a note of this value (see the module docstring); stems only exist from the half note on."""
@@ -186,6 +188,7 @@ def note_shape(
 
 def draw_note(
     p: QPainter,
+    *,
     value: str,
     x: float,
     y: float,
@@ -203,5 +206,5 @@ def draw_note(
     p.save()
     p.setPen(Qt.PenStyle.NoPen)
     p.setBrush(colour)
-    p.drawPath(t.map(note_shape(value, stem_down)))
+    p.drawPath(t.map(note_shape(value, stem_down=stem_down)))
     p.restore()

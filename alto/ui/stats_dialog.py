@@ -42,6 +42,7 @@ TIMEFRAMES = (
 
 def since_for(
     span: str | int | None,
+    *,
     now: float,
 ) -> float | None:
     """The timestamp a timeframe starts from: midnight for today, so many days back for the rest, None for all time."""
@@ -72,6 +73,7 @@ class Tile(QFrame):
     def __init__(
         self,
         caption: str,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -97,6 +99,7 @@ class StatsPage(QWidget):
     def __init__(
         self,
         learner: Learner,
+        *,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
@@ -160,8 +163,8 @@ class StatsPage(QWidget):
         lay.addLayout(tiles)
 
         self.volume = StackedBarChart("Questions answered")
-        self.accuracy = LineChart("Right first time", lambda v: f"{v:.0f}%", fixed_top=100)
-        self.speed = LineChart("Typical time to first answer", lambda v: f"{v:.1f} s")
+        self.accuracy = LineChart("Right first time", fmt=lambda v: f"{v:.0f}%", fixed_top=100)
+        self.speed = LineChart("Typical time to first answer", fmt=lambda v: f"{v:.1f} s")
         self.by_exercise = HBarChart("Right first time, by exercise")
         charts = QGridLayout()
         charts.setSpacing(14)
@@ -222,10 +225,10 @@ class StatsPage(QWidget):
         profiles = [self.learner.profile.id]  # only the active profile's answers
         s = stats.collect(
             self.learner.db,
-            profiles,
-            self.exercise.currentData(),
-            since_for(self.timeframe.currentData(), now),
-            now,
+            profile_ids=profiles,
+            exercise=self.exercise.currentData(),
+            since=since_for(self.timeframe.currentData(), now=now),
+            now=now,
         )
         names = self._names()
 
@@ -250,11 +253,15 @@ class StatsPage(QWidget):
             "month": "month",
         }[s.granularity]
         self.volume.title = f"Questions answered per {per}"
-        self.volume.set_data(labels, [b.first_right for b in s.buckets], [b.questions - b.first_right for b in s.buckets])
+        self.volume.set_data(
+            labels,
+            right=[b.first_right for b in s.buckets],
+            wrong=[b.questions - b.first_right for b in s.buckets],
+        )
         self.accuracy.title = f"Right first time, per {per}"
-        self.accuracy.set_data(labels, [b.accuracy for b in s.buckets])
+        self.accuracy.set_data(labels, values=[b.accuracy for b in s.buckets])
         self.speed.title = f"Typical time to first answer, per {per}"
-        self.speed.set_data(labels, [b.median_seconds for b in s.buckets])
+        self.speed.set_data(labels, values=[b.median_seconds for b in s.buckets])
         self.by_exercise.set_data(
             [
                 (
@@ -268,11 +275,11 @@ class StatsPage(QWidget):
 
         counts = stats.daily_counts(
             self.learner.db,
-            profiles,
-            self.exercise.currentData(),
+            profile_ids=profiles,
+            exercise=self.exercise.currentData(),
             now=now,
         )
-        self.heatmap.set_data(counts, datetime.fromtimestamp(now).date())
+        self.heatmap.set_data(counts, today=datetime.fromtimestamp(now).date())
 
         self.table.setRowCount(len(s.hardest))
         for row, h in enumerate(s.hardest):

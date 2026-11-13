@@ -13,6 +13,7 @@ class Effect:
     def __init__(
         self,
         playing=False,
+        *,
         loading=False,
     ):
         self.playing, self.loading, self.volume_set, self.stopped = playing, loading, [], 0
@@ -43,7 +44,7 @@ def test_a_piano_note_far_outside_the_recordings_is_synthesized(tmp_path):
     s = Sounds()
     s._dir = tmp_path
     piano = INSTRUMENT_BY_KEY["piano"]
-    path = s._note_file(piano, max(s.recordings(piano)) + 6)  # well above the highest recording
+    path = s._note_file(piano, midi=max(s.recordings(piano)) + 6)  # well above the highest recording
     assert path.exists()
     with wave.open(str(path)) as w:
         assert w.getnchannels() == 1 and w.getnframes() > 1000
@@ -54,7 +55,7 @@ def test_another_instrument_shifts_the_nearest_recording(tmp_path):
     s._dir = tmp_path
     inst = INSTRUMENT_BY_KEY["viola_plucked"]
     missing = next(m for m in range(48, 90) if m not in s.recordings(inst))  # a note between the recorded ones
-    assert s._note_file(inst, missing).exists()
+    assert s._note_file(inst, midi=missing).exists()
 
 
 def test_a_released_note_fades_out_and_stops(app):
@@ -115,13 +116,13 @@ def test_a_failure_in_the_sound_system_is_reported_not_raised(
 
     monkeypatch.setattr(s, "_effect", broken)
     s.play_midi(60)
-    s.play_notes([[Note(4, 0)]])
-    s.preview("piano", (60,))
+    s.play_notes([[Note(4, letter=0)]])
+    s.preview("piano", midis=(60,))
     assert capsys.readouterr().out.count("audio unavailable: no sound card") == 3
 
 
 def test_an_unknown_instrument_is_reported_not_raised(capsys):
-    Sounds().preview("no-such-instrument", (60,))
+    Sounds().preview("no-such-instrument", midis=(60,))
     assert "audio unavailable" in capsys.readouterr().out
 
 
@@ -136,8 +137,8 @@ def test_a_sequence_waiting_for_its_notes_to_load_gives_way_to_a_newer_one(
     played = []
     monkeypatch.setattr(s, "play_midi", lambda midi, *a, **k: played.append(midi))
     monkeypatch.setattr(s, "_effect", lambda inst, midi: slow if midi == 60 else ready)
-    s.play_notes([[Note(4, 0)]])  # waits, because note 60 is still loading
-    s.play_notes([[Note(4, 1)]])  # replaces it
+    s.play_notes([[Note(4, letter=0)]])  # waits, because note 60 is still loading
+    s.play_notes([[Note(4, letter=1)]])  # replaces it
     QTest.qWait(150)
     assert played == [62]  # the first one gave up without playing
     slow.loading = False

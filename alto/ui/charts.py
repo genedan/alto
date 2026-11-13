@@ -17,6 +17,7 @@ GOOD, BAD = QColor("#2e7d32"), QColor("#c62828")  # the same greens and reds the
 
 def nice_ticks(
     top: float,
+    *,
     count: int = 4,
 ) -> list[float]:
     """Round tick values from 0 up to just above `top`, e.g. 0, 5, 10, 15 for a top of 13."""
@@ -47,6 +48,7 @@ class _Chart(QWidget):
     def __init__(
         self,
         title: str,
+        *,
         empty: str = "Nothing to show for this selection.",
         parent=None,
     ):
@@ -63,10 +65,10 @@ class _Chart(QWidget):
         return self.palette().color(QPalette.ColorRole.Text)
 
     def _soft(self) -> QColor:
-        return blend(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.55)
+        return blend(self.palette().color(QPalette.ColorRole.Base), b=self._ink(), t=0.55)
 
     def _grid(self) -> QColor:
-        return blend(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.16)
+        return blend(self.palette().color(QPalette.ColorRole.Base), b=self._ink(), t=0.16)
 
     def _plot(self) -> QRectF:
         return QRectF(
@@ -99,6 +101,7 @@ class _Chart(QWidget):
     def _message(
         self,
         p: QPainter,
+        *,
         text: str,
     ) -> None:
         p.setPen(self._soft())
@@ -107,6 +110,7 @@ class _Chart(QWidget):
     def _value_axis(
         self,
         p: QPainter,
+        *,
         ticks: Sequence[float],
         top: float,
         fmt: Callable[[float], str],
@@ -135,6 +139,7 @@ class _Chart(QWidget):
     def _category_axis(
         self,
         p: QPainter,
+        *,
         centres: Sequence[float],
         labels: Sequence[str],
     ) -> None:
@@ -160,6 +165,7 @@ class _Chart(QWidget):
     def _hover(
         self,
         event,
+        *,
         centres: Sequence[float],
         texts: Sequence[str],
     ) -> None:
@@ -188,6 +194,7 @@ class StackedBarChart(_Chart):
     def __init__(
         self,
         title: str,
+        *,
         parent=None,
     ):
         super().__init__(title, parent=parent)
@@ -197,6 +204,7 @@ class StackedBarChart(_Chart):
     def set_data(
         self,
         labels: Sequence[str],
+        *,
         right: Sequence[int],
         wrong: Sequence[int],
     ) -> None:
@@ -212,15 +220,15 @@ class StackedBarChart(_Chart):
         self._frame(p)
         totals = [r + w for r, w in zip(self.right, self.wrong)]
         if not any(totals):
-            self._message(p, self.empty)
+            self._message(p, text=self.empty)
             return
         ticks = nice_ticks(max(totals))
         top = ticks[-1]
         self._value_axis(
             p,
-            ticks,
-            top,
-            lambda v: f"{v:g}",
+            ticks=ticks,
+            top=top,
+            fmt=lambda v: f"{v:g}",
         )
         plot, n = self._plot(), len(self.labels)
         slot = plot.width() / n
@@ -251,13 +259,13 @@ class StackedBarChart(_Chart):
                 2,
                 2,
             ) if w else None
-        self._category_axis(p, centres, self.labels)
+        self._category_axis(p, centres=centres, labels=self.labels)
 
     def mouseMoveEvent(self, event):
         self._hover(
             event,
-            self._centres(),
-            [
+            centres=self._centres(),
+            texts=[
                 f"{lab}\n{r + w} question{'s' if r + w != 1 else ''}: {r} right first time, {w} missed"
                 for lab, r, w in zip(self.labels, self.right, self.wrong)
             ],
@@ -270,6 +278,7 @@ class LineChart(_Chart):
     def __init__(
         self,
         title: str,
+        *,
         fmt: Callable[[float], str],
         fixed_top: float | None = None,
         parent=None,
@@ -281,6 +290,7 @@ class LineChart(_Chart):
     def set_data(
         self,
         labels: Sequence[str],
+        *,
         values: Sequence[float | None],
     ) -> None:
         self.labels, self.values = list(labels), list(values)
@@ -302,14 +312,14 @@ class LineChart(_Chart):
         self._frame(p)
         present = [v for v in self.values if v is not None]
         if not present:
-            self._message(p, self.empty)
+            self._message(p, text=self.empty)
             return
         top, ticks = self._top_and_ticks()
         self._value_axis(
             p,
-            ticks,
-            top,
-            self.fmt,
+            ticks=ticks,
+            top=top,
+            fmt=self.fmt,
         )
         plot, centres = self._plot(), self._centres()
         points = [
@@ -344,13 +354,13 @@ class LineChart(_Chart):
         for pt in points:
             if pt is not None:
                 p.drawEllipse(pt, radius, radius)
-        self._category_axis(p, centres, self.labels)
+        self._category_axis(p, centres=centres, labels=self.labels)
 
     def mouseMoveEvent(self, event):
         self._hover(
             event,
-            self._centres(),
-            [f"{lab}\n{self.fmt(v) if v is not None else 'no answers'}" for lab, v in zip(self.labels, self.values)],
+            centres=self._centres(),
+            texts=[f"{lab}\n{self.fmt(v) if v is not None else 'no answers'}" for lab, v in zip(self.labels, self.values)],
         )
 
 
@@ -362,6 +372,7 @@ class HBarChart(_Chart):
     def __init__(
         self,
         title: str,
+        *,
         parent=None,
     ):
         super().__init__(title, parent=parent)
@@ -377,7 +388,7 @@ class HBarChart(_Chart):
         p = QPainter(self)
         self._frame(p)
         if not self.rows:
-            self._message(p, self.empty)
+            self._message(p, text=self.empty)
             return
         label_w = min(max(p.fontMetrics().horizontalAdvance(n) for n, _, _ in self.rows) + 12, self.width() * 0.45)
         value_w = max(p.fontMetrics().horizontalAdvance(t) for _, _, t in self.rows) + 10
@@ -440,6 +451,7 @@ class HeatmapChart(_Chart):
     def __init__(
         self,
         title: str,
+        *,
         parent=None,
     ):
         super().__init__(title, parent=parent)
@@ -451,6 +463,7 @@ class HeatmapChart(_Chart):
     def set_data(
         self,
         counts: dict[date, int],
+        *,
         today: date,
         weeks: int = 53,
     ) -> None:
@@ -479,7 +492,7 @@ class HeatmapChart(_Chart):
         base = self.palette().color(QPalette.ColorRole.Base)
         if level == 0:
             return self._grid()
-        return blend(base, GOOD, 0.25 + 0.75 * level / self.LEVELS)
+        return blend(base, b=GOOD, t=0.25 + 0.75 * level / self.LEVELS)
 
     def day_at(self, pos: QPointF) -> date | None:
         cell, (x0, y0) = self._cell(), self._origin()

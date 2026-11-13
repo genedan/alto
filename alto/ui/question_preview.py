@@ -20,6 +20,7 @@ class QuestionPreview(QDialog):
     def __init__(
         self,
         exercise_name: str,
+        *,
         question: Question,
         details: list[str] | None = None,
         parent: QWidget | None = None,
@@ -45,10 +46,10 @@ class QuestionPreview(QDialog):
             notes = q.staff or ([[q.construct]] if q.construct is not None else [])
             staff.show_notes(
                 notes,
-                q.clef,
-                q.key,
-                q.value,
-                q.caption,
+                clef=q.clef,
+                key=q.key,
+                value=q.value,
+                caption=q.caption,
             )
             lay.addWidget(staff, alignment=Qt.AlignmentFlag.AlignHCenter)
         if q.keyboard is not None:
@@ -61,11 +62,11 @@ class QuestionPreview(QDialog):
                     compact=True,
                 )
                 key_staff.setFixedWidth(210)
-                key_staff.show_notes([], "treble", q.key)
+                key_staff.show_notes([], clef="treble", key=q.key)
                 lay.addWidget(key_staff, alignment=Qt.AlignmentFlag.AlignHCenter)
             keyboard = KeyboardWidget()
             keyboard.max_key_width = 30.0 if q.key_staff else 38.0
-            keyboard.show_key(q.keyboard.midi, q.keyboard_range)
+            keyboard.show_key(q.keyboard.midi, span=q.keyboard_range)
             lay.addWidget(keyboard)
 
         lines = [f"<b>Answer:</b> {self._answer_text()}"]
@@ -94,5 +95,5 @@ class QuestionPreview(QDialog):
     def _answer_text(self) -> str:
         q = self.question
         if q.construct is not None:
-            return f"{spell(q.construct, app_settings.note_names.naming)}{q.construct.octave}"
+            return f"{spell(q.construct, naming=app_settings.note_names.naming)}{q.construct.octave}"
         return q.answer

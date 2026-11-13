@@ -42,16 +42,16 @@ def tokens(widget: QWidget) -> dict[str, str]:
     accent = pal.color(QPalette.ColorRole.Highlight)
     window = pal.color(QPalette.ColorRole.Window)
     out = dict(
-        accent=blend_name(accent, text, 0.35),  # as text, a little towards the text colour so it reads on either theme
-        accent_soft=blend_name(base, accent, 0.18),
-        muted=blend_name(text, base, 0.42),
+        accent=blend_name(accent, b=text, t=0.35),  # as text, a little towards the text colour so it reads on either theme
+        accent_soft=blend_name(base, b=accent, t=0.18),
+        muted=blend_name(text, b=base, t=0.42),
         line=pal.color(QPalette.ColorRole.Mid).name(),
         panel=base.name(),
-        well=blend_name(window, text, 0.05),
+        well=blend_name(window, b=text, t=0.05),
     )
     for kind, hue in (("good", QColor("#2e9e50")), ("warn", QColor("#d08a00")), ("bad", QColor("#d64a37"))):
-        out[kind] = blend_name(text, hue, 0.65)  # the text colour leaning towards the hue, so it stays readable
-        out[kind + "_soft"] = blend_name(base, hue, 0.16)
+        out[kind] = blend_name(text, b=hue, t=0.65)  # the text colour leaning towards the hue, so it stays readable
+        out[kind + "_soft"] = blend_name(base, b=hue, t=0.16)
     return out
 
 
@@ -222,6 +222,7 @@ class InstrumentPicker(QWidget):
     def _chip(
         self,
         text: str,
+        *,
         kind: str = "",
     ) -> QLabel:
         """A small rounded tag. kind is 'accent', 'good', 'warn', 'bad', or empty for a plain outlined one."""
@@ -237,6 +238,7 @@ class InstrumentPicker(QWidget):
     def _link(
         self,
         url: str,
+        *,
         text: str,
     ) -> str:
         return f'<a href="{url}"><span style="color: {tokens(self)["accent"]};">{text}</span></a>'
@@ -244,6 +246,7 @@ class InstrumentPicker(QWidget):
     def _fact(
         self,
         row: int,
+        *,
         label: str,
         value: str,
         link: bool = False,
@@ -268,6 +271,7 @@ class InstrumentPicker(QWidget):
     @staticmethod
     def _per_way(
         members: list[Instrument],
+        *,
         values: list[str],
     ) -> str:
         """One value if the ways of playing agree, else a line for each, led by its name."""
@@ -299,10 +303,12 @@ class InstrumentPicker(QWidget):
         self._clear(self.chips)
         active = next((m for m in members if m.key == sounds.instrument), None)
         if active is not None:
-            self.chips.addWidget(self._chip(f"In use: {active.variant}" if many else "In use", "accent"))
+            self.chips.addWidget(self._chip(f"In use: {active.variant}" if many else "In use", kind="accent"))
         installed = [h.installed for h in have]
         state = "Installed" if all(installed) else "Not installed" if not any(installed) else "Partly installed"
-        self.chips.addWidget(self._chip(state, "good" if state == "Installed" else "bad" if state == "Not installed" else "warn"))
+        self.chips.addWidget(
+            self._chip(state, kind="good" if state == "Installed" else "bad" if state == "Not installed" else "warn"),
+        )
         if len({m.sustained for m in members}) == 1:
             self.chips.addWidget(self._chip("Each note ends as the next begins" if members[0].sustained else "Notes ring on"))
         self.chips.addStretch(1)
@@ -320,33 +326,35 @@ class InstrumentPicker(QWidget):
         self._clear(self.facts)
         urls = {i.source_url for i in infos}
         source = (
-            self._link(infos[0].source_url, infos[0].source)
+            self._link(infos[0].source_url, text=infos[0].source)
             if len(urls) == 1
-            else "<br>".join(f"{m.variant}: {self._link(i.source_url, i.source)}" for m, i in zip(members, infos))
+            else "<br>".join(f"{m.variant}: {self._link(i.source_url, text=i.source)}" for m, i in zip(members, infos))
         )
         rows = [
             ("Source", source, True),
-            ("Performer", self._per_way(members, [i.performer for i in infos]), False),
-            ("Recorded", self._per_way(members, [i.recorded for i in infos]), False),
-            ("Includes", self._per_way(members, [i.includes for i in infos]), False),
-            ("Notes", self._per_way(members, [h.describe() for h in have]), False),
+            ("Performer", self._per_way(members, values=[i.performer for i in infos]), False),
+            ("Recorded", self._per_way(members, values=[i.recorded for i in infos]), False),
+            ("Includes", self._per_way(members, values=[i.includes for i in infos]), False),
+            ("Notes", self._per_way(members, values=[h.describe() for h in have]), False),
             (
                 "Size",
                 self._per_way(
                     members,
-                    [format_size(sum(p.stat().st_size for p in f.values())) if h.installed else "" for f, h in zip(files, have)],
+                    values=[
+                        format_size(sum(p.stat().st_size for p in f.values())) if h.installed else "" for f, h in zip(files, have)
+                    ],
                 ),
                 False,
             ),
-            ("Terms", self._per_way(members, [i.terms for i in infos]), False),
-            ("About", self._per_way(members, [i.note for i in infos]), False),
+            ("Terms", self._per_way(members, values=[i.terms for i in infos]), False),
+            ("About", self._per_way(members, values=[i.note for i in infos]), False),
         ]
         for row, (label, value, link) in enumerate(r for r in rows if r[1]):
             self._fact(
                 row,
-                label,
-                value,
-                link,
+                label=label,
+                value=value,
+                link=link,
             )
 
         # One row of buttons for each way of playing the instrument.
@@ -394,4 +402,4 @@ class InstrumentPicker(QWidget):
 
     def preview(self, key: str) -> None:
         """Play a short C major arpeggio in that instrument, even if sound is muted."""
-        sounds.preview(key, PREVIEW)
+        sounds.preview(key, midis=PREVIEW)

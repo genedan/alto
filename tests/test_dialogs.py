@@ -140,14 +140,14 @@ def test_a_staff_question_shows_its_notes_answer_choices_and_explanation(
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     q = Question(
         "Which?",
-        ["major", "minor"],
-        "minor",
-        [[Note(4, 0)], [Note(4, 2)]],
+        choices=["major", "minor"],
+        answer="minor",
+        staff=[[Note(4, letter=0)], [Note(4, letter=2)]],
         explanation="C minor",
         octaves=["root position", "1st inversion"],
         second_label="Inversion",
     )
-    dialog = QuestionPreview("Chord", q, ["<b>You answered:</b> major"])
+    dialog = QuestionPreview("Chord", question=q, details=["<b>You answered:</b> major"])
     shown = texts(dialog)
     assert "Which?" in shown and "<b>Answer:</b> minor" in shown and "Choices: major  ·  minor" in shown
     assert "Inversion: root position  ·  1st inversion" in shown and "You answered" in shown and "C minor" in shown
@@ -169,17 +169,17 @@ def test_a_keyboard_question_shows_the_key(
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     q = Question(
         "",
-        ["C", "D"],
-        "C",
-        keyboard=Note(4, 0),
+        choices=["C", "D"],
+        answer="C",
+        keyboard=Note(4, letter=0),
         key=2,
         key_staff=key_staff,
         keyboard_range=(48, 72),
     )
-    dialog = QuestionPreview("Keyboard", q)
+    dialog = QuestionPreview("Keyboard", question=q)
     assert dialog.grab().width() > 0
     next(b for b in dialog.findChildren(QPushButton) if b.text() == "Play").click()
-    assert played == [[[Note(4, 0)]]]
+    assert played == [[[Note(4, letter=0)]]]
 
 
 def test_a_note_construction_question_shows_the_note_that_was_asked_for(
@@ -191,19 +191,19 @@ def test_a_note_construction_question_shows_the_note_that_was_asked_for(
     settings.note_names.naming = "solfege"
     q = Question(
         "Place Sol",
-        [],
-        "",
+        choices=[],
+        answer="",
         clef="bass",
-        construct=Note(3, 4),
+        construct=Note(3, letter=4),
     )
-    dialog = QuestionPreview("Construction", q)
+    dialog = QuestionPreview("Construction", question=q)
     assert "<b>Answer:</b> Sol3" in texts(dialog)
     next(b for b in dialog.findChildren(QPushButton) if b.text() == "Play").click()
-    assert played == [[[Note(3, 4)]]]
+    assert played == [[[Note(3, letter=4)]]]
 
 
 def test_a_question_with_nothing_to_play_has_no_play_button(app):
-    dialog = QuestionPreview("Key signatures", Question("How many?", ["one", "two"], "two"))
+    dialog = QuestionPreview("Key signatures", question=Question("How many?", choices=["one", "two"], answer="two"))
     assert not [b for b in dialog.findChildren(QPushButton) if b.text() == "Play"]
 
 
@@ -212,11 +212,11 @@ def test_the_staff_in_the_preview_is_capped_like_the_one_in_the_exercise(app):
 
     dialog = QuestionPreview(
         "Note",
-        Question(
+        question=Question(
             "",
-            ["C"],
-            "C",
-            [[Note(4, 0)]],
+            choices=["C"],
+            answer="C",
+            staff=[[Note(4, letter=0)]],
         ),
     )
     staff = dialog.findChildren(StaffWidget)[0]

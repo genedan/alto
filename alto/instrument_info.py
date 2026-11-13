@@ -7,7 +7,7 @@ The facts here come from the sources' own pages (the University of Iowa Musical 
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import KW_ONLY, dataclass
 
 from .settings import key_name
 
@@ -19,6 +19,7 @@ SYNTH = "Notes outside the recorded range are synthesized."
 @dataclass(frozen=True)
 class InstrumentInfo:
     summary: str  # one sentence on what the sound is
+    _: KW_ONLY
     source: str
     source_url: str
     performer: str = ""
@@ -31,8 +32,8 @@ class InstrumentInfo:
 INFO: dict[str, InstrumentInfo] = {
     "piano": InstrumentInfo(
         "A Steinway & Sons model B grand piano.",
-        IOWA,
-        "https://theremin.music.uiowa.edu/MISpiano.html",
+        source=IOWA,
+        source_url="https://theremin.music.uiowa.edu/MISpiano.html",
         performer="Evan Mazunik",
         recorded="5 and 27 November 2001, Voxman Music Building, Neumann KM 84 microphones over the strings",
         includes="Mezzo-forte",
@@ -40,8 +41,8 @@ INFO: dict[str, InstrumentInfo] = {
     ),
     "flute": InstrumentInfo(
         "A concert flute, played without vibrato.",
-        IOWA,
-        "https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISFlute2012.html",
+        source=IOWA,
+        source_url="https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISFlute2012.html",
         performer="Sonja Feig",
         recorded="April 2000, anechoic chamber, Neumann KM 84 microphone",
         includes="Without vibrato, fortissimo",
@@ -50,8 +51,8 @@ INFO: dict[str, InstrumentInfo] = {
     ),
     "horn": InstrumentInfo(
         "A French horn.",
-        IOWA,
-        "https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISHorn2012.html",
+        source=IOWA,
+        source_url="https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISHorn2012.html",
         performer="Jessica Wiskus",
         recorded="27 July 1997, anechoic chamber, Neumann KM 84 microphone, 5 feet away",
         includes="Fortissimo",
@@ -60,8 +61,8 @@ INFO: dict[str, InstrumentInfo] = {
     ),
     "viola_bowed": InstrumentInfo(
         "A viola, bowed (arco).",
-        IOWA,
-        "https://theremin.music.uiowa.edu/MISviola2012.html",
+        source=IOWA,
+        source_url="https://theremin.music.uiowa.edu/MISviola2012.html",
         performer="Manuel Tabora, on a viola by Anton Krutz (2001)",
         recorded="11 May 2012, anechoic chamber, Earthworks QTC40 microphones",
         includes="Bowed (arco), mezzo-forte, on the C, G, D and A strings",
@@ -70,8 +71,8 @@ INFO: dict[str, InstrumentInfo] = {
     ),
     "viola_plucked": InstrumentInfo(
         "A viola, plucked (pizzicato).",
-        IOWA,
-        "https://theremin.music.uiowa.edu/MISviola2012.html",
+        source=IOWA,
+        source_url="https://theremin.music.uiowa.edu/MISviola2012.html",
         performer="Manuel Tabora, on a viola by Anton Krutz (2001)",
         recorded="11 May 2012, anechoic chamber, Earthworks QTC40 microphones",
         includes="Plucked (pizzicato), fortissimo, on the C, D and A strings",
@@ -80,16 +81,16 @@ INFO: dict[str, InstrumentInfo] = {
     ),
     "marimba": InstrumentInfo(
         "A marimba, struck with yarn mallets.",
-        IOWA,
-        "https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISMarimba2012.html",
+        source=IOWA,
+        source_url="https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISMarimba2012.html",
         performer="Andrew Thierauf",
         recorded="20 March 2013, anechoic chamber, Earthworks QTC40 microphones",
         includes="Normal strokes with yarn mallets, fortissimo",
     ),
     "vibraphone": InstrumentInfo(
         "A vibraphone, with its sustain.",
-        IOWA,
-        "https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISVibraphone2012.html",
+        source=IOWA,
+        source_url="https://theremin.music.uiowa.edu/MIS-Pitches-2012/MISVibraphone2012.html",
         performer="Andrew Thierauf",
         recorded="10 June 2013, anechoic chamber, Earthworks QTC40 microphones",
         includes="Sustain, fortissimo",
@@ -106,6 +107,7 @@ class Coverage:
     """Which notes an instrument has recordings for."""
 
     count: int
+    _: KW_ONLY
     lowest: int | None = None
     highest: int | None = None
     gaps: int = 0  # semitones inside the range with no recording
@@ -132,7 +134,7 @@ def coverage(midis: Iterable[int]) -> Coverage:
         return Coverage(0)
     return Coverage(
         len(have),
-        have[0],
-        have[-1],
+        lowest=have[0],
+        highest=have[-1],
         gaps=(have[-1] - have[0] + 1) - len(have),
     )

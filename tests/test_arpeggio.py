@@ -24,12 +24,12 @@ def names(notes):
 
 
 def test_an_arpeggio_rises_from_the_bass_note_to_its_octave():
-    c = Note(4, 0)
-    assert names(arpeggio(c, CHORDS["major"], 0)) == "C E G C"
-    assert names(arpeggio(c, CHORDS["major"], 1)) == "E G C E"
-    assert names(arpeggio(c, CHORDS["major"], 2)) == "G C E G"
-    assert names(arpeggio(c, CHORDS["dominant 7th"], 3)) == "B♭ C E G B♭"
-    notes = arpeggio(c, CHORDS["diminished 7th"], 2)
+    c = Note(4, letter=0)
+    assert names(arpeggio(c, intervals=CHORDS["major"], inversion=0)) == "C E G C"
+    assert names(arpeggio(c, intervals=CHORDS["major"], inversion=1)) == "E G C E"
+    assert names(arpeggio(c, intervals=CHORDS["major"], inversion=2)) == "G C E G"
+    assert names(arpeggio(c, intervals=CHORDS["dominant 7th"], inversion=3)) == "B♭ C E G B♭"
+    notes = arpeggio(c, intervals=CHORDS["diminished 7th"], inversion=2)
     assert [n.midi for n in notes] == sorted(n.midi for n in notes)  # always rising
     assert notes[-1].midi - notes[0].midi == 12
 
@@ -143,11 +143,7 @@ class FakeStore:
     def __init__(self, values=None):
         self.values = dict(values or {})
 
-    def setValue(
-        self,
-        key,
-        value,
-    ):
+    def setValue(self, key, value):  # noqa: PLR0917  (stands in for QSettings.setValue, which the code under test calls)
         self.values[key] = value
 
     def value(
@@ -175,7 +171,7 @@ def view(
     # Nothing is played: a note scheduled for later would sound (and load the audio system) during some other test.
     monkeypatch.setattr(sounds, "play_notes", lambda *args, **kwargs: None)
     monkeypatch.setattr(sounds, "play_correct", lambda *args, **kwargs: None)
-    v = ExerciseView(ArpeggioNames(), random.Random(1))
+    v = ExerciseView(ArpeggioNames(), rng=random.Random(1))
     yield v
     v.deleteLater()  # gone before the application, or Qt crashes when Python exits
     QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
@@ -183,6 +179,7 @@ def view(
 
 def press(
     view,
+    *,
     text,
 ):
     next(b for b in view.buttons if b.text() == text).click()
@@ -191,9 +188,9 @@ def press(
 def test_choosing_the_type_and_the_inversion_answers_the_question(view):
     q = view.question
     kind, inversion = q.answer.split(q.joiner)
-    press(view, kind)
+    press(view, text=kind)
     assert not view.answered  # one part is not an answer yet
-    press(view, inversion)
+    press(view, text=inversion)
     assert view.answered and (view.correct, view.total) == (1, 1)
 
 
@@ -203,13 +200,13 @@ def test_a_wrong_pair_is_a_miss_and_the_buttons_reset(view):
     q = view.question
     kind, inversion = q.answer.split(q.joiner)
     wrong = next(t for t in q.choices if t != kind)
-    press(view, inversion)
-    press(view, wrong)
+    press(view, text=inversion)
+    press(view, text=wrong)
     assert view.missed and not view.answered and view.total == 1 and view.correct == 0
     QTest.qWait(900)
     assert view._pending == {} and not view._busy
-    press(view, kind)
-    press(view, inversion)  # trying again works, but it still counts as missed
+    press(view, text=kind)
+    press(view, text=inversion)  # trying again works, but it still counts as missed
     assert view.answered and view.correct == 0
 
 

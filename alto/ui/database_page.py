@@ -37,6 +37,7 @@ class RowsModel(QAbstractTableModel):
     def __init__(
         self,
         headers: list[str],
+        *,
         rows: list[list[tuple[str, object]]],
         numeric: Iterable[int] = (),
         extras: list[dict] | None = None,
@@ -53,7 +54,7 @@ class RowsModel(QAbstractTableModel):
     def columnCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         return 0 if parent.isValid() else len(self.headers)
 
-    def data(
+    def data(  # noqa: PLR0917  (Qt calls this override with positional arguments)
         self,
         index: QModelIndex | QPersistentModelIndex,
         role: int = Qt.ItemDataRole.DisplayRole,
@@ -69,7 +70,7 @@ class RowsModel(QAbstractTableModel):
             return int(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         return None
 
-    def headerData(
+    def headerData(  # noqa: PLR0917  (Qt calls this override with positional arguments)
         self,
         section: int,
         orientation: Qt.Orientation,
@@ -92,6 +93,7 @@ class DatabasePage(QWidget):
     def __init__(
         self,
         learner: Learner,
+        *,
         parent: QWidget | None = None,
     ):
         super().__init__(parent)
@@ -163,6 +165,7 @@ class DatabasePage(QWidget):
     def _question_text(
         self,
         exercise: str,
+        *,
         key: str,
         payload: str | None,
     ) -> str:
@@ -181,7 +184,7 @@ class DatabasePage(QWidget):
     def _answers(self) -> tuple[RowsModel, str]:
         db, pid = self.learner.db, self.learner.profile.id
         rows, extras = [], []
-        for r in db.attempt_rows(pid, ROW_LIMIT):
+        for r in db.attempt_rows(pid, limit=ROW_LIMIT):
             seconds = r["duration_ms"] / 1000
             extras.append(
                 {
@@ -200,7 +203,7 @@ class DatabasePage(QWidget):
                 [
                     _when(r["answered_at"]),
                     (self._names.get(r["exercise"], r["exercise"]),) * 2,
-                    (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2,
+                    (self._question_text(r["exercise"], key=r["item_key"], payload=r["payload"]),) * 2,
                     (r["answer"],) * 2,
                     ("Right", 1) if r["correct"] else ("Wrong", 0),
                     (str(r["attempt_no"]), r["attempt_no"]),
@@ -224,15 +227,15 @@ class DatabasePage(QWidget):
                 "Attempt",
                 "Time",
             ],
-            rows,
-            {5, 6},
-            extras,
+            rows=rows,
+            numeric={5, 6},
+            extras=extras,
         )
         return model, note
 
     def _questions(self) -> tuple[RowsModel, str]:
         rows, extras = [], []
-        for r in self.learner.db.item_rows(self.learner.profile.id, ROW_LIMIT):
+        for r in self.learner.db.item_rows(self.learner.profile.id, limit=ROW_LIMIT):
             typical = r["total_first_ms"] / r["seen"] / 1000 if r["seen"] else 0.0
             extras.append(
                 {
@@ -252,7 +255,7 @@ class DatabasePage(QWidget):
             rows.append(
                 [
                     (self._names.get(r["exercise"], r["exercise"]),) * 2,
-                    (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2,
+                    (self._question_text(r["exercise"], key=r["item_key"], payload=r["payload"]),) * 2,
                     (f"{r['strain']:.1f}", r["strain"]),
                     (str(r["seen"]), r["seen"]),
                     (str(r["first_try_right"]), r["first_try_right"]),
@@ -272,15 +275,15 @@ class DatabasePage(QWidget):
                 "Typical time",
                 "Last seen",
             ],
-            rows,
-            {
+            rows=rows,
+            numeric={
                 2,
                 3,
                 4,
                 5,
                 6,
             },
-            extras,
+            extras=extras,
         )
         return model, (
             f"{len(rows):,} questions asked of {self.learner.profile.name}. "
@@ -305,8 +308,8 @@ class DatabasePage(QWidget):
                     "Answers",
                     "Questions",
                 ],
-                rows,
-                {2, 3},
+                rows=rows,
+                numeric={2, 3},
             ),
             f"{len(rows)} profile{'s' if len(rows) != 1 else ''}.",
         )
@@ -340,9 +343,9 @@ class DatabasePage(QWidget):
         name = str(self._names.get(extra["exercise"], extra["exercise"]))
         QuestionPreview(
             name,
-            question,
-            extra.get("details"),
-            self,
+            question=question,
+            details=extra.get("details"),
+            parent=self,
         ).exec()
 
     def _show_count(self) -> None:

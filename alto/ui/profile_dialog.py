@@ -27,6 +27,7 @@ class ProfileDialog(QDialog):
     def __init__(
         self,
         db: Database,
+        *,
         current: Profile | None = None,
         parent: QWidget | None = None,
     ):
@@ -115,7 +116,7 @@ def startup_profile(db: Database) -> Profile | None:
     """The profile to open with: the one used last time, else ask. None if the person closed the dialog."""
     profiles = db.profiles()
     if profiles:
-        last = db.profile(int_value(store(), "profile/last", -1))
+        last = db.profile(int_value(store(), key="profile/last", default=-1))
         if last:
             return last
         if len(profiles) == 1:

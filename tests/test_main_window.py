@@ -58,7 +58,7 @@ def test_an_exercise_with_no_icon_of_its_own_gets_the_default(app):
         name, category, description = "Odd", "Notation", "Something new."
 
         def generate(self, rng):
-            return Question("?", ["a"], "a")
+            return Question("?", choices=["a"], answer="a")
 
     assert "Odd" not in EXERCISE_ICONS
     card = ExerciseCard(Odd)
@@ -204,6 +204,7 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
         def __init__(
             self,
             db,
+            *,
             current,
             parent,
         ):
@@ -233,6 +234,7 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
         def __init__(
             self,
             db,
+            *,
             current,
             parent,
         ):

@@ -91,12 +91,12 @@ def test_clicking_a_keyboard_card_applies_the_style(dialog):
 def test_the_builder_colours_each_part_and_selects_the_custom_style(dialog):
     from alto.ui import keyboard_styles
 
-    dialog.builder._set("naturals", "#ead9aa")  # boxwood
+    dialog.builder._set("naturals", colour="#ead9aa")  # boxwood
     assert keyboard_styles.current().key == "custom" and keyboard_styles.custom_colours()["naturals"] == "#ead9aa"
     assert dialog.keyboard_cards["custom"].isChecked()
     assert dialog.keyboard_cards["custom"].keys.style_override.white[0] == "#ead9aa"  # the card previews it
-    dialog.builder._set("felt", "#7d1f27")
-    dialog.builder._set("felt", None)  # an optional part can be left out
+    dialog.builder._set("felt", colour="#7d1f27")
+    dialog.builder._set("felt", colour=None)  # an optional part can be left out
     assert keyboard_styles.custom_colours()["felt"] is None and keyboard_styles.current().felt is None
     assert dialog.builder.swatches["felt"].text() == "none"
 

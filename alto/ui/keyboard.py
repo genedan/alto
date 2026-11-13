@@ -46,6 +46,7 @@ MAX_KEY_WIDTH = 38.0  # px; keeps a short range from making a keyboard taller th
 
 def _bottom_rounded(
     x: float,
+    *,
     y: float,
     w: float,
     h: float,
@@ -117,6 +118,7 @@ class KeyboardWidget(QWidget):
     def show_key(
         self,
         midi: int | None,
+        *,
         span: tuple[int, int] | None = None,
     ) -> None:
         """Highlight a key. `span` is the range of keys to show; it is widened to whole white keys."""
@@ -192,28 +194,28 @@ class KeyboardWidget(QWidget):
             on = midi == self.highlight
             path = _bottom_rounded(
                 left + i * kw + style.gap / 2,
-                top,
-                kw - style.gap,
-                kh,
-                radius,
+                y=top,
+                w=kw - style.gap,
+                h=kh,
+                r=radius,
             )
             self._outline(
                 p,
-                path,
-                style,
-                midi,
-                False,
-                edge,
+                path=path,
+                style=style,
+                midi=midi,
+                black=False,
+                width=edge,
             )
             p.setBrush(
                 self.highlight_color
                 if on
                 else keyboard_styles.key_brush(
                     style,
-                    midi,
-                    False,
-                    top,
-                    kh,
+                    midi=midi,
+                    black=False,
+                    y=top,
+                    height=kh,
                 ),
             )
             p.drawPath(path)
@@ -232,28 +234,28 @@ class KeyboardWidget(QWidget):
             on = midi == self.highlight
             path = _bottom_rounded(
                 x,
-                top - 1,
-                bw,
-                bh + 1,
-                min(4.0, bw * 0.2),
+                y=top - 1,
+                w=bw,
+                h=bh + 1,
+                r=min(4.0, bw * 0.2),
             )
             self._outline(
                 p,
-                path,
-                style,
-                midi,
-                True,
-                edge,
+                path=path,
+                style=style,
+                midi=midi,
+                black=True,
+                width=edge,
             )
             p.setBrush(
                 self.highlight_color
                 if on
                 else keyboard_styles.key_brush(
                     style,
-                    midi,
-                    True,
-                    top,
-                    bh,
+                    midi=midi,
+                    black=True,
+                    y=top,
+                    height=bh,
                 ),
             )
             p.drawPath(path)
@@ -278,6 +280,7 @@ class KeyboardWidget(QWidget):
     @staticmethod
     def _outline(
         p: QPainter,
+        *,
         path: QPainterPath,
         style: KeyboardStyle,
         midi: int,
@@ -285,7 +288,7 @@ class KeyboardWidget(QWidget):
         width: float,
     ) -> None:
         """Set the pen for a key's outline; a style with a glow first draws a wide faint halo of it."""
-        colour = keyboard_styles.edge_color(style, midi, black)
+        colour = keyboard_styles.edge_color(style, midi=midi, black=black)
         if style.glow:
             halo = QColor(colour)
             halo.setAlpha(60)
@@ -304,6 +307,7 @@ class KeyboardSpan(QWidget):
     def __init__(
         self,
         parent=None,
+        *,
         compact: bool = False,
         size: tuple[int, int] = (124, 26),
     ):
@@ -399,6 +403,7 @@ class KeyboardSpan(QWidget):
     def set_span(
         self,
         lo: int,
+        *,
         hi: int,
     ) -> None:
         self.lo, self.hi = lo, hi
@@ -433,10 +438,10 @@ class KeyboardSpan(QWidget):
                 if on
                 else keyboard_styles.key_brush(
                     style,
-                    midi,
-                    False,
-                    4,
-                    h - 8,
+                    midi=midi,
+                    black=False,
+                    y=4,
+                    height=h - 8,
                 ),
             )
             p.drawRect(
@@ -457,10 +462,10 @@ class KeyboardSpan(QWidget):
                 if on
                 else keyboard_styles.key_brush(
                     style,
-                    midi,
-                    True,
-                    4,
-                    (h - 8) * 0.6,
+                    midi=midi,
+                    black=True,
+                    y=4,
+                    height=(h - 8) * 0.6,
                 ),
             )
             p.drawRect(

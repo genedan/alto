@@ -12,9 +12,9 @@ from alto.theory.pitch import Note
 def question(letter=0):
     return Question(
         "",
-        ["A", "B"],
-        "A",
-        [[Note(4, letter)]],
+        choices=["A", "B"],
+        answer="A",
+        staff=[[Note(4, letter=letter)]],
     )
 
 
@@ -23,7 +23,7 @@ def test_a_profile_can_be_found_by_id_and_removed_with_its_history():
     ada, ben = db.add_profile("Ada"), db.add_profile("Ben")
     assert db.profile(ada.id) == ada and db.profile(9999) is None
     q = question()
-    learner = Learner(db, ada)
+    learner = Learner(db, profile=ada)
 
     class Stub(Exercise):
         par_seconds = 4.0
@@ -33,11 +33,11 @@ def test_a_profile_can_be_found_by_id_and_removed_with_its_history():
 
     learner.record(
         Stub(),
-        q,
-        "A",
-        True,
-        1,
-        2.0,
+        question=q,
+        answer="A",
+        correct=True,
+        attempt_no=1,
+        seconds=2.0,
     )
     assert db.count_attempts(ada.id) == 1
     db.delete_profile(ada.id)
@@ -52,38 +52,38 @@ def test_the_browser_rows_come_newest_first_with_the_stored_question():
     payload = json.dumps(q.to_dict())
     db.save_item(
         ada.id,
-        "Stub",
-        q.item_key(),
-        ItemRecord(
+        exercise="Stub",
+        item_key=q.item_key(),
+        item=ItemRecord(
             1.5,
-            1,
-            0,
-            1,
-            2000,
-            10.0,
-            "sig",
-            payload,
+            seen=1,
+            first_try_right=0,
+            wrong_attempts=1,
+            total_first_ms=2000,
+            last_seen=10.0,
+            signature="sig",
+            payload=payload,
         ),
     )
     db.add_attempt(
         ada.id,
-        "Stub",
-        q.item_key(),
-        1,
-        "B",
-        False,
-        1500,
-        10.0,
+        exercise="Stub",
+        item_key=q.item_key(),
+        attempt_no=1,
+        answer="B",
+        correct=False,
+        duration_ms=1500,
+        answered_at=10.0,
     )
     db.add_attempt(
         ada.id,
-        "Stub",
-        q.item_key(),
-        2,
-        "A",
-        True,
-        900,
-        11.0,
+        exercise="Stub",
+        item_key=q.item_key(),
+        attempt_no=2,
+        answer="A",
+        correct=True,
+        duration_ms=900,
+        answered_at=11.0,
     )
     rows = db.attempt_rows(ada.id)
     assert [r["attempt_no"] for r in rows] == [2, 1]
@@ -100,17 +100,17 @@ def test_the_item_rows_list_the_hardest_questions_first():
         q = question(i)
         db.save_item(
             ada.id,
-            "Stub",
-            q.item_key(),
-            ItemRecord(
+            exercise="Stub",
+            item_key=q.item_key(),
+            item=ItemRecord(
                 strain,
-                1,
-                0,
-                0,
-                0,
-                float(i),
-                "",
-                json.dumps(q.to_dict()),
+                seen=1,
+                first_try_right=0,
+                wrong_attempts=0,
+                total_first_ms=0,
+                last_seen=float(i),
+                signature="",
+                payload=json.dumps(q.to_dict()),
             ),
         )
     assert [r["strain"] for r in db.item_rows(ada.id)] == [5.0, 3.0, 1.0]

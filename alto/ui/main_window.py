@@ -63,7 +63,7 @@ class MainWindow(QMainWindow):
         self._items: dict[type, QListWidgetItem] = {}
         pal = self.palette()
         ink, window = pal.color(QPalette.ColorRole.Text), pal.color(QPalette.ColorRole.Window)
-        section_colour = blend(ink, window, 0.5)
+        section_colour = blend(ink, b=window, t=0.5)
         section_font = QFont()
         section_font.setPixelSize(10)
         section_font.setBold(True)
@@ -79,7 +79,10 @@ class MainWindow(QMainWindow):
                 label.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
                 label.setSizeHint(QSize(0, 40))
                 self.nav.addItem(label)
-            item = QListWidgetItem(svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), ink, size=20), cls.name)
+            item = QListWidgetItem(
+                svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), color=ink, size=20),
+                cls.name,
+            )
             item.setData(Qt.ItemDataRole.UserRole, cls)
             item.setToolTip(cls.description)
             item.setSizeHint(QSize(0, 38))
@@ -98,24 +101,24 @@ class MainWindow(QMainWindow):
         menu.setWindowFlags(menu.windowFlags() | Qt.WindowType.FramelessWindowHint | Qt.WindowType.NoDropShadowWindowHint)
         menu.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         glyph = self.menu_button.palette().color(QPalette.ColorRole.WindowText)  # menu icons share the text colour
-        home = menu.addAction(svg_icon(icons.HOME, glyph, size=18), "Home")
+        home = menu.addAction(svg_icon(icons.HOME, color=glyph, size=18), "Home")
         home.triggered.connect(self.show_home)
         menu.addSeparator()
-        restart = menu.addAction(svg_icon(icons.RESTART, glyph, size=18), "Restart")
+        restart = menu.addAction(svg_icon(icons.RESTART, color=glyph, size=18), "Restart")
         restart.setShortcut(QKeySequence("Ctrl+R"))
         restart.triggered.connect(self.restart_app)
-        stats_action = menu.addAction(svg_icon(icons.CHART, glyph, size=18), "Statistics")
+        stats_action = menu.addAction(svg_icon(icons.CHART, color=glyph, size=18), "Statistics")
         stats_action.triggered.connect(self.open_stats)
-        database_action = menu.addAction(svg_icon(icons.DATABASE, glyph, size=18), "Browse database")
+        database_action = menu.addAction(svg_icon(icons.DATABASE, color=glyph, size=18), "Browse database")
         database_action.triggered.connect(self.open_database)
-        self.profile_action = menu.addAction(svg_icon(icons.PROFILE, glyph, size=18), "")
+        self.profile_action = menu.addAction(svg_icon(icons.PROFILE, color=glyph, size=18), "")
         self.profile_action.triggered.connect(self.switch_profile)
         self._show_profile()
-        settings_action = menu.addAction(svg_icon(icons.GEAR, glyph, size=18), "Settings…")
+        settings_action = menu.addAction(svg_icon(icons.GEAR, color=glyph, size=18), "Settings…")
         settings_action.setShortcut(QKeySequence("Ctrl+Alt+S"))
         settings_action.triggered.connect(self.open_settings)
         menu.addSeparator()
-        quit_action = menu.addAction(svg_icon(icons.QUIT, glyph, size=18), "Quit")
+        quit_action = menu.addAction(svg_icon(icons.QUIT, color=glyph, size=18), "Quit")
         quit_action.setShortcut(QKeySequence.StandardKey.Quit)
         quit_action.triggered.connect(QApplication.quit)
         self.menu_button.setMenu(menu)
@@ -142,7 +145,7 @@ class MainWindow(QMainWindow):
         self.splitter.setStretchFactor(1, 1)
         self.splitter.setCollapsible(0, True)
         self.splitter.setCollapsible(1, False)
-        self._sidebar_width = int_value(store(), "ui/sidebarWidth", self.SIDEBAR_DEFAULT)
+        self._sidebar_width = int_value(store(), key="ui/sidebarWidth", default=self.SIDEBAR_DEFAULT)
         # Whether the user wants the list shown on exercise pages. The start screen never shows it.
         self._sidebar_pref = str(store().value("ui/sidebarCollapsed", "false")).lower() != "true"
         self._sidebar_anim: QVariantAnimation | None = None
@@ -166,7 +169,7 @@ class MainWindow(QMainWindow):
         )
         buttons.addWidget(self.menu_button)
         self.stats_button = QToolButton()  # a quick way to the statistics, beside the menu
-        self.stats_button.setIcon(svg_icon(icons.CHART, self.palette().color(QPalette.ColorRole.WindowText)))
+        self.stats_button.setIcon(svg_icon(icons.CHART, color=self.palette().color(QPalette.ColorRole.WindowText)))
         self.stats_button.setIconSize(QSize(22, 22))
         self.stats_button.setAutoRaise(True)
         self.stats_button.setToolTip("Statistics")
@@ -174,7 +177,7 @@ class MainWindow(QMainWindow):
         self.stats_button.clicked.connect(self.open_stats)
         buttons.addWidget(self.stats_button)
         self.database_button = QToolButton()
-        self.database_button.setIcon(svg_icon(icons.DATABASE, self.palette().color(QPalette.ColorRole.WindowText)))
+        self.database_button.setIcon(svg_icon(icons.DATABASE, color=self.palette().color(QPalette.ColorRole.WindowText)))
         self.database_button.setIconSize(QSize(22, 22))
         self.database_button.setAutoRaise(True)
         self.database_button.setToolTip("Browse the database")
@@ -232,6 +235,7 @@ class MainWindow(QMainWindow):
     def _set_sidebar(
         self,
         show: bool,
+        *,
         user: bool = False,
     ):
         """Slide the exercise list open or closed. Only a user's choice changes the saved preference."""
@@ -304,15 +308,16 @@ class MainWindow(QMainWindow):
 
     def open_stats(self):
         if self.learner:
-            self._open_overlay(StatsPage(self.learner), "Statistics")
+            self._open_overlay(StatsPage(self.learner), title="Statistics")
 
     def open_database(self):
         if self.learner:
-            self._open_overlay(DatabasePage(self.learner), "Database")
+            self._open_overlay(DatabasePage(self.learner), title="Database")
 
     def _open_overlay(
         self,
         page: StatsPage | DatabasePage,
+        *,
         title: str,
     ):
         """Show `page` (which has a `back` signal) in place of the current page; Back returns to it."""
@@ -340,7 +345,7 @@ class MainWindow(QMainWindow):
         """Choose or add a profile. Their history and questions are kept apart; the next question comes from theirs."""
         if not self.learner:
             return
-        dialog = ProfileDialog(self.learner.db, self.learner.profile, self)
+        dialog = ProfileDialog(self.learner.db, current=self.learner.profile, parent=self)
         if dialog.exec() == QDialog.DialogCode.Accepted and dialog.chosen and dialog.chosen != self.learner.profile:
             self.learner.profile = dialog.chosen
             remember_profile(dialog.chosen)

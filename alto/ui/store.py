@@ -18,6 +18,7 @@ def store() -> QSettings:
 
 def int_value(
     settings: QSettings,
+    *,
     key: str,
     default: int,
 ) -> int:

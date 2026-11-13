@@ -68,7 +68,7 @@ def test_every_instrument_has_recordings_and_covers_the_notes():
             73,
             90,
         ):
-            assert sounds._note_file(inst, midi).exists(), (inst.key, midi)
+            assert sounds._note_file(inst, midi=midi).exists(), (inst.key, midi)
 
 
 def test_pitch_shift_moves_the_frequency():
@@ -76,7 +76,7 @@ def test_pitch_shift_moves_the_frequency():
 
     t = np.arange(SAMPLE_RATE) / SAMPLE_RATE
     tone = np.sin(2 * np.pi * 440 * t)
-    shifted = shift_pitch(tone, 2)  # up a whole tone: ~493.9 Hz
+    shifted = shift_pitch(tone, semitones=2)  # up a whole tone: ~493.9 Hz
     peak = np.argmax(np.abs(np.fft.rfft(shifted))) * SAMPLE_RATE / len(shifted)
     assert abs(peak - 493.9) < 3
 
@@ -90,6 +90,7 @@ class FakeEffect:
     def __init__(
         self,
         label,
+        *,
         log,
     ):
         self.label, self.log, self._volume = label, log, 1.0
@@ -109,6 +110,7 @@ class FakeEffect:
 
 def engine(
     monkeypatch,
+    *,
     instrument,
 ):
     from alto.audio import Sounds
@@ -116,7 +118,7 @@ def engine(
     log, effects = [], {}
     s = Sounds()
     s.instrument = instrument
-    monkeypatch.setattr(s, "_effect", lambda inst, midi: effects.setdefault(midi, FakeEffect(midi, log)))
+    monkeypatch.setattr(s, "_effect", lambda inst, midi: effects.setdefault(midi, FakeEffect(midi, log=log)))
     monkeypatch.setattr(s, "_release", lambda fx: log.append(("release", fx.label)))
     return s, log
 
@@ -135,7 +137,7 @@ def test_only_bowed_and_blown_instruments_are_sustained():
 
 
 def test_a_bowed_note_ends_when_the_next_one_begins(monkeypatch):
-    s, log = engine(monkeypatch, "viola_bowed")
+    s, log = engine(monkeypatch, instrument="viola_bowed")
     s.play_midi(60)
     s.play_midi(62)
     assert log == [("play", 60), ("release", 60), ("play", 62)]
@@ -148,7 +150,7 @@ def test_struck_and_plucked_notes_ring_on(monkeypatch):
         "vibraphone",
         "viola_plucked",
     ):
-        s, log = engine(monkeypatch, instrument)
+        s, log = engine(monkeypatch, instrument=instrument)
         s.play_midi(60)
         s.play_midi(62)
         assert log == [("play", 60), ("play", 62)], instrument
@@ -157,10 +159,10 @@ def test_struck_and_plucked_notes_ring_on(monkeypatch):
 def test_the_notes_of_a_chord_sound_together_and_end_together(monkeypatch):
     from alto.theory.pitch import Note
 
-    s, log = engine(monkeypatch, "viola_bowed")
-    s.play_notes([[Note(4, 0), Note(4, 2), Note(4, 4)]])  # C4 E4 G4 at once
+    s, log = engine(monkeypatch, instrument="viola_bowed")
+    s.play_notes([[Note(4, letter=0), Note(4, letter=2), Note(4, letter=4)]])  # C4 E4 G4 at once
     assert log == [("play", 60), ("play", 64), ("play", 67)]  # none of them cuts off another
-    s.play_notes([[Note(4, 1)]])
+    s.play_notes([[Note(4, letter=1)]])
     assert log[3:] == [
         ("release", 60),
         ("release", 64),
@@ -178,8 +180,8 @@ def test_a_melody_hands_over_from_note_to_note(monkeypatch):
     from PySide6.QtWidgets import QApplication
 
     _app = QApplication.instance() or QApplication([])  # kept alive for the timers
-    s, log = engine(monkeypatch, "viola_bowed")
-    s.play_notes([[Note(4, 0)], [Note(4, 1)], [Note(4, 2)]], gap_ms=30)
+    s, log = engine(monkeypatch, instrument="viola_bowed")
+    s.play_notes([[Note(4, letter=0)], [Note(4, letter=1)], [Note(4, letter=2)]], gap_ms=30)
     QTest.qWait(250)
     assert log == [
         ("play", 60),
@@ -191,7 +193,7 @@ def test_a_melody_hands_over_from_note_to_note(monkeypatch):
 
 
 def test_a_muted_engine_neither_plays_nor_releases(monkeypatch):
-    s, log = engine(monkeypatch, "viola_bowed")
+    s, log = engine(monkeypatch, instrument="viola_bowed")
     s.enabled = False
     s.play_midi(60)
     s.play_midi(62)
@@ -213,6 +215,7 @@ def test_the_two_ways_of_playing_the_viola_are_listed_together():
 
 def preview_engine(
     monkeypatch,
+    *,
     instrument="viola_bowed",
 ):
     """An engine whose notes are recorded with the time they were started."""
@@ -231,7 +234,7 @@ def preview_engine(
         def isPlaying(self):
             return False
 
-    monkeypatch.setattr(s, "_effect", lambda inst, midi: Quiet(midi, []))
+    monkeypatch.setattr(s, "_effect", lambda inst, midi: Quiet(midi, log=[]))
     monkeypatch.setattr(s, "play_midi", lambda midi, *a, **k: started.append((midi, time.monotonic())))
     return s, started
 
@@ -240,7 +243,7 @@ def test_a_preview_plays_its_notes_in_order_one_step_apart(monkeypatch):
     from PySide6.QtTest import QTest
 
     s, started = preview_engine(monkeypatch)
-    s.preview("viola_bowed", (60, 64, 67), step_ms=60)
+    s.preview("viola_bowed", midis=(60, 64, 67), step_ms=60)
     QTest.qWait(400)
     assert [m for m, _ in started] == [60, 64, 67]
     times = [t for _, t in started]
@@ -253,7 +256,7 @@ def test_a_pause_in_the_program_delays_the_notes_instead_of_making_them_sound_to
     from PySide6.QtTest import QTest
 
     s, started = preview_engine(monkeypatch)
-    s.preview("viola_bowed", (60, 64, 67), step_ms=80)
+    s.preview("viola_bowed", midis=(60, 64, 67), step_ms=80)
     time.sleep(0.5)  # the sound system starting up, say, which blocks the timers
     QTest.qWait(500)
     assert [m for m, _ in started] == [60, 64, 67]
@@ -265,9 +268,9 @@ def test_starting_a_second_preview_ends_the_first(monkeypatch):
     from PySide6.QtTest import QTest
 
     s, started = preview_engine(monkeypatch)
-    s.preview("viola_bowed", (60, 64, 67), step_ms=80)
+    s.preview("viola_bowed", midis=(60, 64, 67), step_ms=80)
     QTest.qWait(100)  # the first note, and maybe the second, have started
-    s.preview("viola_bowed", (62, 65, 69), step_ms=80)
+    s.preview("viola_bowed", midis=(62, 65, 69), step_ms=80)
     QTest.qWait(400)
     played = [m for m, _ in started]
     assert played[-3:] == [62, 65, 69]
@@ -280,7 +283,7 @@ def test_starting_a_second_preview_ends_the_first(monkeypatch):
 def melody(n):
     from alto.theory.pitch import Note
 
-    return [[Note(4, i % 7)] for i in range(n)]
+    return [[Note(4, letter=i % 7)] for i in range(n)]
 
 
 def test_the_notes_of_a_melody_are_evenly_spaced(monkeypatch):

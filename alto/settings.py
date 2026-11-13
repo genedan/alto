@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import KW_ONLY, dataclass, field
 
 from .theory.pitch import ACCIDENTAL_SYMBOLS, LETTERS, Note
 
@@ -31,17 +31,17 @@ CLEF_GROUPS = (
 RANGE_KEYS = (*CLEFS, "grand")  # clefs that can have a note range
 # Inclusive diatonic range of notes that may be asked, per clef (defaults sit comfortably on the staff).
 DEFAULT_RANGES = {
-    "treble": (Note(3, 1).diatonic, Note(7, 3).diatonic),  # D3..F7
-    "bass": (Note(1, 3).diatonic, Note(5, 5).diatonic),  # F1..A5
-    "alto": (Note(3, 0).diatonic, Note(5, 0).diatonic),  # C3..C5
-    "tenor": (Note(2, 5).diatonic, Note(4, 5).diatonic),  # A2..A4
-    "soprano": (Note(3, 4).diatonic, Note(5, 4).diatonic),  # G3..G5
-    "mezzo": (Note(3, 2).diatonic, Note(5, 2).diatonic),  # E3..E5
-    "baritone": (Note(2, 3).diatonic, Note(4, 3).diatonic),  # F2..F4
-    "grand": (Note(2, 0).diatonic, Note(6, 0).diatonic),  # C2..C6
+    "treble": (Note(3, letter=1).diatonic, Note(7, letter=3).diatonic),  # D3..F7
+    "bass": (Note(1, letter=3).diatonic, Note(5, letter=5).diatonic),  # F1..A5
+    "alto": (Note(3, letter=0).diatonic, Note(5, letter=0).diatonic),  # C3..C5
+    "tenor": (Note(2, letter=5).diatonic, Note(4, letter=5).diatonic),  # A2..A4
+    "soprano": (Note(3, letter=4).diatonic, Note(5, letter=4).diatonic),  # G3..G5
+    "mezzo": (Note(3, letter=2).diatonic, Note(5, letter=2).diatonic),  # E3..E5
+    "baritone": (Note(2, letter=3).diatonic, Note(4, letter=3).diatonic),  # F2..F4
+    "grand": (Note(2, letter=0).diatonic, Note(6, letter=0).diatonic),  # C2..C6
 }
 # Bounds for the range pickers: C1..C7.
-MIN_DIATONIC, MAX_DIATONIC = Note(1, 0).diatonic, Note(7, 0).diatonic
+MIN_DIATONIC, MAX_DIATONIC = Note(1, letter=0).diatonic, Note(7, letter=0).diatonic
 
 
 NOTE_VALUES = (
@@ -67,13 +67,13 @@ SOLFEGE = (
 
 # How far the range arrows may go: up to 5 ledger lines (10 steps) beyond the staff.
 _BOTTOM_LINES = {
-    "treble": Note(4, 2),
-    "bass": Note(2, 4),
-    "alto": Note(3, 3),
-    "tenor": Note(3, 1),  # E4 G2 F3 D3
-    "soprano": Note(4, 0),
-    "mezzo": Note(3, 5),
-    "baritone": Note(2, 6),
+    "treble": Note(4, letter=2),
+    "bass": Note(2, letter=4),
+    "alto": Note(3, letter=3),
+    "tenor": Note(3, letter=1),  # E4 G2 F3 D3
+    "soprano": Note(4, letter=0),
+    "mezzo": Note(3, letter=5),
+    "baritone": Note(2, letter=6),
 }  # C4 A3 B2
 RANGE_LIMITS = {
     **{c: (max(MIN_DIATONIC, n.diatonic - 10), min(MAX_DIATONIC, n.diatonic + 8 + 10)) for c, n in _BOTTOM_LINES.items()},
@@ -89,6 +89,7 @@ RANGE_LIMITS["bass"] = DEFAULT_RANGES["bass"]
 
 def spell(
     note: Note,
+    *,
     naming: str = "letters",
 ) -> str:
     """Pitch-class name of `note` in the chosen naming system, e.g. 'F♯' or 'Fa♯'."""
@@ -104,6 +105,7 @@ def diatonic_name(d: int) -> str:
 @dataclass
 class NoteNameSettings:
     clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of RANGE_KEYS, so "grand" is allowed
+    _: KW_ONLY
     ranges: dict[str, tuple[int, int]] = field(default_factory=dict)  # overrides of DEFAULT_RANGES
     key_signatures: set[int] = field(default_factory=lambda: {0})  # sharps (+) / flats (-) of the keys to use
     note_values: set[str] = field(default_factory=lambda: {"whole"})
@@ -154,6 +156,7 @@ def key_name(midi: int) -> str:
 @dataclass
 class KeyboardSettings:
     black_keys: bool = True  # also ask the black keys, answered by either enharmonic name
+    _: KW_ONLY
     require_octave: bool = False  # the answer must include the octave number as well
     low: int = KEYBOARD_DEFAULT[0]  # lowest and highest key asked (MIDI numbers, inclusive)
     high: int = KEYBOARD_DEFAULT[1]
@@ -180,6 +183,7 @@ keyboard = KeyboardSettings()
 @dataclass
 class ConstructionSettings:
     clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of RANGE_KEYS, so "grand" is allowed
+    _: KW_ONLY
     accidentals: bool = False  # also ask for sharps and flats, which the answer then has to include
     key_signature: bool = False  # draw a key signature; it applies to the note unless you give the note its own sign
     keys: set[int] = field(
@@ -230,6 +234,7 @@ INVERSIONS = (
 @dataclass
 class ArpeggioSettings:
     clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of CLEFS
+    _: KW_ONLY
     types: set[str] = field(
         default_factory=lambda: {
             "major",
@@ -299,6 +304,7 @@ MODE_LABELS = {
 @dataclass
 class KeySignatureSettings:
     questions: set[str] = field(default_factory=lambda: {"read", "count"})  # keys of KEY_QUESTIONS
+    _: KW_ONLY
     clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of CLEFS: the clef the signature is drawn on
     modes: set[str] = field(default_factory=lambda: {"Major (Ionian)", "Natural minor (Aeolian)"})  # of KEY_MODES
     keys: set[int] = field(default_factory=lambda: set(range(-7, 8)))  # the key signatures asked: sharps (+) / flats (-)

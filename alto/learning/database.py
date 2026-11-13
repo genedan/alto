@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sqlite3
 import time
-from dataclasses import dataclass
+from dataclasses import KW_ONLY, dataclass
 from pathlib import Path
 
 SCHEMA_VERSION = 1
@@ -51,12 +51,14 @@ CREATE TABLE items (
 @dataclass(frozen=True)
 class Profile:
     id: int
+    _: KW_ONLY
     name: str
 
 
 @dataclass(frozen=True)
 class ItemRecord:
     strain: float
+    _: KW_ONLY
     seen: int
     first_try_right: int
     wrong_attempts: int
@@ -90,11 +92,11 @@ class Database:
 
     def profiles(self) -> list[Profile]:
         rows = self.conn.execute("SELECT id, name FROM profiles ORDER BY name COLLATE NOCASE").fetchall()
-        return [Profile(r["id"], r["name"]) for r in rows]
+        return [Profile(r["id"], name=r["name"]) for r in rows]
 
     def profile(self, profile_id: int) -> Profile | None:
         r = self.conn.execute("SELECT id, name FROM profiles WHERE id = ?", (profile_id,)).fetchone()
-        return Profile(r["id"], r["name"]) if r else None
+        return Profile(r["id"], name=r["name"]) if r else None
 
     def add_profile(self, name: str) -> Profile:
         """Create a profile. Raises ValueError for an empty name or one that is taken (case does not matter)."""
@@ -107,7 +109,7 @@ class Database:
         except sqlite3.IntegrityError:
             raise ValueError(f"There is already a profile called {name}.") from None
         assert cur.lastrowid is not None  # an INSERT always gives the new row an id
-        return Profile(cur.lastrowid, name)
+        return Profile(cur.lastrowid, name=name)
 
     def delete_profile(self, profile_id: int) -> None:
         with self.conn:
@@ -118,6 +120,7 @@ class Database:
     def get_item(
         self,
         profile_id: int,
+        *,
         exercise: str,
         item_key: str,
     ) -> ItemRecord | None:
@@ -130,6 +133,7 @@ class Database:
     def save_item(
         self,
         profile_id: int,
+        *,
         exercise: str,
         item_key: str,
         item: ItemRecord,
@@ -160,6 +164,7 @@ class Database:
     def add_attempt(
         self,
         profile_id: int,
+        *,
         exercise: str,
         item_key: str,
         attempt_no: int,
@@ -187,6 +192,7 @@ class Database:
     def attempts(
         self,
         profile_id: int,
+        *,
         exercise: str | None = None,
     ) -> list[sqlite3.Row]:
         sql, args = "SELECT * FROM attempts WHERE profile_id = ?", [profile_id]
@@ -197,6 +203,7 @@ class Database:
     @staticmethod
     def _scope(
         profile_ids: list[int] | None,
+        *,
         exercise: str | None,
         time_column: str,
         since: float | None,
@@ -217,15 +224,16 @@ class Database:
     def attempts_in(
         self,
         profile_ids: list[int] | None = None,
+        *,
         exercise: str | None = None,
         since: float | None = None,
     ) -> list[sqlite3.Row]:
         """Answers given, oldest first. `profile_ids` of None means every profile."""
         where, args = self._scope(
             profile_ids,
-            exercise,
-            "answered_at",
-            since,
+            exercise=exercise,
+            time_column="answered_at",
+            since=since,
         )
         return self.conn.execute(
             "SELECT exercise, attempt_no, correct, duration_ms, answered_at FROM attempts "
@@ -236,6 +244,7 @@ class Database:
     def strained_items(
         self,
         profile_ids: list[int] | None = None,
+        *,
         exercise: str | None = None,
         since: float | None = None,
         min_strain: float = 0.0,
@@ -244,9 +253,9 @@ class Database:
         """The questions that need most practice, the same question from different profiles counted together."""
         where, args = self._scope(
             profile_ids,
-            exercise,
-            "last_seen",
-            since,
+            exercise=exercise,
+            time_column="last_seen",
+            since=since,
         )
         return self.conn.execute(
             "SELECT exercise, item_key, AVG(strain) AS strain, SUM(seen) AS seen, SUM(wrong_attempts) AS wrong, "
@@ -264,6 +273,7 @@ class Database:
     def attempt_rows(
         self,
         profile_id: int,
+        *,
         limit: int = 10000,
     ) -> list[sqlite3.Row]:
         """The newest answers first, each with the stored question it was an answer to (if that is still known)."""
@@ -277,6 +287,7 @@ class Database:
     def item_rows(
         self,
         profile_id: int,
+        *,
         limit: int = 10000,
     ) -> list[sqlite3.Row]:
         return self.conn.execute(
@@ -294,6 +305,7 @@ class Database:
     def replay_candidates(
         self,
         profile_id: int,
+        *,
         exercise: str,
         signature: str,
         hardest: int = 25,
@@ -315,12 +327,12 @@ class Database:
     def _item(r: sqlite3.Row) -> ItemRecord:
         return ItemRecord(
             r["strain"],
-            r["seen"],
-            r["first_try_right"],
-            r["wrong_attempts"],
-            r["total_first_ms"],
-            r["last_seen"],
-            r["signature"],
-            r["payload"],
-            r["item_key"],
+            seen=r["seen"],
+            first_try_right=r["first_try_right"],
+            wrong_attempts=r["wrong_attempts"],
+            total_first_ms=r["total_first_ms"],
+            last_seen=r["last_seen"],
+            signature=r["signature"],
+            payload=r["payload"],
+            item_key=r["item_key"],
         )

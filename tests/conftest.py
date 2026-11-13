@@ -86,11 +86,12 @@ def practised_learner():
 
     def make(
         days=120,
+        *,
         name="Ada",
         db=None,
     ):
         db = db or Database()
-        learner = Learner(db, db.add_profile(name))
+        learner = Learner(db, profile=db.add_profile(name))
         rng, now = random.Random(3), time.time()
         for day in range(days, -1, -3):
             for _ in range(rng.randint(2, 6)):
@@ -100,30 +101,30 @@ def practised_learner():
                 if rng.random() < 0.4:
                     learner.record(
                         ex,
-                        q,
-                        "wrong",
-                        False,
-                        1,
-                        rng.uniform(1, 9),
+                        question=q,
+                        answer="wrong",
+                        correct=False,
+                        attempt_no=1,
+                        seconds=rng.uniform(1, 9),
                         now=at,
                     )
                     learner.record(
                         ex,
-                        q,
-                        q.answer,
-                        True,
-                        2,
-                        2.0,
+                        question=q,
+                        answer=q.answer,
+                        correct=True,
+                        attempt_no=2,
+                        seconds=2.0,
                         now=at + 5,
                     )
                 else:
                     learner.record(
                         ex,
-                        q,
-                        q.answer,
-                        True,
-                        1,
-                        rng.uniform(0.5, 12),
+                        question=q,
+                        answer=q.answer,
+                        correct=True,
+                        attempt_no=1,
+                        seconds=rng.uniform(0.5, 12),
                         now=at,
                     )
         return learner

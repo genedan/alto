@@ -5,7 +5,7 @@ from __future__ import annotations
 import io
 import tempfile
 import wave
-from dataclasses import dataclass
+from dataclasses import KW_ONLY, dataclass
 from pathlib import Path
 
 import numpy as np
@@ -15,6 +15,7 @@ SAMPLE_RATE = 44100
 
 def synth_piano(
     midi: int,
+    *,
     duration: float = 1.6,
 ) -> np.ndarray:
     """Additive piano model: stretched partials, per-partial decay, detuned string pair, hammer thump."""
@@ -49,6 +50,7 @@ def synth_piano(
 @dataclass(frozen=True)
 class Instrument:
     key: str
+    _: KW_ONLY
     label: str
     folder: str  # under assets/: "piano" or "samples/<key>"; file names are MIDI note numbers
     gain: float = 1.0  # level relative to the piano
@@ -58,49 +60,49 @@ class Instrument:
 
 
 INSTRUMENTS = (
-    Instrument("piano", "Piano", "piano"),
+    Instrument("piano", label="Piano", folder="piano"),
     Instrument(
         "flute",
-        "Flute",
-        "samples/flute",
-        0.85,
+        label="Flute",
+        folder="samples/flute",
+        gain=0.85,
         sustained=True,
     ),
     Instrument(
         "horn",
-        "French Horn",
-        "samples/horn",
-        0.85,
+        label="French Horn",
+        folder="samples/horn",
+        gain=0.85,
         sustained=True,
     ),
     Instrument(
         "viola_bowed",
-        "Viola (Arco)",
-        "samples/viola_bowed",
-        0.85,
+        label="Viola (Arco)",
+        folder="samples/viola_bowed",
+        gain=0.85,
         sustained=True,
         family="Viola",
         variant="Arco",
     ),
     Instrument(
         "viola_plucked",
-        "Viola (Pizzicato)",
-        "samples/viola_plucked",
-        0.85,
+        label="Viola (Pizzicato)",
+        folder="samples/viola_plucked",
+        gain=0.85,
         family="Viola",
         variant="Pizzicato",
     ),
     Instrument(
         "marimba",
-        "Marimba",
-        "samples/marimba",
-        0.85,
+        label="Marimba",
+        folder="samples/marimba",
+        gain=0.85,
     ),
     Instrument(
         "vibraphone",
-        "Vibraphone",
-        "samples/vibraphone",
-        0.85,
+        label="Vibraphone",
+        folder="samples/vibraphone",
+        gain=0.85,
     ),
 )
 INSTRUMENT_BY_KEY = {i.key: i for i in INSTRUMENTS}
@@ -122,6 +124,7 @@ def read_wav(path: Path) -> tuple[np.ndarray, int]:
 
 def shift_pitch(
     samples: np.ndarray,
+    *,
     semitones: float,
 ) -> np.ndarray:
     """Change pitch by resampling (it also changes the length, which is fine for a few semitones)."""
@@ -132,6 +135,7 @@ def shift_pitch(
 
 def to_wav_bytes(
     samples: np.ndarray,
+    *,
     rate: int = SAMPLE_RATE,
 ) -> bytes:
     buf = io.BytesIO()
@@ -176,6 +180,7 @@ class Sounds:
     def _note_file(
         self,
         inst: Instrument,
+        *,
         midi: int,
     ) -> Path:
         """A WAV for this note: the recording if there is one, else the nearest recording pitch-shifted."""
@@ -187,7 +192,7 @@ class Sounds:
         if samples and (inst.key != "piano" or abs(min(samples, key=lambda m: abs(m - midi)) - midi) <= 2):
             nearest = min(samples, key=lambda m: abs(m - midi))
             audio, rate = read_wav(samples[nearest])
-            path.write_bytes(to_wav_bytes(shift_pitch(audio, midi - nearest), rate))
+            path.write_bytes(to_wav_bytes(shift_pitch(audio, semitones=midi - nearest), rate=rate))
         else:  # the piano outside its sampled range
             path.write_bytes(to_wav_bytes(synth_piano(midi)))
         return path
@@ -197,6 +202,7 @@ class Sounds:
     def _effect(
         self,
         inst: Instrument,
+        *,
         midi: int,
     ):
         """The sound effect for this note, created the first time it is needed."""
@@ -207,7 +213,7 @@ class Sounds:
             from PySide6.QtMultimedia import QSoundEffect
 
             fx = QSoundEffect()
-            fx.setSource(QUrl.fromLocalFile(str(self._note_file(inst, midi))))
+            fx.setSource(QUrl.fromLocalFile(str(self._note_file(inst, midi=midi))))
             self._effects[key] = fx
         return fx
 
@@ -232,6 +238,7 @@ class Sounds:
     def play_midi(
         self,
         midi: int,
+        *,
         volume: float = 1.0,
         instrument: str | None = None,
         force: bool = False,
@@ -247,7 +254,7 @@ class Sounds:
             inst = INSTRUMENT_BY_KEY.get(instrument or self.instrument, INSTRUMENTS[0])
             if inst.sustained and release_previous:
                 self._release_sounding()
-            fx = self._effect(inst, midi)
+            fx = self._effect(inst, midi=midi)
             fade = self._fades.pop(id(fx), None)  # this note may have been released a moment ago
             if fade is not None:
                 fade.stop()
@@ -272,6 +279,7 @@ class Sounds:
     def preview(
         self,
         key: str,
+        *,
         midis,
         step_ms: int = 300,
     ) -> None:
@@ -280,14 +288,15 @@ class Sounds:
         self.stop_all()
         self._play_sequence(
             key,
-            [([m], 0.9) for m in midis],
-            step_ms,
+            steps=[([m], 0.9) for m in midis],
+            gap_ms=step_ms,
             force=True,
         )
 
     def _play_column(
         self,
         midis,
+        *,
         volume: float,
         key: str | None = None,
         force: bool = False,
@@ -299,7 +308,7 @@ class Sounds:
         for midi in midis:
             self.play_midi(
                 midi,
-                volume,
+                volume=volume,
                 instrument=key,
                 force=force,
                 release_previous=False,
@@ -308,6 +317,7 @@ class Sounds:
     def _play_sequence(
         self,
         key: str,
+        *,
         steps: list[tuple[list[int], float]],
         gap_ms: int,
         force: bool = False,
@@ -328,7 +338,7 @@ class Sounds:
             return
         try:
             inst = INSTRUMENT_BY_KEY[key]
-            effects = [self._effect(inst, m) for midis, _ in steps for m in midis]
+            effects = [self._effect(inst, midi=m) for midis, _ in steps for m in midis]
         except Exception as exc:  # audio must never break an exercise
             print(f"audio unavailable: {exc}")
             return
@@ -345,9 +355,9 @@ class Sounds:
             midis, volume = steps[i]
             self._play_column(
                 midis,
-                volume,
-                key,
-                force,
+                volume=volume,
+                key=key,
+                force=force,
             )
             if i + 1 < len(steps):  # the next one is due a full gap after this one has started, however long that took
                 QTimer.singleShot(gap_ms, lambda: step(i + 1))
@@ -365,13 +375,14 @@ class Sounds:
     def play_notes(
         self,
         columns,
+        *,
         gap_ms: int = 450,
     ) -> None:
         """Play staff columns left to right, evenly spaced; the notes within a column sound together."""
         self._play_sequence(
             self.instrument,
-            [([n.midi for n in col], min(1.0, 1.4 / len(col) ** 0.5)) for col in columns],
-            gap_ms,
+            steps=[([n.midi for n in col], min(1.0, 1.4 / len(col) ** 0.5)) for col in columns],
+            gap_ms=gap_ms,
         )
 
     def play_correct(self, streak: int) -> None:

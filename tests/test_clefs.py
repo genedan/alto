@@ -77,7 +77,7 @@ def test_a_staff_with_notes_and_a_key_signature_draws_in_every_clef(
     staff = StaffWidget()
     staff.resize(500, 300)
     low = Note.from_diatonic(BOTTOM_LINE[clef])
-    staff.show_notes([[low], [Note.from_diatonic(BOTTOM_LINE[clef] + 8)]], clef, -3)
+    staff.show_notes([[low], [Note.from_diatonic(BOTTOM_LINE[clef] + 8)]], clef=clef, key=-3)
     assert staff.grab().width() == 500
     assert staff.staff_bottoms().keys() == {clef}
 
@@ -173,7 +173,7 @@ def test_the_baritone_clef_is_an_f_clef_unless_the_c_clef_is_chosen(
     assert baritone.clef_shape("baritone") == "baritone_f" and baritone.clef_shape("alto") == "alto"
     staff = StaffWidget()
     staff.resize(400, 300)
-    staff.show_notes([[Note(3, 3)]], "baritone", 0)
+    staff.show_notes([[Note(3, letter=3)]], clef="baritone", key=0)
     as_f = _ink(staff)
     baritone.set_baritone_clef("c")
     assert baritone.clef_shape("baritone") == "baritone_c"
@@ -212,7 +212,7 @@ def test_both_baritone_clefs_draw_in_a_music_font_and_in_the_built_in_one(
             baritone.set_baritone_clef(kind)
             staff = StaffWidget()
             staff.resize(400, 300)
-            staff.show_notes([[Note(3, 3)]], "baritone", -2)
+            staff.show_notes([[Note(3, letter=3)]], clef="baritone", key=-2)
             assert staff.grab().width() == 400
     finally:
         baritone.set_style("finalemaestro")

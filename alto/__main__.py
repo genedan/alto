@@ -22,7 +22,7 @@ def main() -> int:
     profile = startup_profile(db)  # asks for a name the first time
     if profile is None:
         return 0
-    learner = Learner(db, profile)
+    learner = Learner(db, profile=profile)
     window = MainWindow(learner)
     app.learner = learner  # pyright: ignore[reportAttributeAccessIssue]  (kept on the app so a theme change can swap in a fresh window)
     app.main_window = window  # pyright: ignore[reportAttributeAccessIssue]

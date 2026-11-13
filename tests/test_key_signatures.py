@@ -21,6 +21,7 @@ MAJOR, MINOR = "Major (Ionian)", "Natural minor (Aeolian)"
 
 def questions(
     n=300,
+    *,
     seed=1,
     **choose,
 ):
@@ -33,7 +34,7 @@ def questions(
 
 def test_each_mode_starts_where_its_signature_says():
     assert [
-        mode_tonic(2, m).name
+        mode_tonic(2, mode=m).name
         for m in (
             MAJOR,
             "Dorian",
@@ -52,16 +53,16 @@ def test_each_mode_starts_where_its_signature_says():
         "B",
         "C♯",
     ]
-    assert mode_tonic(-3, MINOR).name == "C" and mode_tonic(0, "Locrian").name == "B"
-    assert mode_tonic(7, "Lydian").name == "F♯" and mode_tonic(-7, "Locrian").name == "B♭"
+    assert mode_tonic(-3, mode=MINOR).name == "C" and mode_tonic(0, mode="Locrian").name == "B"
+    assert mode_tonic(7, mode="Lydian").name == "F♯" and mode_tonic(-7, mode="Locrian").name == "B♭"
 
 
 @pytest.mark.parametrize("mode", list(MODE_DEGREE))
 def test_a_scale_in_any_mode_carries_exactly_the_key_signature_it_is_asked_with(mode):
     for count in range(-7, 8):
-        tonic = mode_tonic(count, mode)
+        tonic = mode_tonic(count, mode=mode)
         assert abs(tonic.accidental) <= 1  # no double sharps or flats in a name
-        notes = build(tonic, SCALES[mode])
+        notes = build(tonic, intervals=SCALES[mode])
         assert sum(n.accidental for n in notes) == count and len({n.letter for n in notes}) == 7
 
 
@@ -166,7 +167,7 @@ def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: played.append(streak))
     for kind in ({"read"}, {"count"}):
         settings.key_signatures.questions = kind
-        view = ExerciseView(KeySignatures(), random.Random(3))
+        view = ExerciseView(KeySignatures(), rng=random.Random(3))
         q = view.question
         assert q is not None
         if "read" in kind:
@@ -187,13 +188,13 @@ def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(
     monkeypatch.setattr(sounds, "enabled", True)
     assert KeySignatures.has_sound is False and NoteNames.has_sound is True
     for exercise in (KeySignatures(), NoteNames()):
-        view = ExerciseView(exercise, random.Random(3))
+        view = ExerciseView(exercise, rng=random.Random(3))
         assert view.sound_btn.isEnabled() and view.sound_btn.toolTip().startswith("Sound on")
         view.sound_btn.click()
         assert not sounds.enabled and view.sound_btn.toolTip().startswith("Muted")
         view.sound_btn.click()
         assert sounds.enabled
-    muted = ExerciseView(KeySignatures(), random.Random(3))  # one exercise sees a mute made in another
+    muted = ExerciseView(KeySignatures(), rng=random.Random(3))  # one exercise sees a mute made in another
     sounds.enabled = False
     muted._show_sound_state()
     assert muted.sound_btn.toolTip().startswith("Muted") and muted.sound_btn.isEnabled()
@@ -201,7 +202,7 @@ def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(
 
 def test_a_counting_question_shows_no_staff(app):
     settings.key_signatures.questions = {"count"}
-    view = ExerciseView(KeySignatures(), random.Random(3))
+    view = ExerciseView(KeySignatures(), rng=random.Random(3))
     assert not view.staff.isVisibleTo(view)
     q = view.question
     assert q is not None
@@ -212,7 +213,7 @@ def test_a_counting_question_shows_no_staff(app):
 
 def test_the_preview_shows_the_signature_and_the_caption(app):
     q = questions(1, questions={"read"})[0]
-    dialog = QuestionPreview("Key signatures", q)
+    dialog = QuestionPreview("Key signatures", question=q)
     assert q.caption and dialog.grab().width() > 0
     assert not [b for b in dialog.findChildren(QPushButton) if b.text() == "Play"]  # there is nothing to play
 
@@ -331,7 +332,7 @@ def test_the_kind_of_scale_is_written_under_the_staff_not_above_it(app):
     asked = questions(200)
     assert {q.caption for q in asked if q.show_staff} == {"_ Major", "_ minor"}
     assert all(q.caption == "" for q in asked if not q.show_staff)  # counting questions keep their line of text
-    view = ExerciseView(KeySignatures(), random.Random(1))
+    view = ExerciseView(KeySignatures(), rng=random.Random(1))
     view.resize(900, 600)
     view.show()
     for _ in range(30):

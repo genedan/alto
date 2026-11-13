@@ -16,9 +16,9 @@ from PySide6.QtTest import QSignalSpy
 def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app):
     model = RowsModel(
         ["Name", "Count"],
-        [[("b", "b"), ("10", 10)], [("a", "a"), ("2", 2)]],
-        {1},
-        [{"x": 1}, {"x": 2}],
+        rows=[[("b", "b"), ("10", 10)], [("a", "a"), ("2", 2)]],
+        numeric={1},
+        extras=[{"x": 1}, {"x": 2}],
     )
     first = model.index(0, 1)
     assert model.rowCount() == 2 and model.columnCount() == 2
@@ -32,7 +32,7 @@ def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app)
     assert model.headerData(1, Qt.Orientation.Horizontal) == "Count"
     assert model.headerData(1, Qt.Orientation.Vertical) is None
     assert model.headerData(1, Qt.Orientation.Horizontal, Qt.ItemDataRole.ToolTipRole) is None
-    assert RowsModel(["A"], [[("x", 1)]]).extras == [{}]  # rows with nothing hidden get an empty note each
+    assert RowsModel(["A"], rows=[[("x", 1)]]).extras == [{}]  # rows with nothing hidden get an empty note each
 
 
 def test_the_answers_table_lists_every_answer_newest_first(
@@ -72,7 +72,7 @@ def test_the_questions_and_profiles_tables(
     practised_learner,
 ):
     learner = practised_learner(30)
-    Learner(learner.db, learner.db.add_profile("Ben"))
+    Learner(learner.db, profile=learner.db.add_profile("Ben"))
     page = DatabasePage(learner)
     page.tabs["questions"].click()
     assert page.proxy.rowCount() > 0 and "questions asked of Ada" in page.note.text()
@@ -111,44 +111,44 @@ def test_questions_whose_record_is_gone_or_unreadable_are_labelled(
     db = learner.db
     db.add_attempt(
         pid,
-        "NoteNames",
-        "ghost",
-        1,
-        "C",
-        True,
-        1000,
-        99.0,
+        exercise="NoteNames",
+        item_key="ghost",
+        attempt_no=1,
+        answer="C",
+        correct=True,
+        duration_ms=1000,
+        answered_at=99.0,
     )  # an answer to a question that is no longer stored
     db.save_item(
         pid,
-        "NoteNames",
-        "broken",
-        ItemRecord(
+        exercise="NoteNames",
+        item_key="broken",
+        item=ItemRecord(
             1.0,
-            1,
-            1,
-            0,
-            0,
-            1.0,
-            "",
-            "{not json",
-            "broken",
+            seen=1,
+            first_try_right=1,
+            wrong_attempts=0,
+            total_first_ms=0,
+            last_seen=1.0,
+            signature="",
+            payload="{not json",
+            item_key="broken",
         ),
     )
     db.add_attempt(
         pid,
-        "NoteNames",
-        "broken",
-        1,
-        "C",
-        True,
-        1000,
-        98.0,
+        exercise="NoteNames",
+        item_key="broken",
+        attempt_no=1,
+        answer="C",
+        correct=True,
+        duration_ms=1000,
+        answered_at=98.0,
     )
     page = DatabasePage(learner)
     texts = [page.proxy.index(r, 2).data() for r in range(page.proxy.rowCount())]
     assert "(no longer stored)" in texts and "(unreadable)" in texts
-    assert page._question_text("NoteNames", "broken", "{not json") == "(unreadable)"  # remembered, not parsed again
+    assert page._question_text("NoteNames", key="broken", payload="{not json") == "(unreadable)"  # remembered, not parsed again
 
 
 def test_double_clicking_a_row_shows_the_question_it_is_about(
@@ -162,6 +162,7 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(
         def __init__(
             self,
             name,
+            *,
             question,
             details,
             parent,
@@ -190,30 +191,30 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(
     assert opened == []
     oddball = ItemRecord(
         1,
-        1,
-        1,
-        0,
-        0,
-        1.0,
-        "",
-        json.dumps({"bad": 1}),
-        "oddball",
+        seen=1,
+        first_try_right=1,
+        wrong_attempts=0,
+        total_first_ms=0,
+        last_seen=1.0,
+        signature="",
+        payload=json.dumps({"bad": 1}),
+        item_key="oddball",
     )
     learner.db.save_item(
         learner.profile.id,
-        "NoteNames",
-        "oddball",
-        oddball,
+        exercise="NoteNames",
+        item_key="oddball",
+        item=oddball,
     )
     learner.db.add_attempt(
         learner.profile.id,
-        "NoteNames",
-        "oddball",
-        1,
-        "x",
-        False,
-        500,
-        200.0,
+        exercise="NoteNames",
+        item_key="oddball",
+        attempt_no=1,
+        answer="x",
+        correct=False,
+        duration_ms=500,
+        answered_at=200.0,
     )
     page.tabs["answers"].click()
     row = next(r for r in range(page.proxy.rowCount()) if page.proxy.index(r, 3).data() == "x")

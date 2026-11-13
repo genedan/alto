@@ -38,6 +38,7 @@ class ExerciseView(QWidget):
     def __init__(
         self,
         exercise: Exercise,
+        *,
         rng: random.Random | None = None,
         parent=None,
         learner: Learner | None = None,
@@ -111,7 +112,7 @@ class ExerciseView(QWidget):
         self.settings_panel = settings_panel_for(exercise)
         if self.settings_panel:
             self.gear = QToolButton()
-            self.gear.setIcon(svg_icon(SLIDERS, self.palette().color(QPalette.ColorRole.WindowText)))
+            self.gear.setIcon(svg_icon(SLIDERS, color=self.palette().color(QPalette.ColorRole.WindowText)))
             self.gear.setIconSize(QSize(24, 24))
             self.gear.setCheckable(True)
             self.gear.setAutoRaise(True)
@@ -173,7 +174,7 @@ class ExerciseView(QWidget):
 
     def _show_sound_state(self):
         color = self.palette().color(QPalette.ColorRole.WindowText)
-        self.sound_btn.setIcon(svg_icon(SPEAKER_ON if sounds.enabled else SPEAKER_MUTED, color))
+        self.sound_btn.setIcon(svg_icon(SPEAKER_ON if sounds.enabled else SPEAKER_MUTED, color=color))
         self.sound_btn.setToolTip("Sound on (click to mute)" if sounds.enabled else "Muted (click to unmute)")
 
     def _toggle_pane(self, open_: bool):
@@ -192,7 +193,7 @@ class ExerciseView(QWidget):
         """A question drawn by what the learner needs, or at random without a profile."""
         if self.learner is None:
             return self.exercise.generate(self.rng)
-        return self.learner.pick(self.exercise, self.rng, avoid=self.question.item_key() if self.question else None)
+        return self.learner.pick(self.exercise, rng=self.rng, avoid=self.question.item_key() if self.question else None)
 
     def next_question(self):
         self._advance.stop()
@@ -212,20 +213,20 @@ class ExerciseView(QWidget):
         self.input_staff.setVisible(construct)
         self.accidental_row.setVisible(construct and q.accidentals)
         if construct:
-            self.input_staff.reset(q.clef, q.key)
+            self.input_staff.reset(q.clef, key=q.key)
             for b in self.accidental_buttons.values():
                 b.setChecked(False)
         self.keyboard.setVisible(q.keyboard is not None)
         self.key_staff.setVisible(q.key_staff)
-        self.key_staff.show_notes([], "treble", q.key)
+        self.key_staff.show_notes([], clef="treble", key=q.key)
         self.keyboard.max_key_width = 30.0 if q.key_staff else 38.0  # leave room for the staff above
-        self.keyboard.show_key(q.keyboard.midi if q.keyboard else None, q.keyboard_range)
+        self.keyboard.show_key(q.keyboard.midi if q.keyboard else None, span=q.keyboard_range)
         self.staff.show_notes(
             q.staff,
-            q.clef,
-            q.key,
-            q.value,
-            q.caption,
+            clef=q.clef,
+            key=q.key,
+            value=q.value,
+            caption=q.caption,
         )
         for b in self.buttons:
             b.deleteLater()
@@ -240,9 +241,9 @@ class ExerciseView(QWidget):
                 b.setToolTip(f"Key {i + 1}")
             if q.octaves:
                 b.setCheckable(True)
-                b.clicked.connect(lambda _=False, choice=c, btn=b: self._pick("name", choice, btn))
+                b.clicked.connect(lambda _=False, choice=c, btn=b: self._pick("name", text=choice, button=btn))
             else:
-                b.clicked.connect(lambda _=False, choice=c, btn=b: self.submit(choice, btn))
+                b.clicked.connect(lambda _=False, choice=c, btn=b: self.submit(choice, button=btn))
             row, col = q.grid[c] if q.grid else (0, i)
             self.choice_box.addWidget(b, row, col)
             self.buttons.append(b)
@@ -260,7 +261,7 @@ class ExerciseView(QWidget):
                 b = QPushButton(octave)
                 b.setMinimumHeight(40)
                 b.setCheckable(True)
-                b.clicked.connect(lambda _=False, text=octave, btn=b: self._pick("octave", text, btn))
+                b.clicked.connect(lambda _=False, text=octave, btn=b: self._pick("octave", text=text, button=btn))
                 self.octave_box.addWidget(b, 1)
                 self.buttons.append(b)
         self._update_score()
@@ -272,6 +273,7 @@ class ExerciseView(QWidget):
     def _flash(
         self,
         button: QPushButton,
+        *,
         target: str,
         staff: bool = False,
     ):
@@ -283,7 +285,7 @@ class ExerciseView(QWidget):
         anim.setEndValue(1.0)
 
         def step(t: float):
-            c = blend(start, end, t)
+            c = blend(start, b=end, t=t)
             button.setStyleSheet(self._style(c))
             if staff:
                 self.staff.set_note_color(c if t > 0 else None)
@@ -330,7 +332,7 @@ class ExerciseView(QWidget):
         anim.setDuration(350)
         anim.setStartValue(0.0)
         anim.setEndValue(1.0)
-        anim.valueChanged.connect(lambda t: self.input_staff.set_note_color(blend(start, end, t)))
+        anim.valueChanged.connect(lambda t: self.input_staff.set_note_color(blend(start, b=end, t=t)))
         self._anims.append(anim)
         anim.start()
 
@@ -340,7 +342,7 @@ class ExerciseView(QWidget):
         if not q or q.construct is None or self.answered or self._busy:
             return
         ok = q.check_placed(note)
-        self._record(ok, f"{spell(note, app_settings.note_names.naming)}{note.octave}")
+        self._record(ok, choice=f"{spell(note, naming=app_settings.note_names.naming)}{note.octave}")
         self.input_staff.locked = True
         if ok:
             self.answered = True
@@ -367,6 +369,7 @@ class ExerciseView(QWidget):
     def _record(
         self,
         ok: bool,
+        *,
         choice: str = "",
     ):
         self._attempts += 1
@@ -375,11 +378,11 @@ class ExerciseView(QWidget):
         if self.learner and self.question:
             self.learner.record(
                 self.exercise,
-                self.question,
-                choice,
-                ok,
-                self._attempts,
-                seconds,
+                question=self.question,
+                answer=choice,
+                correct=ok,
+                attempt_no=self._attempts,
+                seconds=seconds,
             )
         if not self.missed:  # only the first attempt counts toward the score
             self.total += 1
@@ -389,6 +392,7 @@ class ExerciseView(QWidget):
     def _pick(
         self,
         part: str,
+        *,
         text: str,
         button: QPushButton,
     ):
@@ -410,14 +414,14 @@ class ExerciseView(QWidget):
         (name, name_btn), (octave, octave_btn) = self._pending["name"], self._pending["octave"]
         choice = name + q.joiner + octave
         if q.check(choice):
-            self._flash(octave_btn, "#2e7d32")
-            self.submit(choice, name_btn)  # scores it, flashes the name button, plays the note, moves on
+            self._flash(octave_btn, target="#2e7d32")
+            self.submit(choice, button=name_btn)  # scores it, flashes the name button, plays the note, moves on
             return
-        self._record(False, choice)
+        self._record(False, choice=choice)
         self.missed = True
         self._busy = True
         for b in (name_btn, octave_btn):
-            self._flash(b, "#c62828")
+            self._flash(b, target="#c62828")
         self._update_score()
         token = self._pair_token
 
@@ -435,16 +439,17 @@ class ExerciseView(QWidget):
     def submit(
         self,
         choice: str,
+        *,
         button: QPushButton,
     ):
         if self.answered or not self.question or not button.isEnabled():
             return
         q = self.question
         ok = q.check(choice)
-        self._record(ok, choice)
+        self._record(ok, choice=choice)
         if ok:
             self.answered = True  # the other buttons stay as they are; only the one pressed animates
-            self._flash(button, "#2e7d32", staff=True)
+            self._flash(button, target="#2e7d32", staff=True)
             notes = q.staff or ([[q.keyboard]] if q.keyboard else [])
             if not self.exercise.has_sound:
                 pass  # no tone for this exercise
@@ -456,7 +461,7 @@ class ExerciseView(QWidget):
         else:
             self.missed = True
             button.setEnabled(False)
-            self._flash(button, "#c62828")
+            self._flash(button, target="#c62828")
         self._update_score()
 
     def _update_score(self):

@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import statistics
 import time
-from dataclasses import dataclass, field
+from dataclasses import KW_ONLY, dataclass, field
 from datetime import date, datetime, timedelta
 
 from ..exercises.base import Question
@@ -24,6 +24,7 @@ IDLE_CAP_S = 120.0  # one answer counts for at most this long towards practice t
 @dataclass
 class Bucket:
     start: datetime
+    _: KW_ONLY
     label: str
     questions: int = 0
     first_right: int = 0
@@ -41,6 +42,7 @@ class Bucket:
 @dataclass
 class ExerciseStats:
     exercise: str
+    _: KW_ONLY
     questions: int
     accuracy: float
     median_seconds: float
@@ -49,6 +51,7 @@ class ExerciseStats:
 @dataclass
 class HardQuestion:
     exercise: str
+    _: KW_ONLY
     text: str
     strain: float
     seen: int
@@ -58,6 +61,7 @@ class HardQuestion:
 @dataclass
 class Stats:
     questions: int = 0
+    _: KW_ONLY
     first_right: int = 0
     attempts: int = 0
     median_seconds: float | None = None
@@ -89,6 +93,7 @@ def _granularity(span_days: float) -> str:
 
 def _floor(
     t: datetime,
+    *,
     gran: str,
 ) -> datetime:
     if gran == "hour":
@@ -108,6 +113,7 @@ def _floor(
 
 def _next(
     t: datetime,
+    *,
     gran: str,
 ) -> datetime:
     if gran == "hour":
@@ -121,6 +127,7 @@ def _next(
 
 def _label(
     t: datetime,
+    *,
     gran: str,
 ) -> str:
     if gran == "hour":
@@ -157,6 +164,7 @@ def describe(question: Question) -> str:
 
 def daily_counts(
     db: Database,
+    *,
     profile_ids: list[int] | None,
     exercise: str | None = None,
     weeks: int = 53,
@@ -169,7 +177,7 @@ def daily_counts(
     first = today - timedelta(days=today.weekday() + 7 * (weeks - 1))  # the Monday that starts the first week shown
     since = datetime.combine(first, datetime.min.time()).timestamp()
     counts: dict[date, int] = {}
-    for r in db.attempts_in(profile_ids, exercise, since):
+    for r in db.attempts_in(profile_ids, exercise=exercise, since=since):
         if r["attempt_no"] == 1:
             day = datetime.fromtimestamp(r["answered_at"]).date()
             counts[day] = counts.get(day, 0) + 1
@@ -178,6 +186,7 @@ def daily_counts(
 
 def collect(
     db: Database,
+    *,
     profile_ids: list[int] | None,
     exercise: str | None = None,
     since: float | None = None,
@@ -187,16 +196,16 @@ def collect(
     """Everything the statistics screen shows for these profiles (None = all of them), this exercise (None = all) and
     answers from `since` (a timestamp, None = from the start) up to now."""
     now = time.time() if now is None else now
-    rows = db.attempts_in(profile_ids, exercise, since)
+    rows = db.attempts_in(profile_ids, exercise=exercise, since=since)
     out = Stats(attempts=len(rows))
     if rows:
         start = datetime.fromtimestamp(since if since is not None else rows[0]["answered_at"])
         out.granularity = gran = _granularity((now - start.timestamp()) / 86400)
-        cursor, end = _floor(start, gran), datetime.fromtimestamp(now)
+        cursor, end = _floor(start, gran=gran), datetime.fromtimestamp(now)
         buckets: dict[datetime, Bucket] = {}
         while cursor <= end:
-            buckets[cursor] = Bucket(cursor, _label(cursor, gran))
-            cursor = _next(cursor, gran)
+            buckets[cursor] = Bucket(cursor, label=_label(cursor, gran=gran))
+            cursor = _next(cursor, gran=gran)
         per_exercise: dict[str, list[tuple[bool, float]]] = {}
         times: list[float] = []
         days = set()
@@ -211,7 +220,7 @@ def collect(
             out.first_right += ok
             times.append(seconds)
             per_exercise.setdefault(r["exercise"], []).append((ok, seconds))
-            b = buckets.get(_floor(when, gran))
+            b = buckets.get(_floor(when, gran=gran))
             if b:
                 b.questions += 1
                 b.first_right += ok
@@ -223,9 +232,9 @@ def collect(
             (
                 ExerciseStats(
                     name,
-                    len(v),
-                    100.0 * sum(ok for ok, _ in v) / len(v),
-                    statistics.median(t for _, t in v),
+                    questions=len(v),
+                    accuracy=100.0 * sum(ok for ok, _ in v) / len(v),
+                    median_seconds=statistics.median(t for _, t in v),
                 )
                 for name, v in per_exercise.items()
             ),
@@ -233,8 +242,8 @@ def collect(
         )
     for r in db.strained_items(
         profile_ids,
-        exercise,
-        since,
+        exercise=exercise,
+        since=since,
         min_strain=scheduler.NEW_STRAIN,
         limit=hardest,
     ):
@@ -245,10 +254,10 @@ def collect(
         out.hardest.append(
             HardQuestion(
                 r["exercise"],
-                text,
-                r["strain"],
-                r["seen"],
-                r["wrong"],
+                text=text,
+                strain=r["strain"],
+                seen=r["seen"],
+                wrong=r["wrong"],
             ),
         )
     return out

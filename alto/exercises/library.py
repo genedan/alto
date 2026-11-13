@@ -18,13 +18,14 @@ from ..theory.scales import (
 from .base import Exercise, Question, pick_distractors, register, signature
 
 CLEF_RANGES = {  # inclusive diatonic range that sits comfortably on the staff
-    "treble": (Note(3, 5), Note(5, 5)),  # A3..A5
-    "bass": (Note(2, 0), Note(4, 0)),  # C2..C4
+    "treble": (Note(3, letter=5), Note(5, letter=5)),  # A3..A5
+    "bass": (Note(2, letter=0), Note(4, letter=0)),  # C2..C4
 }
 
 
 def _random_note(
     rng: random.Random,
+    *,
     clef: str,
     accidentals: bool,
     span: tuple[int, int] | None = None,
@@ -32,7 +33,7 @@ def _random_note(
     """Random note; `span` is an inclusive diatonic range (default: the clef's comfortable range)."""
     lo, hi = span or (CLEF_RANGES[clef][0].diatonic, CLEF_RANGES[clef][1].diatonic)
     d = rng.randint(lo, hi)
-    return Note.from_diatonic(d, rng.choice((-1, 0, 1)) if accidentals else 0)
+    return Note.from_diatonic(d, accidental=rng.choice((-1, 0, 1)) if accidentals else 0)
 
 
 @register
@@ -63,20 +64,20 @@ class NoteNames(Exercise):
         with_accidentals = self.accidentals or cfg.accidentals
 
         letter_pos = rng.randint(*cfg.range_for(clef))
-        in_key = key_accidental(letter_pos % 7, key)
+        in_key = key_accidental(letter_pos % 7, count=key)
         acc = in_key
         if with_accidentals and rng.random() < 0.5:  # an explicit sign that differs from the key signature
             acc = rng.choice([a for a in (-1, 0, 1) if a != in_key])
-        note = Note.from_diatonic(letter_pos, acc)
+        note = Note.from_diatonic(letter_pos, accidental=acc)
 
-        name = spell(note, cfg.naming)
+        name = spell(note, naming=cfg.naming)
         # One button for every name that can be the answer under the current settings.
         if with_accidentals:
             pool = {(l, a) for l in range(7) for a in (-1, 0, 1)}
         else:
-            pool = {(l, key_accidental(l, k)) for l in range(7) for k in cfg.active_keys()}
+            pool = {(l, key_accidental(l, count=k)) for l in range(7) for k in cfg.active_keys()}
         ordered = sorted(pool)
-        choices = [spell(Note(4, l, a), cfg.naming) for l, a in ordered]
+        choices = [spell(Note(4, letter=l, accidental=a), naming=cfg.naming) for l, a in ordered]
         if len(pool) == 7:  # one name per letter: a single row, one column per letter
             grid = {c: (0, l) for c, (l, _) in zip(choices, ordered)}
         else:  # columns are letters; sharps on the top row, then naturals, then flats
@@ -90,14 +91,14 @@ class NoteNames(Exercise):
             expl.append("The accidental on the note overrides the key signature.")
         return Question(
             "",
-            choices,
-            name,
-            [[note]],
-            clef,
-            " ".join(expl),
-            key,
-            value,
-            grid,
+            choices=choices,
+            answer=name,
+            staff=[[note]],
+            clef=clef,
+            explanation=" ".join(expl),
+            key=key,
+            value=value,
+            grid=grid,
         )
 
 
@@ -129,10 +130,10 @@ class IntervalNames(Exercise):
 
     def generate(self, rng):
         clef = rng.choice(("treble", "bass"))
-        low = _random_note(rng, clef, True)
+        low = _random_note(rng, clef=clef, accidentals=True)
         number = rng.randint(2, 8)
         quality = rng.choice(self.QUALITIES[number].split())
-        iv = Interval(number, quality)
+        iv = Interval(number, quality=quality)
         high = low.transpose(iv)
         if abs(high.accidental) > 1 or abs(low.accidental) > 1:
             return self.generate(rng)
@@ -140,18 +141,18 @@ class IntervalNames(Exercise):
         near = [f"{q}{number}" for q in self.QUALITIES[number].split()]
         choices = pick_distractors(
             iv.short,
-            near + pool,
-            5,
-            rng,
+            pool=near + pool,
+            n=5,
+            rng=rng,
         )
         expl = f"{low} to {high}: {QUALITY_NAMES[quality]} {number}, {iv.semitones} semitones."
         return Question(
             "",
-            choices,
-            iv.short,
-            [[low], [high]],
-            clef,
-            expl,
+            choices=choices,
+            answer=iv.short,
+            staff=[[low], [high]],
+            clef=clef,
+            explanation=expl,
         )
 
 
@@ -186,25 +187,26 @@ class KeySignatures(Exercise):
         kind = rng.choice(cfg.active_questions())
         mode = rng.choice(cfg.active_modes())
         count = rng.choice(cfg.active_keys())
-        tonic = mode_tonic(count, mode)
+        tonic = mode_tonic(count, mode=mode)
         if kind == "count":
             return self._count_question(
                 tonic,
-                mode,
-                count,
-                rng,
+                mode=mode,
+                count=count,
+                rng=rng,
             )
         return self._read_question(
             tonic,
-            mode,
-            count,
-            rng.choice(cfg.active_clefs()),
-            rng,
+            mode=mode,
+            count=count,
+            clef=rng.choice(cfg.active_clefs()),
+            rng=rng,
         )
 
     @staticmethod
     def _count_question(
         tonic: Note,
+        *,
         mode: str,
         count: int,
         rng: random.Random,
@@ -214,15 +216,16 @@ class KeySignatures(Exercise):
         near = [format_key_signature(c) for c in range(count - 2, count + 3) if abs(c) <= 7]
         choices = pick_distractors(
             correct,
-            near,
-            3,
-            rng,
+            pool=near,
+            n=3,
+            rng=rng,
         )
-        return Question(f"How many sharps or flats are in {tonic.name} {_scale_name(mode)}?", choices, correct)
+        return Question(f"How many sharps or flats are in {tonic.name} {_scale_name(mode)}?", choices=choices, answer=correct)
 
     @staticmethod
     def _read_question(
         tonic: Note,
+        *,
         mode: str,
         count: int,
         clef: str,
@@ -230,22 +233,22 @@ class KeySignatures(Exercise):
     ) -> Question:
         """A key signature on a staff: press the tonic of the scale of the kind asked, which has that signature."""
         correct = tonic.name
-        near = [mode_tonic(c, mode).name for c in range(count - 2, count + 3) if abs(c) <= 7]
-        everyone = [mode_tonic(c, mode).name for c in range(-7, 8)]
+        near = [mode_tonic(c, mode=mode).name for c in range(count - 2, count + 3) if abs(c) <= 7]
+        everyone = [mode_tonic(c, mode=mode).name for c in range(-7, 8)]
         choices = pick_distractors(
             correct,
-            near + everyone,
-            5,
-            rng,
+            pool=near + everyone,
+            n=5,
+            rng=rng,
         )
         word = MODE_WORDS.get(mode, f"{mode} scale")
-        notes = [*build(tonic, SCALES[mode]), tonic.transpose(Interval(8, "P"))]  # the scale, up to its octave
+        notes = [*build(tonic, intervals=SCALES[mode]), tonic.transpose(Interval(8, quality="P"))]  # the scale, up to its octave
         scale = _scale_name(mode)
         blank = f"_ {scale if scale == 'minor' else scale[0].upper() + scale[1:]}"  # "_ Major", "_ minor", "_ Dorian"
         return Question(
             f"Which {word} has this key signature?",
-            choices,
-            correct,
+            choices=choices,
+            answer=correct,
             clef=clef,
             key=count,
             show_staff=True,
@@ -269,25 +272,25 @@ class ScaleDegrees(Exercise):
 
     def generate(self, rng):
         scale = rng.choice(list(SCALES))
-        tonic = rng.choice([Note(4, l, a) for l in range(7) for a in (-1, 0, 1)])
+        tonic = rng.choice([Note(4, letter=l, accidental=a) for l in range(7) for a in (-1, 0, 1)])
         degree = rng.randint(2, 7)
-        notes = build(tonic, SCALES[scale])
+        notes = build(tonic, intervals=SCALES[scale])
         if any(abs(n.accidental) > 1 for n in notes):
             return self.generate(rng)
         target = notes[degree - 1]
-        pool = [Note(4, l, a).name for l in range(7) for a in (-1, 0, 1)]
-        near = [Note.from_diatonic(target.diatonic, a).name for a in (-1, 0, 1)]
+        pool = [Note(4, letter=l, accidental=a).name for l in range(7) for a in (-1, 0, 1)]
+        near = [Note.from_diatonic(target.diatonic, accidental=a).name for a in (-1, 0, 1)]
         choices = pick_distractors(
             target.name,
-            near + pool,
-            5,
-            rng,
+            pool=near + pool,
+            n=5,
+            rng=rng,
         )
         spelled = " ".join(n.name for n in notes)
         return Question(
             f"In {tonic.name} {scale}, what is scale degree {degree}?",
-            choices,
-            target.name,
+            choices=choices,
+            answer=target.name,
             explanation=f"{tonic.name} {scale}: {spelled}",
         )
 
@@ -308,37 +311,37 @@ class ChordQualities(Exercise):
     def generate(self, rng):
         clef = rng.choice(("treble", "bass"))
         quality = rng.choice(list(CHORDS))
-        root = _random_note(rng, clef, True)
+        root = _random_note(rng, clef=clef, accidentals=True)
         lo, hi = CLEF_RANGES[clef]
-        chord = build(root, CHORDS[quality])
+        chord = build(root, intervals=CHORDS[quality])
         if any(abs(n.accidental) > 1 for n in chord) or chord[-1].diatonic > hi.diatonic + 3:
             return self.generate(rng)
         choices = pick_distractors(
             quality,
-            list(CHORDS),
-            4,
-            rng,
+            pool=list(CHORDS),
+            n=4,
+            rng=rng,
         )
         expl = f"{root.name} {quality}: " + " ".join(n.name for n in chord)
         return Question(
             "",
-            choices,
-            quality,
-            [chord],
-            clef,
-            expl,
+            choices=choices,
+            answer=quality,
+            staff=[chord],
+            clef=clef,
+            explanation=expl,
         )
 
 
 # Where the lowest and highest note of an arpeggio may sit on each clef (up to two ledger lines either side of the staff).
 ARPEGGIO_WINDOWS = {
-    "treble": (Note(3, 6), Note(6, 0)),  # B3..C6
-    "bass": (Note(2, 0), Note(4, 2)),  # C2..E4
-    "alto": (Note(2, 6), Note(5, 1)),  # B2..D5
-    "tenor": (Note(2, 4), Note(4, 6)),  # G2..B4
-    "soprano": (Note(3, 3), Note(5, 5)),  # F3..A5
-    "mezzo": (Note(3, 1), Note(5, 3)),  # D3..F5
-    "baritone": (Note(2, 2), Note(4, 4)),  # E2..G4
+    "treble": (Note(3, letter=6), Note(6, letter=0)),  # B3..C6
+    "bass": (Note(2, letter=0), Note(4, letter=2)),  # C2..E4
+    "alto": (Note(2, letter=6), Note(5, letter=1)),  # B2..D5
+    "tenor": (Note(2, letter=4), Note(4, letter=6)),  # G2..B4
+    "soprano": (Note(3, letter=3), Note(5, letter=5)),  # F3..A5
+    "mezzo": (Note(3, letter=1), Note(5, letter=3)),  # D3..F5
+    "baritone": (Note(2, letter=2), Note(4, letter=4)),  # E2..G4
 }
 
 
@@ -369,7 +372,7 @@ class ArpeggioNames(Exercise):
             inversion = rng.choice(cfg.inversions_for(chord_type))
             clef = rng.choice(cfg.active_clefs())
             key = rng.choice(cfg.active_keys()) if cfg.key_signature else 0
-            root = Note(4, rng.randrange(7), rng.choice((-1, 0, 1)))
+            root = Note(4, letter=rng.randrange(7), accidental=rng.choice((-1, 0, 1)))
             if (root.letter, root.accidental) in (
                 (2, 1),
                 (6, 1),
@@ -377,7 +380,7 @@ class ArpeggioNames(Exercise):
                 (3, -1),
             ):  # E♯ B♯ C♭ F♭ are not worth asking
                 continue
-            notes = arpeggio(root, CHORDS[chord_type], inversion)
+            notes = arpeggio(root, intervals=CHORDS[chord_type], inversion=inversion)
             if any(abs(n.accidental) > 1 for n in notes):  # no double sharps or flats
                 continue
             low, high = (n.diatonic for n in ARPEGGIO_WINDOWS[clef])
@@ -385,21 +388,22 @@ class ArpeggioNames(Exercise):
             if not fits:
                 continue
             shift = rng.choice(fits) // 7
-            notes = [Note(n.octave + shift, n.letter, n.accidental) for n in notes]
+            notes = [Note(n.octave + shift, letter=n.letter, accidental=n.accidental) for n in notes]
             return self._question(
                 chord_type,
-                inversion,
-                root,
-                notes,
-                clef,
-                key,
-                cfg,
+                inversion=inversion,
+                root=root,
+                notes=notes,
+                clef=clef,
+                key=key,
+                cfg=cfg,
             )
         raise RuntimeError("no arpeggio fits the chosen settings")
 
     @staticmethod
     def _question(
         chord_type,
+        *,
         inversion,
         root,
         notes,
@@ -415,11 +419,11 @@ class ArpeggioNames(Exercise):
         expl = f"{root.name} {chord_type}, {INVERSION_NAMES[inversion]}: " + " ".join(n.name for n in notes)
         return Question(
             "What type of arpeggio is this, and which inversion?",
-            types,
-            answer,
-            [[n] for n in notes],
-            clef,
-            expl,
+            choices=types,
+            answer=answer,
+            staff=[[n] for n in notes],
+            clef=clef,
+            explanation=expl,
             key=key,
             value="quarter",
             grid=grid,
@@ -451,11 +455,12 @@ _WHITE_KEY_LETTER = {
 def _key_tonic(count: int) -> Note:
     """The major key with `count` sharps (+) or flats (-), as a Note."""
     name = MAJOR_KEYS[count]
-    return Note(4, "CDEFGAB".index(name[0]), 1 if "♯" in name else -1 if "♭" in name else 0)
+    return Note(4, letter="CDEFGAB".index(name[0]), accidental=1 if "♯" in name else -1 if "♭" in name else 0)
 
 
 def _key_spellings(
     pc: int,
+    *,
     count: int | None,
 ) -> list[tuple[int, int]]:
     """The (letter, accidental) names that are correct for a key of pitch class `pc` in a key signature.
@@ -466,7 +471,7 @@ def _key_spellings(
     """
     diatonic = {}
     if count is not None:
-        diatonic = {n.pitch_class: (n.letter, n.accidental) for n in build(_key_tonic(count), SCALES["Major (Ionian)"])}
+        diatonic = {n.pitch_class: (n.letter, n.accidental) for n in build(_key_tonic(count), intervals=SCALES["Major (Ionian)"])}
     if pc in diatonic:
         return [diatonic[pc]]
     if pc in _WHITE_KEY_LETTER:
@@ -481,11 +486,12 @@ def _key_spellings(
 
 def _spelled(
     midi: int,
+    *,
     letter: int,
     accidental: int,
 ) -> Note:
     """The Note that sounds as `midi` when written with this letter name (B3 written as C♭ is C♭4)."""
-    return Note((midi - accidental - NATURAL_SEMITONES[letter]) // 12 - 1, letter, accidental)
+    return Note((midi - accidental - NATURAL_SEMITONES[letter]) // 12 - 1, letter=letter, accidental=accidental)
 
 
 @register
@@ -521,19 +527,28 @@ class KeyboardNotes(Exercise):
         count = rng.choice(cfg.active_keys()) if cfg.key_signature else None
         midi = rng.choice(candidates)
 
-        spelled = [_spelled(midi, letter, acc) for letter, acc in _key_spellings(midi % 12, count)]
+        spelled = [_spelled(midi, letter=letter, accidental=acc) for letter, acc in _key_spellings(midi % 12, count=count)]
         key = spelled[0]  # the key as the signature spells it (also what plays when you answer correctly)
-        names = [spell(n, naming) for n in spelled]
+        names = [spell(n, naming=naming) for n in spelled]
         answer, accept = names[0], tuple(names[1:])
         octaves = None
         if cfg.require_octave:
-            octaves = [str(o) for o in sorted({_spelled(m, *_key_spellings(m % 12, count)[0]).octave for m in candidates})]
+            octaves = [
+                str(o)
+                for o in sorted(
+                    {
+                        _spelled(m, letter=letter, accidental=accidental).octave
+                        for m in candidates
+                        for letter, accidental in _key_spellings(m % 12, count=count)[:1]  # the first spelling of each
+                    },
+                )
+            ]
             answer, accept = f"{names[0]}{spelled[0].octave}", tuple(f"{n}{sp.octave}" for n, sp in zip(names[1:], spelled[1:]))
 
         if len(spelled) > 1:
             explanation = f"{names[0]} and {names[1]} are the same black key."
         elif count is not None:
-            in_key = midi % 12 in {n.pitch_class for n in build(_key_tonic(count), SCALES["Major (Ionian)"])}
+            in_key = midi % 12 in {n.pitch_class for n in build(_key_tonic(count), intervals=SCALES["Major (Ionian)"])}
             explanation = f"In {MAJOR_KEYS[count]} major ({format_key_signature(count)}) this key is called {names[0]}."
             if not in_key and midi % 12 not in _WHITE_KEY_LETTER:
                 explanation += f" It is not in the key, so it is spelled with {'sharps' if count > 0 else 'flats'}."
@@ -544,7 +559,7 @@ class KeyboardNotes(Exercise):
         # A key signature can need any spelling (E♯, C♭ ...), so it gets the full set.
         grid, choices = {}, []
         for letter in range(7):
-            n = spell(Note(4, letter), naming)
+            n = spell(Note(4, letter=letter), naming=naming)
             choices.append(n)
             grid[n] = (1, letter)
         if cfg.key_signature:
@@ -558,14 +573,14 @@ class KeyboardNotes(Exercise):
         else:
             extra = []
         for letter, acc, row in extra:
-            n = spell(Note(4, letter, acc), naming)
+            n = spell(Note(4, letter=letter, accidental=acc), naming=naming)
             choices.append(n)
             grid[n] = (row, letter)
 
         return Question(
             "",
-            choices,
-            answer,
+            choices=choices,
+            answer=answer,
             keyboard=key,
             accept=accept,
             explanation=explanation,
@@ -617,12 +632,12 @@ class NoteConstruction(Exercise):
         lo, hi = settings.DEFAULT_RANGES[clef]
         count = rng.choice(cfg.active_keys()) if cfg.key_signature else 0
         diatonic = rng.randint(lo, hi)
-        implied = key_accidental(diatonic % 7, count)  # what the key signature already does to this letter
+        implied = key_accidental(diatonic % 7, count=count)  # what the key signature already does to this letter
         accidental = implied
         if cfg.accidentals and rng.random() < (0.4 if cfg.key_signature else 0.5):
             accidental = rng.choice([a for a in (-1, 0, 1) if a != implied])  # a sign that differs from the key
-        note = Note.from_diatonic(diatonic, accidental)
-        name = f"{spell(note, settings.note_names.naming)}{note.octave}"
+        note = Note.from_diatonic(diatonic, accidental=accidental)
+        name = f"{spell(note, naming=settings.note_names.naming)}{note.octave}"
         explanation = ""
         if cfg.key_signature and count:
             key_name = f"{MAJOR_KEYS[count]} major ({format_key_signature(count)})"
@@ -633,8 +648,8 @@ class NoteConstruction(Exercise):
                 explanation = f"In {key_name} this note needs its own {word[accidental]} sign."
         return Question(
             f"Place {name} on the staff.",
-            [],
-            name,
+            choices=[],
+            answer=name,
             clef=clef,
             construct=note,
             accidentals=cfg.accidentals,

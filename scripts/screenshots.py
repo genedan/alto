@@ -65,7 +65,7 @@ def main() -> int:
     names = tuple(args.only or SHOTS)
     args.out.mkdir(parents=True, exist_ok=True)
     if args.theme:
-        capture(args.theme, names, args.out)
+        capture(args.theme, names=names, out=args.out)
         return 0
     # One process for each theme, each with its own throwaway settings and data folder.
     for theme in THEMES:
@@ -90,6 +90,7 @@ def main() -> int:
 
 def capture(
     theme: str,
+    *,
     names: tuple[str, ...],
     out: Path,
 ) -> None:
@@ -117,12 +118,12 @@ def capture(
     import alto.ui.exercise_view as ev  # the same questions in both themes, so the light and dark pictures match
 
     original = ev.ExerciseView.__init__
-    ev.ExerciseView.__init__ = lambda self, exercise, rng=None, parent=None, learner=None: original(
+    ev.ExerciseView.__init__ = lambda self, exercise, *, rng=None, parent=None, learner=None: original(
         self,
         exercise,
-        random.Random(5),
-        parent,
-        learner,
+        rng=random.Random(5),
+        parent=parent,
+        learner=learner,
     )
 
     def wait(ms: int = 450) -> None:
@@ -132,6 +133,7 @@ def capture(
 
     def save(
         widget,
+        *,
         name: str,
         width: int = 1400,
     ) -> None:
@@ -145,7 +147,7 @@ def capture(
 
     # A made-up profile: five weeks of answers that slowly get better, after about a year of lighter practice.
     db = Database()
-    learner = Learner(db, db.add_profile("Ada"))
+    learner = Learner(db, profile=db.add_profile("Ada"))
     rng = random.Random(11)
     now = time.time()
     for day in range(34, -1, -1):
@@ -161,11 +163,11 @@ def capture(
                 ok = rng.random() < accuracy if attempt == 1 else True
                 learner.record(
                     ex,
-                    q,
-                    q.answer if ok else "?",
-                    ok,
-                    attempt,
-                    seconds,
+                    question=q,
+                    answer=q.answer if ok else "?",
+                    correct=ok,
+                    attempt_no=attempt,
+                    seconds=seconds,
                     now=t + attempt * 5,
                 )
                 if ok:
@@ -199,11 +201,11 @@ def capture(
             ok = old.random() < 0.5 + 0.3 * (364 - day) / 330
             learner.record(
                 ex,
-                q,
-                q.answer if ok else "?",
-                ok,
-                1,
-                max(0.7, old.gauss(ex.par_seconds * 1.5, 1)),
+                question=q,
+                answer=q.answer if ok else "?",
+                correct=ok,
+                attempt_no=1,
+                seconds=max(0.7, old.gauss(ex.par_seconds * 1.5, 1)),
                 now=t,
             )
 
@@ -211,7 +213,7 @@ def capture(
     window.resize(1100, 720)
     window.show()
     wait()
-    save(window, "home")
+    save(window, name="home")
     by_class = {c.__name__: c for c in REGISTRY}
     for cls, name in (
         ("NoteNames", "note-identification"),
@@ -230,12 +232,12 @@ def capture(
             settings.key_signatures.keys = {-3}  # three flats, so there is something to read
         window.open_exercise(by_class[cls])
         wait(500)
-        save(window, name)
+        save(window, name=name)
     window.show_home()
     wait()
     window.open_stats()
     wait(400)
-    save(window, "stats", 1500)
+    save(window, name="stats", width=1500)
     if "stats-heatmap" in names:  # scroll down to the calendar of reviews and show it with the table under it
         from alto.ui.stats_dialog import StatsPage
         from PySide6.QtWidgets import QScrollArea
@@ -246,10 +248,10 @@ def capture(
         assert scroller is not None
         scroller.verticalScrollBar().setValue(stats_page.heatmap.y() - 16)
         wait(300)
-        save(window, "stats-heatmap", 1500)
+        save(window, name="stats-heatmap", width=1500)
     window.open_database()
     wait(400)
-    save(window, "database")
+    save(window, name="database")
     page = window._overlay
     assert isinstance(page, DatabasePage)
     page.tabs["answers"].click()
@@ -258,13 +260,13 @@ def capture(
     answer = row.data(ROW_ROLE)
     preview = QuestionPreview(
         page._names[answer["exercise"]],
-        Question.from_dict(json.loads(answer["payload"])),
-        answer["details"],
-        window,
+        question=Question.from_dict(json.loads(answer["payload"])),
+        details=answer["details"],
+        parent=window,
     )
     preview.show()
     wait(300)
-    save(preview, "question-preview", 900)
+    save(preview, name="question-preview", width=900)
     preview.close()
     window.show_home()
 
@@ -274,11 +276,11 @@ def capture(
     dialog.show()
     dialog.segment_buttons[1].click()
     wait(300)
-    save(dialog, "settings")
+    save(dialog, name="settings")
     dialog.categories.setCurrentRow(1)
     dialog.instruments.select("viola_bowed")
     wait(200)
-    save(dialog, "settings-sound", 1000)
+    save(dialog, name="settings-sound", width=1000)
     dialog.close()
 
 

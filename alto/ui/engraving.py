@@ -92,6 +92,7 @@ def _family_of(font: str) -> str:
 @cache
 def _outline(
     font: str,
+    *,
     name: str,
 ) -> QPainterPath:
     """The glyph as a path in font units (100 per em), with its origin at (0, 0) and y pointing down."""
@@ -109,15 +110,17 @@ def _outline(
 
 def _ink(
     font: str,
+    *,
     name: str,
 ) -> tuple[float, float, float, float]:
     """The glyph's drawn extent as (left, bottom, right, top) in staff spaces, measured up from its origin."""
-    r = _outline(font, name).boundingRect()
+    r = _outline(font, name=name).boundingRect()
     return r.left() / _SPACE, -r.bottom() / _SPACE, r.right() / _SPACE, -r.top() / _SPACE
 
 
 def _anchor(
     font: str,
+    *,
     name: str,
     anchor: str,
 ) -> tuple[float, float]:
@@ -125,12 +128,13 @@ def _anchor(
     given = _metrics(font)["anchors"].get(name, {}).get(anchor)
     if given:
         return given[0], given[1]
-    left, _, right, _ = _ink(font, name)
+    left, _, right, _ = _ink(font, name=name)
     return {"stemUpSE": (right, 0.17), "stemDownNW": (left, -0.17)}.get(anchor, (0.0, 0.0))
 
 
 def _place(
     path: QPainterPath,
+    *,
     x: float,
     y: float,
     gap: float,
@@ -144,6 +148,7 @@ def _place(
 
 def staff_line_width(
     font: str,
+    *,
     gap: float,
 ) -> float:
     return max(_metrics(font)["staffLine"] * gap, 1.0)
@@ -151,6 +156,7 @@ def staff_line_width(
 
 def ledger_width(
     font: str,
+    *,
     gap: float,
 ) -> float:
     return max(_metrics(font)["ledger"] * gap, 1.2)
@@ -158,6 +164,7 @@ def ledger_width(
 
 def _fill(
     p: QPainter,
+    *,
     path: QPainterPath,
     colour: QColor,
 ) -> None:
@@ -170,6 +177,7 @@ def _fill(
 
 def draw_note(
     p: QPainter,
+    *,
     font: str,
     value: str,
     x: float,
@@ -180,22 +188,22 @@ def draw_note(
 ) -> None:
     """A note of this value with its head centred on (x, y); `gap` is the distance between staff lines."""
     head_name = HEADS.get(value, "noteheadBlack")
-    left, _, right, _ = _ink(font, head_name)
+    left, _, right, _ = _ink(font, name=head_name)
     ox, oy = x - (left + right) / 2 * gap, y  # the head's origin, with the drawn head centred on the line or space
     _fill(
         p,
-        _place(
-            _outline(font, head_name),
-            ox,
-            oy,
-            gap,
+        path=_place(
+            _outline(font, name=head_name),
+            x=ox,
+            y=oy,
+            gap=gap,
         ),
-        colour,
+        colour=colour,
     )
     if value in ("breve", "whole"):
         return
     stem_down = bool(stem_down)
-    ax, ay = _anchor(font, head_name, "stemDownNW" if stem_down else "stemUpSE")
+    ax, ay = _anchor(font, name=head_name, anchor="stemDownNW" if stem_down else "stemUpSE")
     thick = _metrics(font)["stem"] * gap
     sx = ox + ax * gap  # the stem's edge that touches the head
     sy = oy - ay * gap
@@ -216,22 +224,23 @@ def draw_note(
     p.restore()
     if value in FLAGS:
         name = f"flag{FLAGS[value]}{'Down' if stem_down else 'Up'}"
-        fx, fy = _anchor(font, name, "stemDownSW" if stem_down else "stemUpNW")
+        fx, fy = _anchor(font, name=name, anchor="stemDownSW" if stem_down else "stemUpNW")
         # put the flag's anchor on the stem's far end, on the side the stem's outer edge is on
         _fill(
             p,
-            _place(
-                _outline(font, name),
-                left - fx * gap,
-                end + fy * gap,
-                gap,
+            path=_place(
+                _outline(font, name=name),
+                x=left - fx * gap,
+                y=end + fy * gap,
+                gap=gap,
             ),
-            colour,
+            colour=colour,
         )
 
 
 def draw_clef(
     p: QPainter,
+    *,
     font: str,
     clef: str,
     x: float,
@@ -253,18 +262,19 @@ def draw_clef(
     }[clef]
     _fill(
         p,
-        _place(
-            _outline(font, name),
-            x,
-            bottom - line * gap,
-            gap,
+        path=_place(
+            _outline(font, name=name),
+            x=x,
+            y=bottom - line * gap,
+            gap=gap,
         ),
-        colour,
+        colour=colour,
     )
 
 
 def draw_accidental(
     p: QPainter,
+    *,
     font: str,
     sign: int,
     x: float,
@@ -276,25 +286,26 @@ def draw_accidental(
     """An accidental with its left edge at x and its reference line at y. If `fit` is given, the glyph is
     shrunk to be no wider than that many pixels. Returns the width drawn."""
     name = ACCIDENTALS[sign]
-    left, _, right, _ = _ink(font, name)
+    left, _, right, _ = _ink(font, name=name)
     width = (right - left) * gap
     k = min(1.0, fit / width) if fit else 1.0
     _fill(
         p,
-        _place(
-            _outline(font, name),
-            x - left * gap * k,
-            y,
-            gap,
-            k,
+        path=_place(
+            _outline(font, name=name),
+            x=x - left * gap * k,
+            y=y,
+            gap=gap,
+            scale=k,
         ),
-        colour,
+        colour=colour,
     )
     return width * k
 
 
 def draw_brace(
     p: QPainter,
+    *,
     font: str,
     x: float,
     y0: float,
@@ -304,7 +315,7 @@ def draw_brace(
 ) -> bool:
     """The font's brace stretched to span y0..y1, `width` wide, with its right edge at x. Returns False (and draws
     nothing) if the font has no brace."""
-    outline = _outline(font, "brace")
+    outline = _outline(font, name="brace")
     box = outline.boundingRect()
     if outline.isEmpty() or box.width() <= 0 or box.height() < 4 * box.width():  # not a tall, narrow brace
         return False
@@ -312,5 +323,5 @@ def draw_brace(
     t.translate(x - width, y0)
     t.scale(width / box.width(), (y1 - y0) / box.height())
     t.translate(-box.left(), -box.top())
-    _fill(p, t.map(outline), colour)
+    _fill(p, path=t.map(outline), colour=colour)
     return True

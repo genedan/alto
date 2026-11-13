@@ -6,7 +6,7 @@ import hashlib
 import json
 import random
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass, field, is_dataclass
+from dataclasses import KW_ONLY, asdict, dataclass, field, is_dataclass
 
 from ..theory.pitch import Note
 
@@ -14,6 +14,7 @@ from ..theory.pitch import Note
 @dataclass
 class Question:
     prompt: str
+    _: KW_ONLY
     choices: list[str]
     answer: str
     # What to draw on the staff: each inner list is one simultaneous chord/note.
@@ -138,6 +139,7 @@ def register(cls: type[Exercise]) -> type[Exercise]:
 
 def pick_distractors(
     correct: str,
+    *,
     pool: list[str],
     n: int,
     rng: random.Random,

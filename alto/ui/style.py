@@ -32,12 +32,12 @@ def app_style(palette: QPalette) -> str:
         fill_hover=base,
         fill_pressed=midlight,
         edge=dark,
-        box_edge=blend_name(base_c, text_c, 0.45),
-        box_edge_off=blend_name(base_c, text_c, 0.2),
+        box_edge=blend_name(base_c, b=text_c, t=0.45),
+        box_edge_off=blend_name(base_c, b=text_c, t=0.2),
         accent=accent_c.name(),
-        accent_dim=blend_name(accent_c, base_c, 0.55),
-        nav_hover=blend_name(window_c, text_c, 0.07),
-        nav_selected=blend_name(window_c, accent_c, 0.2),
+        accent_dim=blend_name(accent_c, b=base_c, t=0.55),
+        nav_hover=blend_name(window_c, b=text_c, t=0.07),
+        nav_selected=blend_name(window_c, b=accent_c, t=0.2),
         check=(Path(__file__).resolve().parent.parent / "assets" / "ui" / "check.svg").as_posix(),
     )
 

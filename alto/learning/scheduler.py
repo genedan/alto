@@ -35,6 +35,7 @@ T = TypeVar("T")
 
 def speed_term(
     seconds: float,
+    *,
     par_seconds: float,
 ) -> float:
     """The strain change for how long the first answer took: negative when quick, positive when slow."""
@@ -48,6 +49,7 @@ def speed_term(
 
 def update_strain(
     strain: float,
+    *,
     correct: bool,
     attempt_no: int,
     seconds: float,
@@ -57,7 +59,7 @@ def update_strain(
     if not correct:
         strain += WRONG_PENALTY
     elif attempt_no == 1:
-        strain += -CORRECT_REWARD + speed_term(seconds, par_seconds)
+        strain += -CORRECT_REWARD + speed_term(seconds, par_seconds=par_seconds)
     else:
         strain -= RETRY_REWARD
     return min(max(strain, 0.0), STRAIN_MAX)
@@ -65,6 +67,7 @@ def update_strain(
 
 def weight(
     strain: float | None,
+    *,
     last_seen: float | None,
     now: float,
 ) -> float:
@@ -82,6 +85,7 @@ def weight(
 
 def choose(
     options: Sequence[T],
+    *,
     weights: Sequence[float],
     rng: random.Random,
 ) -> T:

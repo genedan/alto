@@ -24,6 +24,7 @@ SLIDERS = (
 
 def svg_icon(
     inner: str,
+    *,
     color: QColor,
     size: int = 24,
     scale: float = 2.0,
@@ -54,6 +55,7 @@ _STAFF = '<path d="M2 6H22M2 9.5H22M2 13H22M2 16.5H22M2 20H22" fill="none" strok
 
 def _ring(
     x: float,
+    *,
     y: float,
     rx: float = 3.3,
     ry: float = 2.3,
@@ -63,23 +65,23 @@ def _ring(
 
 EXERCISE_NOTE_NAMES = _STAFF + _ring(
     12,
-    11.25,
-    3.4,
-    2.1,
+    y=11.25,
+    rx=3.4,
+    ry=2.1,
 )
 # Two stacked notes with a bracket spanning the distance between them.
 EXERCISE_INTERVALS = (
     _ring(
         7,
-        6,
-        3.2,
-        2.2,
+        y=6,
+        rx=3.2,
+        ry=2.2,
     )
     + _ring(
         7,
-        18,
-        3.2,
-        2.2,
+        y=18,
+        rx=3.2,
+        ry=2.2,
     )
     + f'<path d="M15.5 6h4v12h-4" {_LINE}/>'
 )
@@ -87,9 +89,9 @@ EXERCISE_KEY_SIGNATURES = f'<path d="M9 4v16M15 3.5v16M5 9.5l14-3M5 16.5l14-3" {
 EXERCISE_SCALES = "".join(
     _ring(
         x,
-        y,
-        2.4,
-        1.7,
+        y=y,
+        rx=2.4,
+        ry=1.7,
     )
     for x, y in (
         (4.5, 18.5),
@@ -101,21 +103,21 @@ EXERCISE_SCALES = "".join(
 EXERCISE_CHORDS = (
     _ring(
         12,
-        18.5,
-        3.6,
-        2.4,
+        y=18.5,
+        rx=3.6,
+        ry=2.4,
     )
     + _ring(
         12,
-        12,
-        3.6,
-        2.4,
+        y=12,
+        rx=3.6,
+        ry=2.4,
     )
     + _ring(
         12,
-        5.5,
-        3.6,
-        2.4,
+        y=5.5,
+        rx=3.6,
+        ry=2.4,
     )
 )
 # Three eighth notes rising under one beam.
@@ -167,9 +169,9 @@ EXERCISE_CONSTRUCTION = (
     '<path d="M2 11.5H22M2 14.3H22M2 17.1H22M2 19.9H22M2 22.7H22" fill="none" stroke="COLOR" stroke-width="1.1" opacity=".5"/>'
     + _ring(
         13,
-        18.5,
-        3.3,
-        1.9,
+        y=18.5,
+        rx=3.3,
+        ry=1.9,
     )
     + f'<path d="M13 1.6V8M10.2 5.2L13 8L15.8 5.2" {_LINE}/>'
 )

@@ -17,9 +17,9 @@ DAY = 86400.0
 
 def test_a_timeframe_starts_where_it_says():
     now = time.time()
-    assert since_for(None, now) is None
-    assert since_for(7, now) == pytest.approx(now - 7 * DAY)
-    today = since_for("today", now)
+    assert since_for(None, now=now) is None
+    assert since_for(7, now=now) == pytest.approx(now - 7 * DAY)
+    today = since_for("today", now=now)
     assert today is not None and now - DAY < today <= now
 
 
@@ -31,7 +31,7 @@ def test_durations_read_naturally():
 
 def test_a_profile_with_no_answers_gets_an_invitation_not_numbers(app):
     db = Database()
-    page = StatsPage(Learner(db, db.add_profile("Ben")))
+    page = StatsPage(Learner(db, profile=db.add_profile("Ben")))
     assert "No answers recorded for Ben" in page.note.text()
     assert page.tiles["questions"].value.text() == "0" and page.tiles["accuracy"].value.text() == "–"
     assert page.tiles["speed"].value.text() == "–" and page.tiles["tries"].value.text() == "–"
@@ -45,15 +45,15 @@ def test_the_numbers_come_from_the_active_profiles_answers(
 ):
     learner = practised_learner()
     other = learner.db.add_profile("Someone else")
-    other_learner = Learner(learner.db, other)
+    other_learner = Learner(learner.db, profile=other)
     ex = REGISTRY[0]()
     other_learner.record(
         ex,
-        ex.generate(random.Random(1)),
-        "x",
-        False,
-        1,
-        3.0,
+        question=ex.generate(random.Random(1)),
+        answer="x",
+        correct=False,
+        attempt_no=1,
+        seconds=3.0,
     )
     page = StatsPage(learner)
     page.timeframe.setCurrentIndex(page.timeframe.findText("All time"))

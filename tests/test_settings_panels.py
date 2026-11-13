@@ -164,7 +164,7 @@ def test_a_page_slides_in_and_ignores_requests_while_sliding(app):
 
 def test_the_range_editor_moves_either_end_within_its_limits(app):
     low_limit, high_limit = settings.RANGE_LIMITS["treble"]
-    editor = sp.RangeEditor("treble", low_limit + 2, low_limit + 4)
+    editor = sp.RangeEditor("treble", low=low_limit + 2, high=low_limit + 4)
     seen = []
     editor.edited.connect(lambda *args: seen.append(args))
     editor.low_up.click()
@@ -185,7 +185,7 @@ def test_the_range_editor_moves_either_end_within_its_limits(app):
 
 
 def test_the_choice_checklist_always_keeps_one_choice(app):
-    checklist = sp.ChoiceChecklist([("Heading", [("a", "A"), ("b", "B")]), ("", [("c", "C")])], {"a"})
+    checklist = sp.ChoiceChecklist([("Heading", [("a", "A"), ("b", "B")]), ("", [("c", "C")])], selected={"a"})
     changed = []
     checklist.changed.connect(lambda: changed.append(1))
     assert checklist.selected() == {"a"} and not checklist.boxes["a"].isEnabled()  # the only one cannot be unchecked
@@ -194,7 +194,7 @@ def test_the_choice_checklist_always_keeps_one_choice(app):
 
 
 def test_the_key_signature_page_greys_out_the_keys_until_it_is_switched_on(app):
-    page = sp.KeySignaturePage(False, {0, 1})
+    page = sp.KeySignaturePage(False, selected={0, 1})
     changed = []
     page.changed.connect(lambda: changed.append(1))
     assert not page.enabled() and not page.checklist.isEnabled() and page.selected() == {0, 1}
@@ -333,8 +333,8 @@ def test_the_keyboard_range_moves_one_key_at_a_time_within_the_whole_piano(keybo
     cfg.low = cfg.high
     keyboard._refresh_range()
     assert not keyboard.arrows["low"][1].isEnabled() and not keyboard.arrows["high"][0].isEnabled()
-    keyboard._step("low", +5)  # the lowest key cannot pass the highest
-    keyboard._step("high", -5)
+    keyboard._step("low", delta=+5)  # the lowest key cannot pass the highest
+    keyboard._step("high", delta=-5)
     assert cfg.low <= cfg.high
 
 

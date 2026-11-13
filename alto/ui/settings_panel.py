@@ -96,6 +96,7 @@ def save_note_names() -> None:
 
 def _guard_last(
     boxes,
+    *,
     enabled: bool = True,
 ) -> None:
     """Disable the only checked box so at least one choice always stays selected."""
@@ -110,6 +111,7 @@ def _key_label(count: int) -> str:
 
 def _arrow(
     kind: Qt.ArrowType,
+    *,
     tip: str,
 ) -> QToolButton:
     btn = QToolButton()
@@ -131,6 +133,7 @@ class RangeEditor(QWidget):
     def __init__(
         self,
         key: str,
+        *,
         low: int,
         high: int,
         parent=None,
@@ -148,7 +151,7 @@ class RangeEditor(QWidget):
             0,
             0,
         )
-        caption_row.addWidget(ClefPictures([key], 0.9))
+        caption_row.addWidget(ClefPictures([key], scale=0.9))
         caption_row.addWidget(self.caption_text)
         caption_row.addStretch()
         self.staff = StaffWidget(
@@ -159,10 +162,10 @@ class RangeEditor(QWidget):
             compact=True,
         )
         self.staff.setFixedWidth(168)
-        self.low_up = _arrow(Qt.ArrowType.UpArrow, "Raise the lowest note")
-        self.low_down = _arrow(Qt.ArrowType.DownArrow, "Lower the lowest note")
-        self.high_up = _arrow(Qt.ArrowType.UpArrow, "Raise the highest note")
-        self.high_down = _arrow(Qt.ArrowType.DownArrow, "Lower the highest note")
+        self.low_up = _arrow(Qt.ArrowType.UpArrow, tip="Raise the lowest note")
+        self.low_down = _arrow(Qt.ArrowType.DownArrow, tip="Lower the lowest note")
+        self.high_up = _arrow(Qt.ArrowType.UpArrow, tip="Raise the highest note")
+        self.high_down = _arrow(Qt.ArrowType.DownArrow, tip="Lower the highest note")
         self.low_up.clicked.connect(lambda: self._move(low=1))
         self.low_down.clicked.connect(lambda: self._move(low=-1))
         self.high_up.clicked.connect(lambda: self._move(high=1))
@@ -204,6 +207,7 @@ class RangeEditor(QWidget):
     def _move(
         self,
         low: int = 0,
+        *,
         high: int = 0,
     ):
         self.low = min(max(self.low + low, self.limits[0]), self.high)  # the lower bound can't pass the upper
@@ -213,7 +217,7 @@ class RangeEditor(QWidget):
 
     def _refresh(self):
         self.caption_text.setText(f"<b>{diatonic_name(self.low)} – {diatonic_name(self.high)}</b>")
-        self.staff.show_notes([[Note.from_diatonic(self.low)], [Note.from_diatonic(self.high)]], self.key)
+        self.staff.show_notes([[Note.from_diatonic(self.low)], [Note.from_diatonic(self.high)]], clef=self.key)
         self.low_up.setEnabled(self.low < self.high)
         self.low_down.setEnabled(self.low > self.limits[0])
         self.high_up.setEnabled(self.high < self.limits[1])
@@ -229,6 +233,7 @@ class KeyDiagram(QWidget):
     def __init__(
         self,
         keys: set[int] | None = None,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -258,7 +263,7 @@ class KeyDiagram(QWidget):
         base = pal.color(QPalette.ColorRole.Base)  # the row is filled with the base colour
 
         def shade(t: float) -> QColor:  # t of the way from the row's background to the text colour
-            return blend(base, text, t)
+            return blend(base, b=text, t=t)
 
         filled, outline = shade(0.85), shade(0.5)  # both stand out from the background, in a light or a dark theme
         mid, top = self.height() / 2, self.height() / 2 - self.ROW_GAP / 2
@@ -278,6 +283,7 @@ ROW_PICTURE_WIDTH = 238  # room for a picture on its own line in a menu row (pan
 
 def _label_with_picture(
     button: QAbstractButton,
+    *,
     picture,
     name: str,
 ) -> None:
@@ -291,20 +297,22 @@ def _label_with_picture(
 
 def _label_with_clef(
     button: QAbstractButton,
+    *,
     clef: str,
     scale: float = 1.4,
 ) -> None:
     """A clef's picture, with its name written to the right of it."""
-    _label_with_picture(button, ClefPictures([clef], scale), CLEF_NAMES[clef])
+    _label_with_picture(button, picture=ClefPictures([clef], scale=scale), name=CLEF_NAMES[clef])
     button.setText(CLEF_NAMES[clef])
 
 
 def _clef_box(
     clef: str,
+    *,
     scale: float = 1.4,
 ) -> QCheckBox:
     box = QCheckBox()
-    _label_with_clef(box, clef, scale)
+    _label_with_clef(box, clef=clef, scale=scale)
     return box
 
 
@@ -336,6 +344,7 @@ def _clef_list(boxes: dict[str, QCheckBox]) -> QWidget:
 
 def _show_keys(
     row: _Row,
+    *,
     diagram: KeyDiagram,
     enabled: bool,
     keys: set[int],
@@ -353,6 +362,7 @@ class _Row(QPushButton):
     def __init__(
         self,
         title: str,
+        *,
         chevron: bool = True,
         tall: bool = False,
     ):
@@ -453,7 +463,7 @@ class Switch(QAbstractButton):
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         pal = self.palette()
         off, on = pal.color(QPalette.ColorRole.Mid), pal.color(QPalette.ColorRole.Highlight)
-        track = blend(off, on, self._pos)
+        track = blend(off, b=on, t=self._pos)
         if not self.isEnabled():
             track.setAlpha(110)
         p.setPen(Qt.PenStyle.NoPen)
@@ -495,6 +505,7 @@ class _ToggleRow(_Row):
 
 def _subpage(
     title: str,
+    *,
     body: QWidget,
     back,
     fill: bool = False,
@@ -582,6 +593,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
     def __init__(
         self,
         cfg: NoteNameSettings,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -657,7 +669,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         _guard_last(list(self.boxes.values()))  # the last checked clef can't be unchecked
         for box in self.boxes.values():
             box.toggled.connect(self._clefs_edited)
-        clefs_page = _subpage("Clefs", body, lambda: self._go(0))
+        clefs_page = _subpage("Clefs", body=body, back=lambda: self._go(0))
 
         # layer 2: range
         self.range_body = QWidget()
@@ -676,8 +688,8 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         range_page = _subpage(
             "Range",
-            scroll,
-            lambda: self._go(0),
+            body=scroll,
+            back=lambda: self._go(0),
             fill=True,
         )
 
@@ -685,7 +697,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.key_list = KeyChecklist(cfg.key_signatures)
         self.key_list.changed.connect(self._keys_edited)
         self.key_boxes = self.key_list.boxes
-        keys_page = _subpage("Key signatures", self.key_list, lambda: self._go(0))
+        keys_page = _subpage("Key signatures", body=self.key_list, back=lambda: self._go(0))
 
         # layer 2: note values, a vertical list: the engraved symbol, then its name
         self.value_boxes = {v: QCheckBox(VALUE_NAMES[v]) for v in NOTE_VALUES}
@@ -702,7 +714,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         values_hint.setWordWrap(True)
         vlay.addWidget(values_hint)
         for v, box in self.value_boxes.items():
-            picture = ValuePictures([v], 1.25, centre_stemless=True)
+            picture = ValuePictures([v], scale=1.25, centre_stemless=True)
             box.setIcon(picture.to_icon())
             box.setIconSize(picture.size())
             box.setStyleSheet("QCheckBox { font-size: 11pt; }")
@@ -710,12 +722,12 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
             box.toggled.connect(self._values_edited)
             vlay.addWidget(box)
         vlay.addStretch()
-        values_page = _subpage("Note values", values_body, lambda: self._go(0))
+        values_page = _subpage("Note values", body=values_body, back=lambda: self._go(0))
 
         # layer 2: note names
         self.naming_radios = {k: QRadioButton() for k in NAMINGS}
         for k, radio in self.naming_radios.items():
-            _label_with_picture(radio, NamePicture(k, 1.6), NAMINGS[k])
+            _label_with_picture(radio, picture=NamePicture(k, scale=1.6), name=NAMINGS[k])
         names_body = QWidget()
         nlay = QVBoxLayout(names_body)
         nlay.setContentsMargins(
@@ -730,7 +742,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
             radio.setChecked(k == cfg.naming)
             radio.toggled.connect(self._names_edited)
             nlay.addWidget(radio)
-        names_page = _subpage("Note names", names_body, lambda: self._go(0))
+        names_page = _subpage("Note names", body=names_body, back=lambda: self._go(0))
 
         for page in (
             menu,
@@ -765,9 +777,9 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.range_row.fit()
         _show_keys(
             self.keys_row,
-            self.keys_diagram,
-            True,
-            set(self.cfg.active_keys()),
+            diagram=self.keys_diagram,
+            enabled=True,
+            keys=set(self.cfg.active_keys()),
         )
         self.value_pictures.set_values(self.cfg.active_values())
         self.name_picture.set_naming(self.cfg.naming)
@@ -811,7 +823,8 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
                 widget.deleteLater()
         self.range_editors = {}
         for key in self._active_keys():
-            editor = RangeEditor(key, *self.cfg.range_for(key))
+            low, high = self.cfg.range_for(key)
+            editor = RangeEditor(key, low=low, high=high)
             editor.edited.connect(self._range_edited)
             self.range_editors[key] = editor
             self.range_lay.addWidget(editor)
@@ -820,7 +833,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.range_lay.addWidget(reset)
         self.range_lay.addStretch()
 
-    def _range_edited(
+    def _range_edited(  # noqa: PLR0917  (a Qt slot: the signal passes positional arguments)
         self,
         key: str,
         low: int,
@@ -842,8 +855,8 @@ def load_keyboard() -> None:
     cfg.black_keys = str(saved_settings.value("keyboard/blackKeys", "true")).lower() != "false"
     cfg.require_octave = str(saved_settings.value("keyboard/requireOctave", "false")).lower() == "true"
     try:
-        low = int_value(saved_settings, "keyboard/low", cfg.low)
-        high = int_value(saved_settings, "keyboard/high", cfg.high)
+        low = int_value(saved_settings, key="keyboard/low", default=cfg.low)
+        high = int_value(saved_settings, key="keyboard/high", default=cfg.high)
     except (TypeError, ValueError):
         return
     first, last = settings.KEYBOARD_FULL
@@ -874,13 +887,14 @@ class KeyChecklist(QWidget):
     def __init__(
         self,
         selected: set[int],
+        *,
         parent=None,
     ):
         super().__init__(parent)
         self.boxes = {k: QCheckBox() for k in range(-7, 8)}
         for k, box in self.boxes.items():  # each key is labelled with its signature, as written after a treble clef
             description = f"{MAJOR_KEYS[k]} major, {_key_label(k).split('·')[1].strip()}"
-            _label_with_picture(box, KeySignaturePicture(k, 1.15), description)
+            _label_with_picture(box, picture=KeySignaturePicture(k, scale=1.15), name=description)
         # Two framed groups: C major on its own, and the keys with sharps or flats (flats left, sharps right).
         outer = QVBoxLayout(self)
         outer.setContentsMargins(
@@ -923,6 +937,7 @@ class KeySignaturePage(QWidget):
     def __init__(
         self,
         enabled: bool,
+        *,
         selected: set[int],
         parent=None,
     ):
@@ -963,6 +978,7 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
     def __init__(
         self,
         cfg: settings.KeyboardSettings,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -1032,10 +1048,10 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         for title, label, which in (("Lowest key", self.low_label, "low"), ("Highest key", self.high_label, "high")):
             row = QHBoxLayout()
             row.addWidget(QLabel(f"<b>{title}</b>"), 1)
-            down = _arrow(Qt.ArrowType.LeftArrow, f"{title}: one key down")
-            up = _arrow(Qt.ArrowType.RightArrow, f"{title}: one key up")
-            down.clicked.connect(lambda _=False, w=which: self._step(w, -1))
-            up.clicked.connect(lambda _=False, w=which: self._step(w, 1))
+            down = _arrow(Qt.ArrowType.LeftArrow, tip=f"{title}: one key down")
+            up = _arrow(Qt.ArrowType.RightArrow, tip=f"{title}: one key up")
+            down.clicked.connect(lambda _=False, w=which: self._step(w, delta=-1))
+            up.clicked.connect(lambda _=False, w=which: self._step(w, delta=1))
             label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             label.setMinimumWidth(48)
             row.addWidget(down)
@@ -1049,12 +1065,12 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         self.default.clicked.connect(lambda: self._set_range(*settings.KEYBOARD_DEFAULT))
         blay.addWidget(self.entire)
         blay.addWidget(self.default)
-        range_page = _subpage("Range", body, lambda: self._go(0))
+        range_page = _subpage("Range", body=body, back=lambda: self._go(0))
 
         # layer 2: key signatures
-        self.key_page = KeySignaturePage(cfg.key_signature, cfg.keys)
+        self.key_page = KeySignaturePage(cfg.key_signature, selected=cfg.keys)
         self.key_page.changed.connect(self._keys_edited)
-        keys_page = _subpage("Key signatures", self.key_page, lambda: self._go(0))
+        keys_page = _subpage("Key signatures", body=self.key_page, back=lambda: self._go(0))
 
         self.stack.addWidget(menu)
         self.stack.addWidget(range_page)
@@ -1071,18 +1087,19 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         cfg = self.cfg
         self.low_label.setText(key_name(cfg.low))
         self.high_label.setText(key_name(cfg.high))
-        self.span.set_span(cfg.low, cfg.high)
+        self.span.set_span(cfg.low, hi=cfg.high)
         first, last = settings.KEYBOARD_FULL
         self.arrows["low"][0].setEnabled(cfg.low > first)
         self.arrows["low"][1].setEnabled(cfg.low < cfg.high)  # the lowest key can't pass the highest
         self.arrows["high"][0].setEnabled(cfg.high > cfg.low)
         self.arrows["high"][1].setEnabled(cfg.high < last)
-        self.range_keyboard.set_span(cfg.low, cfg.high)
+        self.range_keyboard.set_span(cfg.low, hi=cfg.high)
         self.range_keyboard.setToolTip(f"{key_name(cfg.low)} to {key_name(cfg.high)}")
 
     def _step(
         self,
         which: str,
+        *,
         delta: int,
     ):
         low, high = self.cfg.low, self.cfg.high
@@ -1093,7 +1110,7 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
             high = max(min(high + delta, last), low)
         self._set_range(low, high)
 
-    def _set_range(
+    def _set_range(  # noqa: PLR0917  (a Qt slot: the signal passes positional arguments)
         self,
         low: int,
         high: int,
@@ -1115,9 +1132,9 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
     def _show_keys(self):
         _show_keys(
             self.keys_row,
-            self.keys_diagram,
-            self.cfg.key_signature,
-            set(self.cfg.active_keys()),
+            diagram=self.keys_diagram,
+            enabled=self.cfg.key_signature,
+            keys=set(self.cfg.active_keys()),
         )
 
     def _keys_edited(self):
@@ -1152,6 +1169,7 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
     def __init__(
         self,
         cfg: settings.ConstructionSettings,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -1212,12 +1230,12 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
             box.toggled.connect(self._clefs_edited)
         blay.addWidget(_clef_list(self.boxes))
         _guard_last(list(self.boxes.values()))
-        staff_page = _subpage("Staff", body, lambda: self._go(0))
+        staff_page = _subpage("Staff", body=body, back=lambda: self._go(0))
 
         # layer 2: key signatures
-        self.key_page = KeySignaturePage(cfg.key_signature, cfg.keys)
+        self.key_page = KeySignaturePage(cfg.key_signature, selected=cfg.keys)
         self.key_page.changed.connect(self._keys_edited)
-        keys_page = _subpage("Key signatures", self.key_page, lambda: self._go(0))
+        keys_page = _subpage("Key signatures", body=self.key_page, back=lambda: self._go(0))
 
         for page in (menu, staff_page, keys_page):
             self.stack.addWidget(page)
@@ -1255,9 +1273,9 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
     def _show_keys(self):
         _show_keys(
             self.keys_row,
-            self.keys_diagram,
-            self.cfg.key_signature,
-            set(self.cfg.active_keys()),
+            diagram=self.keys_diagram,
+            enabled=self.cfg.key_signature,
+            keys=set(self.cfg.active_keys()),
         )
 
     def _keys_edited(self):
@@ -1294,6 +1312,7 @@ class ChoiceChecklist(QWidget):
     def __init__(
         self,
         groups: list[tuple[str, list[tuple[object, str]]]],
+        *,
         selected: set,
         parent=None,
     ):
@@ -1343,6 +1362,7 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
     def __init__(
         self,
         cfg: settings.ArpeggioSettings,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -1408,7 +1428,7 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
             box.toggled.connect(self._clefs_edited)
         blay.addWidget(_clef_list(self.boxes))
         _guard_last(list(self.boxes.values()))
-        staff_page = _subpage("Staff", body, lambda: self._go(0))
+        staff_page = _subpage("Staff", body=body, back=lambda: self._go(0))
 
         # layer 2: arpeggio types, and inversions
         self.types = ChoiceChecklist(
@@ -1416,12 +1436,12 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
                 ("Triads", [(t, t.capitalize()) for t in settings.ARPEGGIO_TRIADS]),
                 ("Seventh chords", [(t, t.capitalize()) for t in settings.ARPEGGIO_SEVENTHS]),
             ],
-            cfg.types,
+            selected=cfg.types,
         )
         self.types.changed.connect(self._types_edited)
-        types_page = _subpage("Arpeggio types", self.types, lambda: self._go(0))
+        types_page = _subpage("Arpeggio types", body=self.types, back=lambda: self._go(0))
         names = settings_inversion_names()
-        self.inversions = ChoiceChecklist([("", [(i, names[i]) for i in settings.INVERSIONS])], cfg.inversions)
+        self.inversions = ChoiceChecklist([("", [(i, names[i]) for i in settings.INVERSIONS])], selected=cfg.inversions)
         self.inversions.changed.connect(self._inversions_edited)
         note = QLabel("A triad has no 3rd inversion, so that choice only applies to seventh chords.")
         note.setWordWrap(True)
@@ -1436,12 +1456,12 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         )
         inv_lay.addWidget(self.inversions)
         inv_lay.addWidget(note)
-        inversions_page = _subpage("Inversions", inv_body, lambda: self._go(0))
+        inversions_page = _subpage("Inversions", body=inv_body, back=lambda: self._go(0))
 
         # layer 2: key signatures
-        self.key_page = KeySignaturePage(cfg.key_signature, cfg.keys)
+        self.key_page = KeySignaturePage(cfg.key_signature, selected=cfg.keys)
         self.key_page.changed.connect(self._keys_edited)
-        keys_page = _subpage("Key signatures", self.key_page, lambda: self._go(0))
+        keys_page = _subpage("Key signatures", body=self.key_page, back=lambda: self._go(0))
 
         for page in (
             menu,
@@ -1471,9 +1491,9 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         )
         _show_keys(
             self.keys_row,
-            self.keys_diagram,
-            cfg.key_signature,
-            set(cfg.active_keys()),
+            diagram=self.keys_diagram,
+            enabled=cfg.key_signature,
+            keys=set(cfg.active_keys()),
         )
 
     def _save_and_emit(self):
@@ -1504,9 +1524,9 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         self.cfg.keys = self.key_page.selected()
         _show_keys(
             self.keys_row,
-            self.keys_diagram,
-            self.cfg.key_signature,
-            set(self.cfg.active_keys()),
+            diagram=self.keys_diagram,
+            enabled=self.cfg.key_signature,
+            keys=set(self.cfg.active_keys()),
         )
         self._save_and_emit()
 
@@ -1535,6 +1555,7 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
     def __init__(
         self,
         cfg: settings.KeySignatureSettings,
+        *,
         parent=None,
     ):
         super().__init__(parent)
@@ -1581,7 +1602,7 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         mlay.addStretch()
 
         # layer 2: the kinds of question
-        self.questions = ChoiceChecklist([("", [(k, v) for k, v in settings.KEY_QUESTIONS.items()])], cfg.questions)
+        self.questions = ChoiceChecklist([("", [(k, v) for k, v in settings.KEY_QUESTIONS.items()])], selected=cfg.questions)
         self.questions.changed.connect(self._questions_edited)
         questions_note = QLabel(
             "A key signature is drawn on a staff and you name its key, or a key is named and you count "
@@ -1599,7 +1620,7 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         )
         qlay.addWidget(self.questions)
         qlay.addWidget(questions_note)
-        questions_page = _subpage("Questions", questions_body, lambda: self._go(0))
+        questions_page = _subpage("Questions", body=questions_body, back=lambda: self._go(0))
 
         # layer 2: the clefs the signature is drawn on
         body = QWidget()
@@ -1620,10 +1641,10 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
             box.toggled.connect(self._clefs_edited)
         blay.addWidget(_clef_list(self.boxes))
         _guard_last(list(self.boxes.values()))
-        staff_page = _subpage("Staff", body, lambda: self._go(0))
+        staff_page = _subpage("Staff", body=body, back=lambda: self._go(0))
 
         # layer 2: the scales, so the key can be a major or minor key or a mode
-        self.modes = ChoiceChecklist([("", [(m, settings.MODE_LABELS[m]) for m in settings.KEY_MODES])], cfg.modes)
+        self.modes = ChoiceChecklist([("", [(m, settings.MODE_LABELS[m]) for m in settings.KEY_MODES])], selected=cfg.modes)
         self.modes.changed.connect(self._modes_edited)
         modes_note = QLabel(
             "A mode has the key signature of a major key and starts from another note of it: D Dorian has "
@@ -1641,12 +1662,12 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         )
         mlay2.addWidget(self.modes)
         mlay2.addWidget(modes_note)
-        modes_page = _subpage("Scales", modes_body, lambda: self._go(0))
+        modes_page = _subpage("Scales", body=modes_body, back=lambda: self._go(0))
 
         # layer 2: the key signatures asked
         self.key_list = KeyChecklist(cfg.keys)
         self.key_list.changed.connect(self._keys_edited)
-        keys_page = _subpage("Key signatures", self.key_list, lambda: self._go(0))
+        keys_page = _subpage("Key signatures", body=self.key_list, back=lambda: self._go(0))
 
         for page in (
             menu,
@@ -1676,9 +1697,9 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         self.modes_row.value.setText(f"{len(modes)} of {len(settings.KEY_MODES)}")
         _show_keys(
             self.keys_row,
-            self.keys_diagram,
-            True,
-            set(cfg.active_keys()),
+            diagram=self.keys_diagram,
+            enabled=True,
+            keys=set(cfg.active_keys()),
         )
 
     def _save_and_emit(self):
