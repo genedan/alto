@@ -44,7 +44,15 @@ line-length = 130
 src = ["alto", "tests"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "UP", "B"]
+select = [
+    "E", "F", "W", "I", "UP", "B",
+    # Habits the code already has, kept that way: one return style, no commented-out code, no shadowed builtins, and so on.
+    "RET", "PERF", "FURB", "ERA", "A", "PLE", "ICN", "RSE", "LOG", "G", "INP", "PGH", "FLY",
+    "PIE",  # no needless range(0, n), pass, or duplicated class fields
+    "ISC",  # a string split over lines inside a list must be wrapped in brackets, so a missing comma cannot hide in it
+    "COM812",  # a list, dict or call split over lines ends with a trailing comma. Not COM819: a trailing comma on a short
+    # line is how you keep it one per line.
+]
 ignore = [
     "B905",  # zip() without strict=: the zipped sequences are built to the same length
     "E741",  # one-letter names such as `l` for a letter name are normal in the music code

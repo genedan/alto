@@ -157,8 +157,8 @@ class DatabasePage(QWidget):
         for r in db.attempt_rows(pid, ROW_LIMIT):
             seconds = r["duration_ms"] / 1000
             extras.append({"exercise": r["exercise"], "payload": r["payload"], "details": [
-                f"<b>You answered:</b> {r['answer'] or '–'} ({'right' if r['correct'] else 'wrong'}, attempt {r['attempt_no']}, "
-                f"{seconds:.1f} s)", f"<span style='color: gray;'>{_when(r['answered_at'])[0]}</span>"]})
+                (f"<b>You answered:</b> {r['answer'] or '–'} ({'right' if r['correct'] else 'wrong'}, attempt {r['attempt_no']}, "
+                 f"{seconds:.1f} s)"), f"<span style='color: gray;'>{_when(r['answered_at'])[0]}</span>"]})
             rows.append([_when(r["answered_at"]), (self._names.get(r["exercise"], r["exercise"]),) * 2,
                          (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2, (r["answer"],) * 2,
                          ("Right", 1) if r["correct"] else ("Wrong", 0), (str(r["attempt_no"]), r["attempt_no"]),
@@ -175,9 +175,9 @@ class DatabasePage(QWidget):
         for r in self.learner.db.item_rows(self.learner.profile.id, ROW_LIMIT):
             typical = r["total_first_ms"] / r["seen"] / 1000 if r["seen"] else 0.0
             extras.append({"exercise": r["exercise"], "payload": r["payload"], "details": [
-                f"<b>History:</b> answered {r['seen']} time{'s' if r['seen'] != 1 else ''}, right first time "
-                f"{r['first_try_right']}, {r['wrong_attempts']} missed attempt{'s' if r['wrong_attempts'] != 1 else ''}, "
-                f"typically {typical:.1f} s", f"<b>Strain:</b> {r['strain']:.1f} (higher comes back sooner)"]})
+                (f"<b>History:</b> answered {r['seen']} time{'s' if r['seen'] != 1 else ''}, right first time "
+                 f"{r['first_try_right']}, {r['wrong_attempts']} missed attempt{'s' if r['wrong_attempts'] != 1 else ''}, "
+                 f"typically {typical:.1f} s"), f"<b>Strain:</b> {r['strain']:.1f} (higher comes back sooner)"]})
             rows.append([(self._names.get(r["exercise"], r["exercise"]),) * 2,
                          (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2,
                          (f"{r['strain']:.1f}", r["strain"]), (str(r["seen"]), r["seen"]),

@@ -414,9 +414,9 @@ class NoteConstruction(Exercise):
 
     def instructions(self) -> str:
         cfg = settings.construction
-        text = ["<b>Note Construction</b><br>A note name is shown. Click the staff where that note belongs. The octave "
-                "counts: the number says which C-to-B you mean, and middle C is C4. On a grand staff, click the upper "
-                "staff for notes from middle C up and the lower staff for the notes below it."]
+        text = [("<b>Note Construction</b><br>A note name is shown. Click the staff where that note belongs. The octave "
+                 "counts: the number says which C-to-B you mean, and middle C is C4. On a grand staff, click the upper "
+                 "staff for notes from middle C up and the lower staff for the notes below it.")]
         if cfg.key_signature:
             text.append("A key signature is drawn at the start of the staff. It already applies to every note of that "
                         "letter, so in G major you place F♯ on the F line with no sign. A note that the key does not "

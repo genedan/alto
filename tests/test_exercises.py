@@ -181,7 +181,7 @@ def test_keyboard_range_and_octave_answers():
         cfg.low, cfg.high = settings.KEYBOARD_FULL  # the whole piano
         qs = [KeyboardNotes().generate(rng) for _ in range(2000)]
         assert min(keyboard_of(q).midi for q in qs) < 30 and max(keyboard_of(q).midi for q in qs) > 100
-        assert qs[0].octaves == [str(o) for o in range(0, 9)]
+        assert qs[0].octaves == [str(o) for o in range(9)]
     finally:
         cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = old
 
