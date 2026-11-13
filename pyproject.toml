@@ -30,7 +30,9 @@ alto = ["assets/piano/*", "assets/samples/*/*", "assets/ui/*", "assets/fonts/*",
 include = ["alto*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "alto"]
+addopts = "--doctest-modules"  # the Examples in docstrings run as tests, so they cannot go out of date
+doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
 
 [tool.coverage.run]
 source = ["alto"]  # measure the app, not the tests
@@ -47,7 +49,11 @@ src = ["alto", "tests"]
 skip-magic-trailing-comma = false  # a trailing comma keeps a list, dict or call one element per line (the default, kept on purpose)
 
 [tool.ruff.lint]
-explicit-preview-rules = true  # PLR0917 is a preview rule; this turns on only the preview rules named in `select`
+preview = true  # the DOC rules are preview rules ...
+explicit-preview-rules = true  # ... and this turns on only the preview rules named in `select`, not all of them
+# The numpy convention switches these off, so they are added back: a docstring on every __init__, every parameter described, and
+# the text of a docstring starting on the line after the opening quotes.
+extend-select = ["D107", "D417", "D213"]  # D213: a multi-line docstring starts on the line after the opening quotes
 select = [
     "E", "F", "W", "I", "UP", "B",
     # Habits the code already has, kept that way: one return style, no commented-out code, no shadowed builtins, and so on.
@@ -55,6 +61,11 @@ select = [
     "PIE",  # no needless range(0, n), pass, or duplicated class fields
     "ISC",  # a string split over lines inside a list must be wrapped in brackets, so a missing comma cannot hide in it
     "PLR0917",  # only the first parameter may be positional; the rest are keyword-only, so calls name their arguments
+    # Every module, class, function and method has a NumPy-style docstring that describes each parameter and the return value,
+    # and every signature is annotated. Packages not yet documented are excluded below, and each line goes when its package is done.
+    "D",
+    "ANN",
+    "DOC201", "DOC202", "DOC402", "DOC403", "DOC501",  # not DOC502: a Raises section may name errors that a called function raises
     "COM812",  # a list, dict or call split over lines ends with a trailing comma. Not COM819: a trailing comma on a short
     # line is how you keep it one per line.
 ]
@@ -66,8 +77,21 @@ ignore = [
 [tool.ruff.lint.pylint]
 max-positional-args = 1
 
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["PLR0917"]  # test functions take their fixtures as plain parameters; pytest passes them by name
+# Not documented yet. Remove a line when that package has its docstrings and annotations.
+"alto/__init__.py" = ["D", "DOC", "ANN"]
+"alto/__main__.py" = ["D", "DOC", "ANN"]
+"alto/audio.py" = ["D", "DOC", "ANN"]
+"alto/instrument_info.py" = ["D", "DOC", "ANN"]
+"alto/settings.py" = ["D", "DOC", "ANN"]
+"alto/exercises/**" = ["D", "DOC", "ANN"]
+"alto/learning/**" = ["D", "DOC", "ANN"]
+"alto/ui/**" = ["D", "DOC", "ANN"]
+"tests/**" = ["D", "DOC", "ANN", "PLR0917"]  # PLR0917: pytest passes fixtures to test functions as plain parameters
+"scripts/**" = ["D", "DOC", "ANN"]
 "alto/ui/icons.py" = ["E501"]  # SVG path data
 "alto/ui/style.py" = ["E501"]  # the stylesheet template
 
