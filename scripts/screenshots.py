@@ -157,10 +157,13 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     wait(400)
     save(window, "stats", 1500)
     if "stats-heatmap" in names:  # scroll down to the calendar of reviews and show it with the table under it
+        from alto.ui.stats_dialog import StatsPage
         from PySide6.QtWidgets import QScrollArea
 
         stats_page = window._overlay
+        assert isinstance(stats_page, StatsPage)
         scroller = stats_page.findChild(QScrollArea)
+        assert scroller is not None
         scroller.verticalScrollBar().setValue(stats_page.heatmap.y() - 16)
         wait(300)
         save(window, "stats-heatmap", 1500)
