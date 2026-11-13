@@ -67,7 +67,9 @@ def test_the_cards_are_laid_out_in_as_many_columns_as_fit(app: QApplication) -> 
         QTest.qWait(10)
         widths[width] = home._columns
         items = [home.rows.itemAt(i) for i in range(home.rows.count())]
+        # noinspection PyUnboundLocalVariable
         rows = [layout for item in items if item is not None and (layout := item.layout()) is not None]
+        # noinspection PyUnresolvedReferences
         assert sum(r.count() - 2 for r in rows) == len(REGISTRY)  # every card is in a row (less the two stretches)
         assert home.grab().width() == width
     assert widths[300] == 1 and widths[300] <= widths[700] <= widths[1100] <= widths[2000]
@@ -176,6 +178,7 @@ def test_the_window_starts_on_the_home_screen_with_a_list_of_exercises(window: M
     classes = [e.data(Qt.ItemDataRole.UserRole) for e in entries if e.data(Qt.ItemDataRole.UserRole)]
     assert classes == list(REGISTRY)
     headings = [e.text() for e in entries if not e.data(Qt.ItemDataRole.UserRole)]
+    # noinspection PyTypeChecker
     assert "NOTATION" in headings and all(not (e.flags() & Qt.ItemFlag.ItemIsSelectable) for e in entries if e.text() in headings)
     assert window.stats_button.isVisibleTo(window) and window.database_button.isVisibleTo(window)
     assert window.profile_action.text() == "Profile: Ada…"
@@ -235,6 +238,7 @@ def test_choosing_an_exercise_shows_it_opens_the_list_and_titles_the_window(wind
     window : MainWindow
         The main window under test.
     """
+    # noinspection PyTypeChecker
     window.open_exercise(None)  # pyright: ignore[reportArgumentType]  (a section heading has no exercise: nothing happens)
     assert window.stack.currentWidget() is window.home
     for cls in REGISTRY[:3]:
@@ -311,6 +315,7 @@ def test_the_statistics_and_database_pages_replace_the_current_page_and_back_ret
     exercise = window.stack.currentWidget()
     window.stats_button.click()
     assert window.title_label.text() == "Statistics" and window.stack.currentWidget() is window._overlay
+    # noinspection PyUnresolvedReferences
     window._overlay.back.emit()
     assert window.stack.currentWidget() is exercise and window.title_label.text() == REGISTRY[0].name
     window.database_button.click()
@@ -337,6 +342,7 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
+    # noinspection PyUnresolvedReferences
     db = window.learner.db
     ben = db.add_profile("Ben")
 
@@ -345,6 +351,7 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
         A stand-in for the profile dialog that picks another profile.
         """
 
+        # noinspection PyShadowingNames
         def __init__(
             self,
             db: Database,
@@ -364,8 +371,10 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
             parent : QWidget or None
                 The owning widget.
             """
+            del db, current, parent  # accepted to match what it stands in for, but not needed
             self.chosen = ben
 
+        # noinspection PyMethodMayBeStatic
         def exec(self) -> QDialog.DialogCode:
             """
             Accept without showing anything.
@@ -377,9 +386,11 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
             """
             return QDialog.DialogCode.Accepted
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(mw, "ProfileDialog", Chooses)
     window.open_exercise(REGISTRY[0])
     window.switch_profile()
+    # noinspection PyUnresolvedReferences
     assert window.learner.profile == ben and window.profile_action.text() == "Profile: Ben…"
     assert window.stack.currentWidget() is window.home
     from alto.ui.store import store
@@ -402,8 +413,10 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
             """
             return QDialog.DialogCode.Rejected
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(mw, "ProfileDialog", Cancels)
     window.switch_profile()
+    # noinspection PyUnresolvedReferences
     assert window.learner.profile == ben  # nothing changed
 
     class SameAgain(Chooses):
@@ -411,6 +424,7 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
         A stand-in for the profile dialog that picks the profile already in use.
         """
 
+        # noinspection PyMissingConstructor,PyShadowingNames
         def __init__(
             self,
             db: Database,
@@ -430,8 +444,10 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
             parent : QWidget or None
                 The owning widget.
             """
+            del db, current, parent  # accepted to match what it stands in for, but not needed
             self.chosen = ben
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(mw, "ProfileDialog", SameAgain)
     window.open_exercise(REGISTRY[1])
     window.switch_profile()
@@ -471,7 +487,9 @@ def test_changing_the_theme_in_settings_opens_a_fresh_window(
             parent : QWidget or None
                 The owning widget.
             """
+            del parent  # accepted to match what it stands in for, but not needed
 
+        # noinspection PyMethodMayBeStatic
         def exec(self) -> int:
             """
             Pretend to show the dialog.
@@ -483,6 +501,7 @@ def test_changing_the_theme_in_settings_opens_a_fresh_window(
             """
             return 0
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(mw, "AppSettingsDialog", Dialog)
     window.open_settings()
     assert rebuilt == []
@@ -536,6 +555,7 @@ def test_restarting_starts_a_new_copy_then_quits(
     """
     started, quit_calls = [], []
     monkeypatch.setattr(mw.QProcess, "startDetached", lambda program, args: started.append((program, args)) or True)
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(mw.QApplication, "quit", lambda: quit_calls.append(1))
     window.restart_app()
     assert started and started[0][1] == ["-m", "alto"] and quit_calls == [1]
@@ -602,6 +622,7 @@ class FakeApp:
         argv : list of str
             The command line, ignored.
         """
+        del argv  # accepted to match what it stands in for, but not needed
         self.calls = []
 
     def __getattr__(self, name: str) -> Callable[..., int | None]:
@@ -643,9 +664,12 @@ def test_the_app_opens_a_window_for_the_chosen_profile(
     from alto import __main__ as entry
 
     db_profile = Database().add_profile("Ada")
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(entry, "QApplication", FakeApp)
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(entry, "startup_profile", lambda db: db_profile)
     shown = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(entry.MainWindow, "show", lambda self: shown.append(self))
     assert entry.main() == 0
     assert len(shown) == 1 and isinstance(shown[0].learner, Learner) and shown[0].learner.profile == db_profile
@@ -668,6 +692,8 @@ def test_the_app_quits_quietly_if_no_profile_is_chosen(
     """
     from alto import __main__ as entry
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(entry, "QApplication", FakeApp)
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(entry, "startup_profile", lambda db: None)
     assert entry.main() == 0

@@ -38,6 +38,7 @@ def test_the_first_time_it_asks_for_a_name_and_creates_the_profile(app: QApplica
     assert dialog.error.text() and dialog.chosen is None
     dialog.name.setText("Ada Lovelace")
     dialog.name.returnPressed.emit()
+    # noinspection PyUnresolvedReferences
     assert dialog.chosen is not None and dialog.chosen.name == "Ada Lovelace" and dialog.result() == QDialog.DialogCode.Accepted
 
 
@@ -266,6 +267,7 @@ def test_a_staff_question_shows_its_notes_answer_choices_and_explanation(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     q = Question(
         "Which?",
@@ -307,6 +309,7 @@ def test_a_keyboard_question_shows_the_key(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     q = Question(
         "",
@@ -338,6 +341,7 @@ def test_a_note_construction_question_shows_the_note_that_was_asked_for(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     settings.note_names.naming = "solfege"
     q = Question(

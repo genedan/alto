@@ -236,6 +236,7 @@ def test_a_line_chart_point_names_itself_when_hovered(
     chart.set_data(["Mon", "Tue", "Wed"], values=[2.0, None, 4.5])
     plot = chart._plot()
     for i, expected in ((0, "Mon\n2.0 s"), (1, "Tue\nno answers"), (2, "Wed\n4.5 s")):
+        # noinspection PyTypeChecker
         point = QPointF(chart._centres()[i], plot.center().y())
         chart.mouseMoveEvent(
             QMouseEvent(

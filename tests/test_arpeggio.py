@@ -267,6 +267,7 @@ class FakeStore:
         """
         self.values = dict(values or {})
 
+    # noinspection PyPep8Naming
     def setValue(self, key: str, value: object) -> None:  # noqa: PLR0917  (stands in for QSettings.setValue, which the code under test calls)
         """
         Save a value, as QSettings does.
@@ -332,10 +333,13 @@ def view(
     from PySide6.QtCore import QEvent
     from PySide6.QtWidgets import QApplication
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(settings_panel, "store", lambda: FakeStore())
     cfg.types, cfg.inversions, cfg.clefs = {"major", "minor"}, {0, 1}, {"treble"}
     # Nothing is played: a note scheduled for later would sound (and load the audio system) during some other test.
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(sounds, "play_notes", lambda *args, **kwargs: None)
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(sounds, "play_correct", lambda *args, **kwargs: None)
     v = ExerciseView(ArpeggioNames(), rng=random.Random(1))
     yield v
@@ -371,6 +375,7 @@ def test_choosing_the_type_and_the_inversion_answers_the_question(view: Exercise
         The exercise view under test.
     """
     q = view.question
+    # noinspection PyUnresolvedReferences
     kind, inversion = q.answer.split(q.joiner)
     press(view, text=kind)
     assert not view.answered  # one part is not an answer yet
@@ -390,7 +395,9 @@ def test_a_wrong_pair_is_a_miss_and_the_buttons_reset(view: ExerciseView) -> Non
     from PySide6.QtTest import QTest
 
     q = view.question
+    # noinspection PyUnresolvedReferences
     kind, inversion = q.answer.split(q.joiner)
+    # noinspection PyUnresolvedReferences
     wrong = next(t for t in q.choices if t != kind)
     press(view, text=inversion)
     press(view, text=wrong)
@@ -438,6 +445,7 @@ def test_the_settings_panel_edits_and_saves_the_settings(
     from alto.ui.settings_panel import ArpeggioSettingsPanel
 
     saved = FakeStore()
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(settings_panel, "store", lambda: saved)
     panel = view.settings_panel
     assert isinstance(panel, ArpeggioSettingsPanel)
@@ -445,7 +453,8 @@ def test_the_settings_panel_edits_and_saves_the_settings(
     panel.changed.connect(lambda: seen.append(1))
     panel.types.boxes["augmented"].setChecked(True)
     assert "augmented" in cfg.types and seen
-    assert "augmented" in str(saved.values["arpeggio/types"]).split(",")
+    types = saved.values["arpeggio/types"]
+    assert isinstance(types, str) and "augmented" in types.split(",")
     panel.inversions.boxes[1].setChecked(False)
     assert cfg.inversions == {0}
     assert saved.values["arpeggio/inversions"] == "0"
@@ -471,6 +480,7 @@ def test_the_saved_settings_are_read_back(
     """
     from alto.ui import settings_panel
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(
         settings_panel,
         "store",

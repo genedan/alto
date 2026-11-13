@@ -86,7 +86,7 @@ def test_the_python_versions_in_the_readme_badge_are_the_ones_the_tests_run_on()
     from urllib.parse import unquote
 
     workflow = (ROOT / ".github" / "workflows" / "tests.yml").read_text()
-    matrix = re.search(r"python-version:\s*\[([^\]]*)\]", workflow)
+    matrix = re.search(r"python-version:\s*\[([^]]*)]", workflow)
     assert matrix is not None
     tested = re.findall(r'"([\d.]+)"', matrix.group(1))
     badge = re.search(r"img\.shields\.io/badge/python-([^)]*?)-\w+\)", (ROOT / "README.md").read_text())

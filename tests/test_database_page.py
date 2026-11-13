@@ -244,6 +244,7 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(
         A stand-in for the question preview popup that records how it was opened.
         """
 
+        # noinspection PyShadowingNames
         def __init__(
             self,
             name: str,
@@ -266,14 +267,17 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(
             parent : QWidget or None
                 The owning widget.
             """
+            del parent  # accepted to match what it stands in for, but not needed
             opened.append((name, question, details))
 
+        # noinspection PyMethodMayBeStatic
         def exec(self) -> None:
             """
             Record that the popup was shown.
             """
             opened.append("exec")
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(database_page, "QuestionPreview", Preview)
     learner = practised_learner(30)
     page = DatabasePage(learner)

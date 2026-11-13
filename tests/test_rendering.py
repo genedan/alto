@@ -339,6 +339,7 @@ def test_the_staff_input_previews_and_locks(
     staff.reset("bass")
     move(staff, x=250, y=100)
     assert staff.columns and staff.note_color is not None  # the preview follows the pointer
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(staff, "underMouse", lambda: True)
     staff.accidental = 1
     staff.refresh_preview()  # e.g. after the accidental changes
@@ -377,6 +378,7 @@ def test_the_grand_staff_input_splits_at_middle_c(app: QApplication) -> None:
     bottoms = staff.staff_bottoms()
     assert staff.note_at(bottoms["treble"] - 4 * staff.GAP).diatonic >= Note(4, letter=0).diatonic
     assert staff.note_at(bottoms["bass"]).diatonic < Note(4, letter=0).diatonic
+    # noinspection PyChainedComparisons
     assert (
         staff.note_at(-5000).diatonic >= Note(4, letter=0).diatonic and staff.note_at(5000).diatonic < Note(4, letter=0).diatonic
     )
@@ -542,8 +544,10 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app: QAppl
     span.resize(880, 64)
     span.set_span(48, hi=72)
     heard: list[tuple[int, int]] = []
+    # noinspection PyNoneFunctionAssignment
     span.dragged.connect(lambda lo, hi: (heard.append((lo, hi)), span.set_span(lo, hi=hi)))
 
+    # noinspection PyShadowingNames
     def send(
         kind: QEvent.Type,
         *,
@@ -574,6 +578,7 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app: QAppl
             button,
             Qt.KeyboardModifier.NoModifier,
         )
+        # noinspection PyArgumentList
         {
             QEvent.Type.MouseButtonPress: span.mousePressEvent,
             QEvent.Type.MouseMove: span.mouseMoveEvent,
@@ -869,6 +874,7 @@ def test_the_sidebar_button_and_help_button(app: QApplication) -> None:
     button.click()  # the text is asked for again each time, so it can follow the settings
     second = button._popup
     assert second is not None and second is not popup
+    # noinspection PyUnresolvedReferences
     second.close()
     button.hide()
 

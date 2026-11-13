@@ -94,6 +94,7 @@ def test_registering_an_exercise_puts_it_beside_the_others_of_its_category() -> 
         assert REGISTRY.index(Extra) == last_of_category + 1
         assert [c for c in REGISTRY if c is not Extra] == before  # nothing else moved
         brand_new = type("New", (Extra,), {"category": "A category nobody has used"})
+        # noinspection PyTypeChecker
         register(brand_new)
         assert REGISTRY[-1] is brand_new  # a new category goes at the end
     finally:
