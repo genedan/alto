@@ -6,3 +6,6 @@ __pycache__/
 .mcp.json
 CLAUDE.md
 alto.egg-info/
+.coverage
+coverage.xml
+htmlcov/

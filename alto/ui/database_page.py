@@ -129,6 +129,7 @@ class DatabasePage(QWidget):
         self.search.textChanged.connect(self.proxy.setFilterFixedString)
         self.proxy.layoutChanged.connect(self._show_count)
         self.proxy.rowsInserted.connect(self._show_count)
+        self.proxy.rowsRemoved.connect(self._show_count)  # narrowing the search removes rows
         self.proxy.modelReset.connect(self._show_count)
         lay.addWidget(self.view, 1)
 
