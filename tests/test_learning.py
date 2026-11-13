@@ -1,14 +1,25 @@
+"""The learner: how answers are recorded, how strain builds up and how the next question is chosen."""
+
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 import pytest
 from alto.exercises.base import Exercise, Question
 from alto.learning import Database, Learner, scheduler
 from alto.theory.pitch import Note
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
 # -- the scheduler --------------------------------------------------------------------------------------------------
 
 
-def test_speed_term_runs_from_bonus_to_penalty():
+def test_speed_term_runs_from_bonus_to_penalty() -> None:
+    """
+    Check that speed term runs from bonus to penalty.
+    """
     par = 4.0
     assert scheduler.speed_term(0.5, par_seconds=par) == -scheduler.FAST_BONUS  # very quick
     assert scheduler.speed_term(par, par_seconds=par) == 0.0  # right on par
@@ -17,7 +28,10 @@ def test_speed_term_runs_from_bonus_to_penalty():
     assert samples == sorted(samples)  # never rewards slowness
 
 
-def test_quick_correct_answer_ends_up_easier_than_slow_one():
+def test_quick_correct_answer_ends_up_easier_than_slow_one() -> None:
+    """
+    Check that quick correct answer ends up easier than slow one.
+    """
     quick = scheduler.update_strain(
         2.0,
         correct=True,
@@ -42,7 +56,10 @@ def test_quick_correct_answer_ends_up_easier_than_slow_one():
     assert quick < steady < 2.0 < slow  # even a correct answer is held against you if it took too long
 
 
-def test_every_extra_attempt_adds_strain():
+def test_every_extra_attempt_adds_strain() -> None:
+    """
+    Check that every extra attempt adds strain.
+    """
     s = 1.5
     for _ in range(3):
         before = s
@@ -57,7 +74,10 @@ def test_every_extra_attempt_adds_strain():
     assert s == scheduler.STRAIN_MAX or s > 1.5 + 2 * scheduler.WRONG_PENALTY
 
 
-def test_strain_stays_in_bounds():
+def test_strain_stays_in_bounds() -> None:
+    """
+    Check that strain stays in bounds.
+    """
     assert (
         scheduler.update_strain(
             0.1,
@@ -80,7 +100,10 @@ def test_strain_stays_in_bounds():
     )
 
 
-def test_weight_grows_with_strain_and_new_questions_beat_mastered_ones():
+def test_weight_grows_with_strain_and_new_questions_beat_mastered_ones() -> None:
+    """
+    Check that weight grows with strain and new questions beat mastered ones.
+    """
     later = 10_000.0
     weights = [
         scheduler.weight(s, last_seen=0.0, now=later)
@@ -96,7 +119,10 @@ def test_weight_grows_with_strain_and_new_questions_beat_mastered_ones():
     assert scheduler.weight(None, last_seen=None, now=later) > scheduler.weight(0.0, last_seen=0.0, now=later)
 
 
-def test_a_question_just_seen_is_held_back_and_hard_ones_return_sooner():
+def test_a_question_just_seen_is_held_back_and_hard_ones_return_sooner() -> None:
+    """
+    Check that a question just seen is held back and hard ones return sooner.
+    """
     assert scheduler.weight(1.0, last_seen=100.0, now=101.0) < scheduler.weight(1.0, last_seen=0.0, now=101.0)
     # after the same short wait, the hard question has recovered more of its chance than the easy one
     easy = scheduler.weight(0.5, last_seen=0.0, now=60.0) / scheduler.weight(0.5, last_seen=0.0, now=1e6)
@@ -107,7 +133,10 @@ def test_a_question_just_seen_is_held_back_and_hard_ones_return_sooner():
 # -- the database ---------------------------------------------------------------------------------------------------
 
 
-def test_profiles_are_unique_ignoring_case_and_need_a_name():
+def test_profiles_are_unique_ignoring_case_and_need_a_name() -> None:
+    """
+    Check that profiles are unique ignoring case and need a name.
+    """
     db = Database()
     first = db.add_profile("  Ada   Lovelace ")
     assert first.name == "Ada Lovelace"
@@ -118,7 +147,15 @@ def test_profiles_are_unique_ignoring_case_and_need_a_name():
     assert [p.name for p in db.profiles()] == ["Ada Lovelace"]
 
 
-def test_database_is_created_on_disk_and_reopened(tmp_path):
+def test_database_is_created_on_disk_and_reopened(tmp_path: Path) -> None:
+    """
+    Check that database is created on disk and reopened.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        A scratch folder unique to this test.
+    """
     path = tmp_path / "nested" / "alto.db"
     Database(path).add_profile("Ben")
     assert [p.name for p in Database(path).profiles()] == ["Ben"]
@@ -132,7 +169,20 @@ class Stub(Exercise):
 
     name, par_seconds = "Stub", 4.0
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make a question with a random note.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random source (not used: the question is fixed).
+
+        Returns
+        -------
+        Question
+            A question.
+        """
         n = Note.from_diatonic(rng.randint(14, 60))
         return Question(
             "",
@@ -143,12 +193,28 @@ class Stub(Exercise):
 
 
 def distinct(
-    ex,
+    ex: Exercise,
     *,
-    count,
-    rng,
-):
-    """`count` questions that are all different from each other."""
+    count: int,
+    rng: random.Random,
+) -> list[Question]:
+    """
+    `count` questions that are all different from each other.
+
+    Parameters
+    ----------
+    ex : Exercise
+        The exercise.
+    count : int
+        How many questions to draw.
+    rng : random.Random
+        The random source.
+
+    Returns
+    -------
+    list of Question
+        The questions, without repeats.
+    """
     found = {}
     while len(found) < count:
         q = ex.generate(rng)
@@ -156,12 +222,23 @@ def distinct(
     return list(found.values())
 
 
-def make_learner():
+def make_learner() -> tuple[Learner, Stub]:
+    """
+    Build a learner on a new database, with a stub exercise.
+
+    Returns
+    -------
+    tuple of Learner and Stub
+        The learner and the exercise.
+    """
     db = Database()
     return Learner(db, profile=db.add_profile("Tester")), Stub()
 
 
-def test_every_answer_is_recorded_including_the_wrong_ones():
+def test_every_answer_is_recorded_including_the_wrong_ones() -> None:
+    """
+    Check that every answer is recorded including the wrong ones.
+    """
     learner, ex = make_learner()
     q = ex.generate(random.Random(1))
     learner.record(
@@ -198,7 +275,10 @@ def test_every_answer_is_recorded_including_the_wrong_ones():
     assert (item.seen, item.first_try_right, item.wrong_attempts) == (1, 0, 2)
 
 
-def test_more_attempts_and_slower_answers_leave_a_question_more_strained():
+def test_more_attempts_and_slower_answers_leave_a_question_more_strained() -> None:
+    """
+    Check that more attempts and slower answers leave a question more strained.
+    """
     learner, ex = make_learner()
     rng = random.Random(2)
     clean, fumbled, slow, quick = distinct(ex, count=4, rng=rng)
@@ -257,7 +337,20 @@ def test_more_attempts_and_slower_answers_leave_a_question_more_strained():
         now=1.0,
     )
 
-    def strain_of(q):
+    def strain_of(q: Question) -> float:
+        """
+        Look up the strain of a question.
+
+        Parameters
+        ----------
+        q : Question
+            The question.
+
+        Returns
+        -------
+        float
+            Its strain.
+        """
         item = learner.db.get_item(learner.profile.id, exercise="Stub", item_key=q.item_key())
         assert item is not None
         return item.strain
@@ -274,7 +367,10 @@ def test_more_attempts_and_slower_answers_leave_a_question_more_strained():
     assert strain["fumbled"] > strain["slow"] > strain["clean"] > strain["quick"]
 
 
-def test_a_hard_question_comes_back_far_more_often_than_a_mastered_one():
+def test_a_hard_question_comes_back_far_more_often_than_a_mastered_one() -> None:
+    """
+    Check that a hard question comes back far more often than a mastered one.
+    """
     learner, ex = make_learner()
     rng = random.Random(3)
     hard, easy = distinct(ex, count=2, rng=rng)
@@ -309,7 +405,10 @@ def test_a_hard_question_comes_back_far_more_often_than_a_mastered_one():
     assert counts["hard"] > 40 and counts["hard"] > 8 * max(counts["easy"], 1)
 
 
-def test_pick_never_repeats_the_question_just_asked():
+def test_pick_never_repeats_the_question_just_asked() -> None:
+    """
+    Check that pick never repeats the question just asked.
+    """
     learner, ex = make_learner()
     rng = random.Random(4)
     last = ex.generate(rng)
@@ -334,7 +433,10 @@ def test_pick_never_repeats_the_question_just_asked():
         )
 
 
-def test_stored_questions_are_only_asked_again_under_the_same_settings():
+def test_stored_questions_are_only_asked_again_under_the_same_settings() -> None:
+    """
+    Check that stored questions are only asked again under the same settings.
+    """
     learner, ex = make_learner()
     rng = random.Random(5)
     q = ex.generate(rng)
@@ -354,7 +456,10 @@ def test_stored_questions_are_only_asked_again_under_the_same_settings():
     assert learner.db.replay_candidates(learner.profile.id, exercise="Stub", signature="other settings") == []
 
 
-def test_each_profile_has_its_own_history():
+def test_each_profile_has_its_own_history() -> None:
+    """
+    Check that each profile has its own history.
+    """
     db = Database()
     ada, ben = db.add_profile("Ada"), db.add_profile("Ben")
     ex = Stub()
@@ -375,7 +480,10 @@ def test_each_profile_has_its_own_history():
 # -- the exercise screen --------------------------------------------------------------------------------------------
 
 
-def test_exercise_view_records_each_answer_with_its_timing():
+def test_exercise_view_records_each_answer_with_its_timing() -> None:
+    """
+    Check that exercise view records each answer with its timing.
+    """
     import os
 
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")

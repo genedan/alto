@@ -1,35 +1,90 @@
+"""The exercise library: every exercise makes valid questions, and the registry keeps them in order."""
+
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 from alto.exercises import REGISTRY
 from alto.exercises.base import Exercise, Question
 
+if TYPE_CHECKING:
+    from alto.theory.pitch import Note
 
-def keyboard_of(q):
-    """The highlighted key of a keyboard question."""
+
+def keyboard_of(q: Question) -> Note:
+    """
+    Return the highlighted key of a keyboard question.
+
+    Parameters
+    ----------
+    q : Question
+        A keyboard question.
+
+    Returns
+    -------
+    Note
+        The key to highlight.
+    """
     assert q.keyboard is not None
     return q.keyboard
 
 
-def construct_of(q):
-    """The note to place, for a note construction question."""
+def construct_of(q: Question) -> Note:
+    """
+    Return the note to place, for a note construction question.
+
+    Parameters
+    ----------
+    q : Question
+        A note construction question.
+
+    Returns
+    -------
+    Note
+        The note to place.
+    """
     assert q.construct is not None
     return q.construct
 
 
-def test_the_exercises_of_a_category_are_listed_together():
+def test_the_exercises_of_a_category_are_listed_together() -> None:
+    """
+    Check that the exercises of a category are listed together.
+    """
     categories = [cls.category for cls in REGISTRY]
     firsts = list(dict.fromkeys(categories))  # the categories in the order they first appear
     assert categories == sorted(categories, key=firsts.index)  # no category comes back after another one has started
     assert len(firsts) > 1
 
 
-def test_registering_an_exercise_puts_it_beside_the_others_of_its_category():
+def test_registering_an_exercise_puts_it_beside_the_others_of_its_category() -> None:
+    """
+    Check that registering an exercise puts it beside the others of its category.
+    """
     from alto.exercises.base import register
 
     class Extra(Exercise):
+        """
+        An exercise in a category that has others after it.
+        """
+
         name, category = "Extra", "Intervals"  # a category with exercises after it, not the last one
 
-        def generate(self, rng):
+        def generate(self, rng: random.Random) -> Question:
+            """
+            Make the one fixed question.
+
+            Parameters
+            ----------
+            rng : random.Random
+                The random source (not used: the question is fixed).
+
+            Returns
+            -------
+            Question
+                A question.
+            """
             return Question("?", choices=["a"], answer="a")
 
     before = list(REGISTRY)
@@ -45,7 +100,10 @@ def test_registering_an_exercise_puts_it_beside_the_others_of_its_category():
         REGISTRY[:] = before
 
 
-def test_every_exercise_generates_valid_questions():
+def test_every_exercise_generates_valid_questions() -> None:
+    """
+    Check that every exercise generates valid questions.
+    """
     rng = random.Random(1)
     for cls in REGISTRY:
         ex = cls()
@@ -61,7 +119,10 @@ def test_every_exercise_generates_valid_questions():
             assert len(set(q.choices)) == len(q.choices), (cls.name, q)
 
 
-def test_note_names_respects_clef_settings():
+def test_note_names_respects_clef_settings() -> None:
+    """
+    Test note names respects clef settings.
+    """
     from alto import settings
     from alto.exercises.library import NoteNames
 
@@ -83,7 +144,10 @@ def test_note_names_respects_clef_settings():
         cfg.clefs = old
 
 
-def test_note_names_respects_range_settings():
+def test_note_names_respects_range_settings() -> None:
+    """
+    Test note names respects range settings.
+    """
     from alto import settings
     from alto.exercises.library import NoteNames
     from alto.theory.pitch import Note
@@ -100,7 +164,10 @@ def test_note_names_respects_range_settings():
         cfg.clefs, cfg.ranges = old
 
 
-def test_note_names_key_signature_values_and_naming():
+def test_note_names_key_signature_values_and_naming() -> None:
+    """
+    Check that note names key signature values and naming.
+    """
     from alto import settings
     from alto.exercises.library import NoteNames
     from alto.theory.pitch import key_accidental
@@ -155,7 +222,10 @@ def test_note_names_key_signature_values_and_naming():
         ) = old
 
 
-def test_keyboard_exercise():
+def test_keyboard_exercise() -> None:
+    """
+    Test keyboard exercise.
+    """
     from alto import settings
     from alto.exercises.library import KeyboardNotes
 
@@ -163,7 +233,7 @@ def test_keyboard_exercise():
     old = cfg.black_keys
     try:
         rng = random.Random(5)
-        lo, hi = keyboard_of(settings).low, keyboard_of(settings).high
+        lo, hi = cfg.low, cfg.high
         for black in (True, False):
             cfg.black_keys = black
             qs = [KeyboardNotes().generate(rng) for _ in range(300)]
@@ -179,7 +249,10 @@ def test_keyboard_exercise():
         cfg.black_keys = old
 
 
-def test_keyboard_range_and_octave_answers():
+def test_keyboard_range_and_octave_answers() -> None:
+    """
+    Test keyboard range and octave answers.
+    """
     from alto import settings
     from alto.exercises.library import KeyboardNotes
 
@@ -218,7 +291,10 @@ def test_keyboard_range_and_octave_answers():
         cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = old
 
 
-def test_keyboard_key_signature_requires_the_right_spelling():
+def test_keyboard_key_signature_requires_the_right_spelling() -> None:
+    """
+    Check that keyboard key signature requires the right spelling.
+    """
     from alto import settings
     from alto.exercises.library import KeyboardNotes
 
@@ -264,7 +340,10 @@ def test_keyboard_key_signature_requires_the_right_spelling():
         cfg.key_signature, cfg.keys, cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = old
 
 
-def test_note_construction():
+def test_note_construction() -> None:
+    """
+    Test note construction.
+    """
     from alto import settings
     from alto.exercises.library import NoteConstruction
     from alto.theory.pitch import Note
@@ -296,7 +375,10 @@ def test_note_construction():
         cfg.clefs, cfg.accidentals = old
 
 
-def test_note_construction_grand_staff():
+def test_note_construction_grand_staff() -> None:
+    """
+    Test note construction grand staff.
+    """
     from alto import settings
     from alto.exercises.library import NoteConstruction
 
@@ -318,7 +400,10 @@ def test_note_construction_grand_staff():
         cfg.clefs, cfg.accidentals = old
 
 
-def test_note_construction_key_signature():
+def test_note_construction_key_signature() -> None:
+    """
+    Test note construction key signature.
+    """
     from alto import settings
     from alto.exercises.library import NoteConstruction
     from alto.theory.pitch import key_accidental

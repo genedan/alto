@@ -1,9 +1,14 @@
+"""Music theory: notes, intervals, scales, chords and key signatures."""
+
 import pytest
 from alto.theory.pitch import Interval, Note
 from alto.theory.scales import CHORDS, SCALES, build, key_signature
 
 
-def test_parse_and_midi():
+def test_parse_and_midi() -> None:
+    """
+    Test parse and midi.
+    """
     assert Note.parse("C4").midi == 60
     assert Note.parse("A4").midi == 69
     assert Note.parse("Bb3").midi == 58
@@ -25,14 +30,29 @@ def test_parse_and_midi():
     ],
 )
 def test_between(
-    low,
-    high,
-    expected,
-):
+    low: str,
+    high: str,
+    expected: str,
+) -> None:
+    """
+    Test between.
+
+    Parameters
+    ----------
+    low : str
+        The lower note.
+    high : str
+        The upper note.
+    expected : str
+        The expected result.
+    """
     assert str(Interval.between(Note.parse(low), high=Note.parse(high))) == expected
 
 
-def test_transpose_roundtrip():
+def test_transpose_roundtrip() -> None:
+    """
+    Test transpose roundtrip.
+    """
     for tonic in (
         "C4",
         "F#4",
@@ -54,7 +74,10 @@ def test_transpose_roundtrip():
             assert Interval.between(n, high=up) == Interval.parse(iv)
 
 
-def test_scales():
+def test_scales() -> None:
+    """
+    Test scales.
+    """
     notes = build(Note.parse("D4"), intervals=SCALES["Major (Ionian)"])
     assert [n.name for n in notes] == [
         "D",
@@ -77,7 +100,10 @@ def test_scales():
     ]
 
 
-def test_key_signatures():
+def test_key_signatures() -> None:
+    """
+    Test key signatures.
+    """
     assert key_signature("C") == 0
     assert key_signature("G") == 1
     assert key_signature("Eb") == -3
@@ -85,7 +111,10 @@ def test_key_signatures():
     assert key_signature("A", scale="Natural minor (Aeolian)") == 0
 
 
-def test_chords():
+def test_chords() -> None:
+    """
+    Test chords.
+    """
     notes = build(Note.parse("C4"), intervals=CHORDS["dominant 7th"])
     assert [n.name for n in notes] == [
         "C",

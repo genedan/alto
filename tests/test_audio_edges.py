@@ -1,10 +1,19 @@
 """The audio engine's less common paths: far notes, fades, errors and a sequence that is replaced while it waits."""
 
+from __future__ import annotations
+
 import wave
+from typing import TYPE_CHECKING, Never
 
 import pytest
 from alto.audio import INSTRUMENT_BY_KEY, Sounds
 from alto.theory.pitch import Note
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from PySide6.QtMultimedia import QSoundEffect
+    from PySide6.QtWidgets import QApplication
 
 
 class Effect:
@@ -12,35 +21,91 @@ class Effect:
 
     def __init__(
         self,
-        playing=False,
+        playing: bool = False,
         *,
-        loading=False,
-    ):
+        loading: bool = False,
+    ) -> None:
+        """
+        Build the effect.
+
+        Parameters
+        ----------
+        playing : bool
+            Whether it is playing at first.
+        loading : bool
+            Whether it is still loading.
+        """
         self.playing, self.loading, self.volume_set, self.stopped = playing, loading, [], 0
 
-    def isPlaying(self):
+    def isPlaying(self) -> bool:
+        """
+        Say whether the effect is playing.
+
+        Returns
+        -------
+        bool
+            The playing flag.
+        """
         return self.playing
 
-    def setVolume(self, v):
+    def setVolume(self, v: float) -> None:
+        """
+        Record a volume that was set.
+
+        Parameters
+        ----------
+        v : float
+            The volume.
+        """
         self.volume_set.append(v)
 
-    def volume(self):
+    def volume(self) -> float:
+        """
+        Return the volume.
+
+        Returns
+        -------
+        float
+            Always 1.0.
+        """
         return 1.0
 
-    def play(self):
+    def play(self) -> None:
+        """
+        Start playing.
+        """
         self.playing = True
 
-    def stop(self):
+    def stop(self) -> None:
+        """
+        Stop playing, and count the stop.
+        """
         self.stopped += 1
         self.playing = False
 
-    def status(self):
+    def status(self) -> QSoundEffect.Status:
+        """
+        Return the loading status.
+
+        Returns
+        -------
+        QSoundEffect.Status
+            Loading while the loading flag is set, otherwise Ready.
+        """
         from PySide6.QtMultimedia import QSoundEffect
 
         return QSoundEffect.Status.Loading if self.loading else QSoundEffect.Status.Ready
 
 
-def test_a_piano_note_far_outside_the_recordings_is_synthesized(tmp_path):
+def test_a_piano_note_far_outside_the_recordings_is_synthesized(tmp_path: Path) -> None:
+    """
+    Check that a piano note far outside the recordings is synthesized.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        A scratch folder unique to this test.
+    """
     s = Sounds()
     s._dir = tmp_path
     piano = INSTRUMENT_BY_KEY["piano"]
@@ -50,7 +115,15 @@ def test_a_piano_note_far_outside_the_recordings_is_synthesized(tmp_path):
         assert w.getnchannels() == 1 and w.getnframes() > 1000
 
 
-def test_another_instrument_shifts_the_nearest_recording(tmp_path):
+def test_another_instrument_shifts_the_nearest_recording(tmp_path: Path) -> None:
+    """
+    Check that another instrument shifts the nearest recording.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        A scratch folder unique to this test.
+    """
     s = Sounds()
     s._dir = tmp_path
     inst = INSTRUMENT_BY_KEY["viola_plucked"]
@@ -58,7 +131,15 @@ def test_another_instrument_shifts_the_nearest_recording(tmp_path):
     assert s._note_file(inst, midi=missing).exists()
 
 
-def test_a_released_note_fades_out_and_stops(app):
+def test_a_released_note_fades_out_and_stops(app: QApplication) -> None:
+    """
+    Check that a released note fades out and stops.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     from PySide6.QtMultimedia import QSoundEffect
     from PySide6.QtTest import QTest
 
@@ -70,13 +151,23 @@ def test_a_released_note_fades_out_and_stops(app):
     assert fx.volume() == pytest.approx(0.0, abs=0.01)
 
 
-def test_playing_a_note_again_cancels_its_fade():
+def test_playing_a_note_again_cancels_its_fade() -> None:
+    """
+    Check that playing a note again cancels its fade.
+    """
     s = Sounds()
     fx = Effect()
     stopped = []
 
     class Fade:
-        def stop(self):
+        """
+        A fade-out that records when it is stopped.
+        """
+
+        def stop(self) -> None:
+            """
+            Record that the fade was cancelled.
+            """
             stopped.append(1)
 
     s._effects[("viola_bowed", 60)] = fx
@@ -85,14 +176,24 @@ def test_playing_a_note_again_cancels_its_fade():
     assert stopped == [1] and fx.playing and id(fx) not in s._fades
 
 
-def test_stop_all_silences_what_is_playing_and_cancels_fades():
+def test_stop_all_silences_what_is_playing_and_cancels_fades() -> None:
+    """
+    Check that stop all silences what is playing and cancels fades.
+    """
     s = Sounds()
     quiet, loud = Effect(), Effect(playing=True)
     s._effects = {("piano", 60): quiet, ("piano", 62): loud}
     cancelled = []
 
     class Fade:
-        def stop(self):
+        """
+        A fade-out that records when it is cancelled.
+        """
+
+        def stop(self) -> None:
+            """
+            Record that the fade was cancelled.
+            """
             cancelled.append(1)
 
     s._fades = {1: Fade(), 2: Fade()}
@@ -103,15 +204,40 @@ def test_stop_all_silences_what_is_playing_and_cancels_fades():
 
 
 def test_a_failure_in_the_sound_system_is_reported_not_raised(
-    monkeypatch,
-    capsys,
-):
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """
+    Check that a failure in the sound system is reported not raised.
+
+    Parameters
+    ----------
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    capsys : pytest.CaptureFixture[str]
+        Captures what the test prints.
+    """
     s = Sounds()
 
     def broken(
-        inst,
-        midi,
-    ):
+        inst: str,
+        midi: int,
+    ) -> Never:
+        """
+        Fail as a machine with no sound card would.
+
+        Raises
+        ------
+        RuntimeError
+            Always.
+
+        Parameters
+        ----------
+        inst : str
+            The instrument.
+        midi : int
+            The note.
+        """
         raise RuntimeError("no sound card")
 
     monkeypatch.setattr(s, "_effect", broken)
@@ -121,15 +247,33 @@ def test_a_failure_in_the_sound_system_is_reported_not_raised(
     assert capsys.readouterr().out.count("audio unavailable: no sound card") == 3
 
 
-def test_an_unknown_instrument_is_reported_not_raised(capsys):
+def test_an_unknown_instrument_is_reported_not_raised(capsys: pytest.CaptureFixture[str]) -> None:
+    """
+    Check that an unknown instrument is reported not raised.
+
+    Parameters
+    ----------
+    capsys : pytest.CaptureFixture[str]
+        Captures what the test prints.
+    """
     Sounds().preview("no-such-instrument", midis=(60,))
     assert "audio unavailable" in capsys.readouterr().out
 
 
 def test_a_sequence_waiting_for_its_notes_to_load_gives_way_to_a_newer_one(
-    monkeypatch,
-    app,
-):
+    monkeypatch: pytest.MonkeyPatch,
+    app: QApplication,
+) -> None:
+    """
+    Check that a sequence waiting for its notes to load gives way to a newer one.
+
+    Parameters
+    ----------
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    app : QApplication
+        The shared Qt application.
+    """
     from PySide6.QtTest import QTest
 
     s = Sounds()

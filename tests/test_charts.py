@@ -1,17 +1,39 @@
 """The three charts: axes, bars and lines are drawn, empty data shows a message, and hovering explains a bar."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 from alto.ui import charts
 from PySide6.QtCore import QPoint, QPointF, Qt
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtTest import QTest
 
+if TYPE_CHECKING:
+    from PySide6.QtWidgets import QApplication, QWidget
+
 
 def ink(
-    widget,
+    widget: QWidget,
     *,
-    size=(560, 260),
+    size: tuple[int, int] = (560, 260),
 ) -> int:
+    """
+    Count the pixels a widget draws that are not blank.
+
+    Parameters
+    ----------
+    widget : QWidget
+        The widget to draw.
+    size : tuple of int
+        Its width and height.
+
+    Returns
+    -------
+    int
+        How many sampled pixels are not light.
+    """
     widget.resize(*size)
     image = widget.grab().toImage()
     return sum(
@@ -19,7 +41,10 @@ def ink(
     )
 
 
-def test_ticks_are_round_numbers_up_to_just_above_the_top():
+def test_ticks_are_round_numbers_up_to_just_above_the_top() -> None:
+    """
+    Check that ticks are round numbers up to just above the top.
+    """
     assert charts.nice_ticks(13) == [
         0,
         5,
@@ -32,7 +57,15 @@ def test_ticks_are_round_numbers_up_to_just_above_the_top():
     assert ticks[0] == 0 and ticks == sorted(ticks) and ticks[-1] >= 8
 
 
-def test_the_stacked_bar_chart_draws_bars_and_axes(app):
+def test_the_stacked_bar_chart_draws_bars_and_axes(app: QApplication) -> None:
+    """
+    Check that the stacked bar chart draws bars and axes.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     chart = charts.StackedBarChart("Questions")
     chart.set_data(
         [f"d{i}" for i in range(12)],
@@ -73,9 +106,19 @@ def test_the_stacked_bar_chart_draws_bars_and_axes(app):
 
 
 def test_a_bar_names_itself_when_hovered(
-    app,
-    monkeypatch,
-):
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that a bar names itself when hovered.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     shown = []
     monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
     hidden = []
@@ -138,9 +181,19 @@ def test_a_bar_names_itself_when_hovered(
 
 @pytest.mark.parametrize("fixed", [None, 100.0])
 def test_the_line_chart_breaks_the_line_where_there_are_no_answers(
-    app,
-    fixed,
-):
+    app: QApplication,
+    fixed: float | None,
+) -> None:
+    """
+    Check that the line chart breaks the line where there are no answers.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    fixed : float | None
+        The fixed top of the chart, or None to scale to the data.
+    """
     chart = charts.LineChart("Accuracy", fmt=lambda v: f"{v:.0f}%", fixed_top=fixed)
     chart.set_data(["a", "b"], values=[None, None])
     message_only = ink(chart)  # nothing answered: only the title and a message
@@ -163,9 +216,19 @@ def test_the_line_chart_breaks_the_line_where_there_are_no_answers(
 
 
 def test_a_line_chart_point_names_itself_when_hovered(
-    app,
-    monkeypatch,
-):
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that a line chart point names itself when hovered.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     shown = []
     monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
     chart = charts.LineChart("Speed", fmt=lambda v: f"{v:.1f} s")
@@ -187,7 +250,15 @@ def test_a_line_chart_point_names_itself_when_hovered(
         assert shown[-1] == expected
 
 
-def test_the_horizontal_bar_chart_lists_its_rows(app):
+def test_the_horizontal_bar_chart_lists_its_rows(app: QApplication) -> None:
+    """
+    Check that the horizontal bar chart lists its rows.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     chart = charts.HBarChart("By exercise")
     chart.set_data(
         [
@@ -203,13 +274,29 @@ def test_the_horizontal_bar_chart_lists_its_rows(app):
     assert chart.minimumHeight() > 190
 
 
-def test_the_chart_colours_follow_the_palette(app):
+def test_the_chart_colours_follow_the_palette(app: QApplication) -> None:
+    """
+    Check that the chart colours follow the palette.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     chart = charts.StackedBarChart("Colours")
     assert chart._ink() != chart._grid() and chart._soft() is not None
     QTest.qWait(1)
 
 
-def test_an_axis_with_no_labels_draws_nothing(app):
+def test_an_axis_with_no_labels_draws_nothing(app: QApplication) -> None:
+    """
+    Check that an axis with no labels draws nothing.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     from PySide6.QtGui import QImage, QPainter
 
     chart = charts.StackedBarChart("Nothing")
@@ -221,7 +308,15 @@ def test_an_axis_with_no_labels_draws_nothing(app):
     assert image.pixelColor(100, 90).alpha() == 0
 
 
-def test_the_heatmap_shades_days_by_how_busy_they_were(app):
+def test_the_heatmap_shades_days_by_how_busy_they_were(app: QApplication) -> None:
+    """
+    Check that the heatmap shades days by how busy they were.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     from datetime import date, timedelta
 
     today = date(2026, 11, 13)  # a Friday
@@ -236,9 +331,19 @@ def test_the_heatmap_shades_days_by_how_busy_they_were(app):
 
 
 def test_the_heatmap_names_the_day_under_the_pointer(
-    app,
-    monkeypatch,
-):
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that the heatmap names the day under the pointer.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     from datetime import date
 
     shown, hidden = [], []
@@ -251,10 +356,20 @@ def test_the_heatmap_names_the_day_under_the_pointer(
     cell, (x0, y0) = chart._cell(), chart._origin()
 
     def move(
-        x,
+        x: float,
         *,
-        y,
-    ):
+        y: float,
+    ) -> None:
+        """
+        Move the pointer over the chart.
+
+        Parameters
+        ----------
+        x : float
+            Horizontal position.
+        y : float
+            Vertical position.
+        """
         pt = QPointF(x, y)
         chart.mouseMoveEvent(
             QMouseEvent(

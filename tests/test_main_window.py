@@ -1,6 +1,9 @@
 """The home screen, the main window with its exercise list and menu, and starting the app."""
 
-from typing import Any, cast
+from __future__ import annotations
+
+import random
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 from alto.exercises import REGISTRY
@@ -15,10 +18,24 @@ from PySide6.QtGui import QKeySequence
 from PySide6.QtTest import QSignalSpy, QTest
 from PySide6.QtWidgets import QApplication, QDialog, QLabel, QListWidget
 
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterator
+    from pathlib import Path
+
+    from PySide6.QtWidgets import QWidget
+
 # -- the home screen ------------------------------------------------------------------------------------------------
 
 
-def test_the_home_screen_has_a_card_for_each_exercise_and_reports_the_one_clicked(app):
+def test_the_home_screen_has_a_card_for_each_exercise_and_reports_the_one_clicked(app: QApplication) -> None:
+    """
+    Check that the home screen has a card for each exercise and reports the one clicked.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     home = HomePage(REGISTRY)
     assert len(home.cards) == len(REGISTRY) and all(isinstance(c, ExerciseCard) for c in home.cards)
     chosen = []
@@ -28,7 +45,15 @@ def test_the_home_screen_has_a_card_for_each_exercise_and_reports_the_one_clicke
     assert home.cards[0].toolTip() == REGISTRY[0].description
 
 
-def test_the_cards_are_laid_out_in_as_many_columns_as_fit(app):
+def test_the_cards_are_laid_out_in_as_many_columns_as_fit(app: QApplication) -> None:
+    """
+    Check that the cards are laid out in as many columns as fit.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     home = HomePage(REGISTRY)
     widths = {}
     for width in (
@@ -53,11 +78,37 @@ def test_the_cards_are_laid_out_in_as_many_columns_as_fit(app):
     assert home._columns == before
 
 
-def test_an_exercise_with_no_icon_of_its_own_gets_the_default(app):
+def test_an_exercise_with_no_icon_of_its_own_gets_the_default(app: QApplication) -> None:
+    """
+    Check that an exercise with no icon of its own gets the default.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+
     class Odd(Exercise):
+        """
+        An exercise with no icon of its own.
+        """
+
         name, category, description = "Odd", "Notation", "Something new."
 
-        def generate(self, rng):
+        def generate(self, rng: random.Random) -> Question:
+            """
+            Make the one fixed question.
+
+            Parameters
+            ----------
+            rng : random.Random
+                The random source (not used: the question is fixed).
+
+            Returns
+            -------
+            Question
+                A question.
+            """
             return Question("?", choices=["a"], answer="a")
 
     assert "Odd" not in EXERCISE_ICONS
@@ -72,9 +123,24 @@ def test_an_exercise_with_no_icon_of_its_own_gets_the_default(app):
 
 @pytest.fixture
 def window(
-    app,
-    practised_learner,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> Iterator[MainWindow]:
+    """
+    Provide a shown main window with some history.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable
+        Builds a learner with a history.
+
+    Yields
+    ------
+    MainWindow
+        The window; it is closed afterwards.
+    """
     w = MainWindow(practised_learner(10))
     w.show()
     yield w
@@ -83,11 +149,27 @@ def window(
     QApplication.sendPostedEvents(None, 0)
 
 
-def settle(ms=260):
+def settle(ms: int = 260) -> None:
+    """
+    Wait for the animations to finish.
+
+    Parameters
+    ----------
+    ms : int
+        How many milliseconds to wait.
+    """
     QTest.qWait(ms)
 
 
-def test_the_window_starts_on_the_home_screen_with_a_list_of_exercises(window):
+def test_the_window_starts_on_the_home_screen_with_a_list_of_exercises(window: MainWindow) -> None:
+    """
+    Check that the window starts on the home screen with a list of exercises.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
     assert window.windowTitle() == MainWindow.APP_TITLE and window.stack.currentWidget() is window.home
     assert window.sidebar_width() == 0  # the start screen has no list
     entries = [window.nav.item(i) for i in range(window.nav.count())]
@@ -99,7 +181,15 @@ def test_the_window_starts_on_the_home_screen_with_a_list_of_exercises(window):
     assert window.profile_action.text() == "Profile: Ada…"
 
 
-def test_each_exercise_in_the_list_sits_under_its_own_category_heading(window):
+def test_each_exercise_in_the_list_sits_under_its_own_category_heading(window: MainWindow) -> None:
+    """
+    Check that each exercise in the list sits under its own category heading.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
     heading = None
     shown = []
     for i in range(window.nav.count()):
@@ -113,7 +203,15 @@ def test_each_exercise_in_the_list_sits_under_its_own_category_heading(window):
     assert len(shown) == len(set(shown))  # each heading appears once
 
 
-def test_without_a_profile_nothing_is_recorded_and_the_history_buttons_are_hidden(app):
+def test_without_a_profile_nothing_is_recorded_and_the_history_buttons_are_hidden(app: QApplication) -> None:
+    """
+    Check that without a profile nothing is recorded and the history buttons are hidden.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     w = MainWindow(None)
     w.show()
     assert not w.stats_button.isVisibleTo(w) and not w.database_button.isVisibleTo(w)
@@ -128,8 +226,16 @@ def test_without_a_profile_nothing_is_recorded_and_the_history_buttons_are_hidde
     w.close()
 
 
-def test_choosing_an_exercise_shows_it_opens_the_list_and_titles_the_window(window):
-    window.open_exercise(None)  # a section heading has no exercise: nothing happens
+def test_choosing_an_exercise_shows_it_opens_the_list_and_titles_the_window(window: MainWindow) -> None:
+    """
+    Check that choosing an exercise shows it opens the list and titles the window.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
+    window.open_exercise(None)  # pyright: ignore[reportArgumentType]  (a section heading has no exercise: nothing happens)
     assert window.stack.currentWidget() is window.home
     for cls in REGISTRY[:3]:
         window.open_exercise(cls)
@@ -141,7 +247,15 @@ def test_choosing_an_exercise_shows_it_opens_the_list_and_titles_the_window(wind
     assert window.stack.count() == 2  # the home screen and the one exercise: each is dropped when the next opens
 
 
-def test_the_exercise_list_can_be_collapsed_and_the_choice_is_remembered(window):
+def test_the_exercise_list_can_be_collapsed_and_the_choice_is_remembered(window: MainWindow) -> None:
+    """
+    Check that the exercise list can be collapsed and the choice is remembered.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
     window.open_exercise(REGISTRY[0])
     settle()
     open_width = window.sidebar_width()
@@ -166,7 +280,15 @@ def test_the_exercise_list_can_be_collapsed_and_the_choice_is_remembered(window)
     assert window._sidebar_pref and window._sidebar_width == window.sidebar_width()
 
 
-def test_going_home_closes_the_list(window):
+def test_going_home_closes_the_list(window: MainWindow) -> None:
+    """
+    Check that going home closes the list.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
     window.open_exercise(REGISTRY[0])
     settle()
     window.show_home()
@@ -176,7 +298,15 @@ def test_going_home_closes_the_list(window):
     assert window.stack.count() == 1
 
 
-def test_the_statistics_and_database_pages_replace_the_current_page_and_back_returns(window):
+def test_the_statistics_and_database_pages_replace_the_current_page_and_back_returns(window: MainWindow) -> None:
+    """
+    Check that the statistics and database pages replace the current page and back returns.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
     window.open_exercise(REGISTRY[0])
     exercise = window.stack.currentWidget()
     window.stats_button.click()
@@ -194,23 +324,57 @@ def test_the_statistics_and_database_pages_replace_the_current_page_and_back_ret
 
 
 def test_switching_profile_changes_who_is_practising_and_goes_home(
-    window,
-    monkeypatch,
-):
+    window: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that switching profile changes who is practising and goes home.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     db = window.learner.db
     ben = db.add_profile("Ben")
 
     class Chooses:
+        """
+        A stand-in for the profile dialog that picks another profile.
+        """
+
         def __init__(
             self,
-            db,
+            db: Database,
             *,
-            current,
-            parent,
-        ):
+            current: object,
+            parent: QWidget | None,
+        ) -> None:
+            """
+            Build the stand-in.
+
+            Parameters
+            ----------
+            db : Database
+                The database.
+            current : object
+                The profile in use.
+            parent : QWidget or None
+                The owning widget.
+            """
             self.chosen = ben
 
-        def exec(self):
+        def exec(self) -> QDialog.DialogCode:
+            """
+            Accept without showing anything.
+
+            Returns
+            -------
+            QDialog.DialogCode
+                Always Accepted.
+            """
             return QDialog.DialogCode.Accepted
 
     monkeypatch.setattr(mw, "ProfileDialog", Chooses)
@@ -223,7 +387,19 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
     assert int(store().value("profile/last")) == ben.id
 
     class Cancels(Chooses):
-        def exec(self):
+        """
+        A stand-in for the profile dialog that is cancelled.
+        """
+
+        def exec(self) -> QDialog.DialogCode:
+            """
+            Reject without showing anything.
+
+            Returns
+            -------
+            QDialog.DialogCode
+                Always Rejected.
+            """
             return QDialog.DialogCode.Rejected
 
     monkeypatch.setattr(mw, "ProfileDialog", Cancels)
@@ -231,13 +407,29 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
     assert window.learner.profile == ben  # nothing changed
 
     class SameAgain(Chooses):
+        """
+        A stand-in for the profile dialog that picks the profile already in use.
+        """
+
         def __init__(
             self,
-            db,
+            db: Database,
             *,
-            current,
-            parent,
-        ):
+            current: object,
+            parent: QWidget | None,
+        ) -> None:
+            """
+            Build the stand-in.
+
+            Parameters
+            ----------
+            db : Database
+                The database.
+            current : object
+                The profile in use.
+            parent : QWidget or None
+                The owning widget.
+            """
             self.chosen = ben
 
     monkeypatch.setattr(mw, "ProfileDialog", SameAgain)
@@ -247,19 +439,48 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
 
 
 def test_changing_the_theme_in_settings_opens_a_fresh_window(
-    window,
-    monkeypatch,
-):
+    window: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that changing the theme in settings opens a fresh window.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     rebuilt = []
     monkeypatch.setattr(window, "rebuild", lambda: rebuilt.append(1))
 
     class Dialog:
+        """
+        A stand-in for the settings dialog that reports a theme change.
+        """
+
         theme_changed = False
 
-        def __init__(self, parent):
-            pass
+        def __init__(self, parent: QWidget | None) -> None:
+            """
+            Build the stand-in.
 
-        def exec(self):
+            Parameters
+            ----------
+            parent : QWidget or None
+                The owning widget.
+            """
+
+        def exec(self) -> int:
+            """
+            Pretend to show the dialog.
+
+            Returns
+            -------
+            int
+                Always 0.
+            """
             return 0
 
     monkeypatch.setattr(mw, "AppSettingsDialog", Dialog)
@@ -271,9 +492,19 @@ def test_changing_the_theme_in_settings_opens_a_fresh_window(
 
 
 def test_a_rebuilt_window_takes_the_old_ones_place(
-    app,
-    practised_learner,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that a rebuilt window takes the old ones place.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     old = MainWindow(practised_learner(5))
     old.setGeometry(
         120,
@@ -290,9 +521,19 @@ def test_a_rebuilt_window_takes_the_old_ones_place(
 
 
 def test_restarting_starts_a_new_copy_then_quits(
-    window,
-    monkeypatch,
-):
+    window: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that restarting starts a new copy then quits.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     started, quit_calls = [], []
     monkeypatch.setattr(mw.QProcess, "startDetached", lambda program, args: started.append((program, args)) or True)
     monkeypatch.setattr(mw.QApplication, "quit", lambda: quit_calls.append(1))
@@ -303,7 +544,15 @@ def test_restarting_starts_a_new_copy_then_quits(
     assert quit_calls == [1]  # if the new copy could not start, this one stays open
 
 
-def test_the_menu_has_the_shortcuts(window):
+def test_the_menu_has_the_shortcuts(window: MainWindow) -> None:
+    """
+    Check that the menu has the shortcuts.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
     actions = {a.text(): a for a in window.menu_button.menu().actions() if a.text()}
     assert actions["Settings…"].shortcut() == QKeySequence("Ctrl+Alt+S")
     assert actions["Restart"].shortcut() == QKeySequence("Ctrl+R")
@@ -323,7 +572,15 @@ def test_the_menu_has_the_shortcuts(window):
     window.close_overlay()
 
 
-def test_the_exercise_list_item_is_a_list_widget_entry(window):
+def test_the_exercise_list_item_is_a_list_widget_entry(window: MainWindow) -> None:
+    """
+    Check that the exercise list item is a list widget entry.
+
+    Parameters
+    ----------
+    window : MainWindow
+        The main window under test.
+    """
     assert isinstance(window.nav, QListWidget) and QSignalSpy(window.nav.itemClicked).isValid()
     entry = next(window.nav.item(i) for i in range(window.nav.count()) if window.nav.item(i).data(Qt.ItemDataRole.UserRole))
     window.nav.itemClicked.emit(entry)
@@ -336,20 +593,53 @@ def test_the_exercise_list_item_is_a_list_widget_entry(window):
 class FakeApp:
     """Stands in for the QApplication that main() would create: the test run already has one."""
 
-    def __init__(self, argv):
+    def __init__(self, argv: list[str]) -> None:
+        """
+        Build the stand-in for the application.
+
+        Parameters
+        ----------
+        argv : list of str
+            The command line, ignored.
+        """
         self.calls = []
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Callable[..., int | None]:
+        """
+        Make any method of the application do nothing but note that it was called.
+
+        Parameters
+        ----------
+        name : str
+            The method asked for.
+
+        Returns
+        -------
+        Callable
+            `exec` returns 0; every other method records its name.
+        """
         if name == "exec":
             return lambda: 0
         return lambda *a: self.calls.append(name)
 
 
 def test_the_app_opens_a_window_for_the_chosen_profile(
-    app,
-    monkeypatch,
-    tmp_path,
-):
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """
+    Check that the app opens a window for the chosen profile.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    tmp_path : Path
+        A scratch folder unique to this test.
+    """
     from alto import __main__ as entry
 
     db_profile = Database().add_profile("Ada")
@@ -363,9 +653,19 @@ def test_the_app_opens_a_window_for_the_chosen_profile(
 
 
 def test_the_app_quits_quietly_if_no_profile_is_chosen(
-    app,
-    monkeypatch,
-):
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that the app quits quietly if no profile is chosen.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     from alto import __main__ as entry
 
     monkeypatch.setattr(entry, "QApplication", FakeApp)

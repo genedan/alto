@@ -84,8 +84,10 @@ convention = "numpy"
 # Not documented yet. Remove a line when that package has its docstrings and annotations.
 "alto/ui/icons.py" = ["E501"]  # E501: SVG path data
 "alto/ui/style.py" = ["E501"]  # E501: the stylesheet template
-"tests/**" = ["D", "DOC", "ANN", "PLR0917"]  # PLR0917: pytest passes fixtures to test functions as plain parameters
-"scripts/**" = ["D", "DOC", "ANN"]
+"tests/**" = [
+    "PLR0917",  # pytest passes fixtures to test functions as plain parameters
+    "D200",  # a test's summary and Parameters stay on separate lines, even when there are no parameters
+]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["PySide6.QtGui.QColor", "PySide6.QtCore.QModelIndex"]  # defaults that are never mutated
@@ -94,3 +96,11 @@ extend-immutable-calls = ["PySide6.QtGui.QColor", "PySide6.QtCore.QModelIndex"] 
 include = ["alto", "tests", "scripts"]
 pythonVersion = "3.11"  # the oldest Python Alto supports, so newer-only features are caught
 typeCheckingMode = "basic"
+
+# Tests reach into widgets and settings that the application keeps optional (a screen's current question, a window's profile ...)
+# and check them by asserting on what they find, so these two checks stay on for the application and are off for the tests.
+[[tool.pyright.executionEnvironments]]
+root = "tests"
+extraPaths = ["."]
+reportOptionalMemberAccess = false
+reportOptionalSubscript = false

@@ -14,7 +14,20 @@ class Fixed(Exercise):
 
     name, par_seconds = "Fixed", 4.0
 
-    def generate(self, rng):
+    def generate(self, rng: random.Random) -> Question:
+        """
+        Make the one fixed question.
+
+        Parameters
+        ----------
+        rng : random.Random
+            The random source (not used: the question is fixed).
+
+        Returns
+        -------
+        Question
+            A question.
+        """
         return Question(
             "",
             choices=["A", "B"],
@@ -23,7 +36,10 @@ class Fixed(Exercise):
         )
 
 
-def test_a_stored_question_that_cannot_be_read_is_skipped():
+def test_a_stored_question_that_cannot_be_read_is_skipped() -> None:
+    """
+    Check that a stored question that cannot be read is skipped.
+    """
     db = Database()
     learner = Learner(db, profile=db.add_profile("Ada"))
     ex = Fixed()
@@ -64,7 +80,10 @@ def test_a_stored_question_that_cannot_be_read_is_skipped():
     assert learner.pick(ex, rng=random.Random(1)).answer == "A"  # the bad ones are ignored, a fresh question is asked
 
 
-def test_when_the_only_question_is_the_one_to_avoid_a_new_one_is_made():
+def test_when_the_only_question_is_the_one_to_avoid_a_new_one_is_made() -> None:
+    """
+    Check that when the only question is the one to avoid a new one is made.
+    """
     db = Database()
     learner = Learner(db, profile=db.add_profile("Ada"))
     ex = Fixed()
@@ -72,14 +91,20 @@ def test_when_the_only_question_is_the_one_to_avoid_a_new_one_is_made():
     assert learner.pick(ex, rng=random.Random(1), avoid=only.item_key()).item_key() == only.item_key()
 
 
-def test_no_questions_means_no_accuracy_and_no_median():
+def test_no_questions_means_no_accuracy_and_no_median() -> None:
+    """
+    Check that no questions means no accuracy and no median.
+    """
     db = Database()
     ada = db.add_profile("Ada")
     s = stats.collect(db, profile_ids=[ada.id], now=1000.0)
     assert s.questions == 0 and s.accuracy is None and s.median_seconds is None
 
 
-def test_a_question_is_described_whatever_it_shows():
+def test_a_question_is_described_whatever_it_shows() -> None:
+    """
+    Check that a question is described whatever it shows.
+    """
     flats = Question(
         "",
         choices=["a"],
@@ -121,7 +146,10 @@ def test_a_question_is_described_whatever_it_shows():
     assert stats.describe(Question("", choices=["A"], answer="A")) == "A"  # nothing is drawn, so the answer is all there is
 
 
-def test_the_hardest_questions_skip_stored_ones_that_cannot_be_read():
+def test_the_hardest_questions_skip_stored_ones_that_cannot_be_read() -> None:
+    """
+    Check that the hardest questions skip stored ones that cannot be read.
+    """
     db = Database()
     ada = db.add_profile("Ada")
     good = Question(

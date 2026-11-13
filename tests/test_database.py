@@ -1,6 +1,7 @@
 """The database: profiles, the stored questions and answers, and the read-only views the browser uses."""
 
 import json
+import random
 
 import pytest
 from alto.exercises.base import Exercise, Question
@@ -9,7 +10,20 @@ from alto.learning.database import ItemRecord
 from alto.theory.pitch import Note
 
 
-def question(letter=0):
+def question(letter: int = 0) -> Question:
+    """
+    Make a two-choice question on a staff.
+
+    Parameters
+    ----------
+    letter : int
+        The letter of the note shown (0 is C).
+
+    Returns
+    -------
+    Question
+        The question.
+    """
     return Question(
         "",
         choices=["A", "B"],
@@ -18,7 +32,10 @@ def question(letter=0):
     )
 
 
-def test_a_profile_can_be_found_by_id_and_removed_with_its_history():
+def test_a_profile_can_be_found_by_id_and_removed_with_its_history() -> None:
+    """
+    Check that a profile can be found by id and removed with its history.
+    """
     db = Database()
     ada, ben = db.add_profile("Ada"), db.add_profile("Ben")
     assert db.profile(ada.id) == ada and db.profile(9999) is None
@@ -26,9 +43,26 @@ def test_a_profile_can_be_found_by_id_and_removed_with_its_history():
     learner = Learner(db, profile=ada)
 
     class Stub(Exercise):
+        """
+        An exercise that always asks the same question.
+        """
+
         par_seconds = 4.0
 
-        def generate(self, rng):
+        def generate(self, rng: random.Random) -> Question:
+            """
+            Make the same question every time.
+
+            Parameters
+            ----------
+            rng : random.Random
+                The random source (not used: the question is fixed).
+
+            Returns
+            -------
+            Question
+                A question.
+            """
             return q
 
     learner.record(
@@ -45,7 +79,10 @@ def test_a_profile_can_be_found_by_id_and_removed_with_its_history():
     assert [p.name for p in db.profiles()] == ["Ben"] and db.profile(ben.id) == ben
 
 
-def test_the_browser_rows_come_newest_first_with_the_stored_question():
+def test_the_browser_rows_come_newest_first_with_the_stored_question() -> None:
+    """
+    Check that the browser rows come newest first with the stored question.
+    """
     db = Database()
     ada = db.add_profile("Ada")
     q = question()
@@ -93,7 +130,10 @@ def test_the_browser_rows_come_newest_first_with_the_stored_question():
     assert [(r["name"], r["attempts"], r["questions"]) for r in profiles] == [("Ada", 2, 1)]
 
 
-def test_the_item_rows_list_the_hardest_questions_first():
+def test_the_item_rows_list_the_hardest_questions_first() -> None:
+    """
+    Check that the item rows list the hardest questions first.
+    """
     db = Database()
     ada = db.add_profile("Ada")
     for i, strain in enumerate((1.0, 5.0, 3.0)):
@@ -117,7 +157,10 @@ def test_the_item_rows_list_the_hardest_questions_first():
     assert len(db.item_rows(ada.id, limit=2)) == 2
 
 
-def test_a_closed_database_refuses_further_work():
+def test_a_closed_database_refuses_further_work() -> None:
+    """
+    Check that a closed database refuses further work.
+    """
     import sqlite3
 
     db = Database()

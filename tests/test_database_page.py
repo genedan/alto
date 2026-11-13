@@ -1,7 +1,11 @@
 """The database browser: three read-only tables, a search box, and a popup for the question a row is about."""
 
-import json
+from __future__ import annotations
 
+import json
+from typing import TYPE_CHECKING
+
+import pytest
 from alto.exercises import REGISTRY
 from alto.exercises.base import Question
 from alto.learning import Learner
@@ -12,8 +16,21 @@ from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtTest import QSignalSpy
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
-def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app):
+    from PySide6.QtWidgets import QApplication, QWidget
+
+
+def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app: QApplication) -> None:
+    """
+    Check that the table model shows text sorts by value and right aligns numbers.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     model = RowsModel(
         ["Name", "Count"],
         rows=[[("b", "b"), ("10", 10)], [("a", "a"), ("2", 2)]],
@@ -36,9 +53,19 @@ def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app)
 
 
 def test_the_answers_table_lists_every_answer_newest_first(
-    app,
-    practised_learner,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that the answers table lists every answer newest first.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     learner = practised_learner(30)
     page = DatabasePage(learner)
     total = learner.db.count_attempts(learner.profile.id)
@@ -58,19 +85,41 @@ def test_the_answers_table_lists_every_answer_newest_first(
 
 
 def test_a_long_history_says_how_much_of_it_is_shown(
-    app,
-    practised_learner,
-    monkeypatch,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that a long history says how much of it is shown.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     monkeypatch.setattr(database_page, "ROW_LIMIT", 5)
     page = DatabasePage(practised_learner(60))
     assert page.proxy.rowCount() == 5 and "Showing the newest 5." in page.note.text()
 
 
 def test_the_questions_and_profiles_tables(
-    app,
-    practised_learner,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Test the questions and profiles tables.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     learner = practised_learner(30)
     Learner(learner.db, profile=learner.db.add_profile("Ben"))
     page = DatabasePage(learner)
@@ -87,9 +136,19 @@ def test_the_questions_and_profiles_tables(
 
 
 def test_searching_narrows_every_table_and_says_so(
-    app,
-    practised_learner,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that searching narrows every table and says so.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     learner = practised_learner(60)
     page = DatabasePage(learner)
     everything = page.proxy.rowCount()
@@ -103,9 +162,19 @@ def test_searching_narrows_every_table_and_says_so(
 
 
 def test_questions_whose_record_is_gone_or_unreadable_are_labelled(
-    app,
-    practised_learner,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that questions whose record is gone or unreadable are labelled.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     learner = practised_learner(3)
     pid = learner.profile.id
     db = learner.db
@@ -152,24 +221,57 @@ def test_questions_whose_record_is_gone_or_unreadable_are_labelled(
 
 
 def test_double_clicking_a_row_shows_the_question_it_is_about(
-    app,
-    practised_learner,
-    monkeypatch,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that double clicking a row shows the question it is about.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     opened = []
 
     class Preview:
+        """
+        A stand-in for the question preview popup that records how it was opened.
+        """
+
         def __init__(
             self,
-            name,
+            name: str,
             *,
-            question,
-            details,
-            parent,
-        ):
+            question: object,
+            details: object,
+            parent: QWidget | None,
+        ) -> None:
+            """
+            Record what the popup was asked to show.
+
+            Parameters
+            ----------
+            name : str
+                The exercise name.
+            question : object
+                The question to show.
+            details : object
+                The details of the answer.
+            parent : QWidget or None
+                The owning widget.
+            """
             opened.append((name, question, details))
 
-        def exec(self):
+        def exec(self) -> None:
+            """
+            Record that the popup was shown.
+            """
             opened.append("exec")
 
     monkeypatch.setattr(database_page, "QuestionPreview", Preview)
@@ -223,9 +325,19 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(
 
 
 def test_back_is_offered_by_a_button_and_by_escape(
-    app,
-    practised_learner,
-):
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that back is offered by a button and by escape.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     page = DatabasePage(practised_learner(3))
     spy = QSignalSpy(page.back)
     back = next(b for b in page.findChildren(type(page.tabs["answers"])) if b.text().endswith("Back"))

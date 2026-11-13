@@ -1,6 +1,9 @@
 """The exercise screen: the sound and settings buttons, placing notes on the staff, and what is ignored."""
 
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 import pytest
 from alto import settings
@@ -17,23 +20,65 @@ from alto.theory.pitch import Note
 from alto.ui.exercise_view import ExerciseView
 from PySide6.QtTest import QTest
 
+if TYPE_CHECKING:
+    from alto.exercises.base import Exercise, Question
+    from alto.learning import Learner
+    from PySide6.QtWidgets import QApplication
+
 
 def view_of(
-    exercise,
+    exercise: Exercise,
     *,
-    seed=1,
-    **kw,
-):
-    return ExerciseView(exercise, rng=random.Random(seed), **kw)
+    seed: int = 1,
+    learner: Learner | None = None,
+) -> ExerciseView:
+    """
+    Build an exercise view with a fixed random source.
+
+    Parameters
+    ----------
+    exercise : Exercise
+        The exercise to ask.
+    seed : int
+        The random seed.
+    learner : Learner or None
+        The learner to record answers, if any.
+
+    Returns
+    -------
+    ExerciseView
+        The view, showing its first question.
+    """
+    return ExerciseView(exercise, rng=random.Random(seed), learner=learner)
 
 
-def asked(view):
-    """The question on screen (there is always one)."""
+def asked(view: ExerciseView) -> Question:
+    """
+    Return the question on screen (there is always one).
+
+    Parameters
+    ----------
+    view : ExerciseView
+        The view.
+
+    Returns
+    -------
+    Question
+        The question on screen.
+    """
     assert view.question is not None
     return view.question
 
 
-def test_the_speaker_button_mutes_and_unmutes(app):
+def test_the_speaker_button_mutes_and_unmutes(app: QApplication) -> None:
+    """
+    Check that the speaker button mutes and unmutes.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(KeySignatures())
     sounds.enabled = True
     view._show_sound_state()
@@ -44,12 +89,28 @@ def test_the_speaker_button_mutes_and_unmutes(app):
     assert sounds.enabled
 
 
-def test_an_exercise_with_fixed_rules_has_no_settings_button(app):
+def test_an_exercise_with_fixed_rules_has_no_settings_button(app: QApplication) -> None:
+    """
+    Check that an exercise with fixed rules has no settings button.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(IntervalNames())
     assert view.settings_panel is None and not hasattr(view, "gear") and not hasattr(view, "pane")
 
 
-def test_the_settings_pane_slides_open_and_shut(app):
+def test_the_settings_pane_slides_open_and_shut(app: QApplication) -> None:
+    """
+    Check that the settings pane slides open and shut.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(NoteNames())
     view.show()
     assert not view.pane.isVisible() and view.pane.maximumWidth() == 0
@@ -61,7 +122,15 @@ def test_the_settings_pane_slides_open_and_shut(app):
     assert view.pane.maximumWidth() == 0 and not view.pane.isVisible()
 
 
-def test_a_change_in_the_settings_asks_a_new_question_straight_away(app):
+def test_a_change_in_the_settings_asks_a_new_question_straight_away(app: QApplication) -> None:
+    """
+    Check that a change in the settings asks a new question straight away.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(NoteNames())
     before = view.question
     assert view.settings_panel is not None
@@ -69,14 +138,30 @@ def test_a_change_in_the_settings_asks_a_new_question_straight_away(app):
     assert view.question is not before
 
 
-def test_the_choices_have_number_key_shortcuts_when_there_are_few_enough(app):
+def test_the_choices_have_number_key_shortcuts_when_there_are_few_enough(app: QApplication) -> None:
+    """
+    Check that the choices have number key shortcuts when there are few enough.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(KeySignatures())
     assert [b.toolTip() for b in view.buttons] == [f"Key {i + 1}" for i in range(len(view.buttons))]
     arpeggio = view_of(ArpeggioNames())
     assert all(b.toolTip() == "" for b in arpeggio.buttons)  # a two-part answer has no shortcuts
 
 
-def test_the_score_starts_empty_and_counts_only_first_answers(app):
+def test_the_score_starts_empty_and_counts_only_first_answers(app: QApplication) -> None:
+    """
+    Check that the score starts empty and counts only first answers.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(KeySignatures())
     assert view.score.text() == "0/0 (–)   streak 0"
     q = asked(view)
@@ -94,20 +179,49 @@ def test_the_score_starts_empty_and_counts_only_first_answers(app):
 
 
 @pytest.fixture
-def construction(app):
+def construction(app: QApplication) -> ExerciseView:
+    """
+    Build a note construction view with accidentals on and no key signature.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+
+    Returns
+    -------
+    ExerciseView
+        The view.
+    """
     settings.construction.accidentals = True
     settings.construction.key_signature = False
     return view_of(NoteConstruction(), seed=4)
 
 
-def test_a_construction_question_shows_the_staff_to_click_and_the_sign_buttons(construction):
+def test_a_construction_question_shows_the_staff_to_click_and_the_sign_buttons(construction: ExerciseView) -> None:
+    """
+    Check that a construction question shows the staff to click and the sign buttons.
+
+    Parameters
+    ----------
+    construction : ExerciseView
+        The note construction view or panel under test.
+    """
     q = asked(construction)
     assert q.construct is not None and not construction.staff.isVisibleTo(construction)
     assert construction.input_staff.isVisibleTo(construction) and construction.accidental_row.isVisibleTo(construction)
     assert construction.accidental_buttons.keys() == {-1, 0, 1}
 
 
-def test_the_sign_buttons_act_like_a_radio_group_that_can_be_cleared(construction):
+def test_the_sign_buttons_act_like_a_radio_group_that_can_be_cleared(construction: ExerciseView) -> None:
+    """
+    Check that the sign buttons act like a radio group that can be cleared.
+
+    Parameters
+    ----------
+    construction : ExerciseView
+        The note construction view or panel under test.
+    """
     sharp, flat = construction.accidental_buttons[1], construction.accidental_buttons[-1]
     sharp.click()
     assert sharp.isChecked() and construction.input_staff.accidental == 1
@@ -117,7 +231,15 @@ def test_the_sign_buttons_act_like_a_radio_group_that_can_be_cleared(constructio
     assert not flat.isChecked() and construction.input_staff.accidental is None
 
 
-def test_right_click_steps_through_the_signs(construction):
+def test_right_click_steps_through_the_signs(construction: ExerciseView) -> None:
+    """
+    Check that right click steps through the signs.
+
+    Parameters
+    ----------
+    construction : ExerciseView
+        The note construction view or panel under test.
+    """
     seen = []
     for _ in range(4):
         construction.input_staff.accidental_cycled.emit()
@@ -139,7 +261,15 @@ def test_right_click_steps_through_the_signs(construction):
     assert construction.input_staff.accidental is None
 
 
-def test_right_click_does_nothing_without_the_sign_buttons(app):
+def test_right_click_does_nothing_without_the_sign_buttons(app: QApplication) -> None:
+    """
+    Check that right click does nothing without the sign buttons.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     settings.construction.accidentals = False
     view = view_of(NoteConstruction())
     view.input_staff.accidental_cycled.emit()
@@ -148,8 +278,17 @@ def test_right_click_does_nothing_without_the_sign_buttons(app):
     other._cycle_accidental()  # not a construction question at all
 
 
-def test_placing_the_right_note_scores_locks_the_staff_and_moves_on(construction):
+def test_placing_the_right_note_scores_locks_the_staff_and_moves_on(construction: ExerciseView) -> None:
+    """
+    Check that placing the right note scores locks the staff and moves on.
+
+    Parameters
+    ----------
+    construction : ExerciseView
+        The note construction view or panel under test.
+    """
     q = asked(construction)
+    assert q.construct is not None
     first = q
     construction._place(q.construct)
     assert construction.answered and (construction.correct, construction.total) == (1, 1)
@@ -161,8 +300,17 @@ def test_placing_the_right_note_scores_locks_the_staff_and_moves_on(construction
     assert construction.question is not first and not construction.input_staff.locked
 
 
-def test_a_wrong_note_is_shown_then_cleared_for_another_try(construction):
+def test_a_wrong_note_is_shown_then_cleared_for_another_try(construction: ExerciseView) -> None:
+    """
+    Check that a wrong note is shown then cleared for another try.
+
+    Parameters
+    ----------
+    construction : ExerciseView
+        The note construction view or panel under test.
+    """
     q = asked(construction)
+    assert q.construct is not None
     wrong = Note(q.construct.octave, letter=(q.construct.letter + 1) % 7)
     construction._place(wrong)
     assert construction.missed and not construction.answered and construction._busy and construction.total == 1
@@ -175,7 +323,15 @@ def test_a_wrong_note_is_shown_then_cleared_for_another_try(construction):
     construction._advance.stop()
 
 
-def test_a_new_question_cancels_the_clearing_of_the_old_one(construction):
+def test_a_new_question_cancels_the_clearing_of_the_old_one(construction: ExerciseView) -> None:
+    """
+    Check that a new question cancels the clearing of the old one.
+
+    Parameters
+    ----------
+    construction : ExerciseView
+        The note construction view or panel under test.
+    """
     q = asked(construction)
     construction._place(Note(q.construct.octave, letter=(q.construct.letter + 2) % 7))
     construction.next_question()  # before the 900 ms are up
@@ -184,7 +340,15 @@ def test_a_new_question_cancels_the_clearing_of_the_old_one(construction):
     assert not construction.input_staff.locked and not construction._busy
 
 
-def test_clicks_on_a_question_that_is_not_construction_are_ignored(app):
+def test_clicks_on_a_question_that_is_not_construction_are_ignored(app: QApplication) -> None:
+    """
+    Check that clicks on a question that is not construction are ignored.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(KeySignatures())
     view._place(Note(4, letter=0))
     assert view.total == 0
@@ -193,7 +357,15 @@ def test_clicks_on_a_question_that_is_not_construction_are_ignored(app):
 # -- two-part answers: what is ignored ------------------------------------------------------------------------------
 
 
-def test_choices_are_ignored_once_the_question_is_answered_or_while_a_miss_shows(app):
+def test_choices_are_ignored_once_the_question_is_answered_or_while_a_miss_shows(app: QApplication) -> None:
+    """
+    Check that choices are ignored once the question is answered or while a miss shows.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(ArpeggioNames(), seed=3)
     q = asked(view)
     kind, inversion = q.answer.split(q.joiner)
@@ -214,7 +386,15 @@ def test_choices_are_ignored_once_the_question_is_answered_or_while_a_miss_shows
     view._advance.stop()
 
 
-def test_choosing_a_different_type_unlights_the_one_before(app):
+def test_choosing_a_different_type_unlights_the_one_before(app: QApplication) -> None:
+    """
+    Check that choosing a different type unlights the one before.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(ArpeggioNames(), seed=5)
     names = {b.text(): b for b in view.buttons}
     first, second = asked(view).choices[:2]
@@ -227,7 +407,15 @@ def test_choosing_a_different_type_unlights_the_one_before(app):
 # -- feedback and the less common orderings -------------------------------------------------------------------------
 
 
-def test_a_right_answer_fades_the_staff_notes_to_green(app):
+def test_a_right_answer_fades_the_staff_notes_to_green(app: QApplication) -> None:
+    """
+    Check that a right answer fades the staff notes to green.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(NoteNames(), seed=2)
     q = asked(view)
     next(b for b in view.buttons if b.text() == q.answer).click()
@@ -236,7 +424,15 @@ def test_a_right_answer_fades_the_staff_notes_to_green(app):
     view._advance.stop()
 
 
-def test_a_right_answer_fades_the_highlighted_key_to_green(app):
+def test_a_right_answer_fades_the_highlighted_key_to_green(app: QApplication) -> None:
+    """
+    Check that a right answer fades the highlighted key to green.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(KeyboardNotes(), seed=2)
     assert view.settings_panel is not None and view.keyboard.isVisibleTo(view)
     q = asked(view)
@@ -246,7 +442,15 @@ def test_a_right_answer_fades_the_highlighted_key_to_green(app):
     view._advance.stop()
 
 
-def test_a_second_submit_after_the_question_is_answered_is_ignored(app):
+def test_a_second_submit_after_the_question_is_answered_is_ignored(app: QApplication) -> None:
+    """
+    Check that a second submit after the question is answered is ignored.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(KeySignatures(), seed=2)
     q = asked(view)
     right = next(b for b in view.buttons if b.text() == q.answer)
@@ -256,7 +460,15 @@ def test_a_second_submit_after_the_question_is_answered_is_ignored(app):
     view._advance.stop()
 
 
-def test_a_wrong_pair_clears_itself_unless_a_new_question_has_come(app):
+def test_a_wrong_pair_clears_itself_unless_a_new_question_has_come(app: QApplication) -> None:
+    """
+    Check that a wrong pair clears itself unless a new question has come.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(ArpeggioNames(), seed=3)
     q = asked(view)
     kind, inversion = q.answer.split(q.joiner)
@@ -274,7 +486,15 @@ def test_a_wrong_pair_clears_itself_unless_a_new_question_has_come(app):
 # -- the music stays a readable size in a wide window -----------------------------------------------------------------
 
 
-def test_in_a_wide_window_the_staff_is_capped_and_centred(app):
+def test_in_a_wide_window_the_staff_is_capped_and_centred(app: QApplication) -> None:
+    """
+    Check that in a wide window the staff is capped and centred.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     view = view_of(NoteNames(), seed=2)
     view.resize(2400, 700)
     view.show()
@@ -288,7 +508,15 @@ def test_in_a_wide_window_the_staff_is_capped_and_centred(app):
     view.hide()
 
 
-def test_the_staff_for_placing_a_note_is_capped_too(app):
+def test_the_staff_for_placing_a_note_is_capped_too(app: QApplication) -> None:
+    """
+    Check that the staff for placing a note is capped too.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     settings.construction.accidentals = False
     view = view_of(NoteConstruction(), seed=4)
     view.resize(2400, 700)

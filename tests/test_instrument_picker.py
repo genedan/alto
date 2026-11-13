@@ -1,4 +1,9 @@
+"""The instrument picker: the list, the summary of each instrument and choosing or hearing one."""
+
+from __future__ import annotations
+
 import os
+from typing import TYPE_CHECKING
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
@@ -11,13 +16,32 @@ from alto.ui.instrument_picker import InstrumentPicker
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from PySide6.QtWidgets import QApplication
+
 
 @pytest.fixture
 def picker(
-    app,
-    monkeypatch,
-):
-    """A picker that never touches the saved settings, and puts the instrument back afterwards."""
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> Iterator[InstrumentPicker]:
+    """
+    Provide a picker that never touches the saved settings, and puts the instrument back afterwards.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+
+    Yields
+    ------
+    InstrumentPicker
+        The picker; the instrument in use is put back afterwards.
+    """
     monkeypatch.setattr(instrument_picker, "save_instrument", lambda: None)
     before = sounds.instrument
     sounds.instrument = "piano"
@@ -25,20 +49,66 @@ def picker(
     sounds.instrument = before
 
 
-def rows(picker):
+def rows(picker: InstrumentPicker) -> list[object]:
+    """
+    List the instruments in the picker's list.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The picker.
+
+    Returns
+    -------
+    list of object
+        The name of each row, in order.
+    """
     return [picker.list.item(i).data(Qt.ItemDataRole.UserRole) for i in range(picker.list.count())]
 
 
-def texts(picker):
-    return " ".join(picker.facts.itemAt(i).widget().text() for i in range(picker.facts.count()))
+def texts(picker: InstrumentPicker) -> str:
+    """
+    Join the text of the summary's labels.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The picker.
+
+    Returns
+    -------
+    str
+        The labels separated by spaces.
+    """
+    return " ".join(picker.facts.itemAt(i).widget().text() for i in range(picker.facts.count()))  # pyright: ignore[reportAttributeAccessIssue]
 
 
-def row_labels(picker):
-    """The text of each 'Use this instrument' button on the page, in order."""
+def row_labels(picker: InstrumentPicker) -> list[str]:
+    """
+    Return the text of each 'Use this instrument' button on the page, in order.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The picker.
+
+    Returns
+    -------
+    list of str
+        The button texts, in order.
+    """
     return [use.text() for use, _hear in picker.buttons.values()]
 
 
-def test_every_instrument_is_listed_once_and_the_one_in_use_is_selected_and_ticked(picker):
+def test_every_instrument_is_listed_once_and_the_one_in_use_is_selected_and_ticked(picker: InstrumentPicker) -> None:
+    """
+    Check that every instrument is listed once and the one in use is selected and ticked.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    """
     assert rows(picker) == [
         "Piano",
         "Flute",
@@ -53,7 +123,15 @@ def test_every_instrument_is_listed_once_and_the_one_in_use_is_selected_and_tick
     assert row_labels(picker) == ["In use"]  # the piano has only one way of playing, so one row
 
 
-def test_the_viola_is_one_entry_with_a_row_of_buttons_for_arco_and_for_pizzicato(picker):
+def test_the_viola_is_one_entry_with_a_row_of_buttons_for_arco_and_for_pizzicato(picker: InstrumentPicker) -> None:
+    """
+    Check that the viola is one entry with a row of buttons for arco and for pizzicato.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    """
     picker.select("viola_bowed")
     assert picker.title.text() == "Viola"
     assert list(picker.buttons) == ["viola_bowed", "viola_plucked"]
@@ -63,7 +141,15 @@ def test_the_viola_is_one_entry_with_a_row_of_buttons_for_arco_and_for_pizzicato
     assert sounds.instrument == "piano"
 
 
-def test_using_pizzicato_marks_the_viola_entry_with_the_way_of_playing(picker):
+def test_using_pizzicato_marks_the_viola_entry_with_the_way_of_playing(picker: InstrumentPicker) -> None:
+    """
+    Check that using pizzicato marks the viola entry with the way of playing.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    """
     picker.select("viola_plucked")
     picker.buttons["viola_plucked"][0].click()
     assert sounds.instrument == "viola_plucked"
@@ -72,14 +158,30 @@ def test_using_pizzicato_marks_the_viola_entry_with_the_way_of_playing(picker):
     assert entry == "Viola (Pizzicato)  ✓"
 
 
-def test_choosing_a_row_shows_its_summary_without_switching_instrument(picker):
+def test_choosing_a_row_shows_its_summary_without_switching_instrument(picker: InstrumentPicker) -> None:
+    """
+    Check that choosing a row shows its summary without switching instrument.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    """
     picker.select("viola_bowed")
     assert picker.buttons["viola_bowed"][0].isEnabled()
     assert sounds.instrument == "piano"
     assert "Manuel Tabora" in texts(picker) and "45 notes" in texts(picker) and "C3 to A6" in texts(picker)
 
 
-def test_using_an_instrument_switches_to_it_and_ticks_it(picker):
+def test_using_an_instrument_switches_to_it_and_ticks_it(picker: InstrumentPicker) -> None:
+    """
+    Check that using an instrument switches to it and ticks it.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    """
     picker.select("marimba")
     picker.buttons["marimba"][0].click()
     assert sounds.instrument == "marimba"
@@ -91,9 +193,19 @@ def test_using_an_instrument_switches_to_it_and_ticks_it(picker):
 
 
 def test_an_instrument_with_no_recordings_cannot_be_chosen(
-    picker,
-    monkeypatch,
-):
+    picker: InstrumentPicker,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that an instrument with no recordings cannot be chosen.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     real = sounds.recordings
     monkeypatch.setattr(sounds, "recordings", lambda inst: {} if inst.key == "vibraphone" else real(inst))
     picker.select("vibraphone")
@@ -105,18 +217,44 @@ def test_an_instrument_with_no_recordings_cannot_be_chosen(
 
 
 def test_hear_it_plays_a_short_arpeggio_in_that_instrument(
-    picker,
-    monkeypatch,
-):
+    picker: InstrumentPicker,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that hear it plays a short arpeggio in that instrument.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     played = []
 
     def record(
-        midi,
-        volume=1.0,
-        instrument=None,
-        force=False,
-        **kwargs,
-    ):
+        midi: int,
+        volume: float = 1.0,
+        instrument: str | None = None,
+        force: bool = False,
+        **kwargs: object,
+    ) -> None:
+        """
+        Record a note instead of playing it.
+
+        Parameters
+        ----------
+        midi : int
+            The note.
+        volume : float
+            Its volume.
+        instrument : str or None
+            The instrument.
+        force : bool
+            Whether it was forced.
+        kwargs : object
+            Ignored.
+        """
         played.append((midi, instrument, force))
 
     monkeypatch.setattr(sounds, "play_midi", record)
@@ -127,7 +265,15 @@ def test_hear_it_plays_a_short_arpeggio_in_that_instrument(
     assert sounds.instrument == "piano"  # hearing it does not choose it
 
 
-def test_double_clicking_an_entry_uses_the_way_of_playing_already_in_use_or_the_first(picker):
+def test_double_clicking_an_entry_uses_the_way_of_playing_already_in_use_or_the_first(picker: InstrumentPicker) -> None:
+    """
+    Check that double clicking an entry uses the way of playing already in use or the first.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    """
     viola = rows(picker).index("Viola")
     picker.list.itemDoubleClicked.emit(picker.list.item(viola))
     assert sounds.instrument == "viola_bowed"  # the first way of playing
@@ -136,7 +282,15 @@ def test_double_clicking_an_entry_uses_the_way_of_playing_already_in_use_or_the_
     assert sounds.instrument == "viola_plucked"  # the one in use stays
 
 
-def test_a_theme_change_redraws_the_summary_in_the_new_colours(picker):
+def test_a_theme_change_redraws_the_summary_in_the_new_colours(picker: InstrumentPicker) -> None:
+    """
+    Check that a theme change redraws the summary in the new colours.
+
+    Parameters
+    ----------
+    picker : InstrumentPicker
+        The instrument picker under test.
+    """
     from PySide6.QtCore import QEvent
     from PySide6.QtWidgets import QApplication
 
@@ -146,7 +300,15 @@ def test_a_theme_change_redraws_the_summary_in_the_new_colours(picker):
     assert picker.title.text() == before and picker.shown == "Viola"
 
 
-def test_the_chosen_instrument_is_saved_and_read_back(app):
+def test_the_chosen_instrument_is_saved_and_read_back(app: QApplication) -> None:
+    """
+    Check that the chosen instrument is saved and read back.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     from alto.ui.instrument_picker import load_instrument, save_instrument
     from alto.ui.store import store
 

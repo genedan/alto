@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Regenerate the screenshots in docs/assets/img, in the light and the dark theme.
+"""
+Regenerate the screenshots in docs/assets/img, in the light and the dark theme.
 
     .venv/bin/python scripts/screenshots.py              # every picture, both themes
     .venv/bin/python scripts/screenshots.py --only home stats
@@ -16,6 +17,11 @@ Never add a picture of the exercise-level settings (the pane behind the sliders 
 """
 
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from PySide6.QtWidgets import QWidget
 
 import argparse
 import os
@@ -46,6 +52,20 @@ SHOTS = (
 
 
 def main() -> int:
+    """
+    Parse the command line and make the pictures, one process for each theme.
+
+    Returns
+    -------
+    int
+        0 if every picture was written, 1 if a capture failed.
+
+    Examples
+    --------
+    >>> main()  # doctest: +SKIP
+    wrote 26 pictures to docs/assets/img
+    0
+    """
     ap = argparse.ArgumentParser(description=(__doc__ or "").split("\n")[0])
     ap.add_argument("--theme", choices=THEMES, help="only this theme (default: both)")
     ap.add_argument(
@@ -94,6 +114,22 @@ def capture(
     names: tuple[str, ...],
     out: Path,
 ) -> None:
+    """
+    Take the pictures of one theme, in this process, using a made-up profile.
+
+    Parameters
+    ----------
+    theme : str
+        "light" or "dark".
+    names : tuple of str
+        The pictures to make, from `SHOTS`.
+    out : Path
+        The folder to write them to.
+
+    Examples
+    --------
+    >>> capture("dark", names=("home",), out=Path("/tmp/shots"))  # doctest: +SKIP
+    """
     import json
     import random
     import time
@@ -127,16 +163,44 @@ def capture(
     )
 
     def wait(ms: int = 450) -> None:
+        """
+        Keep the application busy for a while, so animations and layout settle.
+
+        Parameters
+        ----------
+        ms : int
+            How many milliseconds to run the event loop.
+
+        Examples
+        --------
+        >>> wait(250)  # doctest: +SKIP
+        """
         end = time.time() + ms / 1000
         while time.time() < end:
             app.processEvents()
 
     def save(
-        widget,
+        widget: QWidget,
         *,
         name: str,
         width: int = 1400,
     ) -> None:
+        """
+        Save a picture of a widget, if this picture was asked for.
+
+        Parameters
+        ----------
+        widget : QWidget
+            The widget to grab.
+        name : str
+            The picture's name; it is skipped unless it is in `names`.
+        width : int
+            The widest the picture may be; wider ones are scaled down.
+
+        Examples
+        --------
+        >>> save(window, name="home")  # doctest: +SKIP
+        """
         if name not in names:
             return
         wait(250)

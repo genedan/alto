@@ -49,13 +49,16 @@ DOCUMENTED = [
     "alto/ui/store.py",
     "alto/ui/theme.py",
     "alto/ui/widgets.py",
+    "tests",
+    "scripts",
+    "conftest.py",
 ]
 
 SECTION = re.compile(r"^(?P<title>[A-Z][A-Za-z ]+)\n-{3,}$", re.MULTILINE)
 
 
 def sections(doc: str) -> dict[str, str]:
-    """
+    r"""
     Split a NumPy-style docstring into its sections.
 
     Parameters
@@ -70,8 +73,8 @@ def sections(doc: str) -> dict[str, str]:
 
     Examples
     --------
-    >>> sections("Summary.\\n\\nParameters\\n----------\\nx : int\\n    An x.\\n")["Parameters"]
-    'x : int\\n    An x.\\n'
+    >>> sections("Summary.\n\nParameters\n----------\nx : int\n    An x.\n")["Parameters"]
+    'x : int\n    An x.\n'
     """
     found = list(SECTION.finditer(doc))
     out = {"": doc[: found[0].start()] if found else doc}
@@ -82,7 +85,7 @@ def sections(doc: str) -> dict[str, str]:
 
 
 def documented_names(parameters: str) -> set[str]:
-    """
+    r"""
     Return the parameter names listed in a Parameters section.
 
     Parameters
@@ -97,7 +100,7 @@ def documented_names(parameters: str) -> set[str]:
 
     Examples
     --------
-    >>> sorted(documented_names("x, y : int\\n    Two numbers.\\n*args : float\\n    More.\\n"))
+    >>> sorted(documented_names("x, y : int\n    Two numbers.\n*args : float\n    More.\n"))
     ['args', 'x', 'y']
     """
     names: set[str] = set()
@@ -158,11 +161,11 @@ def problems(path: Path) -> list[str]:
             out.append(f"{label} has no docstring")
             continue
         parts = sections(inspect.cleandoc(raw))
-        is_test = node.name.startswith("test_")
+        is_test = node.name.startswith("test_") or where.parts[0] == "tests" or where.name == "conftest.py"
         if not parts[""].strip():
             out.append(f"{label} has no summary line")
         if isinstance(node, ast.ClassDef):
-            if "Examples" not in parts:
+            if not is_test and "Examples" not in parts:
                 out.append(f"{label} has no Examples section")
             continue
         if any(isinstance(d, ast.Attribute) and d.attr in ("setter", "deleter") for d in node.decorator_list):
@@ -187,7 +190,7 @@ def problems(path: Path) -> list[str]:
 
 
 @pytest.mark.parametrize("path", python_files(), ids=lambda p: str(p.relative_to(ROOT)))
-def test_every_definition_has_a_complete_docstring(path):
+def test_every_definition_has_a_complete_docstring(path: Path) -> None:
     """
     Check the docstrings of one source file.
 
@@ -199,7 +202,7 @@ def test_every_definition_has_a_complete_docstring(path):
     assert problems(path) == []
 
 
-def test_the_checker_catches_what_it_should(tmp_path, monkeypatch):
+def test_the_checker_catches_what_it_should(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """
     Check that a file with missing and incomplete docstrings is reported.
 
@@ -237,7 +240,7 @@ def test_the_checker_catches_what_it_should(tmp_path, monkeypatch):
     assert any("g has no docstring" in line for line in found)
 
 
-def test_there_are_documented_packages_to_check():
+def test_there_are_documented_packages_to_check() -> None:
     """
     Check that the list of documented packages is not empty and points at real code.
 

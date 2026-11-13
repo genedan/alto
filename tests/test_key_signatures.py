@@ -1,7 +1,14 @@
-"""The key signature exercise: reading a signature drawn on a staff, counting the sharps and flats of a named key, and the
-scales (major, minor and the modes) and the staffs and signatures it can use."""
+"""
+The key signature exercise.
+
+Reading a signature drawn on a staff, counting the sharps and flats of a named key, and the
+scales (major, minor and the modes) and the staffs and signatures it can use.
+"""
+
+from __future__ import annotations
 
 import random
+from typing import TYPE_CHECKING
 
 import pytest
 from alto import settings
@@ -16,23 +23,46 @@ from alto.ui.store import store
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QPushButton, QToolButton
 
+if TYPE_CHECKING:
+    from alto.ui.settings_panel import KeySignatureSettingsPanel
+    from PySide6.QtWidgets import QApplication, QWidget
+
 MAJOR, MINOR = "Major (Ionian)", "Natural minor (Aeolian)"
 
 
 def questions(
-    n=300,
+    n: int = 300,
     *,
-    seed=1,
-    **choose,
-):
-    """`n` questions made with these settings (questions, clefs, modes, keys)."""
+    seed: int = 1,
+    **choose: object,
+) -> list[Question]:
+    """
+    `n` questions made with these settings (questions, clefs, modes, keys).
+
+    Parameters
+    ----------
+    n : int
+        How many questions.
+    seed : int
+        The random seed.
+    choose : object
+        Key signature settings to change before asking.
+
+    Returns
+    -------
+    list of Question
+        The questions.
+    """
     for name, value in choose.items():
         setattr(settings.key_signatures, name, value)
     rng = random.Random(seed)
     return [KeySignatures().generate(rng) for _ in range(n)]
 
 
-def test_each_mode_starts_where_its_signature_says():
+def test_each_mode_starts_where_its_signature_says() -> None:
+    """
+    Check that each mode starts where its signature says.
+    """
     assert [
         mode_tonic(2, mode=m).name
         for m in (
@@ -58,7 +88,15 @@ def test_each_mode_starts_where_its_signature_says():
 
 
 @pytest.mark.parametrize("mode", list(MODE_DEGREE))
-def test_a_scale_in_any_mode_carries_exactly_the_key_signature_it_is_asked_with(mode):
+def test_a_scale_in_any_mode_carries_exactly_the_key_signature_it_is_asked_with(mode: str) -> None:
+    """
+    Check that a scale in any mode carries exactly the key signature it is asked with.
+
+    Parameters
+    ----------
+    mode : str
+        The scale mode under test.
+    """
     for count in range(-7, 8):
         tonic = mode_tonic(count, mode=mode)
         assert abs(tonic.accidental) <= 1  # no double sharps or flats in a name
@@ -66,7 +104,10 @@ def test_a_scale_in_any_mode_carries_exactly_the_key_signature_it_is_asked_with(
         assert sum(n.accidental for n in notes) == count and len({n.letter for n in notes}) == 7
 
 
-def test_by_default_both_kinds_of_question_are_asked_about_major_and_minor_keys():
+def test_by_default_both_kinds_of_question_are_asked_about_major_and_minor_keys() -> None:
+    """
+    Check that by default both kinds of question are asked about major and minor keys.
+    """
     asked = questions(400)
     reading = [q for q in asked if q.show_staff]
     counting = [q for q in asked if not q.show_staff]
@@ -76,7 +117,10 @@ def test_by_default_both_kinds_of_question_are_asked_about_major_and_minor_keys(
     assert all(q.prompt.endswith((" major?", " minor?")) for q in counting)
 
 
-def test_reading_a_signature_shows_a_staff_and_asks_for_the_tonic():
+def test_reading_a_signature_shows_a_staff_and_asks_for_the_tonic() -> None:
+    """
+    Check that reading a signature shows a staff and asks for the tonic.
+    """
     for q in questions(
         200,
         questions={"read"},
@@ -92,7 +136,10 @@ def test_reading_a_signature_shows_a_staff_and_asks_for_the_tonic():
         assert "2 sharps: E Dorian" in q.explanation
 
 
-def test_counting_names_the_key_and_asks_for_its_signature():
+def test_counting_names_the_key_and_asks_for_its_signature() -> None:
+    """
+    Check that counting names the key and asks for its signature.
+    """
     for q in questions(
         200,
         questions={"count"},
@@ -103,7 +150,10 @@ def test_counting_names_the_key_and_asks_for_its_signature():
         assert q.answer == "2 flats" and q.answer in q.choices and len(q.choices) == 4
 
 
-def test_the_staffs_the_modes_and_the_keys_are_chosen_from_the_settings():
+def test_the_staffs_the_modes_and_the_keys_are_chosen_from_the_settings() -> None:
+    """
+    Check that the staffs the modes and the keys are chosen from the settings.
+    """
     asked = questions(
         600,
         questions={"read"},
@@ -117,7 +167,10 @@ def test_the_staffs_the_modes_and_the_keys_are_chosen_from_the_settings():
     assert major.answer == "E"
 
 
-def test_a_settings_choice_with_nothing_ticked_falls_back_to_something_sensible():
+def test_a_settings_choice_with_nothing_ticked_falls_back_to_something_sensible() -> None:
+    """
+    Check that a settings choice with nothing ticked falls back to something sensible.
+    """
     cfg = settings.key_signatures
     cfg.questions, cfg.clefs, cfg.modes, cfg.keys = set(), set(), set(), set()
     assert (
@@ -133,19 +186,28 @@ def test_a_settings_choice_with_nothing_ticked_falls_back_to_something_sensible(
     )
 
 
-def test_a_question_comes_back_with_its_staff_and_its_scale():
+def test_a_question_comes_back_with_its_staff_and_its_scale() -> None:
+    """
+    Check that a question comes back with its staff and its scale.
+    """
     for q in questions(50, questions={"read"}):
         again = Question.from_dict(q.to_dict())
         assert again == q and again.show_staff and again.item_key() == q.item_key()
 
 
-def test_the_exercise_signature_follows_the_settings():
+def test_the_exercise_signature_follows_the_settings() -> None:
+    """
+    Check that the exercise signature follows the settings.
+    """
     before = KeySignatures().settings_signature()
     settings.key_signatures.modes = {"Dorian"}
     assert KeySignatures().settings_signature() != before
 
 
-def test_a_key_signature_question_is_described_by_its_signature_in_the_lists_of_hard_questions():
+def test_a_key_signature_question_is_described_by_its_signature_in_the_lists_of_hard_questions() -> None:
+    """
+    Check that a key signature question is described by its signature in the lists of hard questions.
+    """
     q = questions(
         1,
         questions={"read"},
@@ -159,9 +221,19 @@ def test_a_key_signature_question_is_described_by_its_signature_in_the_lists_of_
 
 
 def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(
-    app,
-    monkeypatch,
-):
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that a signature is drawn and a right answer makes no sound.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     played = []
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_notes", lambda notes: played.append(notes))
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: played.append(streak))
@@ -179,9 +251,19 @@ def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(
 
 
 def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(
-    app,
-    monkeypatch,
-):
+    app: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    Check that the sound button is a global mute that works in every exercise.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+    """
     from alto.exercises.library import NoteNames
     from alto.ui.exercise_view import sounds
 
@@ -200,7 +282,15 @@ def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(
     assert muted.sound_btn.toolTip().startswith("Muted") and muted.sound_btn.isEnabled()
 
 
-def test_a_counting_question_shows_no_staff(app):
+def test_a_counting_question_shows_no_staff(app: QApplication) -> None:
+    """
+    Check that a counting question shows no staff.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     settings.key_signatures.questions = {"count"}
     view = ExerciseView(KeySignatures(), rng=random.Random(3))
     assert not view.staff.isVisibleTo(view)
@@ -211,14 +301,25 @@ def test_a_counting_question_shows_no_staff(app):
     view._advance.stop()
 
 
-def test_the_preview_shows_the_signature_and_the_caption(app):
+def test_the_preview_shows_the_signature_and_the_caption(app: QApplication) -> None:
+    """
+    Check that the preview shows the signature and the caption.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     q = questions(1, questions={"read"})[0]
     dialog = QuestionPreview("Key signatures", question=q)
     assert q.caption and dialog.grab().width() > 0
     assert not [b for b in dialog.findChildren(QPushButton) if b.text() == "Play"]  # there is nothing to play
 
 
-def test_a_question_stored_with_a_scale_to_play_still_loads():
+def test_a_question_stored_with_a_scale_to_play_still_loads() -> None:
+    """
+    Check that a question stored with a scale to play still loads.
+    """
     q = questions(1, questions={"read"})[0]
     old = {**q.to_dict(), "play": [[{"octave": 4, "letter": 0, "accidental": 0}]]}
     assert Question.from_dict(old) == q
@@ -228,19 +329,48 @@ def test_a_question_stored_with_a_scale_to_play_still_loads():
 
 
 @pytest.fixture
-def pane(app):
+def pane(app: QApplication) -> sp.KeySignatureSettingsPanel:
+    """
+    Build the key signature settings panel, sized and shown.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+
+    Returns
+    -------
+    KeySignatureSettingsPanel
+        The panel.
+    """
     panel = sp.KeySignatureSettingsPanel(settings.key_signatures)
     panel.resize(290, 600)
     panel.show()
     return panel
 
 
-def back(panel):
+def back(panel: QWidget) -> None:
+    """
+    Click the Back button of the panel and wait for the page to slide.
+
+    Parameters
+    ----------
+    panel : QWidget
+        The panel.
+    """
     next(b for b in panel.findChildren(QToolButton) if b.text() == "‹ Back").click()
     QTest.qWait(300)
 
 
-def test_the_pane_opens_each_page_and_back_returns(pane):
+def test_the_pane_opens_each_page_and_back_returns(pane: KeySignatureSettingsPanel) -> None:
+    """
+    Check that the pane opens each page and back returns.
+
+    Parameters
+    ----------
+    pane : KeySignatureSettingsPanel
+        The key signature panel under test.
+    """
     for row, index in (
         (pane.questions_row, 1),
         (pane.staff_row, 2),
@@ -258,7 +388,15 @@ def test_the_pane_opens_each_page_and_back_returns(pane):
     assert pane.stack.currentIndex() == 2
 
 
-def test_the_pane_edits_and_saves_every_setting(pane):
+def test_the_pane_edits_and_saves_every_setting(pane: KeySignatureSettingsPanel) -> None:
+    """
+    Check that the pane edits and saves every setting.
+
+    Parameters
+    ----------
+    pane : KeySignatureSettingsPanel
+        The key signature panel under test.
+    """
     cfg = settings.key_signatures
     changes = []
     pane.changed.connect(lambda: changes.append(1))
@@ -286,7 +424,10 @@ def test_the_pane_edits_and_saves_every_setting(pane):
     assert pane.questions_row.value.text() == "Both"
 
 
-def test_the_saved_settings_are_read_back_and_bad_ones_ignored():
+def test_the_saved_settings_are_read_back_and_bad_ones_ignored() -> None:
+    """
+    Check that the saved settings are read back and bad ones ignored.
+    """
     s = store()
     s.setValue("keySignatures/questions", "count,nonsense")
     s.setValue("keySignatures/clefs", "tenor,bass,nonsense")
@@ -308,12 +449,18 @@ def test_the_saved_settings_are_read_back_and_bad_ones_ignored():
     assert cfg.questions == {"count"} and cfg.keys == {-4, 3}  # nothing usable: what was there stays
 
 
-def test_the_exercises_help_describes_both_kinds_of_question():
+def test_the_exercises_help_describes_both_kinds_of_question() -> None:
+    """
+    Check that the exercises help describes both kinds of question.
+    """
     text = KeySignatures().instructions()
     assert "drawn on a staff" in text and "how many sharps or flats" in text and "Dorian" in text
 
 
-def test_the_explanation_spells_the_scale_from_the_tonic_up_to_its_octave():
+def test_the_explanation_spells_the_scale_from_the_tonic_up_to_its_octave() -> None:
+    """
+    Check that the explanation spells the scale from the tonic up to its octave.
+    """
     q = questions(
         1,
         questions={"read"},
@@ -323,7 +470,15 @@ def test_the_explanation_spells_the_scale_from_the_tonic_up_to_its_octave():
     assert q.explanation.endswith("C D E F G A B C")
 
 
-def test_the_kind_of_scale_is_written_under_the_staff_not_above_it(app):
+def test_the_kind_of_scale_is_written_under_the_staff_not_above_it(app: QApplication) -> None:
+    """
+    Check that the kind of scale is written under the staff not above it.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     import random
 
     from alto.exercises.library import KeySignatures
