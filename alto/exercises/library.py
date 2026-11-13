@@ -34,7 +34,7 @@ def _random_note(rng: random.Random, clef: str, accidentals: bool, span: tuple[i
 class NoteNames(Exercise):
     name = "Note Identification"
     category = "Notation"
-    description = "Identify notes on the grand staff or the treble, bass, alto and tenor clefs."
+    description = "Identify notes on the grand staff or on any of seven clefs, from treble to baritone."
     par_seconds = 3.0
 
     def settings_signature(self) -> str:
@@ -230,6 +230,9 @@ ARPEGGIO_WINDOWS = {
     "bass": (Note(2, 0), Note(4, 2)),    # C2..E4
     "alto": (Note(2, 6), Note(5, 1)),    # B2..D5
     "tenor": (Note(2, 4), Note(4, 6)),   # G2..B4
+    "soprano": (Note(3, 3), Note(5, 5)),    # F3..A5
+    "mezzo": (Note(3, 1), Note(5, 3)),      # D3..F5
+    "baritone": (Note(2, 2), Note(4, 4)),   # E2..G4
 }
 
 

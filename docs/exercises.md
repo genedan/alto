@@ -12,7 +12,9 @@ A note is drawn on a staff. Press the button with its name.
 
 In the exercise settings you can choose:
 
-- **Clefs:** treble, bass, alto, tenor, or the grand staff.
+- **Clefs:** the grand staff, or any of the seven single-staff clefs, listed in three groups: treble, bass, alto and
+  tenor; then soprano, mezzo-soprano and baritone. Each clef is shown with its name beside it. The same list is used by every
+  exercise that has a clef setting, apart from the grand staff, which only Note Identification and Note Construction use.
 - **Range:** the lowest and highest note that can appear, per clef.
 - **Key signatures:** which keys appear. When a key is on, the note's name has to agree with the signature.
 - **Note values:** whole notes up to thirty-second notes, and the breve.
@@ -68,7 +70,7 @@ A mode uses the key signature of a major key and starts from another note of it,
 In the exercise settings you can choose:
 
 - **Questions:** read the signature, count the sharps and flats, or both.
-- **Staff:** treble, bass, alto and tenor clefs, for the signature that is drawn.
+- **Staff:** any of the seven clefs (treble, bass, alto, tenor, soprano, mezzo-soprano and baritone), for the signature that is drawn.
 - **Scales:** major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.
 - **Key signatures:** which of the fifteen signatures, from seven flats to seven sharps, can appear.
 
@@ -107,7 +109,7 @@ The inversion is which chord tone is lowest:
 By default Alto asks major, minor, dominant 7th and diminished 7th arpeggios on the treble and bass staves, in every
 inversion. In the exercise settings you can choose:
 
-- **Staff:** treble, bass, alto and tenor clefs.
+- **Staff:** any of the seven clefs, from treble to baritone.
 - **Arpeggio types:** any of major, minor, diminished and augmented triads, and dominant 7th, major 7th, minor 7th,
   half-diminished 7th and diminished 7th chords. The type buttons below the staff follow your choice.
 - **Inversions:** root position and the first three inversions. A triad has no 3rd inversion, so that choice only applies to seventh chords.

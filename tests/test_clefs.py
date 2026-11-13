@@ -1,0 +1,121 @@
+"""The seven clefs with one staff (treble, bass, and the C clefs from soprano to baritone), how they are grouped on the
+settings pages, and that every exercise with a clef setting works on each of them."""
+import random
+import time
+
+import pytest
+from alto import settings
+from alto.exercises.library import ARPEGGIO_WINDOWS, ArpeggioNames, KeySignatures, NoteConstruction, NoteNames
+from alto.theory.pitch import Note
+from alto.ui import settings_panel as sp
+from alto.ui.pictures import CLEF_NAMES
+from alto.ui.staff import _KEY_POSITIONS, BOTTOM_LINE, MIDDLE_C, StaffWidget
+from PySide6.QtWidgets import QApplication, QCheckBox
+
+NEW = ("soprano", "mezzo", "baritone")
+
+
+def test_each_c_clef_puts_middle_c_on_its_own_line():
+    lines_up = {"soprano": 0, "mezzo": 1, "alto": 2, "tenor": 3, "baritone": 4}  # lines above the bottom one
+    for clef, lines in lines_up.items():
+        assert MIDDLE_C - BOTTOM_LINE[clef] == 2 * lines, clef
+
+
+def test_the_clefs_are_grouped_into_the_grand_staff_the_everyday_clefs_and_the_rest():
+    assert settings.CLEF_GROUPS == (("grand",), ("treble", "bass", "alto", "tenor"), ("soprano", "mezzo", "baritone"))
+    assert sorted(c for g in settings.CLEF_GROUPS for c in g) == sorted(settings.RANGE_KEYS)  # each clef in one group
+    for clef in settings.RANGE_KEYS:
+        assert clef in CLEF_NAMES and clef in settings.DEFAULT_RANGES and clef in settings.RANGE_LIMITS
+
+
+def test_the_default_ranges_sit_inside_the_limits_and_span_two_octaves():
+    for clef in NEW:
+        lo, hi = settings.DEFAULT_RANGES[clef]
+        limit_lo, limit_hi = settings.RANGE_LIMITS[clef]
+        assert limit_lo <= lo < hi <= limit_hi and hi - lo == 14
+        assert lo == BOTTOM_LINE[clef] - 3  # the same place relative to the staff as the alto and tenor ranges
+    assert settings.DEFAULT_RANGES["alto"][0] == BOTTOM_LINE["alto"] - 3
+
+
+def test_key_signatures_keep_their_usual_places_on_the_four_older_clefs():
+    assert _KEY_POSITIONS[("treble", 1)] == "F5 C5 G5 D5 A4 E5 B4" and _KEY_POSITIONS[("treble", -1)] == "B4 E5 A4 D5 G4 C5 F4"
+    assert _KEY_POSITIONS[("bass", 1)] == "F3 C3 G3 D3 A2 E3 B2" and _KEY_POSITIONS[("bass", -1)] == "B2 E3 A2 D3 G2 C3 F2"
+    assert _KEY_POSITIONS[("alto", 1)] == "F4 C4 G4 D4 A3 E4 B3" and _KEY_POSITIONS[("alto", -1)] == "B3 E4 A3 D4 G3 C4 F3"
+    assert _KEY_POSITIONS[("tenor", 1)] == "F3 C4 G3 D4 A3 E4 B3" and _KEY_POSITIONS[("tenor", -1)] == "B3 E4 A3 D4 G3 C4 F3"
+
+
+@pytest.mark.parametrize("clef", settings.CLEFS)
+def test_every_signature_sits_on_the_staff_in_every_clef(clef):
+    for sign, order in ((1, "FCGDAEB"), (-1, "BEADGCF")):
+        notes = [Note.parse(n) for n in _KEY_POSITIONS[(clef, sign)].split()]
+        assert "".join(n.name for n in notes) == order  # the usual order of sharps and of flats
+        assert all(BOTTOM_LINE[clef] - 1 <= n.diatonic <= BOTTOM_LINE[clef] + 9 for n in notes)  # no ledger lines
+        assert len({n.diatonic for n in notes}) == 7
+
+
+@pytest.mark.parametrize("clef", settings.CLEFS)
+def test_a_staff_with_notes_and_a_key_signature_draws_in_every_clef(app, clef):
+    staff = StaffWidget()
+    staff.resize(500, 300)
+    low = Note.from_diatonic(BOTTOM_LINE[clef])
+    staff.show_notes([[low], [Note.from_diatonic(BOTTOM_LINE[clef] + 8)]], clef, -3)
+    assert staff.grab().width() == 500
+    assert staff.staff_bottoms().keys() == {clef}
+
+
+@pytest.mark.parametrize("clef", NEW)
+def test_the_exercises_ask_on_the_new_clefs(clef):
+    rng = random.Random(4)
+    cfg = settings.note_names
+    cfg.mode, cfg.clefs = "single", {clef}
+    lo, hi = cfg.range_for(clef)
+    for _ in range(60):
+        q = NoteNames().generate(rng)
+        assert q.clef == clef and lo <= q.staff[0][0].diatonic <= hi
+    settings.construction.clefs = {clef}
+    assert all(NoteConstruction().generate(rng).clef == clef for _ in range(40))
+    settings.arpeggio.clefs = {clef}
+    low, high = (n.diatonic for n in ARPEGGIO_WINDOWS[clef])
+    for _ in range(80):
+        q = ArpeggioNames().generate(rng)
+        assert q.clef == clef and low <= q.staff[0][0].diatonic and q.staff[-1][0].diatonic <= high
+    settings.key_signatures.clefs, settings.key_signatures.questions = {clef}, {"read"}
+    assert all(KeySignatures().generate(rng).clef == clef for _ in range(40))
+
+
+def test_the_arpeggio_windows_sit_the_same_way_on_every_clef_but_the_treble():
+    for clef in (*NEW, "bass", "alto", "tenor"):
+        lo, hi = ARPEGGIO_WINDOWS[clef]
+        assert (lo.diatonic - BOTTOM_LINE[clef], hi.diatonic - BOTTOM_LINE[clef]) == (-4, 12), clef
+
+
+@pytest.mark.parametrize("panel_class, config, expect_grand", [
+    (sp.NoteNameSettingsPanel, settings.note_names, True),
+    (sp.NoteConstructionSettingsPanel, settings.construction, True),
+    (sp.ArpeggioSettingsPanel, settings.arpeggio, False),
+    (sp.KeySignatureSettingsPanel, settings.key_signatures, False),
+])
+def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(app, panel_class, config, expect_grand):
+    panel = panel_class(config)
+    panel.resize(272, 800)
+    panel.show()
+    page = next(iter(panel.boxes.values()))
+    while page.parentWidget() is not panel.stack:  # the page of the settings that the clefs are on
+        page = page.parentWidget()
+    panel._go(panel.stack.indexOf(page))
+    deadline = time.monotonic() + 1.0
+    while panel.stack.sliding and time.monotonic() < deadline:
+        QApplication.processEvents()
+    QApplication.processEvents()
+    boxes = panel.boxes
+    assert set(boxes) == set(settings.RANGE_KEYS if expect_grand and panel_class is sp.NoteConstructionSettingsPanel
+                             else settings.CLEFS)
+    assert all(isinstance(b, QCheckBox) and b.text() == CLEF_NAMES[c] for c, b in boxes.items())
+    order = [c for g in settings.CLEF_GROUPS for c in g if c in boxes]
+    ys = [boxes[c].mapTo(panel, boxes[c].rect().topLeft()).y() for c in order]
+    xs = {boxes[c].mapTo(panel, boxes[c].rect().topLeft()).x() for c in order}
+    assert ys == sorted(ys) and len(set(ys)) == len(ys) and len(xs) == 1  # a single column, in group order
+    gaps = [b - a for a, b in zip(ys, ys[1:])]
+    assert max(gaps) > min(gaps)  # a larger gap where one group ends and the next begins
+    if panel_class is sp.NoteNameSettingsPanel:
+        assert panel.grand.text() == "Grand staff"

@@ -16,19 +16,39 @@ BOTTOM_LINE = {
     "bass": Note(2, 4).diatonic,    # G2
     "alto": Note(3, 3).diatonic,    # F3
     "tenor": Note(3, 1).diatonic,   # D3
+    "soprano": Note(4, 0).diatonic,   # C4
+    "mezzo": Note(3, 5).diatonic,     # A3
+    "baritone": Note(2, 6).diatonic,  # B2
 }
-CLEF_GLYPH = {"treble": "𝄞", "bass": "𝄢", "alto": "𝄡", "tenor": "𝄡"}
+CLEF_GLYPH = {"treble": "𝄞", "bass": "𝄢", "alto": "𝄡", "tenor": "𝄡", "soprano": "𝄡", "mezzo": "𝄡", "baritone": "𝄡"}
 # (glyph top, glyph bottom) measured upward from the bottom staff line, in staff gaps
-CLEF_EXTENT = {"treble": (6.6, -2.2), "bass": (4.0, 0.7), "alto": (4.0, 0.0), "tenor": (5.0, 1.0)}
+CLEF_EXTENT = {"treble": (6.6, -2.2), "bass": (4.0, 0.7), "alto": (4.0, 0.0), "tenor": (5.0, 1.0),
+               "soprano": (2.0, -2.0), "mezzo": (3.0, -1.0), "baritone": (6.0, 2.0)}
 MIDDLE_C = Note(4, 0).diatonic
 
-# Where each key-signature accidental sits, in order of appearance (diatonic positions as note names).
-_KEY_POSITIONS = {
-    ("treble", 1): "F5 C5 G5 D5 A4 E5 B4", ("treble", -1): "B4 E5 A4 D5 G4 C5 F4",
-    ("bass", 1): "F3 C3 G3 D3 A2 E3 B2", ("bass", -1): "B2 E3 A2 D3 G2 C3 F2",
-    ("alto", 1): "F4 C4 G4 D4 A3 E4 B3", ("alto", -1): "B3 E4 A3 D4 G3 C4 F3",
-    ("tenor", 1): "F3 C4 G3 D4 A3 E4 B3", ("tenor", -1): "B3 E4 A3 D4 G3 C4 F3",
-}
+# Where each key-signature accidental sits, in order of appearance. Each is a fourth up or a fifth down from the one before
+# (sharps: F C G D A E B, flats: B E A D G C F), and the pattern is chosen so that all seven stay on the staff, or one step
+# above or below it. This gives the usual signatures for the treble, bass, alto and tenor clefs, and works out the rest.
+_SHARP_PATTERNS = ((-3, 4, -3, -3, 4, -3), (4, -3, 4, -3, 4, -3))
+_FLAT_PATTERNS = ((3, -4, 3, -4, 3, -4), (-4, 3, -4, 3, -4, 3))
+
+
+def key_signature_positions(clef: str, sign: int) -> list[str]:
+    """The notes the sharps (sign 1) or flats (sign -1) of a key signature are written on in this clef."""
+    bottom = BOTTOM_LINE[clef]
+    first, patterns = ("F", _SHARP_PATTERNS) if sign > 0 else ("B", _FLAT_PATTERNS)
+    for steps in patterns:
+        for start in range(bottom - 1, bottom + 10):
+            offsets = [0]
+            for s in steps:
+                offsets.append(offsets[-1] + s)
+            places = [start + o for o in offsets]
+            if Note.from_diatonic(start).name == first and all(bottom - 1 <= d <= bottom + 9 for d in places):
+                return [f"{n.name}{n.octave}" for n in map(Note.from_diatonic, places)]
+    raise ValueError(f"no key signature fits the {clef} clef")
+
+
+_KEY_POSITIONS = {(clef, sign): " ".join(key_signature_positions(clef, sign)) for clef in BOTTOM_LINE for sign in (1, -1)}
 KEY_STEP = 13.0  # horizontal spacing between key-signature accidentals
 # A staff with few notes should not stretch across a wide window: each column of notes gets at most this much width, and the
 # staff is never made narrower than MIN_COLUMNS columns would need.

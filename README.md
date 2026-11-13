@@ -26,7 +26,7 @@ Almost everything is adjustable.
 - **Notation in the font you like.** Eleven music fonts, from the polished look of Finale Maestro, Leland and Bravura to
   handwritten jazz styles. Every staff in the app follows your choice.
 - **Light, dark or follow your desktop.** The theme switches instantly.
-- **Practise exactly what you need.** Choose the clefs (treble, bass, alto, tenor or the grand staff), the range of
+- **Practise exactly what you need.** Choose the clefs (the grand staff, treble, bass, alto, tenor, soprano, mezzo-soprano or baritone), the range of
   notes, the key signatures, the note values from the breve to the thirty-second note, letter or solfège names, and
   whether sharps, flats and naturals appear.
 - **Choose the sound.** Pick the instrument that plays your answers.
