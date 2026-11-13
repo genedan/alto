@@ -20,6 +20,7 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.17.5
     hooks:
+      - id: ruff-format  # first: the formatter splits long lines, then ruff-check adds the trailing commas it leaves out
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
 

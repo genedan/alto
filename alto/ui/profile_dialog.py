@@ -1,4 +1,14 @@
-"""Choosing who is practising. There is no password: a profile is just a name that keeps its own history."""
+"""
+Choosing who is practising. There is no password: a profile is just a name that keeps its own history.
+
+Examples
+--------
+>>> db = Database()
+>>> remember_profile(db.add_profile("Ada"))
+>>> startup_profile(db).name  # the one used last time, with no dialog
+'Ada'
+"""
+
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
@@ -20,10 +30,59 @@ from .store import int_value, store
 
 
 class ProfileDialog(QDialog):
-    """On first launch (no profiles yet) it asks for a name. Afterwards it lists the profiles to switch between and
-    lets you add another."""
+    """
+    Ask who is practising: a first name on launch, then a list to switch between.
 
-    def __init__(self, db: Database, current: Profile | None = None, parent: QWidget | None = None):
+    On first launch (no profiles yet) it asks for a name. Afterwards it lists the profiles to switch between and lets you add
+    another.
+
+    Attributes
+    ----------
+    db : Database
+        Where the profiles are kept.
+    chosen : Profile or None
+        The profile that was picked or created, once the dialog is accepted.
+    list : QListWidget
+        The existing profiles.
+    name : QLineEdit
+        Where a new name is typed.
+    error : QLabel
+        Says why a name was refused.
+
+    Examples
+    --------
+    >>> db = Database()
+    >>> dialog = ProfileDialog(db)
+    >>> dialog.windowTitle()  # nobody has a profile yet
+    'Welcome'
+    """
+
+    def __init__(
+        self,
+        db: Database,
+        *,
+        current: Profile | None = None,
+        parent: QWidget | None = None,
+    ) -> None:
+        """
+        Build the dialog for the profiles in a database.
+
+        Parameters
+        ----------
+        db : Database
+            The database whose profiles are listed and added to.
+        current : Profile or None, default None
+            The profile to select in the list at first. Keyword-only.
+        parent : QWidget or None, default None
+            The widget that owns the dialog. Keyword-only.
+
+        Examples
+        --------
+        >>> db = Database()
+        >>> _ = db.add_profile("Ada")
+        >>> ProfileDialog(db).windowTitle()
+        'Profile'
+        """
         super().__init__(parent)
         self.db = db
         self.chosen: Profile | None = None
@@ -35,8 +94,10 @@ class ProfileDialog(QDialog):
         lay.setSpacing(10)
         if first_run:
             lay.addWidget(QLabel("<h2>Welcome to Alto</h2>"))
-            about = QLabel("Create a profile so your progress is remembered. Questions you find hard come back more "
-                           "often, and ones you answer quickly and correctly fade away. There is no password.")
+            about = QLabel(
+                "Create a profile so your progress is remembered. Questions you find hard come back more "
+                "often, and ones you answer quickly and correctly fade away. There is no password.",
+            )
         else:
             lay.addWidget(QLabel("<h3>Who is practising?</h3>"))
             about = QLabel("Each profile keeps its own history.")
@@ -85,6 +146,21 @@ class ProfileDialog(QDialog):
         self.name.setFocus()
 
     def _create(self) -> None:
+        """
+        Create the profile named in the box and close, or say why it cannot be made.
+
+        Examples
+        --------
+        >>> db = Database()
+        >>> dialog = ProfileDialog(db)
+        >>> dialog._create()  # no name typed
+        >>> dialog.error.text()
+        'Enter a name for the profile.'
+        >>> dialog.name.setText("Ada")
+        >>> dialog._create()
+        >>> dialog.chosen.name
+        'Ada'
+        """
         try:
             self.chosen = self.db.add_profile(self.name.text())
         except ValueError as e:
@@ -93,6 +169,18 @@ class ProfileDialog(QDialog):
         self.accept()
 
     def _use_selected(self) -> None:
+        """
+        Choose the profile selected in the list and close.
+
+        Examples
+        --------
+        >>> db = Database()
+        >>> _ = db.add_profile("Ada")
+        >>> dialog = ProfileDialog(db)
+        >>> dialog._use_selected()
+        >>> dialog.chosen.name
+        'Ada'
+        """
         item = self.list.currentItem()
         if item is not None:
             self.chosen = item.data(Qt.ItemDataRole.UserRole)
@@ -100,14 +188,48 @@ class ProfileDialog(QDialog):
 
 
 def remember_profile(profile: Profile) -> None:
+    """
+    Remember which profile was used, so the next launch can open with it.
+
+    Parameters
+    ----------
+    profile : Profile
+        The profile in use.
+
+    Examples
+    --------
+    >>> remember_profile(Profile(7, name="Ada"))
+    >>> int_value(store(), key="profile/last", default=-1)
+    7
+    """
     store().setValue("profile/last", profile.id)
 
 
 def startup_profile(db: Database) -> Profile | None:
-    """The profile to open with: the one used last time, else ask. None if the person closed the dialog."""
+    """
+    Return the profile to open with: the one used last time, else ask.
+
+    Parameters
+    ----------
+    db : Database
+        The database of profiles.
+
+    Returns
+    -------
+    Profile or None
+        The profile, or None if the person closed the dialog without choosing one.
+
+    Examples
+    --------
+    >>> db = Database()
+    >>> ada = db.add_profile("Ada")
+    >>> remember_profile(ada)
+    >>> startup_profile(db).name
+    'Ada'
+    """
     profiles = db.profiles()
     if profiles:
-        last = db.profile(int_value(store(), "profile/last", -1))
+        last = db.profile(int_value(store(), key="profile/last", default=-1))
         if last:
             return last
         if len(profiles) == 1:

@@ -1,4 +1,16 @@
 """Shared test setup: one Qt application for the whole run, and settings and data kept away from the real ones."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterator
+    from pathlib import Path
+
+    from alto.learning import Learner
+    from PySide6.QtCore import QCoreApplication
+
 import atexit
 import copy
 import os
@@ -17,14 +29,22 @@ import pytest  # noqa: E402
 
 
 @pytest.fixture(scope="session")
-def app():
+def app() -> QCoreApplication:
+    """
+    Provide the one Qt application for the whole run.
+
+    Returns
+    -------
+    QCoreApplication
+        The shared application, created on first use.
+    """
     pytest.importorskip("PySide6")
     from PySide6.QtWidgets import QApplication
 
     return QApplication.instance() or QApplication([])
 
 
-def _close_every_window():
+def _close_every_window() -> None:
     """Close and delete every window a test left open, so none is torn down by Qt after the application is gone."""
     from PySide6.QtCore import QEvent
     from PySide6.QtWidgets import QApplication
@@ -38,12 +58,25 @@ def _close_every_window():
 
 
 @pytest.fixture(autouse=True)
-def _isolated_state():
-    """Every test starts with the default exercise settings and no saved settings, and sound off."""
+def _isolated_state() -> Iterator[None]:
+    """
+    Every test starts with the default exercise settings and no saved settings, and sound off.
+
+    Yields
+    ------
+    None
+        Control, while the test runs with fresh settings.
+    """
     from alto import settings
     from alto.audio import sounds
 
-    names = ("note_names", "keyboard", "construction", "arpeggio", "key_signatures")
+    names = (
+        "note_names",
+        "keyboard",
+        "construction",
+        "arpeggio",
+        "key_signatures",
+    )
     before = {n: copy.deepcopy(getattr(settings, n).__dict__) for n in names}
     muted = sounds.enabled
     sounds.enabled = False
@@ -69,17 +102,46 @@ def _isolated_state():
 
 
 @pytest.fixture
-def practised_learner():
-    """A function that makes a profile with answers spread over the last `days` days, some wrong first and some slow."""
+def practised_learner() -> Callable[..., Learner]:
+    """
+    Provide a function that makes a profile with answers spread over the last `days` days, some wrong first and some slow.
+
+    Returns
+    -------
+    Callable[..., Learner]
+        A function that builds a learner with a history of answers.
+    """
     import random
     import time
 
     from alto.exercises import REGISTRY
     from alto.learning import Database, Learner
 
-    def make(days=120, name="Ada", db=None):
+    def make(
+        days: int = 120,
+        *,
+        name: str = "Ada",
+        db: Database | None = None,
+    ) -> Learner:
+        """
+        Build a learner with a history of answers spread over the past days.
+
+        Parameters
+        ----------
+        days : int
+            How many days back the history starts.
+        name : str
+            The profile's name.
+        db : Database or None
+            The database to use; a new in-memory one if None.
+
+        Returns
+        -------
+        Learner
+            The learner, with answers recorded every third day.
+        """
         db = db or Database()
-        learner = Learner(db, db.add_profile(name))
+        learner = Learner(db, profile=db.add_profile(name))
         rng, now = random.Random(3), time.time()
         for day in range(days, -1, -3):
             for _ in range(rng.randint(2, 6)):
@@ -87,24 +149,76 @@ def practised_learner():
                 q = ex.generate(rng)
                 at = now - day * 86400.0 - rng.randint(0, 3000)
                 if rng.random() < 0.4:
-                    learner.record(ex, q, "wrong", False, 1, rng.uniform(1, 9), now=at)
-                    learner.record(ex, q, q.answer, True, 2, 2.0, now=at + 5)
+                    learner.record(
+                        ex,
+                        question=q,
+                        answer="wrong",
+                        correct=False,
+                        attempt_no=1,
+                        seconds=rng.uniform(1, 9),
+                        now=at,
+                    )
+                    learner.record(
+                        ex,
+                        question=q,
+                        answer=q.answer,
+                        correct=True,
+                        attempt_no=2,
+                        seconds=2.0,
+                        now=at + 5,
+                    )
                 else:
-                    learner.record(ex, q, q.answer, True, 1, rng.uniform(0.5, 12), now=at)
+                    learner.record(
+                        ex,
+                        question=q,
+                        answer=q.answer,
+                        correct=True,
+                        attempt_no=1,
+                        seconds=rng.uniform(0.5, 12),
+                        now=at,
+                    )
         return learner
 
     return make
 
 
 @pytest.fixture(autouse=True)
-def _close_databases(monkeypatch):
-    """Close every database a test opened, so none is left for the garbage collector to report as unclosed."""
+def _close_databases(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+    """
+    Close every database a test opened, so none is left for the garbage collector to report as unclosed.
+
+    Parameters
+    ----------
+    monkeypatch : pytest.MonkeyPatch
+        Replaces settings, functions or attributes for the length of the test.
+
+    Yields
+    ------
+    None
+        Control, while the test runs; every database opened meanwhile is closed afterwards.
+    """
     from alto.learning import Database
 
     opened = []
     original = Database.__init__
 
-    def tracking(self, *args, **kwargs):
+    def tracking(
+        self: Database,
+        *args: str | Path,
+        **kwargs: str | Path,
+    ) -> None:
+        """
+        Open a database as usual, and remember it so it can be closed after the test.
+
+        Parameters
+        ----------
+        self : Database
+            The database being opened.
+        args : str or Path
+            The positional arguments of `Database`.
+        kwargs : str or Path
+            The keyword arguments of `Database`.
+        """
         original(self, *args, **kwargs)
         opened.append(self)
 

@@ -1,4 +1,15 @@
-"""Small monochrome icons drawn from SVG, tinted with the current theme's text colour."""
+"""
+Small monochrome icons drawn from SVG, tinted with the current theme's text colour.
+
+Each icon is the inside of a 24 by 24 SVG, written with the word COLOR where the theme colour goes. `svg_icon` turns one
+into a `QIcon`.
+
+Examples
+--------
+>>> svg_icon(HELP, color=QColor("black")).isNull()
+False
+"""
+
 from __future__ import annotations
 
 from PySide6.QtCore import QByteArray, Qt
@@ -21,8 +32,38 @@ SLIDERS = (
 )
 
 
-def svg_icon(inner: str, color: QColor, size: int = 24, scale: float = 2.0) -> QIcon:
-    """Render 24x24 SVG shapes (using COLOR as the colour) to a crisp icon of `size` logical pixels."""
+def svg_icon(
+    inner: str,
+    *,
+    color: QColor,
+    size: int = 24,
+    scale: float = 2.0,
+) -> QIcon:
+    """
+    Render 24 by 24 SVG shapes into a crisp icon.
+
+    Parameters
+    ----------
+    inner : str
+        The SVG shapes, using COLOR wherever the colour goes.
+    color : QColor
+        The colour to draw in. Keyword-only.
+    size : int, default 24
+        The icon's size in logical pixels. Keyword-only.
+    scale : float, default 2.0
+        How many device pixels to render per logical pixel, so it stays sharp on high-resolution screens. Keyword-only.
+
+    Returns
+    -------
+    QIcon
+        The icon.
+
+    Examples
+    --------
+    >>> icon = svg_icon(PLAY, color=QColor("#336699"), size=16)
+    >>> icon.isNull()
+    False
+    """
     svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">{inner.replace("COLOR", color.name())}</svg>'
     renderer = QSvgRenderer(QByteArray(svg.encode()))
     px = QPixmap(int(size * scale), int(size * scale))
@@ -33,6 +74,7 @@ def svg_icon(inner: str, color: QColor, size: int = 24, scale: float = 2.0) -> Q
     p.end()
     px.setDevicePixelRatio(scale)
     return QIcon(px)
+
 
 # Sidebar toggle: an edge bar with a chevron pointing toward the edge while the list is shown
 # (click to hide) and away from it while hidden (click to show).
@@ -45,21 +87,115 @@ _LINE = 'fill="none" stroke="COLOR" stroke-width="1.7" stroke-linecap="round" st
 _STAFF = '<path d="M2 6H22M2 9.5H22M2 13H22M2 16.5H22M2 20H22" fill="none" stroke="COLOR" stroke-width="1.1" opacity=".5"/>'
 
 
-def _ring(x: float, y: float, rx: float = 3.3, ry: float = 2.3) -> str:
+def _ring(
+    x: float,
+    *,
+    y: float,
+    rx: float = 3.3,
+    ry: float = 2.3,
+) -> str:
+    """
+    Return the SVG for an outlined oval, used as a note head.
+
+    Parameters
+    ----------
+    x : float
+        The centre's x position in the 24 by 24 drawing.
+    y : float
+        The centre's y position. Keyword-only.
+    rx : float, default 3.3
+        The horizontal radius. Keyword-only.
+    ry : float, default 2.3
+        The vertical radius. Keyword-only.
+
+    Returns
+    -------
+    str
+        An `<ellipse>` element.
+
+    Examples
+    --------
+    >>> _ring(13, y=18.5).startswith('<ellipse cx="13" cy="18.5"')
+    True
+    """
     return f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" {_LINE}/>'
 
 
-EXERCISE_NOTE_NAMES = _STAFF + _ring(12, 11.25, 3.4, 2.1)
+EXERCISE_NOTE_NAMES = _STAFF + _ring(
+    12,
+    y=11.25,
+    rx=3.4,
+    ry=2.1,
+)
 # Two stacked notes with a bracket spanning the distance between them.
-EXERCISE_INTERVALS = _ring(7, 6, 3.2, 2.2) + _ring(7, 18, 3.2, 2.2) + f'<path d="M15.5 6h4v12h-4" {_LINE}/>'
+EXERCISE_INTERVALS = (
+    _ring(
+        7,
+        y=6,
+        rx=3.2,
+        ry=2.2,
+    )
+    + _ring(
+        7,
+        y=18,
+        rx=3.2,
+        ry=2.2,
+    )
+    + f'<path d="M15.5 6h4v12h-4" {_LINE}/>'
+)
 EXERCISE_KEY_SIGNATURES = f'<path d="M9 4v16M15 3.5v16M5 9.5l14-3M5 16.5l14-3" {_LINE}/>'
-EXERCISE_SCALES = "".join(_ring(x, y, 2.4, 1.7) for x, y in ((4.5, 18.5), (9.5, 14.8), (14.5, 11.1), (19.5, 7.4)))
-EXERCISE_CHORDS = _ring(12, 18.5, 3.6, 2.4) + _ring(12, 12, 3.6, 2.4) + _ring(12, 5.5, 3.6, 2.4)
+EXERCISE_SCALES = "".join(
+    _ring(
+        x,
+        y=y,
+        rx=2.4,
+        ry=1.7,
+    )
+    for x, y in (
+        (4.5, 18.5),
+        (9.5, 14.8),
+        (14.5, 11.1),
+        (19.5, 7.4),
+    )
+)
+EXERCISE_CHORDS = (
+    _ring(
+        12,
+        y=18.5,
+        rx=3.6,
+        ry=2.4,
+    )
+    + _ring(
+        12,
+        y=12,
+        rx=3.6,
+        ry=2.4,
+    )
+    + _ring(
+        12,
+        y=5.5,
+        rx=3.6,
+        ry=2.4,
+    )
+)
 # Three eighth notes rising under one beam.
 _NOTE = 'fill="COLOR" stroke="COLOR" stroke-width="1" stroke-linejoin="round"'
 
 
 def _beamed_notes() -> str:
+    """
+    Return the SVG for three eighth notes rising under one beam, the arpeggio exercise's icon.
+
+    Returns
+    -------
+    str
+        Note heads, stems and a beam as SVG shapes.
+
+    Examples
+    --------
+    >>> _beamed_notes().count("<ellipse")
+    3
+    """
     heads = ((4.6, 19.0), (11.8, 15.0), (19.0, 11.0))  # note heads rise to the right
     beam_start, beam_end = (7.0, 6.2), (21.6, 2.2)  # the beam follows them
     out = []
@@ -68,8 +204,10 @@ def _beamed_notes() -> str:
         top = beam_start[1] + (stem - beam_start[0]) * (beam_end[1] - beam_start[1]) / (beam_end[0] - beam_start[0])
         out.append(f'<ellipse cx="{x}" cy="{y}" rx="2.7" ry="1.9" transform="rotate(-20 {x} {y})" {_NOTE}/>')
         out.append(f'<path d="M{stem} {y - 0.3}V{top:.2f}" {_LINE}/>')
-    out.append(f'<path d="M{beam_start[0]} {beam_start[1]}L{beam_end[0]} {beam_end[1]}" stroke="COLOR" stroke-width="2.6" '
-               'stroke-linecap="butt" fill="none"/>')
+    out.append(
+        f'<path d="M{beam_start[0]} {beam_start[1]}L{beam_end[0]} {beam_end[1]}" stroke="COLOR" stroke-width="2.6" '
+        'stroke-linecap="butt" fill="none"/>',
+    )
     return "".join(out)
 
 
@@ -91,14 +229,21 @@ EXERCISE_KEYBOARD = (
 )
 
 # Help: a question mark in a circle.
-HELP = ('<circle cx="12" cy="12" r="9" fill="none" stroke="COLOR" stroke-width="2"/>'
-        '<path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.9.5-1.3 1.1-1.3 2" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round"/>'
-        '<circle cx="12" cy="16.9" r="1.15" fill="COLOR"/>')
+HELP = (
+    '<circle cx="12" cy="12" r="9" fill="none" stroke="COLOR" stroke-width="2"/>'
+    '<path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.9.5-1.3 1.1-1.3 2" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round"/>'
+    '<circle cx="12" cy="16.9" r="1.15" fill="COLOR"/>'
+)
 
 # Note construction: a staff with a note being dropped onto it.
 EXERCISE_CONSTRUCTION = (
     '<path d="M2 11.5H22M2 14.3H22M2 17.1H22M2 19.9H22M2 22.7H22" fill="none" stroke="COLOR" stroke-width="1.1" opacity=".5"/>'
-    + _ring(13, 18.5, 3.3, 1.9)
+    + _ring(
+        13,
+        y=18.5,
+        rx=3.3,
+        ry=1.9,
+    )
     + f'<path d="M13 1.6V8M10.2 5.2L13 8L15.8 5.2" {_LINE}/>'
 )
 
@@ -106,17 +251,23 @@ EXERCISE_CONSTRUCTION = (
 _MENU = 'fill="none" stroke="COLOR" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'
 HOME = f'<path d="M3.5 11.2L12 4l8.5 7.2M6 9.6V20h4.4v-5.2h3.2V20H18V9.6" {_MENU}/>'
 RESTART = f'<path d="M19 12a7 7 0 1 1-2.05-4.95M17.6 3.6v4h-4" {_MENU}/>'
-GEAR = (f'<circle cx="12" cy="12" r="3" {_MENU}/><circle cx="12" cy="12" r="6.4" {_MENU}/>'
-        '<path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7" '
-        'fill="none" stroke="COLOR" stroke-width="2.6" stroke-linecap="round"/>')
+GEAR = (
+    f'<circle cx="12" cy="12" r="3" {_MENU}/><circle cx="12" cy="12" r="6.4" {_MENU}/>'
+    '<path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7" '
+    'fill="none" stroke="COLOR" stroke-width="2.6" stroke-linecap="round"/>'
+)
 # Quit: a power symbol, a broken ring with a line through the gap.
 QUIT = f'<path d="M12 3.5v8M7.2 6.6a7.2 7.2 0 1 0 9.6 0" {_MENU}/>'
 # Profile: a head and shoulders.
 PROFILE = f'<circle cx="12" cy="8.2" r="3.6" {_MENU}/><path d="M4.6 20c.7-4 3.7-6 7.4-6s6.7 2 7.4 6" {_MENU}/>'
 # Statistics: a line graph, a rising line with its points over a pair of axes.
-CHART = (f'<path d="M4 4v16h16" {_MENU}/><path d="M8 15l3.6-4.4 3 2.6 4.4-6" {_MENU}/>'
-         '<circle cx="8" cy="15" r="1.2" fill="COLOR"/><circle cx="11.6" cy="10.6" r="1.2" fill="COLOR"/>'
-         '<circle cx="14.6" cy="13.2" r="1.2" fill="COLOR"/><circle cx="19" cy="7.2" r="1.2" fill="COLOR"/>')
+CHART = (
+    f'<path d="M4 4v16h16" {_MENU}/><path d="M8 15l3.6-4.4 3 2.6 4.4-6" {_MENU}/>'
+    '<circle cx="8" cy="15" r="1.2" fill="COLOR"/><circle cx="11.6" cy="10.6" r="1.2" fill="COLOR"/>'
+    '<circle cx="14.6" cy="13.2" r="1.2" fill="COLOR"/><circle cx="19" cy="7.2" r="1.2" fill="COLOR"/>'
+)
 # Database: a stack of discs, drawn as a cylinder.
-DATABASE = (f'<ellipse cx="12" cy="6" rx="7" ry="2.6" {_MENU}/>'
-            f'<path d="M5 6v12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6V6M5 12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6" {_MENU}/>')
+DATABASE = (
+    f'<ellipse cx="12" cy="6" rx="7" ry="2.6" {_MENU}/>'
+    f'<path d="M5 6v12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6V6M5 12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6" {_MENU}/>'
+)

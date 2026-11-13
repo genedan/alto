@@ -1,0 +1,8 @@
+# Commits that only reformat code. GitHub skips them in blame; locally run:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Format the code with ruff format
+112852d0f609ed6fbfe393a6b2d97253d006c321
+
+# Put definitions with two or more parameters, and calls and collections with four or more elements, one per line
+130dd09b4e149ab11616d4235076aa3b0abb3fb8

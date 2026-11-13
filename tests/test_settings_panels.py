@@ -1,4 +1,9 @@
 """The exercise settings panes: the menus, the pages behind them, and the settings they save and load."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
 from alto import settings
 from alto.ui import settings_panel as sp
@@ -6,12 +11,27 @@ from alto.ui.store import store
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QToolButton
 
+if TYPE_CHECKING:
+    from alto.ui.settings_panel import KeyboardSettingsPanel, NoteConstructionSettingsPanel, NoteNameSettingsPanel
+    from PySide6.QtWidgets import QApplication, QWidget
 
-def slide():
+
+def slide() -> None:
+    """
+    Wait for a page to finish sliding in.
+    """
     QTest.qWait(300)  # a page slides in over about 220 ms
 
 
-def back(panel):
+def back(panel: QWidget) -> None:
+    """
+    Click the Back button of the panel and wait for the page to slide.
+
+    Parameters
+    ----------
+    panel : QWidget
+        The panel.
+    """
     next(b for b in panel.findChildren(QToolButton) if b.text() == "‹ Back").click()
     slide()
 
@@ -19,7 +39,10 @@ def back(panel):
 # -- saving and loading ---------------------------------------------------------------------------------------------
 
 
-def test_the_note_name_settings_are_saved_and_read_back():
+def test_the_note_name_settings_are_saved_and_read_back() -> None:
+    """
+    Check that the note name settings are saved and read back.
+    """
     cfg = settings.note_names
     cfg.clefs, cfg.key_signatures = {"grand", "alto", "baritone"}, {-2, 0, 5}
     cfg.note_values, cfg.naming, cfg.accidentals = {"half", "eighth"}, "solfege", True
@@ -32,7 +55,10 @@ def test_the_note_name_settings_are_saved_and_read_back():
     assert cfg.ranges == {"treble": (30, 40), "bass": (15, 25)}
 
 
-def test_bad_saved_note_name_settings_fall_back_to_sensible_ones():
+def test_bad_saved_note_name_settings_fall_back_to_sensible_ones() -> None:
+    """
+    Check that bad saved note name settings fall back to sensible ones.
+    """
     s = store()
     s.setValue("noteNames/clefs", ["treble", "tenor", "sideways"])  # QSettings may give a list back
     s.setValue("noteNames/keys", "99,abc,-9")  # none of them is a real key
@@ -47,14 +73,27 @@ def test_bad_saved_note_name_settings_fall_back_to_sensible_ones():
     assert cfg.ranges == {"alto": (20, 30)}  # only the one well-formed range inside the limits is kept
 
 
-def test_the_keyboard_settings_are_saved_and_read_back_and_bad_ones_ignored():
+def test_the_keyboard_settings_are_saved_and_read_back_and_bad_ones_ignored() -> None:
+    """
+    Check that the keyboard settings are saved and read back and bad ones ignored.
+    """
     cfg = settings.keyboard
     cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = False, True, 40, 80
     cfg.key_signature, cfg.keys = True, {-1, 2}
     sp.save_keyboard()
     cfg.__init__()
     sp.load_keyboard()
-    assert (cfg.black_keys, cfg.require_octave, cfg.low, cfg.high) == (False, True, 40, 80)
+    assert (
+        cfg.black_keys,
+        cfg.require_octave,
+        cfg.low,
+        cfg.high,
+    ) == (
+        False,
+        True,
+        40,
+        80,
+    )
     assert cfg.key_signature and cfg.keys == {-1, 2}
     store().setValue("keyboard/low", 90)
     store().setValue("keyboard/high", 50)  # backwards: not used
@@ -67,7 +106,10 @@ def test_the_keyboard_settings_are_saved_and_read_back_and_bad_ones_ignored():
     assert cfg.low == settings.KEYBOARD_DEFAULT[0] and cfg.key_signature is False
 
 
-def test_the_construction_settings_are_read_back_and_bad_ones_ignored():
+def test_the_construction_settings_are_read_back_and_bad_ones_ignored() -> None:
+    """
+    Check that the construction settings are read back and bad ones ignored.
+    """
     s = store()
     s.setValue("construction/clefs", "bass,grand,nonsense")
     s.setValue("construction/accidentals", "true")
@@ -81,13 +123,29 @@ def test_the_construction_settings_are_read_back_and_bad_ones_ignored():
     s.setValue("construction/keys", "99")
     cfg.__init__()
     sp.load_construction()
-    assert cfg.clefs == {"treble", "bass"} and cfg.keys == {-3, -2, -1, 0, 1, 2, 3}
+    assert cfg.clefs == {"treble", "bass"} and cfg.keys == {
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+    }
 
 
 # -- the small parts --------------------------------------------------------------------------------------------------
 
 
-def test_the_key_diagram_shows_which_keys_are_chosen(app):
+def test_the_key_diagram_shows_which_keys_are_chosen(app: QApplication) -> None:
+    """
+    Check that the key diagram shows which keys are chosen.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     diagram = sp.KeyDiagram({0, 2, -3})
     assert diagram.toolTip() == "C, D, E♭" or set(diagram.toolTip().split(", ")) == {"C", "D", "E♭"}
     diagram.set_keys({7, -7})
@@ -95,7 +153,15 @@ def test_the_key_diagram_shows_which_keys_are_chosen(app):
     assert diagram.grab().width() == diagram.width()
 
 
-def test_the_switch_slides_when_clicked_and_jumps_when_set(app):
+def test_the_switch_slides_when_clicked_and_jumps_when_set(app: QApplication) -> None:
+    """
+    Check that the switch slides when clicked and jumps when set.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     switch = sp.Switch()
     switch.setChecked(True)
     assert switch._pos == 1.0 and switch.isChecked()
@@ -110,7 +176,15 @@ def test_the_switch_slides_when_clicked_and_jumps_when_set(app):
     assert switch.grab().width() == switch.width()  # a disabled switch is drawn fainter
 
 
-def test_a_menu_row_can_hold_a_picture_inline_or_on_its_own_line(app):
+def test_a_menu_row_can_hold_a_picture_inline_or_on_its_own_line(app: QApplication) -> None:
+    """
+    Check that a menu row can hold a picture inline or on its own line.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     from PySide6.QtWidgets import QLabel
 
     plain = sp._Row("Plain")
@@ -123,7 +197,15 @@ def test_a_menu_row_can_hold_a_picture_inline_or_on_its_own_line(app):
     assert plain.grab().width() > 0
 
 
-def test_a_page_slides_in_and_ignores_requests_while_sliding(app):
+def test_a_page_slides_in_and_ignores_requests_while_sliding(app: QApplication) -> None:
+    """
+    Check that a page slides in and ignores requests while sliding.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     from PySide6.QtWidgets import QLabel
 
     stack = sp.SlideStack()
@@ -143,9 +225,17 @@ def test_a_page_slides_in_and_ignores_requests_while_sliding(app):
     assert stack.currentIndex() == 0
 
 
-def test_the_range_editor_moves_either_end_within_its_limits(app):
+def test_the_range_editor_moves_either_end_within_its_limits(app: QApplication) -> None:
+    """
+    Check that the range editor moves either end within its limits.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     low_limit, high_limit = settings.RANGE_LIMITS["treble"]
-    editor = sp.RangeEditor("treble", low_limit + 2, low_limit + 4)
+    editor = sp.RangeEditor("treble", low=low_limit + 2, high=low_limit + 4)
     seen = []
     editor.edited.connect(lambda *args: seen.append(args))
     editor.low_up.click()
@@ -165,8 +255,16 @@ def test_the_range_editor_moves_either_end_within_its_limits(app):
     assert "–" in editor.caption_text.text()
 
 
-def test_the_choice_checklist_always_keeps_one_choice(app):
-    checklist = sp.ChoiceChecklist([("Heading", [("a", "A"), ("b", "B")]), ("", [("c", "C")])], {"a"})
+def test_the_choice_checklist_always_keeps_one_choice(app: QApplication) -> None:
+    """
+    Check that the choice checklist always keeps one choice.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+    checklist = sp.ChoiceChecklist([("Heading", [("a", "A"), ("b", "B")]), ("", [("c", "C")])], selected={"a"})
     changed = []
     checklist.changed.connect(lambda: changed.append(1))
     assert checklist.selected() == {"a"} and not checklist.boxes["a"].isEnabled()  # the only one cannot be unchecked
@@ -174,8 +272,16 @@ def test_the_choice_checklist_always_keeps_one_choice(app):
     assert checklist.selected() == {"a", "b"} and checklist.boxes["a"].isEnabled() and changed == [1]
 
 
-def test_the_key_signature_page_greys_out_the_keys_until_it_is_switched_on(app):
-    page = sp.KeySignaturePage(False, {0, 1})
+def test_the_key_signature_page_greys_out_the_keys_until_it_is_switched_on(app: QApplication) -> None:
+    """
+    Check that the key signature page greys out the keys until it is switched on.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+    page = sp.KeySignaturePage(False, selected={0, 1})
     changed = []
     page.changed.connect(lambda: changed.append(1))
     assert not page.enabled() and not page.checklist.isEnabled() and page.selected() == {0, 1}
@@ -191,24 +297,62 @@ def test_the_key_signature_page_greys_out_the_keys_until_it_is_switched_on(app):
 # -- the note names pane --------------------------------------------------------------------------------------------
 
 
-def watch(panel) -> list[int]:
-    """A list that gets an entry each time the pane announces a change."""
+def watch(panel: sp.ExerciseSettingsPanel) -> list[int]:
+    """
+    Return a list that gets an entry each time the pane announces a change.
+
+    Parameters
+    ----------
+    panel : ExerciseSettingsPanel
+        The panel.
+
+    Returns
+    -------
+    list of int
+        A list that gets an entry for each change.
+    """
     changes: list[int] = []
     panel.changed.connect(lambda: changes.append(1))
     return changes
 
 
 @pytest.fixture
-def names(app):
+def names(app: QApplication) -> sp.NoteNameSettingsPanel:
+    """
+    Build the note names panel, sized and shown.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+
+    Returns
+    -------
+    NoteNameSettingsPanel
+        The panel.
+    """
     panel = sp.NoteNameSettingsPanel(settings.note_names)
     panel.resize(290, 600)
     panel.show()
     return panel
 
 
-def test_the_menu_opens_each_page_and_back_returns_to_the_menu(names):
-    for row, index in ((names.clefs_row, 1), (names.range_row, 2), (names.keys_row, 3), (names.values_row, 4),
-                       (names.names_row, 5)):
+def test_the_menu_opens_each_page_and_back_returns_to_the_menu(names: NoteNameSettingsPanel) -> None:
+    """
+    Check that the menu opens each page and back returns to the menu.
+
+    Parameters
+    ----------
+    names : NoteNameSettingsPanel
+        The note names panel under test.
+    """
+    for row, index in (
+        (names.clefs_row, 1),
+        (names.range_row, 2),
+        (names.keys_row, 3),
+        (names.values_row, 4),
+        (names.names_row, 5),
+    ):
         row.click()
         slide()
         assert names.stack.currentIndex() == index
@@ -222,7 +366,15 @@ def test_the_menu_opens_each_page_and_back_returns_to_the_menu(names):
     back(names)
 
 
-def test_choosing_the_clefs_including_the_grand_staff(names):
+def test_choosing_the_clefs_including_the_grand_staff(names: NoteNameSettingsPanel) -> None:
+    """
+    Check that choosing the clefs including the grand staff.
+
+    Parameters
+    ----------
+    names : NoteNameSettingsPanel
+        The note names panel under test.
+    """
     changes = watch(names)
     cfg = settings.note_names
     assert not hasattr(names, "single") and set(names.boxes) == set(settings.RANGE_KEYS)  # no switch: just the clefs
@@ -237,7 +389,10 @@ def test_choosing_the_clefs_including_the_grand_staff(names):
     assert names.range_pictures.items  # the menu's summary follows the settings
 
 
-def test_a_grand_staff_saved_by_an_older_version_becomes_the_grand_staff_clef():
+def test_a_grand_staff_saved_by_an_older_version_becomes_the_grand_staff_clef() -> None:
+    """
+    Check that a grand staff saved by an older version becomes the grand staff clef.
+    """
     s = store()
     s.setValue("noteNames/mode", "grand")
     s.setValue("noteNames/clefs", "treble,bass")  # the clefs an older version kept for when "single clef" was chosen
@@ -250,7 +405,15 @@ def test_a_grand_staff_saved_by_an_older_version_becomes_the_grand_staff_clef():
     assert settings.note_names.clefs == {"grand"} and s.value("noteNames/mode") is None
 
 
-def test_the_summaries_follow_the_grand_staff(names):
+def test_the_summaries_follow_the_grand_staff(names: NoteNameSettingsPanel) -> None:
+    """
+    Check that the summaries follow the grand staff.
+
+    Parameters
+    ----------
+    names : NoteNameSettingsPanel
+        The note names panel under test.
+    """
     names.boxes["grand"].setChecked(True)
     names.boxes["treble"].setChecked(False)
     names.boxes["bass"].setChecked(False)
@@ -266,14 +429,35 @@ def test_the_summaries_follow_the_grand_staff(names):
 
 
 @pytest.fixture
-def keyboard(app):
+def keyboard(app: QApplication) -> sp.KeyboardSettingsPanel:
+    """
+    Build the keyboard panel, sized and shown.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+
+    Returns
+    -------
+    KeyboardSettingsPanel
+        The panel.
+    """
     panel = sp.KeyboardSettingsPanel(settings.keyboard)
     panel.resize(290, 600)
     panel.show()
     return panel
 
 
-def test_the_keyboard_menu_opens_its_pages(keyboard):
+def test_the_keyboard_menu_opens_its_pages(keyboard: KeyboardSettingsPanel) -> None:
+    """
+    Check that the keyboard menu opens its pages.
+
+    Parameters
+    ----------
+    keyboard : KeyboardSettingsPanel
+        The keyboard panel under test.
+    """
     keyboard.range_row.click()
     slide()
     assert keyboard.stack.currentIndex() == 1
@@ -289,7 +473,15 @@ def test_the_keyboard_menu_opens_its_pages(keyboard):
     assert keyboard.stack.currentIndex() == 1
 
 
-def test_the_keyboard_range_moves_one_key_at_a_time_within_the_whole_piano(keyboard):
+def test_the_keyboard_range_moves_one_key_at_a_time_within_the_whole_piano(keyboard: KeyboardSettingsPanel) -> None:
+    """
+    Check that the keyboard range moves one key at a time within the whole piano.
+
+    Parameters
+    ----------
+    keyboard : KeyboardSettingsPanel
+        The keyboard panel under test.
+    """
     changes = watch(keyboard)
     cfg, first, last = settings.keyboard, *settings.KEYBOARD_FULL
     low, high = cfg.low, cfg.high
@@ -309,12 +501,20 @@ def test_the_keyboard_range_moves_one_key_at_a_time_within_the_whole_piano(keybo
     cfg.low = cfg.high
     keyboard._refresh_range()
     assert not keyboard.arrows["low"][1].isEnabled() and not keyboard.arrows["high"][0].isEnabled()
-    keyboard._step("low", +5)  # the lowest key cannot pass the highest
-    keyboard._step("high", -5)
+    keyboard._step("low", delta=+5)  # the lowest key cannot pass the highest
+    keyboard._step("high", delta=-5)
     assert cfg.low <= cfg.high
 
 
-def test_the_keyboard_switches_and_key_signatures_change_the_settings(keyboard):
+def test_the_keyboard_switches_and_key_signatures_change_the_settings(keyboard: KeyboardSettingsPanel) -> None:
+    """
+    Check that the keyboard switches and key signatures change the settings.
+
+    Parameters
+    ----------
+    keyboard : KeyboardSettingsPanel
+        The keyboard panel under test.
+    """
     changes = watch(keyboard)
     cfg = settings.keyboard
     keyboard.black_keys_row.click()
@@ -331,14 +531,35 @@ def test_the_keyboard_switches_and_key_signatures_change_the_settings(keyboard):
 
 
 @pytest.fixture
-def construction(app):
+def construction(app: QApplication) -> sp.NoteConstructionSettingsPanel:
+    """
+    Build the note construction panel, sized and shown.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+
+    Returns
+    -------
+    NoteConstructionSettingsPanel
+        The panel.
+    """
     panel = sp.NoteConstructionSettingsPanel(settings.construction)
     panel.resize(290, 600)
     panel.show()
     return panel
 
 
-def test_the_construction_pane_opens_its_pages_and_edits_the_settings(construction):
+def test_the_construction_pane_opens_its_pages_and_edits_the_settings(construction: NoteConstructionSettingsPanel) -> None:
+    """
+    Check that the construction pane opens its pages and edits the settings.
+
+    Parameters
+    ----------
+    construction : NoteConstructionSettingsPanel
+        The note construction view or panel under test.
+    """
     cfg = settings.construction
     construction.staff_row.click()
     slide()
@@ -366,11 +587,24 @@ def test_the_construction_pane_opens_its_pages_and_edits_the_settings(constructi
 # -- the arpeggio pane's pages ----------------------------------------------------------------------------------------
 
 
-def test_the_arpeggio_pane_opens_each_page_and_back_returns(app):
+def test_the_arpeggio_pane_opens_each_page_and_back_returns(app: QApplication) -> None:
+    """
+    Check that the arpeggio pane opens each page and back returns.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     panel = sp.ArpeggioSettingsPanel(settings.arpeggio)
     panel.resize(290, 600)
     panel.show()
-    for row, index in ((panel.staff_row, 1), (panel.types_row, 2), (panel.inversions_row, 3), (panel.keys_row, 4)):
+    for row, index in (
+        (panel.staff_row, 1),
+        (panel.types_row, 2),
+        (panel.inversions_row, 3),
+        (panel.keys_row, 4),
+    ):
         row.click()
         slide()
         assert panel.stack.currentIndex() == index
@@ -388,7 +622,15 @@ def test_the_arpeggio_pane_opens_each_page_and_back_returns(app):
     assert panel.keys_row.value.text() == ""
 
 
-def test_dragging_the_keyboard_sets_the_range(app):
+def test_dragging_the_keyboard_sets_the_range(app: QApplication) -> None:
+    """
+    Check that dragging the keyboard sets the range.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     panel = sp.KeyboardSettingsPanel(settings.keyboard)
     panel.span.dragged.emit(48, 60)
     assert (settings.keyboard.low, settings.keyboard.high) == (48, 60)

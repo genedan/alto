@@ -1,36 +1,91 @@
+"""The exercise library: every exercise makes valid questions, and the registry keeps them in order."""
+
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 from alto.exercises import REGISTRY
 from alto.exercises.base import Exercise, Question
 
+if TYPE_CHECKING:
+    from alto.theory.pitch import Note
 
-def keyboard_of(q):
-    """The highlighted key of a keyboard question."""
+
+def keyboard_of(q: Question) -> Note:
+    """
+    Return the highlighted key of a keyboard question.
+
+    Parameters
+    ----------
+    q : Question
+        A keyboard question.
+
+    Returns
+    -------
+    Note
+        The key to highlight.
+    """
     assert q.keyboard is not None
     return q.keyboard
 
 
-def construct_of(q):
-    """The note to place, for a note construction question."""
+def construct_of(q: Question) -> Note:
+    """
+    Return the note to place, for a note construction question.
+
+    Parameters
+    ----------
+    q : Question
+        A note construction question.
+
+    Returns
+    -------
+    Note
+        The note to place.
+    """
     assert q.construct is not None
     return q.construct
 
 
-def test_the_exercises_of_a_category_are_listed_together():
+def test_the_exercises_of_a_category_are_listed_together() -> None:
+    """
+    Check that the exercises of a category are listed together.
+    """
     categories = [cls.category for cls in REGISTRY]
     firsts = list(dict.fromkeys(categories))  # the categories in the order they first appear
     assert categories == sorted(categories, key=firsts.index)  # no category comes back after another one has started
     assert len(firsts) > 1
 
 
-def test_registering_an_exercise_puts_it_beside_the_others_of_its_category():
+def test_registering_an_exercise_puts_it_beside_the_others_of_its_category() -> None:
+    """
+    Check that registering an exercise puts it beside the others of its category.
+    """
     from alto.exercises.base import register
 
     class Extra(Exercise):
+        """
+        An exercise in a category that has others after it.
+        """
+
         name, category = "Extra", "Intervals"  # a category with exercises after it, not the last one
 
-        def generate(self, rng):
-            return Question("?", ["a"], "a")
+        def generate(self, rng: random.Random) -> Question:
+            """
+            Make the one fixed question.
+
+            Parameters
+            ----------
+            rng : random.Random
+                The random source (not used: the question is fixed).
+
+            Returns
+            -------
+            Question
+                A question.
+            """
+            return Question("?", choices=["a"], answer="a")
 
     before = list(REGISTRY)
     try:
@@ -45,7 +100,10 @@ def test_registering_an_exercise_puts_it_beside_the_others_of_its_category():
         REGISTRY[:] = before
 
 
-def test_every_exercise_generates_valid_questions():
+def test_every_exercise_generates_valid_questions() -> None:
+    """
+    Check that every exercise generates valid questions.
+    """
     rng = random.Random(1)
     for cls in REGISTRY:
         ex = cls()
@@ -61,7 +119,10 @@ def test_every_exercise_generates_valid_questions():
             assert len(set(q.choices)) == len(q.choices), (cls.name, q)
 
 
-def test_note_names_respects_clef_settings():
+def test_note_names_respects_clef_settings() -> None:
+    """
+    Test note names respects clef settings.
+    """
     from alto import settings
     from alto.exercises.library import NoteNames
 
@@ -83,7 +144,10 @@ def test_note_names_respects_clef_settings():
         cfg.clefs = old
 
 
-def test_note_names_respects_range_settings():
+def test_note_names_respects_range_settings() -> None:
+    """
+    Test note names respects range settings.
+    """
     from alto import settings
     from alto.exercises.library import NoteNames
     from alto.theory.pitch import Note
@@ -92,7 +156,7 @@ def test_note_names_respects_range_settings():
     old = (set(cfg.clefs), dict(cfg.ranges))
     try:
         cfg.clefs = {"treble"}
-        cfg.ranges = {"treble": (Note(4, 0).diatonic, Note(4, 2).diatonic)}  # C4..E4
+        cfg.ranges = {"treble": (Note(4, letter=0).diatonic, Note(4, letter=2).diatonic)}  # C4..E4
         rng = random.Random(3)
         got = {NoteNames().generate(rng).staff[0][0].name for _ in range(200)}
         assert got == {"C", "D", "E"}
@@ -100,13 +164,23 @@ def test_note_names_respects_range_settings():
         cfg.clefs, cfg.ranges = old
 
 
-def test_note_names_key_signature_values_and_naming():
+def test_note_names_key_signature_values_and_naming() -> None:
+    """
+    Check that note names key signature values and naming.
+    """
     from alto import settings
     from alto.exercises.library import NoteNames
     from alto.theory.pitch import key_accidental
 
     cfg = settings.note_names
-    old = (set(cfg.clefs), dict(cfg.ranges), set(cfg.key_signatures), set(cfg.note_values), cfg.naming, cfg.accidentals)
+    old = (
+        set(cfg.clefs),
+        dict(cfg.ranges),
+        set(cfg.key_signatures),
+        set(cfg.note_values),
+        cfg.naming,
+        cfg.accidentals,
+    )
     try:
         cfg.clefs, cfg.ranges = {"treble"}, {}
         cfg.key_signatures, cfg.note_values = {2, -3}, {"half", "eighth"}
@@ -118,17 +192,40 @@ def test_note_names_key_signature_values_and_naming():
                 note = q.staff[0][0]
                 assert q.key in (2, -3) and q.value in ("half", "eighth")
                 assert q.answer in q.choices and len(set(q.choices)) == len(q.choices)
-                assert q.answer == settings.spell(note, naming)
+                assert q.answer == settings.spell(note, naming=naming)
                 if not accidentals:  # with no explicit signs the key signature decides the accidental
-                    assert note.accidental == key_accidental(note.letter, q.key)
+                    assert note.accidental == key_accidental(note.letter, count=q.key)
             if naming == "solfege":
-                assert all(c[:2] in ("Do", "Re", "Mi", "Fa", "So", "La", "Si") for q in qs for c in q.choices)
+                assert all(
+                    c[:2]
+                    in (
+                        "Do",
+                        "Re",
+                        "Mi",
+                        "Fa",
+                        "So",
+                        "La",
+                        "Si",
+                    )
+                    for q in qs
+                    for c in q.choices
+                )
         assert {q.key for q in qs} == {2, -3}
     finally:
-        (cfg.clefs, cfg.ranges, cfg.key_signatures, cfg.note_values, cfg.naming, cfg.accidentals) = old
+        (
+            cfg.clefs,
+            cfg.ranges,
+            cfg.key_signatures,
+            cfg.note_values,
+            cfg.naming,
+            cfg.accidentals,
+        ) = old
 
 
-def test_keyboard_exercise():
+def test_keyboard_exercise() -> None:
+    """
+    Test keyboard exercise.
+    """
     from alto import settings
     from alto.exercises.library import KeyboardNotes
 
@@ -136,7 +233,7 @@ def test_keyboard_exercise():
     old = cfg.black_keys
     try:
         rng = random.Random(5)
-        lo, hi = keyboard_of(settings).low, keyboard_of(settings).high
+        lo, hi = cfg.low, cfg.high
         for black in (True, False):
             cfg.black_keys = black
             qs = [KeyboardNotes().generate(rng) for _ in range(300)]
@@ -152,12 +249,20 @@ def test_keyboard_exercise():
         cfg.black_keys = old
 
 
-def test_keyboard_range_and_octave_answers():
+def test_keyboard_range_and_octave_answers() -> None:
+    """
+    Test keyboard range and octave answers.
+    """
     from alto import settings
     from alto.exercises.library import KeyboardNotes
 
     cfg = settings.keyboard
-    old = (cfg.black_keys, cfg.require_octave, cfg.low, cfg.high)
+    old = (
+        cfg.black_keys,
+        cfg.require_octave,
+        cfg.low,
+        cfg.high,
+    )
     try:
         rng = random.Random(6)
         cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = True, False, 48, 72
@@ -181,17 +286,27 @@ def test_keyboard_range_and_octave_answers():
         cfg.low, cfg.high = settings.KEYBOARD_FULL  # the whole piano
         qs = [KeyboardNotes().generate(rng) for _ in range(2000)]
         assert min(keyboard_of(q).midi for q in qs) < 30 and max(keyboard_of(q).midi for q in qs) > 100
-        assert qs[0].octaves == [str(o) for o in range(0, 9)]
+        assert qs[0].octaves == [str(o) for o in range(9)]
     finally:
         cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = old
 
 
-def test_keyboard_key_signature_requires_the_right_spelling():
+def test_keyboard_key_signature_requires_the_right_spelling() -> None:
+    """
+    Check that keyboard key signature requires the right spelling.
+    """
     from alto import settings
     from alto.exercises.library import KeyboardNotes
 
     cfg = settings.keyboard
-    old = (cfg.key_signature, cfg.keys, cfg.black_keys, cfg.require_octave, cfg.low, cfg.high)
+    old = (
+        cfg.key_signature,
+        cfg.keys,
+        cfg.black_keys,
+        cfg.require_octave,
+        cfg.low,
+        cfg.high,
+    )
     try:
         cfg.key_signature, cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = True, True, False, 60, 71
         rng = random.Random(8)
@@ -200,7 +315,7 @@ def test_keyboard_key_signature_requires_the_right_spelling():
         qs = [KeyboardNotes().generate(rng) for _ in range(400)]
         assert all(q.key == 2 and q.key_staff and len(q.choices) == 21 for q in qs)
         by_midi = {keyboard_of(q).midi: q for q in qs}
-        assert by_midi[66].answer == "F♯" and not by_midi[66].check("G♭")   # no enharmonic
+        assert by_midi[66].answer == "F♯" and not by_midi[66].check("G♭")  # no enharmonic
         assert by_midi[70].answer == "A♯" and not by_midi[70].check("B♭")
         assert all(q.accept == () for q in qs)
 
@@ -225,7 +340,10 @@ def test_keyboard_key_signature_requires_the_right_spelling():
         cfg.key_signature, cfg.keys, cfg.black_keys, cfg.require_octave, cfg.low, cfg.high = old
 
 
-def test_note_construction():
+def test_note_construction() -> None:
+    """
+    Test note construction.
+    """
     from alto import settings
     from alto.exercises.library import NoteConstruction
     from alto.theory.pitch import Note
@@ -240,24 +358,27 @@ def test_note_construction():
         for q in qs:
             lo, hi = settings.DEFAULT_RANGES[q.clef]
             assert lo <= construct_of(q).diatonic <= hi and construct_of(q).accidental == 0
-            assert q.answer in q.prompt                                 # the question shows the note's name and octave
+            assert q.answer in q.prompt  # the question shows the note's name and octave
         q = qs[0]
         assert q.check_placed(construct_of(q))
-        assert not q.check_placed(Note(construct_of(q).octave, construct_of(q).letter, 1))             # wrong accidental
-        assert not q.check_placed(Note.from_diatonic(construct_of(q).diatonic + 1))                # next line or space
+        assert not q.check_placed(Note(construct_of(q).octave, letter=construct_of(q).letter, accidental=1))  # wrong accidental
+        assert not q.check_placed(Note.from_diatonic(construct_of(q).diatonic + 1))  # next line or space
 
         cfg.accidentals = True
         qs = [NoteConstruction().generate(rng) for _ in range(300)]
         assert any(construct_of(q).accidental for q in qs) and any(construct_of(q).accidental == 0 for q in qs)
         assert all(q.accidentals for q in qs)
-        sharp = next(q for q in qs if construct_of(q).accidental == 1)       # G sharp is not A flat: same sound, wrong spelling
-        enharmonic = Note.from_diatonic(construct_of(sharp).diatonic + 1, -1)
+        sharp = next(q for q in qs if construct_of(q).accidental == 1)  # G sharp is not A flat: same sound, wrong spelling
+        enharmonic = Note.from_diatonic(construct_of(sharp).diatonic + 1, accidental=-1)
         assert enharmonic.midi == construct_of(sharp).midi and not sharp.check_placed(enharmonic)
     finally:
         cfg.clefs, cfg.accidentals = old
 
 
-def test_note_construction_grand_staff():
+def test_note_construction_grand_staff() -> None:
+    """
+    Test note construction grand staff.
+    """
     from alto import settings
     from alto.exercises.library import NoteConstruction
 
@@ -279,28 +400,36 @@ def test_note_construction_grand_staff():
         cfg.clefs, cfg.accidentals = old
 
 
-def test_note_construction_key_signature():
+def test_note_construction_key_signature() -> None:
+    """
+    Test note construction key signature.
+    """
     from alto import settings
     from alto.exercises.library import NoteConstruction
     from alto.theory.pitch import key_accidental
 
     cfg = settings.construction
-    old = (set(cfg.clefs), cfg.accidentals, cfg.key_signature, set(cfg.keys))
+    old = (
+        set(cfg.clefs),
+        cfg.accidentals,
+        cfg.key_signature,
+        set(cfg.keys),
+    )
     try:
         rng = random.Random(12)
         cfg.clefs, cfg.key_signature, cfg.keys, cfg.accidentals = {"treble"}, True, {2, -3}, False
         qs = [NoteConstruction().generate(rng) for _ in range(400)]
         assert {q.key for q in qs} == {2, -3}
         # no extra signs: the note is exactly what the key signature makes of its letter
-        assert all(construct_of(q).accidental == key_accidental(construct_of(q).letter, q.key) for q in qs)
+        assert all(construct_of(q).accidental == key_accidental(construct_of(q).letter, count=q.key) for q in qs)
         f_in_d = next(q for q in qs if q.key == 2 and construct_of(q).letter == 3)
         assert construct_of(f_in_d).accidental == 1 and "F♯" in f_in_d.answer and "no sign" in f_in_d.explanation
 
         cfg.accidentals = True  # some notes now need their own sign (a natural cancels the key)
         qs = [NoteConstruction().generate(rng) for _ in range(600)]
-        differing = [q for q in qs if construct_of(q).accidental != key_accidental(construct_of(q).letter, q.key)]
+        differing = [q for q in qs if construct_of(q).accidental != key_accidental(construct_of(q).letter, count=q.key)]
         assert differing and len(differing) < len(qs)
-        assert any(construct_of(q).accidental == 0 for q in differing)       # an explicit natural
+        assert any(construct_of(q).accidental == 0 for q in differing)  # an explicit natural
         assert all("needs its own" in q.explanation for q in differing)
 
         cfg.key_signature = False  # off: no signature, and the old behaviour

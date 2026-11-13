@@ -1,6 +1,10 @@
 """The statistics page: its numbers follow the answers recorded and the filters chosen."""
+
+from __future__ import annotations
+
 import random
 import time
+from typing import TYPE_CHECKING
 
 import pytest
 from alto.exercises import REGISTRY
@@ -11,26 +15,45 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtTest import QSignalSpy
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from PySide6.QtWidgets import QApplication
+
 DAY = 86400.0
 
 
-def test_a_timeframe_starts_where_it_says():
+def test_a_timeframe_starts_where_it_says() -> None:
+    """
+    Check that a timeframe starts where it says.
+    """
     now = time.time()
-    assert since_for(None, now) is None
-    assert since_for(7, now) == pytest.approx(now - 7 * DAY)
-    today = since_for("today", now)
+    assert since_for(None, now=now) is None
+    assert since_for(7, now=now) == pytest.approx(now - 7 * DAY)
+    today = since_for("today", now=now)
     assert today is not None and now - DAY < today <= now
 
 
-def test_durations_read_naturally():
+def test_durations_read_naturally() -> None:
+    """
+    Check that durations read naturally.
+    """
     assert format_duration(5) == "5 s" and format_duration(29) == "29 s"
     assert format_duration(90) == "2 min" and format_duration(3000) == "50 min"
     assert format_duration(3600) == "1 h 00 min" and format_duration(3 * 3600 + 7 * 60) == "3 h 07 min"
 
 
-def test_a_profile_with_no_answers_gets_an_invitation_not_numbers(app):
+def test_a_profile_with_no_answers_gets_an_invitation_not_numbers(app: QApplication) -> None:
+    """
+    Check that a profile with no answers gets an invitation not numbers.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
     db = Database()
-    page = StatsPage(Learner(db, db.add_profile("Ben")))
+    page = StatsPage(Learner(db, profile=db.add_profile("Ben")))
     assert "No answers recorded for Ben" in page.note.text()
     assert page.tiles["questions"].value.text() == "0" and page.tiles["accuracy"].value.text() == "–"
     assert page.tiles["speed"].value.text() == "–" and page.tiles["tries"].value.text() == "–"
@@ -38,12 +61,32 @@ def test_a_profile_with_no_answers_gets_an_invitation_not_numbers(app):
     assert page.grab().width() > 0
 
 
-def test_the_numbers_come_from_the_active_profiles_answers(app, practised_learner):
+def test_the_numbers_come_from_the_active_profiles_answers(
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that the numbers come from the active profiles answers.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     learner = practised_learner()
     other = learner.db.add_profile("Someone else")
-    other_learner = Learner(learner.db, other)
+    other_learner = Learner(learner.db, profile=other)
     ex = REGISTRY[0]()
-    other_learner.record(ex, ex.generate(random.Random(1)), "x", False, 1, 3.0)
+    other_learner.record(
+        ex,
+        question=ex.generate(random.Random(1)),
+        answer="x",
+        correct=False,
+        attempt_no=1,
+        seconds=3.0,
+    )
     page = StatsPage(learner)
     page.timeframe.setCurrentIndex(page.timeframe.findText("All time"))
     total = int(page.tiles["questions"].value.text())
@@ -57,7 +100,20 @@ def test_the_numbers_come_from_the_active_profiles_answers(app, practised_learne
     assert page.grab().width() > 0
 
 
-def test_every_timeframe_and_exercise_can_be_chosen(app, practised_learner):
+def test_every_timeframe_and_exercise_can_be_chosen(
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that every timeframe and exercise can be chosen.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     page = StatsPage(practised_learner())
     counts = {}
     for i in range(page.timeframe.count()):
@@ -77,7 +133,20 @@ def test_every_timeframe_and_exercise_can_be_chosen(app, practised_learner):
     assert page.volume.title.endswith(("hour", "day"))
 
 
-def test_back_is_offered_by_a_button_and_by_escape(app, practised_learner):
+def test_back_is_offered_by_a_button_and_by_escape(
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that back is offered by a button and by escape.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     page = StatsPage(practised_learner(30))
     spy = QSignalSpy(page.back)
     page.back_button.click()
@@ -87,7 +156,20 @@ def test_back_is_offered_by_a_button_and_by_escape(app, practised_learner):
     assert spy.count() == 2
 
 
-def test_a_name_is_kept_for_exercises_the_page_no_longer_knows(app, practised_learner):
+def test_a_name_is_kept_for_exercises_the_page_no_longer_knows(
+    app: QApplication,
+    practised_learner: Callable[..., Learner],
+) -> None:
+    """
+    Check that a name is kept for exercises the page no longer knows.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    practised_learner : Callable[..., Learner]
+        Builds a learner with a history of answers.
+    """
     page = StatsPage(practised_learner(30))
     assert page._names()[REGISTRY[0].__name__] == REGISTRY[0].name
     assert stats_dialog.Tile("caption").caption.text() == "caption"

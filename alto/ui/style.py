@@ -1,6 +1,12 @@
-"""Application-wide stylesheet: rounded corners on buttons, panes, lists and scroll bars.
+"""
+Application-wide stylesheet: rounded corners on buttons, panes, lists and scroll bars.
 
 Colours come from the palette so it follows the system light/dark theme.
+
+Examples
+--------
+>>> RADIUS
+10
 """
 
 from pathlib import Path
@@ -13,16 +19,54 @@ RADIUS = 10
 
 
 def app_style(palette: QPalette) -> str:
-    """The stylesheet: white-filled buttons with a dark border and a heavier lower edge."""
-    base, dark, midlight = (palette.color(r).name() for r in (QPalette.ColorRole.Base, QPalette.ColorRole.Dark, QPalette.ColorRole.Midlight))
-    base_c, text_c, accent_c = palette.color(QPalette.ColorRole.Base), palette.color(QPalette.ColorRole.Text), palette.color(QPalette.ColorRole.Highlight)
+    """
+    Build the stylesheet for a palette.
+
+    White-filled buttons with a dark border and a heavier lower edge, rounded check boxes and lists, and so on, with colours
+    taken from the palette.
+
+    Parameters
+    ----------
+    palette : QPalette
+        The palette to take colours from, so the style follows the light or dark theme.
+
+    Returns
+    -------
+    str
+        Qt style sheet text.
+
+    Examples
+    --------
+    >>> sheet = app_style(app.palette())
+    >>> "QPushButton" in sheet and "border-radius" in sheet
+    True
+    """
+    base, dark, midlight = (
+        palette.color(r).name() for r in (QPalette.ColorRole.Base, QPalette.ColorRole.Dark, QPalette.ColorRole.Midlight)
+    )
+    base_c, text_c, accent_c = (
+        palette.color(QPalette.ColorRole.Base),
+        palette.color(QPalette.ColorRole.Text),
+        palette.color(QPalette.ColorRole.Highlight),
+    )
     window_c = palette.color(QPalette.ColorRole.Window)
-    return _TEMPLATE.format(RADIUS=RADIUS, r2=RADIUS - 2, r3=RADIUS - 3, rp=RADIUS + 2,
-                            fill=base, fill_hover=base, fill_pressed=midlight, edge=dark,
-                            box_edge=blend_name(base_c, text_c, 0.45), box_edge_off=blend_name(base_c, text_c, 0.2),
-                            accent=accent_c.name(), accent_dim=blend_name(accent_c, base_c, 0.55),
-                            nav_hover=blend_name(window_c, text_c, 0.07), nav_selected=blend_name(window_c, accent_c, 0.2),
-                            check=(Path(__file__).resolve().parent.parent / "assets" / "ui" / "check.svg").as_posix())
+    return _TEMPLATE.format(
+        RADIUS=RADIUS,
+        r2=RADIUS - 2,
+        r3=RADIUS - 3,
+        rp=RADIUS + 2,
+        fill=base,
+        fill_hover=base,
+        fill_pressed=midlight,
+        edge=dark,
+        box_edge=blend_name(base_c, b=text_c, t=0.45),
+        box_edge_off=blend_name(base_c, b=text_c, t=0.2),
+        accent=accent_c.name(),
+        accent_dim=blend_name(accent_c, b=base_c, t=0.55),
+        nav_hover=blend_name(window_c, b=text_c, t=0.07),
+        nav_selected=blend_name(window_c, b=accent_c, t=0.2),
+        check=(Path(__file__).resolve().parent.parent / "assets" / "ui" / "check.svg").as_posix(),
+    )
 
 
 _TEMPLATE = """
