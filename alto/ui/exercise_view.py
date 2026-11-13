@@ -181,7 +181,7 @@ class ExerciseView(QWidget):
         self.prompt.setText(q.prompt)
         self.prompt.setVisible(bool(q.prompt))  # some exercises need no prompt
         construct = q.construct is not None
-        self.staff.setVisible(bool(q.staff) and not construct)
+        self.staff.setVisible((bool(q.staff) or q.show_staff) and not construct)
         self.input_staff.setVisible(construct)
         self.accidental_row.setVisible(construct and q.accidentals)
         if construct:
@@ -379,7 +379,7 @@ class ExerciseView(QWidget):
             for b in self.buttons:
                 b.setEnabled(False)
             self._flash(button, "#2e7d32", staff=True)
-            notes = q.staff or ([[q.keyboard]] if q.keyboard else [])
+            notes = q.staff or q.play or ([[q.keyboard]] if q.keyboard else [])
             if notes:
                 sounds.play_notes(notes)
             else:

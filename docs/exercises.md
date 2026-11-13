@@ -3,7 +3,7 @@ title: Exercises
 nav_order: 3
 permalink: /exercises/
 ---
-Alto has eight exercises. Each one has a **?** button with a short explanation, and four of them have their own
+Alto has eight exercises. Each one has a **?** button with a short explanation, and five of them have their own
 settings (the sliders button). The others use fixed rules, described below.
 
 ## Note Identification
@@ -56,7 +56,24 @@ is m3.
 
 ## Key signatures
 
-A question such as "How many sharps or flats are in D major?" Press the answer. Both major and natural minor keys appear.
+Two kinds of question, asked at random:
+
+- **Read the signature.** A key signature is drawn on a staff and you press the tonic of the scale it belongs to. The
+  question says what kind of scale: "Which major key has this key signature?", "Which minor key ...?" or, for a mode,
+  "Which Dorian scale ...?". A right answer plays the scale.
+- **Count the sharps or flats.** A key is named, such as "How many sharps or flats are in D major?" or "... in E Dorian?",
+  and you press how many it has.
+
+A mode uses the key signature of a major key and starts from another note of it, so D Dorian has the signature of C major
+(no sharps or flats), started from D. By default Alto asks major and natural minor keys, on the treble and bass staves.
+In the exercise settings you can choose:
+
+- **Questions:** read the signature, count the sharps and flats, or both.
+- **Staff:** treble, bass, alto and tenor clefs, for the signature that is drawn.
+- **Scales:** major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.
+- **Key signatures:** which of the fifteen signatures, from seven flats to seven sharps, can appear.
+
+{% include shot.html src="key-signatures.png" alt="Key signatures showing three flats on an alto clef staff, asking which major key has this key signature" %}
 
 ## Scale spelling
 

@@ -43,7 +43,7 @@ def _isolated_state():
     from alto import settings
     from alto.audio import sounds
 
-    names = ("note_names", "keyboard", "construction", "arpeggio")
+    names = ("note_names", "keyboard", "construction", "arpeggio", "key_signatures")
     before = {n: copy.deepcopy(getattr(settings, n).__dict__) for n in names}
     muted = sounds.enabled
     sounds.enabled = False

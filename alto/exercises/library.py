@@ -5,7 +5,16 @@ import random
 from .. import settings
 from ..settings import spell
 from ..theory.pitch import MAJOR_KEYS, NATURAL_SEMITONES, QUALITY_NAMES, Interval, Note, key_accidental
-from ..theory.scales import CHORDS, INVERSION_NAMES, SCALES, arpeggio, build, format_key_signature, key_signature
+from ..theory.scales import (
+    CHORDS,
+    INVERSION_NAMES,
+    MODE_WORDS,
+    SCALES,
+    arpeggio,
+    build,
+    format_key_signature,
+    mode_tonic,
+)
 from .base import Exercise, Question, pick_distractors, register, signature
 
 CLEF_RANGES = {  # inclusive diatonic range that sits comfortably on the staff
@@ -106,29 +115,60 @@ class IntervalNames(Exercise):
         return Question("", choices, iv.short, [[low], [high]], clef, expl)
 
 
+def _scale_name(mode: str) -> str:
+    """The mode as it follows a tonic: 'major', 'minor', 'Dorian'."""
+    return {"Major (Ionian)": "major", "Natural minor (Aeolian)": "minor"}.get(mode, mode)
+
+
 @register
 class KeySignatures(Exercise):
     name = "Key signatures"
     category = "Scales & keys"
-    description = "How many sharps or flats does a key have?"
-    par_seconds = 4.0
+    description = "Read a key signature, or count the sharps and flats of a key."
+    par_seconds = 5.0
+
+    def settings_signature(self) -> str:
+        return signature(settings.key_signatures)
 
     def instructions(self) -> str:
-        return ("<b>Key signatures</b><br>Read the question, then press how many sharps or flats that key has. "
-                "Sharp keys add sharps (G, D, A ...) and flat keys add flats (F, B♭, E♭ ...).")
+        return ("<b>Key signatures</b><br>Two kinds of question. In one a key signature is drawn on a staff: press the "
+                "tonic of the scale it belongs to (the question says whether it is a major key, a minor key or a mode such "
+                "as Dorian). In the other a key is named: press how many sharps or flats it has.<br><br>"
+                "Sharp keys add sharps (G, D, A ...) and flat keys add flats (F, B♭, E♭ ...). A mode uses the signature of a "
+                "major key, started from another degree: D Dorian has the signature of C major, started from its second note."
+                "<br><br>Use the sliders button to choose the kinds of question, the clefs, the scales and the key signatures.")
 
     def generate(self, rng):
-        tonic = rng.choice([Note(4, l, a) for l in range(7) for a in (-1, 0, 1)])
-        mode = rng.choice(("Major (Ionian)", "Natural minor (Aeolian)"))
-        count = key_signature(tonic.name.replace("♯", "#").replace("♭", "b"), mode)
-        if abs(count) > 7:
-            return self.generate(rng)
-        word = "major" if mode.startswith("Major") else "minor"
+        cfg = settings.key_signatures
+        kind = rng.choice(cfg.active_questions())
+        mode = rng.choice(cfg.active_modes())
+        count = rng.choice(cfg.active_keys())
+        tonic = mode_tonic(count, mode)
+        if kind == "count":
+            return self._count_question(tonic, mode, count, rng)
+        return self._read_question(tonic, mode, count, rng.choice(cfg.active_clefs()), rng)
+
+    @staticmethod
+    def _count_question(tonic: Note, mode: str, count: int, rng: random.Random) -> Question:
+        """'How many sharps or flats are in D Dorian?': the key is named, the signature is the answer."""
         correct = format_key_signature(count)
-        pool = [format_key_signature(c) for c in range(-7, 8)]
         near = [format_key_signature(c) for c in range(count - 2, count + 3) if abs(c) <= 7]
-        choices = pick_distractors(correct, near + pool[:0], 3, rng)
-        return Question(f"How many sharps or flats are in {tonic.name} {word}?", choices, correct)
+        choices = pick_distractors(correct, near, 3, rng)
+        return Question(f"How many sharps or flats are in {tonic.name} {_scale_name(mode)}?", choices, correct)
+
+    @staticmethod
+    def _read_question(tonic: Note, mode: str, count: int, clef: str, rng: random.Random) -> Question:
+        """A key signature on a staff: press the tonic of the scale of the kind asked, which has that signature."""
+        correct = tonic.name
+        near = [mode_tonic(c, mode).name for c in range(count - 2, count + 3) if abs(c) <= 7]
+        everyone = [mode_tonic(c, mode).name for c in range(-7, 8)]
+        choices = pick_distractors(correct, near + everyone, 5, rng)
+        word = MODE_WORDS.get(mode, f"{mode} scale")
+        notes = [*build(tonic, SCALES[mode]), tonic.transpose(Interval(8, "P"))]  # the scale, up to its octave
+        return Question(f"Which {word} has this key signature?", choices, correct, clef=clef, key=count, show_staff=True,
+                        play=[[n] for n in notes],
+                        explanation=f"{format_key_signature(count)}: {tonic.name} {_scale_name(mode)}: "
+                        + " ".join(n.name for n in notes))
 
 
 @register

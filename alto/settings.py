@@ -153,3 +153,33 @@ class ArpeggioSettings:
 
 
 arpeggio = ArpeggioSettings()
+
+
+# Key signature exercise: read the signature on a staff and name the key, or count its sharps and flats.
+KEY_QUESTIONS = {"read": "Name the key from its signature", "count": "Count the sharps or flats"}
+KEY_MODES = ("Major (Ionian)", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Natural minor (Aeolian)", "Locrian")
+MODE_LABELS = {"Major (Ionian)": "Major (Ionian)", "Dorian": "Dorian", "Phrygian": "Phrygian", "Lydian": "Lydian",
+               "Mixolydian": "Mixolydian", "Natural minor (Aeolian)": "Minor (Aeolian)", "Locrian": "Locrian"}
+
+
+@dataclass
+class KeySignatureSettings:
+    questions: set[str] = field(default_factory=lambda: {"read", "count"})  # keys of KEY_QUESTIONS
+    clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of CLEFS: the clef the signature is drawn on
+    modes: set[str] = field(default_factory=lambda: {"Major (Ionian)", "Natural minor (Aeolian)"})  # of KEY_MODES
+    keys: set[int] = field(default_factory=lambda: set(range(-7, 8)))  # the key signatures asked: sharps (+) / flats (-)
+
+    def active_questions(self) -> list[str]:
+        return [q for q in KEY_QUESTIONS if q in self.questions] or ["read"]
+
+    def active_clefs(self) -> list[str]:
+        return [c for c in CLEFS if c in self.clefs] or ["treble"]
+
+    def active_modes(self) -> list[str]:
+        return [m for m in KEY_MODES if m in self.modes] or ["Major (Ionian)"]
+
+    def active_keys(self) -> list[int]:
+        return sorted(self.keys) or [0]
+
+
+key_signatures = KeySignatureSettings()

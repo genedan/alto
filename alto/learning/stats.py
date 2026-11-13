@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 
 from ..exercises.base import Question
 from ..theory.pitch import Note
+from ..theory.scales import format_key_signature
 from . import scheduler
 from .database import Database
 
@@ -119,7 +120,9 @@ def describe(question: Question) -> str:
     def spelled(n: Note) -> str:
         return f"{n.name}{n.octave}"
     clef = question.clef.capitalize()
-    if question.prompt:
+    if question.show_staff:
+        what = f"{clef}: {format_key_signature(question.key)}. {question.prompt}"
+    elif question.prompt:
         what = question.prompt
     elif question.keyboard:
         what = f"Key {spelled(question.keyboard)}"

@@ -1213,6 +1213,150 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         self._save_and_emit()
 
 
+def load_key_signatures() -> None:
+    saved_settings = store()
+    cfg = settings.key_signatures
+    questions = str(saved_settings.value("keySignatures/questions", "") or "")
+    if questions:
+        cfg.questions = {q for q in questions.split(",") if q in settings.KEY_QUESTIONS} or cfg.questions
+    clefs = str(saved_settings.value("keySignatures/clefs", "") or "")
+    if clefs:
+        cfg.clefs = {c for c in clefs.split(",") if c in CLEFS} or cfg.clefs
+    modes = str(saved_settings.value("keySignatures/modes", "") or "")
+    if modes:
+        cfg.modes = {m for m in modes.split("|") if m in settings.KEY_MODES} or cfg.modes
+    keys = str(saved_settings.value("keySignatures/keys", "") or "")
+    if keys:
+        cfg.keys = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or cfg.keys
+
+
+class KeySignatureSettingsPanel(ExerciseSettingsPanel):
+    """Settings for the key signature exercise: a menu (Questions, Staff, Scales, Key signatures) with a page for each.
+    Edits are live; emits `changed` after each one."""
+
+    def __init__(self, cfg: settings.KeySignatureSettings, parent=None):
+        super().__init__(parent)
+        self.cfg = cfg
+        self.stack = SlideStack()
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        outer.addWidget(self.stack)
+
+        # layer 1: menu
+        menu = QWidget()
+        mlay = QVBoxLayout(menu)
+        mlay.setContentsMargins(0, 0, 0, 0)
+        mlay.addWidget(QLabel("<h3>Settings</h3>"))
+        self.questions_row = _Row("Questions")
+        self.staff_row = _Row("Staff")
+        self.modes_row = _Row("Scales")
+        self.keys_row = _Row("Key signatures")
+        self.clef_pictures = ClefPictures()
+        self.staff_row.attach(self.clef_pictures)
+        self.keys_diagram = KeyDiagram()
+        self.keys_row.attach(self.keys_diagram)
+        for index, row in enumerate((self.questions_row, self.staff_row, self.modes_row, self.keys_row), 1):
+            row.clicked.connect(lambda _=False, i=index: self._go(i))
+            mlay.addWidget(row)
+        mlay.addStretch()
+
+        # layer 2: the kinds of question
+        self.questions = ChoiceChecklist([("", [(k, v) for k, v in settings.KEY_QUESTIONS.items()])], cfg.questions)
+        self.questions.changed.connect(self._questions_edited)
+        questions_note = QLabel("A key signature is drawn on a staff and you name its key, or a key is named and you count "
+                                "its sharps and flats. One of the checked kinds is picked at random.")
+        questions_note.setWordWrap(True)
+        questions_note.setStyleSheet("color: gray;")
+        questions_body = QWidget()
+        qlay = QVBoxLayout(questions_body)
+        qlay.setContentsMargins(0, 0, 0, 0)
+        qlay.addWidget(self.questions)
+        qlay.addWidget(questions_note)
+        questions_page = _subpage("Questions", questions_body, lambda: self._go(0))
+
+        # layer 2: the clefs the signature is drawn on
+        body = QWidget()
+        blay = QVBoxLayout(body)
+        blay.setContentsMargins(0, 0, 0, 0)
+        hint = QLabel("One of the checked choices is picked at random.")
+        hint.setWordWrap(True)
+        hint.setStyleSheet("color: gray;")
+        blay.addWidget(hint)
+        self.boxes = {c: _clef_box(c) for c in CLEFS}
+        for c, box in self.boxes.items():
+            box.setChecked(c in cfg.clefs)
+            box.toggled.connect(self._clefs_edited)
+        blay.addWidget(_clef_grid(self.boxes))
+        _guard_last(list(self.boxes.values()))
+        staff_page = _subpage("Staff", body, lambda: self._go(0))
+
+        # layer 2: the scales, so the key can be a major or minor key or a mode
+        self.modes = ChoiceChecklist([("", [(m, settings.MODE_LABELS[m]) for m in settings.KEY_MODES])], cfg.modes)
+        self.modes.changed.connect(self._modes_edited)
+        modes_note = QLabel("A mode has the key signature of a major key and starts from another note of it: D Dorian has "
+                            "the signature of C major.")
+        modes_note.setWordWrap(True)
+        modes_note.setStyleSheet("color: gray;")
+        modes_body = QWidget()
+        mlay2 = QVBoxLayout(modes_body)
+        mlay2.setContentsMargins(0, 0, 0, 0)
+        mlay2.addWidget(self.modes)
+        mlay2.addWidget(modes_note)
+        modes_page = _subpage("Scales", modes_body, lambda: self._go(0))
+
+        # layer 2: the key signatures asked
+        self.key_list = KeyChecklist(cfg.keys)
+        self.key_list.changed.connect(self._keys_edited)
+        keys_page = _subpage("Key signatures", self.key_list, lambda: self._go(0))
+
+        for page in (menu, questions_page, staff_page, modes_page, keys_page):
+            self.stack.addWidget(page)
+        self._refresh_summaries()
+
+    def _go(self, index: int):
+        if self.stack.sliding or index == self.stack.currentIndex():
+            return
+        if index == 0:
+            self._refresh_summaries()
+        self.stack.slide_to(index)
+
+    def _refresh_summaries(self):
+        cfg = self.cfg
+        questions = cfg.active_questions()
+        self.questions_row.value.setText("Both" if len(questions) == len(settings.KEY_QUESTIONS)
+                                         else "Read" if questions == ["read"] else "Count")
+        self.clef_pictures.set_clefs(cfg.active_clefs())
+        modes = cfg.active_modes()
+        self.modes_row.value.setText(f"{len(modes)} of {len(settings.KEY_MODES)}")
+        _show_keys(self.keys_row, self.keys_diagram, True, set(cfg.active_keys()))
+
+    def _save_and_emit(self):
+        saved_settings = store()
+        cfg = self.cfg
+        saved_settings.setValue("keySignatures/questions", ",".join(cfg.active_questions()))
+        saved_settings.setValue("keySignatures/clefs", ",".join(cfg.active_clefs()))
+        saved_settings.setValue("keySignatures/modes", "|".join(cfg.active_modes()))
+        saved_settings.setValue("keySignatures/keys", ",".join(str(k) for k in cfg.active_keys()))
+        self.changed.emit()
+
+    def _questions_edited(self):
+        self.cfg.questions = self.questions.selected()
+        self._save_and_emit()
+
+    def _clefs_edited(self):
+        self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
+        _guard_last(list(self.boxes.values()))
+        self._save_and_emit()
+
+    def _modes_edited(self):
+        self.cfg.modes = self.modes.selected()
+        self._save_and_emit()
+
+    def _keys_edited(self):
+        self.cfg.keys = self.key_list.selected()
+        self._save_and_emit()
+
+
 def settings_inversion_names() -> tuple[str, ...]:
     """The inversions as written in the settings: 'Root position', '1st inversion' ..."""
     return tuple(n.capitalize() for n in INVERSION_NAMES)
@@ -1220,7 +1364,7 @@ def settings_inversion_names() -> tuple[str, ...]:
 
 def settings_panel_for(exercise) -> ExerciseSettingsPanel | None:
     """The settings panel for an exercise (has a `changed` signal), or None if it has none."""
-    from ..exercises.library import ArpeggioNames, KeyboardNotes, NoteConstruction, NoteNames
+    from ..exercises.library import ArpeggioNames, KeyboardNotes, KeySignatures, NoteConstruction, NoteNames
 
     if isinstance(exercise, NoteNames):
         return NoteNameSettingsPanel(settings.note_names)
@@ -1230,4 +1374,6 @@ def settings_panel_for(exercise) -> ExerciseSettingsPanel | None:
         return NoteConstructionSettingsPanel(settings.construction)
     if isinstance(exercise, ArpeggioNames):
         return ArpeggioSettingsPanel(settings.arpeggio)
+    if isinstance(exercise, KeySignatures):
+        return KeySignatureSettingsPanel(settings.key_signatures)
     return None

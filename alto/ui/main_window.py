@@ -33,7 +33,7 @@ from .icons import svg_icon
 from .instrument_picker import load_instrument
 from .notation import load_style as load_notation_style
 from .profile_dialog import ProfileDialog, remember_profile
-from .settings_panel import load_arpeggio, load_construction, load_keyboard, load_note_names
+from .settings_panel import load_arpeggio, load_construction, load_key_signatures, load_keyboard, load_note_names
 from .stats_dialog import StatsPage
 from .store import int_value, store
 
@@ -126,6 +126,7 @@ class MainWindow(QMainWindow):
         load_keyboard()
         load_construction()
         load_arpeggio()
+        load_key_signatures()
         load_instrument()
         load_notation_style()
 

@@ -4,7 +4,14 @@ import random
 import pytest
 from alto import settings
 from alto.audio import sounds
-from alto.exercises.library import ArpeggioNames, KeyboardNotes, KeySignatures, NoteConstruction, NoteNames
+from alto.exercises.library import (
+    ArpeggioNames,
+    IntervalNames,
+    KeyboardNotes,
+    KeySignatures,
+    NoteConstruction,
+    NoteNames,
+)
 from alto.theory.pitch import Note
 from alto.ui.exercise_view import ExerciseView
 from PySide6.QtTest import QTest
@@ -32,7 +39,7 @@ def test_the_speaker_button_mutes_and_unmutes(app):
 
 
 def test_an_exercise_with_fixed_rules_has_no_settings_button(app):
-    view = view_of(KeySignatures())
+    view = view_of(IntervalNames())
     assert view.settings_panel is None and not hasattr(view, "gear") and not hasattr(view, "pane")
 
 
