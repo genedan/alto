@@ -41,3 +41,34 @@ def _qt_application_for_doctests(
     from PySide6.QtWidgets import QApplication
 
     doctest_namespace["app"] = QApplication.instance() or QApplication([])
+
+
+def pytest_sessionfinish(session: pytest.Session) -> None:
+    """
+    Delete every widget the run left behind, while Python and Qt are both still running.
+
+    Examples make widgets they never close. Left to the interpreter's exit, PySide destroys them in an order that aborts the
+    process after every test has passed, which fails the pre-push hook.
+
+    Parameters
+    ----------
+    session : pytest.Session
+        The finished run. Not used.
+
+    Examples
+    --------
+    >>> callable(pytest_sessionfinish)
+    True
+    """
+    import gc
+
+    from PySide6.QtCore import QEvent
+    from PySide6.QtWidgets import QApplication
+
+    if QApplication.instance() is None:
+        return
+    for widget in QApplication.topLevelWidgets():
+        widget.close()
+        widget.deleteLater()
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    gc.collect()
