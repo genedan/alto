@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QScrollArea,
+    QSizePolicy,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -25,7 +26,7 @@ from PySide6.QtWidgets import (
 
 from ..exercises import REGISTRY
 from ..learning import Learner, stats
-from .charts import HBarChart, LineChart, StackedBarChart
+from .charts import HBarChart, HeatmapChart, LineChart, StackedBarChart
 
 DAY = 86400.0
 TIMEFRAMES = (("Today", "today"), ("Last 7 days", 7), ("Last 30 days", 30), ("Last 90 days", 90),
@@ -128,6 +129,12 @@ class StatsPage(QWidget):
             charts.addWidget(chart, i // 2, i % 2)
         lay.addLayout(charts)
 
+        # The calendar always looks back about a year, whatever the timeframe, so it follows only the exercise filter.
+        self.heatmap = HeatmapChart("Reviews, last 12 months")
+        self.heatmap.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.heatmap.setFixedHeight(190)
+        lay.addWidget(self.heatmap)
+
         lay.addWidget(QLabel("<b>Questions that need practice</b>"))
         self.table = QTableWidget(0, 4)
         self.table.setHorizontalHeaderLabels(["Exercise", "Question", "Missed", "Answered"])
@@ -184,6 +191,9 @@ class StatsPage(QWidget):
         self.by_exercise.set_data([(names.get(e.exercise, e.exercise), e.accuracy,
                                     f"{e.accuracy:.0f}%  ·  {e.questions} q  ·  {e.median_seconds:.1f} s")
                                    for e in s.by_exercise])
+
+        counts = stats.daily_counts(self.learner.db, profiles, self.exercise.currentData(), now=now)
+        self.heatmap.set_data(counts, datetime.fromtimestamp(now).date())
 
         self.table.setRowCount(len(s.hardest))
         for row, h in enumerate(s.hardest):

@@ -112,3 +112,39 @@ def test_an_axis_with_no_labels_draws_nothing(app):
     chart._category_axis(painter, [], [])
     painter.end()
     assert image.pixelColor(100, 90).alpha() == 0
+
+
+def test_the_heatmap_shades_days_by_how_busy_they_were(app):
+    from datetime import date, timedelta
+    today = date(2026, 11, 13)  # a Friday
+    chart = charts.HeatmapChart("Reviews")
+    chart.set_data({today: 40, today - timedelta(days=1): 20, today - timedelta(days=2): 1}, today)
+    assert chart.level(0) == 0 and chart.level(1) >= 1
+    assert chart.level(40) == chart.LEVELS and chart.level(1) < chart.level(40)
+    assert chart.first_day().weekday() == 0 and (today - chart.first_day()).days // 7 == 52
+    busy = ink(chart, (760, 190))
+    chart.set_data({}, today)
+    assert ink(chart, (760, 190)) > 0 and ink(chart, (760, 190)) != busy  # still drawn, with a message
+
+
+def test_the_heatmap_names_the_day_under_the_pointer(app, monkeypatch):
+    from datetime import date
+    shown, hidden = [], []
+    monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
+    monkeypatch.setattr(charts.QToolTip, "hideText", lambda: hidden.append(1))
+    today = date(2026, 11, 13)
+    chart = charts.HeatmapChart("Reviews")
+    chart.resize(760, 190)
+    chart.set_data({today: 3}, today)
+    cell, (x0, y0) = chart._cell(), chart._origin()
+
+    def move(x, y):
+        pt = QPointF(x, y)
+        chart.mouseMoveEvent(QMouseEvent(QMouseEvent.Type.MouseMove, pt, pt, Qt.MouseButton.NoButton,
+                                         Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+    move(x0 + 52.5 * cell, y0 + 4.5 * cell)  # last column, Friday
+    assert shown[-1].startswith("Fri Nov 13, 2026") and "3 questions" in shown[-1]
+    move(x0 + 52.5 * cell, y0 + 6.5 * cell)  # Sunday, in the future
+    move(2, 2)
+    assert len(hidden) == 2
+    assert chart.day_at(QPointF(x0 + 0.5 * cell, y0 + 0.5 * cell)) == chart.first_day()
