@@ -134,6 +134,12 @@ Alto draws notes with fonts that follow the [SMuFL](https://www.smufl.org/) stan
 
 Only add fonts whose licence allows redistribution, such as the SIL Open Font License.
 
+## Adding a keyboard style
+
+Add a `KeyboardStyle` to `STYLES` in `alto/ui/keyboard_styles.py`: the colours of the naturals and sharps, and any extras such as
+a case, felt, bone caps or stop knobs. The settings page, the keyboard and the range picker all read from that list, so nothing
+else needs changing. Add a row to the table in `docs/settings.md`. The colours named after materials in the builder are `MATERIALS` in the same file.
+
 ## Keeping the docs and screenshots current
 
 Every picture in the docs comes as a light and a dark pair, and `scripts/screenshots.py` makes all of them:

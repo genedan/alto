@@ -31,6 +31,7 @@ from .exercise_view import ExerciseView
 from .home import EXERCISE_ICONS, HomePage
 from .icons import svg_icon
 from .instrument_picker import load_instrument
+from .keyboard_styles import load_style as load_keyboard_style
 from .notation import load_style as load_notation_style
 from .profile_dialog import ProfileDialog, remember_profile
 from .settings_panel import load_arpeggio, load_construction, load_key_signatures, load_keyboard, load_note_names
@@ -129,6 +130,7 @@ class MainWindow(QMainWindow):
         load_key_signatures()
         load_instrument()
         load_notation_style()
+        load_keyboard_style()
 
         # The list and the exercise sit in a splitter: drag the handle to resize, or drag the list
         # narrower than its minimum to collapse it.

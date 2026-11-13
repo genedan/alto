@@ -27,7 +27,7 @@ permalink: /
 
 - **It learns from your answers.** Every answer is recorded under your profile. Questions you miss, or take a long time over, come back more often. Questions you answer quickly and correctly fade into the background. [How it works]({{ '/practice/' | relative_url }}).
 - **Statistics and a database browser.** Charts of accuracy, speed and volume, filterable by exercise and timeframe, plus a table view of everything stored. [Statistics]({{ '/statistics/' | relative_url }}).
-- **Notation in the font you like.** Eleven notation styles, including Finale Maestro, Leland, Bravura and two handwritten jazz styles. [Settings]({{ '/settings/' | relative_url }}).
+- **Notation and keyboards your way.** Eleven notation styles, including Finale Maestro, Leland, Bravura and two handwritten jazz styles, and eleven keyboard looks from a modern piano to a French harpsichord. [Settings]({{ '/settings/' | relative_url }}).
 - **Local and private.** Your history is one file on your computer. Alto makes no network connections. [Your data]({{ '/data/' | relative_url }}).
 - **Free and open source** under the MIT License.
 

@@ -50,6 +50,11 @@ def _isolated_state():
     yield
     _close_every_window()
     sounds.enabled = muted
+    from alto.ui import keyboard_styles
+
+    keyboard_styles._current = keyboard_styles.BY_KEY[keyboard_styles.DEFAULT]
+    keyboard_styles._custom.clear()
+    keyboard_styles._custom.update(keyboard_styles.DEFAULT_CUSTOM)
     for n in names:
         getattr(settings, n).__dict__.clear()
         getattr(settings, n).__dict__.update(before[n])

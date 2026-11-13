@@ -828,8 +828,9 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         blay = QVBoxLayout(body)
         blay.setContentsMargins(0, 0, 0, 0)
         blay.setSpacing(10)
-        blay.addWidget(QLabel("Keys that will be asked:"))
+        blay.addWidget(QLabel("Keys that will be asked: click and drag on the keyboard to choose them."))
         self.span = KeyboardSpan()
+        self.span.dragged.connect(self._set_range)
         blay.addWidget(self.span)
         self.low_label, self.high_label = QLabel(), QLabel()
         self.arrows = {}
