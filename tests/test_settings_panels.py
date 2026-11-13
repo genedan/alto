@@ -4,7 +4,7 @@ from alto import settings
 from alto.ui import settings_panel as sp
 from alto.ui.store import store
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QPushButton, QToolButton
+from PySide6.QtWidgets import QToolButton
 
 
 def slide():
@@ -21,21 +21,20 @@ def back(panel):
 
 def test_the_note_name_settings_are_saved_and_read_back():
     cfg = settings.note_names
-    cfg.mode, cfg.clefs, cfg.key_signatures = "grand", {"alto", "tenor"}, {-2, 0, 5}
+    cfg.clefs, cfg.key_signatures = {"grand", "alto", "baritone"}, {-2, 0, 5}
     cfg.note_values, cfg.naming, cfg.accidentals = {"half", "eighth"}, "solfege", True
     cfg.ranges = {"treble": (30, 40), "bass": (15, 25)}
     sp.save_note_names()
     cfg.__init__()  # back to the defaults
     sp.load_note_names()
-    assert (cfg.mode, cfg.clefs, cfg.key_signatures) == ("grand", {"alto", "tenor"}, {-2, 0, 5})
+    assert (cfg.clefs, cfg.key_signatures) == ({"grand", "alto", "baritone"}, {-2, 0, 5})
     assert cfg.note_values == {"half", "eighth"} and cfg.naming == "solfege" and cfg.accidentals
     assert cfg.ranges == {"treble": (30, 40), "bass": (15, 25)}
 
 
 def test_bad_saved_note_name_settings_fall_back_to_sensible_ones():
     s = store()
-    s.setValue("noteNames/mode", "sideways")
-    s.setValue("noteNames/clefs", ["treble", "tenor"])  # QSettings may give a list back
+    s.setValue("noteNames/clefs", ["treble", "tenor", "sideways"])  # QSettings may give a list back
     s.setValue("noteNames/keys", "99,abc,-9")  # none of them is a real key
     s.setValue("noteNames/values", "zigzag")
     s.setValue("noteNames/naming", "klingon")
@@ -43,7 +42,7 @@ def test_bad_saved_note_name_settings_fall_back_to_sensible_ones():
     settings.note_names.__init__()
     sp.load_note_names()
     cfg = settings.note_names
-    assert cfg.mode == "single" and cfg.clefs == {"treble", "tenor"}
+    assert cfg.clefs == {"treble", "tenor"}
     assert cfg.key_signatures == {0} and cfg.note_values == {"whole"} and cfg.naming == "letters"
     assert cfg.ranges == {"alto": (20, 30)}  # only the one well-formed range inside the limits is kept
 
@@ -223,54 +222,38 @@ def test_the_menu_opens_each_page_and_back_returns_to_the_menu(names):
     back(names)
 
 
-def test_choosing_the_grand_staff_or_single_clefs(names):
+def test_choosing_the_clefs_including_the_grand_staff(names):
     changes = watch(names)
     cfg = settings.note_names
-    names.grand.setChecked(True)
-    assert cfg.mode == "grand" and all(not b.isEnabled() for b in names.boxes.values())  # a grand staff has no clef choice
-    names.single.setChecked(True)
-    assert cfg.mode == "single" and any(b.isEnabled() for b in names.boxes.values())
-    for clef in ("alto", "tenor", "bass"):
+    assert not hasattr(names, "single") and set(names.boxes) == set(settings.RANGE_KEYS)  # no switch: just the clefs
+    names.boxes["grand"].setChecked(True)
+    assert cfg.clefs == {"treble", "bass", "grand"} and store().value("noteNames/clefs") == "treble,bass,grand"
+    names.boxes["soprano"].setChecked(True)
+    for clef in ("treble", "bass", "grand"):
         names.boxes[clef].setChecked(False)
-    assert cfg.clefs == {"treble"} and not names.boxes["treble"].isEnabled()  # the last clef stays
-    assert changes and store().value("noteNames/clefs") == "treble"
-    assert names._active_keys() == ["treble"]
-
-
-def test_the_key_values_and_names_pages_change_the_settings(names):
-    changes = watch(names)
-    cfg = settings.note_names
-    names.key_boxes[3].setChecked(True)
-    assert 3 in cfg.key_signatures and store().value("noteNames/keys")
-    names.value_boxes["quarter"].setChecked(True)
-    names.value_boxes["whole"].setChecked(False)
-    assert cfg.note_values == {"quarter"} and not names.value_boxes["quarter"].isEnabled()
-    names.naming_radios["solfege"].setChecked(True)
-    assert cfg.naming == "solfege"
-    names.accidentals_row.click()
-    assert cfg.accidentals and store().value("noteNames/accidentals") == "true"
-    names.accidentals_row.click()
-    assert not cfg.accidentals
-    assert len(changes) >= 6
-
-
-def test_the_range_page_lists_the_active_staves_and_resets(names):
-    cfg = settings.note_names
-    names.range_row.click()
-    slide()
-    assert list(names.range_editors) == cfg.active_clefs()
-    editor = names.range_editors["treble"]
-    editor.low_up.click()
-    assert cfg.ranges["treble"] == (editor.low, editor.high) and store().value("noteNames/ranges")
-    reset = next(b for b in names.range_body.findChildren(QPushButton) if b.text() == "Reset to defaults")
-    reset.click()
-    assert cfg.ranges == {} and names.range_editors["treble"].low == settings.DEFAULT_RANGES["treble"][0]
+    assert cfg.clefs == {"soprano"} and not names.boxes["soprano"].isEnabled()  # the last clef stays
+    assert changes and store().value("noteNames/clefs") == "soprano"
     back(names)
     assert names.range_pictures.items  # the menu's summary follows the settings
 
 
+def test_a_grand_staff_saved_by_an_older_version_becomes_the_grand_staff_clef():
+    s = store()
+    s.setValue("noteNames/mode", "grand")
+    s.setValue("noteNames/clefs", "treble,bass")  # the clefs an older version kept for when "single clef" was chosen
+    settings.note_names.__init__()
+    sp.load_note_names()
+    assert settings.note_names.clefs == {"grand"} and s.value("noteNames/mode") is None
+    sp.save_note_names()  # saved the new way, the old key is not written again
+    settings.note_names.__init__()
+    sp.load_note_names()
+    assert settings.note_names.clefs == {"grand"} and s.value("noteNames/mode") is None
+
+
 def test_the_summaries_follow_the_grand_staff(names):
-    names.grand.setChecked(True)
+    names.boxes["grand"].setChecked(True)
+    names.boxes["treble"].setChecked(False)
+    names.boxes["bass"].setChecked(False)
     names._refresh_summaries()
     assert [clef for clef, _, _ in names.range_pictures.items] == ["grand"]
     names.range_row.click()

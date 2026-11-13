@@ -57,8 +57,7 @@ def diatonic_name(d: int) -> str:
 
 @dataclass
 class NoteNameSettings:
-    mode: str = "single"  # "grand" = grand staff; "single" = random pick among `clefs`
-    clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})
+    clefs: set[str] = field(default_factory=lambda: {"treble", "bass"})  # any of RANGE_KEYS, so "grand" is allowed
     ranges: dict[str, tuple[int, int]] = field(default_factory=dict)  # overrides of DEFAULT_RANGES
     key_signatures: set[int] = field(default_factory=lambda: {0})  # sharps (+) / flats (-) of the keys to use
     note_values: set[str] = field(default_factory=lambda: {"whole"})
@@ -67,7 +66,7 @@ class NoteNameSettings:
 
     def active_clefs(self) -> list[str]:
         """Clefs to draw from, in canonical order; falls back to treble if none are checked."""
-        return [c for c in CLEFS if c in self.clefs] or ["treble"]
+        return [c for c in RANGE_KEYS if c in self.clefs] or ["treble"]
 
     def active_keys(self) -> list[int]:
         return sorted(self.key_signatures) or [0]

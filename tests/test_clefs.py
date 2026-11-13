@@ -67,7 +67,7 @@ def test_a_staff_with_notes_and_a_key_signature_draws_in_every_clef(app, clef):
 def test_the_exercises_ask_on_the_new_clefs(clef):
     rng = random.Random(4)
     cfg = settings.note_names
-    cfg.mode, cfg.clefs = "single", {clef}
+    cfg.clefs = {clef}
     lo, hi = cfg.range_for(clef)
     for _ in range(60):
         q = NoteNames().generate(rng)
@@ -108,8 +108,7 @@ def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(app, p
         QApplication.processEvents()
     QApplication.processEvents()
     boxes = panel.boxes
-    assert set(boxes) == set(settings.RANGE_KEYS if expect_grand and panel_class is sp.NoteConstructionSettingsPanel
-                             else settings.CLEFS)
+    assert set(boxes) == set(settings.RANGE_KEYS if expect_grand else settings.CLEFS)
     assert all(isinstance(b, QCheckBox) and b.text() == CLEF_NAMES[c] for c, b in boxes.items())
     order = [c for g in settings.CLEF_GROUPS for c in g if c in boxes]
     ys = [boxes[c].mapTo(panel, boxes[c].rect().topLeft()).y() for c in order]
@@ -117,5 +116,4 @@ def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(app, p
     assert ys == sorted(ys) and len(set(ys)) == len(ys) and len(xs) == 1  # a single column, in group order
     gaps = [b - a for a, b in zip(ys, ys[1:])]
     assert max(gaps) > min(gaps)  # a larger gap where one group ends and the next begins
-    if panel_class is sp.NoteNameSettingsPanel:
-        assert panel.grand.text() == "Grand staff"
+    assert ("grand" in boxes) == expect_grand and not hasattr(panel, "single")  # no "Single clef" switch

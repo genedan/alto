@@ -56,12 +56,13 @@ def load_note_names() -> None:
     """Load saved note-name settings into the shared settings object."""
     s = store()
     cfg = settings.note_names
-    mode = s.value("noteNames/mode", cfg.mode)
-    cfg.mode = mode if mode in ("grand", "single") else "single"
     saved = s.value("noteNames/clefs")
     if saved is not None:
         text = saved if isinstance(saved, str) else ",".join(saved)
-        cfg.clefs = {c for c in text.split(",") if c in CLEFS}
+        cfg.clefs = {c for c in text.split(",") if c in settings.RANGE_KEYS}
+    if s.value("noteNames/mode") == "grand":  # an older version had a switch between the grand staff and single clefs
+        cfg.clefs = {"grand"}
+    s.remove("noteNames/mode")
     keys = str(s.value("noteNames/keys", "") or "")
     if keys:
         cfg.key_signatures = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or {0}
@@ -85,8 +86,7 @@ def load_note_names() -> None:
 def save_note_names() -> None:
     s = store()
     cfg = settings.note_names
-    s.setValue("noteNames/mode", cfg.mode)
-    s.setValue("noteNames/clefs", ",".join(c for c in CLEFS if c in cfg.clefs))
+    s.setValue("noteNames/clefs", ",".join(c for c in settings.RANGE_KEYS if c in cfg.clefs))
     s.setValue("noteNames/keys", ",".join(str(k) for k in cfg.active_keys()))
     s.setValue("noteNames/values", ",".join(cfg.active_values()))
     s.setValue("noteNames/naming", cfg.naming)
@@ -521,31 +521,18 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         mlay.addStretch()
 
         # layer 2: clefs
-        self.grand = QRadioButton()  # labelled with a picture of the grand staff
-        _label_with_clef(self.grand, "grand")
-        self.single = QRadioButton("Single clef")
-        group = QButtonGroup(self)
-        group.addButton(self.grand)
-        group.addButton(self.single)
-        self.boxes = {c: _clef_box(c) for c in CLEFS}
+        self.boxes = {c: _clef_box(c) for c in settings.RANGE_KEYS}
         body = QWidget()
         blay = QVBoxLayout(body)
         blay.setContentsMargins(0, 0, 0, 0)
-        blay.addWidget(self.grand)
-        rule = QFrame()
-        rule.setFrameShape(QFrame.Shape.HLine)
-        rule.setStyleSheet("color: palette(mid);")
-        blay.addWidget(rule)
-        blay.addWidget(self.single)
         hint = QLabel("One of the checked clefs is picked at random.")
         hint.setWordWrap(True)
-        hint.setStyleSheet("margin-left: 24px; color: gray;")
+        hint.setStyleSheet("color: gray;")
         blay.addWidget(hint)
         for c, box in self.boxes.items():
             box.setChecked(c in cfg.clefs)
         blay.addWidget(_clef_list(self.boxes))
-        (self.grand if cfg.mode == "grand" else self.single).setChecked(True)
-        self.grand.toggled.connect(self._clefs_edited)
+        _guard_last(list(self.boxes.values()))  # the last checked clef can't be unchecked
         for box in self.boxes.values():
             box.toggled.connect(self._clefs_edited)
         clefs_page = _subpage("Clefs", body, lambda: self._go(0))
@@ -605,7 +592,6 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
 
         for page in (menu, clefs_page, range_page, keys_page, values_page, names_page):
             self.stack.addWidget(page)
-        self._refresh_enabled()
         _guard_last(list(self.key_boxes.values()))
         _guard_last(list(self.value_boxes.values()))
         self._refresh_summaries()
@@ -621,11 +607,11 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.stack.slide_to(index)
 
     def _active_keys(self) -> list[str]:
-        return ["grand"] if self.cfg.mode == "grand" else self.cfg.active_clefs()
+        return self.cfg.active_clefs()
 
     def _refresh_summaries(self):
         keys = self._active_keys()
-        self.clef_pictures.set_clefs(["grand"] if self.cfg.mode == "grand" else keys)
+        self.clef_pictures.set_clefs(keys)
         self.range_pictures.set_items([(k, *self.cfg.range_for(k)) for k in keys])
         self.range_row.fit()
         _show_keys(self.keys_row, self.keys_diagram, True, set(self.cfg.active_keys()))
@@ -633,17 +619,9 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.name_picture.set_naming(self.cfg.naming)
 
     # clefs page
-    def _refresh_enabled(self):
-        single = self.single.isChecked()
-        checked = [b for b in self.boxes.values() if b.isChecked()]
-        for box in self.boxes.values():
-            # The last checked clef can't be unchecked: single mode needs one to pick from.
-            box.setEnabled(single and not (len(checked) == 1 and box.isChecked()))
-
     def _clefs_edited(self):
-        self.cfg.mode = "single" if self.single.isChecked() else "grand"
         self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
-        self._refresh_enabled()
+        _guard_last(list(self.boxes.values()))  # the last checked clef can't be unchecked
         save_note_names()
         self.changed.emit()
 

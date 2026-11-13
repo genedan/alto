@@ -66,19 +66,21 @@ def test_note_names_respects_clef_settings():
     from alto.exercises.library import NoteNames
 
     cfg = settings.note_names
-    old = (cfg.mode, set(cfg.clefs))
+    old = set(cfg.clefs)
     try:
         rng = random.Random(2)
-        cfg.mode, cfg.clefs = "single", {"alto", "tenor"}
+        cfg.clefs = {"alto", "tenor"}
         assert {NoteNames().generate(rng).clef for _ in range(100)} == {"alto", "tenor"}
-        cfg.mode = "grand"
+        cfg.clefs = {"grand"}
         qs = [NoteNames().generate(rng) for _ in range(100)]
         assert {q.clef for q in qs} == {"grand"}
         assert all(q.answer in q.choices for q in qs)
-        cfg.mode, cfg.clefs = "single", set()
+        cfg.clefs = {"grand", "baritone"}  # the grand staff is picked at random like any other clef
+        assert {NoteNames().generate(rng).clef for _ in range(100)} == {"grand", "baritone"}
+        cfg.clefs = set()
         assert NoteNames().generate(rng).clef == "treble"  # empty selection falls back
     finally:
-        cfg.mode, cfg.clefs = old
+        cfg.clefs = old
 
 
 def test_note_names_respects_range_settings():
@@ -87,15 +89,15 @@ def test_note_names_respects_range_settings():
     from alto.theory.pitch import Note
 
     cfg = settings.note_names
-    old = (cfg.mode, set(cfg.clefs), dict(cfg.ranges))
+    old = (set(cfg.clefs), dict(cfg.ranges))
     try:
-        cfg.mode, cfg.clefs = "single", {"treble"}
+        cfg.clefs = {"treble"}
         cfg.ranges = {"treble": (Note(4, 0).diatonic, Note(4, 2).diatonic)}  # C4..E4
         rng = random.Random(3)
         got = {NoteNames().generate(rng).staff[0][0].name for _ in range(200)}
         assert got == {"C", "D", "E"}
     finally:
-        cfg.mode, cfg.clefs, cfg.ranges = old
+        cfg.clefs, cfg.ranges = old
 
 
 def test_note_names_key_signature_values_and_naming():
@@ -104,9 +106,9 @@ def test_note_names_key_signature_values_and_naming():
     from alto.theory.pitch import key_accidental
 
     cfg = settings.note_names
-    old = (cfg.mode, set(cfg.clefs), dict(cfg.ranges), set(cfg.key_signatures), set(cfg.note_values), cfg.naming, cfg.accidentals)
+    old = (set(cfg.clefs), dict(cfg.ranges), set(cfg.key_signatures), set(cfg.note_values), cfg.naming, cfg.accidentals)
     try:
-        cfg.mode, cfg.clefs, cfg.ranges = "single", {"treble"}, {}
+        cfg.clefs, cfg.ranges = {"treble"}, {}
         cfg.key_signatures, cfg.note_values = {2, -3}, {"half", "eighth"}
         rng = random.Random(4)
         for naming, accidentals in (("letters", False), ("solfege", True)):
@@ -123,7 +125,7 @@ def test_note_names_key_signature_values_and_naming():
                 assert all(c[:2] in ("Do", "Re", "Mi", "Fa", "So", "La", "Si") for q in qs for c in q.choices)
         assert {q.key for q in qs} == {2, -3}
     finally:
-        (cfg.mode, cfg.clefs, cfg.ranges, cfg.key_signatures, cfg.note_values, cfg.naming, cfg.accidentals) = old
+        (cfg.clefs, cfg.ranges, cfg.key_signatures, cfg.note_values, cfg.naming, cfg.accidentals) = old
 
 
 def test_keyboard_exercise():

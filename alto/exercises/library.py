@@ -50,7 +50,7 @@ class NoteNames(Exercise):
 
     def generate(self, rng):
         cfg = settings.note_names
-        clef = "grand" if cfg.mode == "grand" else rng.choice(cfg.active_clefs())
+        clef = rng.choice(cfg.active_clefs())
         key = rng.choice(cfg.active_keys())
         value = rng.choice(cfg.active_values())
         with_accidentals = self.accidentals or cfg.accidentals
