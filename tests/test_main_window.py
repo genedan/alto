@@ -90,6 +90,20 @@ def test_the_window_starts_on_the_home_screen_with_a_list_of_exercises(window):
     assert window.profile_action.text() == "Profile: Ada…"
 
 
+def test_each_exercise_in_the_list_sits_under_its_own_category_heading(window):
+    heading = None
+    shown = []
+    for i in range(window.nav.count()):
+        entry = window.nav.item(i)
+        cls = entry.data(Qt.ItemDataRole.UserRole)
+        if cls is None:
+            heading = entry.text()
+            shown.append(heading)
+        else:
+            assert heading == cls.category.upper(), f"{cls.name} is under {heading}"
+    assert len(shown) == len(set(shown))  # each heading appears once
+
+
 def test_without_a_profile_nothing_is_recorded_and_the_history_buttons_are_hidden(app):
     w = MainWindow(None)
     w.show()

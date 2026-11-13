@@ -113,7 +113,13 @@ REGISTRY: list[type[Exercise]] = []
 
 
 def register(cls: type[Exercise]) -> type[Exercise]:
-    REGISTRY.append(cls)
+    """Add an exercise to REGISTRY, next to the others of its category. The categories come in the order they first
+    appear, so the home screen and the exercise list can show each category once, with all its exercises under it."""
+    last = max((i for i, other in enumerate(REGISTRY) if other.category == cls.category), default=None)
+    if last is None:
+        REGISTRY.append(cls)
+    else:
+        REGISTRY.insert(last + 1, cls)
     return cls
 
 
