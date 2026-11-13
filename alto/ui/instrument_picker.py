@@ -11,8 +11,17 @@ Examples
 
 from __future__ import annotations
 
-from PySide6.QtCore import QEvent, QSize, Qt, Signal
-from PySide6.QtGui import QColor, QFont, QPalette
+from PySide6.QtCore import (
+    QEvent,
+    QSize,
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QPalette,
+)
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
@@ -27,10 +36,22 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..audio import INSTRUMENT_BY_KEY, Instrument, instrument_groups, sounds
-from ..instrument_info import FAMILY_SUMMARY, INFO, coverage
-from .colors import blend_name
-from .store import store
+from alto.audio import (
+    INSTRUMENT_BY_KEY,
+    Instrument,
+    instrument_groups,
+    sounds,
+)
+from alto.instrument_info import (
+    FAMILY_SUMMARY,
+    INFO,
+    coverage,
+)
+from alto.ui.colors import blend_name
+from alto.ui.store import (
+    store,
+    text_value,
+)
 
 PREVIEW = (60, 64, 67)  # a C major arpeggio, to hear an instrument
 
@@ -52,7 +73,7 @@ def load_instrument() -> None:
     >>> sounds.instrument
     'piano'
     """
-    key = str(store().value("audio/instrument", "piano"))
+    key = text_value(store(), key="audio/instrument", default="piano")
     sounds.instrument = key if key in INSTRUMENT_BY_KEY else "piano"
 
 
@@ -191,7 +212,9 @@ class InstrumentPicker(QWidget):
             item.setData(Qt.ItemDataRole.UserRole, name)
             item.setSizeHint(QSize(0, 34))
             self.list.addItem(item)
+        # noinspection PyNoneFunctionAssignment
         self.list.currentItemChanged.connect(lambda cur, _prev: cur and self.show_group(cur.data(Qt.ItemDataRole.UserRole)))
+        # noinspection PyShadowingNames
         self.list.itemDoubleClicked.connect(lambda item: self.use(self._default_key(item.data(Qt.ItemDataRole.UserRole))))
 
         # The summary page.
@@ -396,10 +419,10 @@ class InstrumentPicker(QWidget):
 
         Examples
         --------
-        >>> layout = QVBoxLayout()
-        >>> layout.addWidget(QLabel("one"))
-        >>> InstrumentPicker._clear(layout)
-        >>> layout.count()
+        >>> layout_ = QVBoxLayout()
+        >>> layout_.addWidget(QLabel("one"))
+        >>> InstrumentPicker._clear(layout_)
+        >>> layout_.count()
         0
         """
         while layout.count():
@@ -438,8 +461,8 @@ class InstrumentPicker(QWidget):
         Examples
         --------
         >>> picker = InstrumentPicker()
-        >>> chip = picker._chip("In use", kind="good")
-        >>> chip.text()
+        >>> chip_ = picker._chip("In use", kind="good")
+        >>> chip_.text()
         'In use'
         """
         t = tokens(self)
@@ -730,6 +753,7 @@ class InstrumentPicker(QWidget):
         self.show_group(self._group_of(key))
         self.chosen.emit(key)
 
+    # noinspection PyMethodMayBeStatic
     def preview(self, key: str) -> None:
         """
         Play a short C major arpeggio in an instrument, even if sound is muted.

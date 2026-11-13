@@ -3,13 +3,23 @@
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING
 
+from alto import settings
 from alto.exercises import REGISTRY
-from alto.exercises.base import Exercise, Question
-
-if TYPE_CHECKING:
-    from alto.theory.pitch import Note
+from alto.exercises.base import (
+    Exercise,
+    Question,
+    register,
+)
+from alto.exercises.library import (
+    KeyboardNotes,
+    NoteConstruction,
+    NoteNames,
+)
+from alto.theory.pitch import (
+    Note,
+    key_accidental,
+)
 
 
 def keyboard_of(q: Question) -> Note:
@@ -62,7 +72,6 @@ def test_registering_an_exercise_puts_it_beside_the_others_of_its_category() -> 
     """
     Check that registering an exercise puts it beside the others of its category.
     """
-    from alto.exercises.base import register
 
     class Extra(Exercise):
         """
@@ -124,9 +133,6 @@ def test_note_names_respects_clef_settings() -> None:
     """
     Test note names respects clef settings.
     """
-    from alto import settings
-    from alto.exercises.library import NoteNames
-
     cfg = settings.note_names
     old = set(cfg.clefs)
     try:
@@ -149,10 +155,6 @@ def test_note_names_respects_range_settings() -> None:
     """
     Test note names respects range settings.
     """
-    from alto import settings
-    from alto.exercises.library import NoteNames
-    from alto.theory.pitch import Note
-
     cfg = settings.note_names
     old = (set(cfg.clefs), dict(cfg.ranges))
     try:
@@ -169,10 +171,6 @@ def test_note_names_key_signature_values_and_naming() -> None:
     """
     Check that note names key signature values and naming.
     """
-    from alto import settings
-    from alto.exercises.library import NoteNames
-    from alto.theory.pitch import key_accidental
-
     cfg = settings.note_names
     old = (
         set(cfg.clefs),
@@ -227,9 +225,6 @@ def test_keyboard_exercise() -> None:
     """
     Test keyboard exercise.
     """
-    from alto import settings
-    from alto.exercises.library import KeyboardNotes
-
     cfg = settings.keyboard
     old = cfg.black_keys
     try:
@@ -254,9 +249,6 @@ def test_keyboard_range_and_octave_answers() -> None:
     """
     Test keyboard range and octave answers.
     """
-    from alto import settings
-    from alto.exercises.library import KeyboardNotes
-
     cfg = settings.keyboard
     old = (
         cfg.black_keys,
@@ -296,9 +288,6 @@ def test_keyboard_key_signature_requires_the_right_spelling() -> None:
     """
     Check that keyboard key signature requires the right spelling.
     """
-    from alto import settings
-    from alto.exercises.library import KeyboardNotes
-
     cfg = settings.keyboard
     old = (
         cfg.key_signature,
@@ -345,10 +334,6 @@ def test_note_construction() -> None:
     """
     Test note construction.
     """
-    from alto import settings
-    from alto.exercises.library import NoteConstruction
-    from alto.theory.pitch import Note
-
     cfg = settings.construction
     old = (set(cfg.clefs), cfg.accidentals)
     try:
@@ -380,9 +365,6 @@ def test_note_construction_grand_staff() -> None:
     """
     Test note construction grand staff.
     """
-    from alto import settings
-    from alto.exercises.library import NoteConstruction
-
     cfg = settings.construction
     old = (set(cfg.clefs), cfg.accidentals)
     try:
@@ -405,10 +387,6 @@ def test_note_construction_key_signature() -> None:
     """
     Test note construction key signature.
     """
-    from alto import settings
-    from alto.exercises.library import NoteConstruction
-    from alto.theory.pitch import key_accidental
-
     cfg = settings.construction
     old = (
         set(cfg.clefs),

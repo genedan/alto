@@ -5,19 +5,32 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QDialog,
+    QLabel,
+    QPushButton,
+)
+
 from alto import settings
 from alto.exercises.base import Question
 from alto.learning import Database
 from alto.theory.pitch import Note
 from alto.ui import profile_dialog
-from alto.ui.profile_dialog import ProfileDialog, remember_profile, startup_profile
+from alto.ui.profile_dialog import (
+    ProfileDialog,
+    remember_profile,
+    startup_profile,
+)
 from alto.ui.question_preview import QuestionPreview
+from alto.ui.staff import StaffWidget
 from alto.ui.store import store
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QLabel, QPushButton
 
 if TYPE_CHECKING:
-    from PySide6.QtWidgets import QApplication, QWidget
+    from PySide6.QtWidgets import (
+        QApplication,
+        QWidget,
+    )
 
 # -- choosing who is practising -------------------------------------------------------------------------------------
 
@@ -379,8 +392,6 @@ def test_the_staff_in_the_preview_is_capped_like_the_one_in_the_exercise(app: QA
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import StaffWidget
-
     dialog = QuestionPreview(
         "Note",
         question=Question(

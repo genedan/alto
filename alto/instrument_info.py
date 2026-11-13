@@ -13,9 +13,12 @@ Examples
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import KW_ONLY, dataclass
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+)
 
-from .settings import key_name
+from alto.settings import key_name
 
 IOWA = "University of Iowa Electronic Music Studios, Musical Instrument Samples"
 IOWA_TERMS = "Freely available, and may be downloaded and used for any projects, without restrictions (the studio's statement)."

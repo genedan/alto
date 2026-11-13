@@ -14,16 +14,38 @@ Examples
 
 from __future__ import annotations
 
-from PySide6.QtCore import QPoint, QPointF, QRectF, Qt
-from PySide6.QtGui import QColor, QFont, QIcon, QPainter, QPaintEvent, QPalette, QPen, QPixmap, QRegion
+from PySide6.QtCore import (
+    QPoint,
+    QPointF,
+    QRectF,
+    Qt,
+)
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QIcon,
+    QPainter,
+    QPaintEvent,
+    QPalette,
+    QPen,
+    QPixmap,
+    QRegion,
+)
 from PySide6.QtWidgets import QWidget
 
-from ..settings import SOLFEGE
-from ..theory.pitch import MAJOR_KEYS, Note
-from . import engraving
-from .colors import blend
-from .notation import current as current_style
-from .staff import BOTTOM_LINE, MIDDLE_C, StaffWidget
+from alto.settings import SOLFEGE
+from alto.theory.pitch import (
+    MAJOR_KEYS,
+    Note,
+)
+from alto.ui import engraving
+from alto.ui.colors import blend
+from alto.ui.notation import current as current_style
+from alto.ui.staff import (
+    BOTTOM_LINE,
+    MIDDLE_C,
+    StaffWidget,
+)
 
 CLEF_NAMES = {
     "treble": "Treble",
@@ -126,8 +148,8 @@ class _Picture(QWidget):
 
         Examples
         --------
-        >>> ink, line = _Picture()._colours()
-        >>> ink.isValid() and line.isValid()
+        >>> ink, line_ = _Picture()._colours()
+        >>> ink.isValid() and line_.isValid()
         True
         """
         pal = self.palette()
@@ -148,7 +170,8 @@ class _Picture(QWidget):
 
         Examples
         --------
-        >>> p = picture._painter()  # doctest: +SKIP
+        >>> # noinspection PyProtectedMember
+        >>> p_ = NamePicture()._painter()  # doctest: +SKIP
         """
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -157,6 +180,7 @@ class _Picture(QWidget):
         self._dev = abs(p.deviceTransform().m11()) or 1.0  # device pixels per picture unit
         return p
 
+    # noinspection DuplicatedCode
     def _hline(
         self,
         p: QPainter,
@@ -214,6 +238,7 @@ class _Picture(QWidget):
         )
         p.drawLine(QPointF(x0, y), QPointF(x1, y))
 
+    # noinspection DuplicatedCode
     def _vline(
         self,
         p: QPainter,
@@ -400,6 +425,7 @@ class ClefPictures(_Picture):
         self.clefs: list[str] = []
         self.set_clefs(clefs or [])
 
+    # noinspection DuplicatedCode
     def set_clefs(self, clefs: list[str]) -> None:
         """
         Show different clefs and size the picture for them.
@@ -487,6 +513,7 @@ class ClefPictures(_Picture):
                 gap=self.GAP,
                 colour=line,
             )
+            # noinspection PyProtectedMember
             StaffWidget._draw_clef(
                 p,
                 clef=clef,
@@ -542,6 +569,7 @@ class ClefPictures(_Picture):
                 gap=gap,
                 colour=line,
             )
+            # noinspection PyProtectedMember
             StaffWidget._draw_clef(
                 p,
                 clef=clef,
@@ -559,6 +587,7 @@ class ClefPictures(_Picture):
             colour=line,
             width=0.65,
         )
+        # noinspection PyProtectedMember
         StaffWidget._brace(
             p,
             x=x + 4,
@@ -624,6 +653,7 @@ class ValuePictures(_Picture):
         self.values: list[str] = []
         self.set_values(values or [])
 
+    # noinspection DuplicatedCode
     def set_values(self, values: list[str]) -> None:
         """
         Show different note values and size the picture for them.
@@ -696,6 +726,7 @@ class ValuePictures(_Picture):
             wide = value in ("breve", "whole")  # the heads without stems are wider, so centre them in the box
             y = self.H / 2 if wide and self.centre_stemless else self.HEAD_Y
             # drawn by the same routine as the staff, so the symbol matches the one in the exercise
+            # noinspection PyProtectedMember
             StaffWidget._note(
                 p,
                 x=x + (self.W / 2 if wide else self.HEAD_X),
@@ -1033,6 +1064,7 @@ class RangePictures(_Picture):
                 width=0.65,
             )
         # a whole note, a little larger than the staff gap so it reads
+        # noinspection PyProtectedMember
         StaffWidget._note(
             p,
             x=x,
@@ -1083,6 +1115,7 @@ class RangePictures(_Picture):
                         gap=gap,
                         colour=line,
                     )
+                    # noinspection PyProtectedMember
                     StaffWidget._draw_clef(
                         p,
                         clef=name,
@@ -1100,6 +1133,7 @@ class RangePictures(_Picture):
                     colour=line,
                     width=0.65,
                 )
+                # noinspection PyProtectedMember
                 StaffWidget._brace(
                     p,
                     x=x + 5,
@@ -1120,6 +1154,7 @@ class RangePictures(_Picture):
                     gap=gap,
                     colour=line,
                 )
+                # noinspection PyProtectedMember
                 StaffWidget._draw_clef(
                     p,
                     clef=clef,
@@ -1192,6 +1227,7 @@ class NamePicture(_Picture):
         'letters'
         """
         super().__init__(scale, parent=parent)
+        self.naming = naming
         self._fit(self.W, height=self.H)
         self.set_naming(naming)
 
@@ -1269,6 +1305,7 @@ class NamePicture(_Picture):
             gap=gap,
             colour=line,
         )
+        # noinspection PyProtectedMember
         StaffWidget._draw_clef(
             p,
             clef="treble",
@@ -1295,6 +1332,7 @@ class NamePicture(_Picture):
                     colour=text,
                     width=0.65,
                 )
+            # noinspection PyProtectedMember
             StaffWidget._note(
                 p,
                 x=x,

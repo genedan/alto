@@ -10,6 +10,9 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 import pytest
 
 pytest.importorskip("PySide6")
+from PySide6.QtGui import QPixmap
+
+from alto.settings import NOTE_VALUES
 from alto.theory.pitch import Note
 from alto.ui.staff import BOTTOM_LINE
 from alto.ui.staff_input import StaffInput
@@ -99,9 +102,6 @@ def test_every_staff_draws_clefs_notes_and_key_signatures(app: QApplication) -> 
     app : QApplication
         The shared Qt application.
     """
-    from alto.settings import NOTE_VALUES
-    from PySide6.QtGui import QPixmap
-
     for clef in (
         "treble",
         "bass",

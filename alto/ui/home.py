@@ -13,12 +13,27 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtGui import QPalette, QResizeEvent
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
+from PySide6.QtCore import (
+    QSize,
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import (
+    QPalette,
+    QResizeEvent,
+)
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 
-from ..exercises.base import Exercise
-from . import icons
+from alto.exercises.base import Exercise
+from alto.ui import icons
 
 # Icon for each exercise, keyed by class name.
 EXERCISE_ICONS = {

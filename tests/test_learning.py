@@ -2,13 +2,25 @@
 
 from __future__ import annotations
 
+import os
 import random
 from typing import TYPE_CHECKING
 
 import pytest
-from alto.exercises.base import Exercise, Question
-from alto.learning import Database, Learner, scheduler
+from PySide6.QtWidgets import QApplication
+
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.exercises.library import KeySignatures
+from alto.learning import (
+    Database,
+    Learner,
+    scheduler,
+)
 from alto.theory.pitch import Note
+from alto.ui.exercise_view import ExerciseView
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -484,12 +496,7 @@ def test_exercise_view_records_each_answer_with_its_timing() -> None:
     """
     Check that exercise view records each answer with its timing.
     """
-    import os
-
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-    from alto.exercises.library import KeySignatures
-    from alto.ui.exercise_view import ExerciseView
-    from PySide6.QtWidgets import QApplication
 
     _app = QApplication.instance() or QApplication([])  # kept alive for the widgets below
     learner, _ = make_learner()

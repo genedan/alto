@@ -3,8 +3,15 @@
 import json
 import random
 
-from alto.exercises.base import Exercise, Question
-from alto.learning import Database, Learner, stats
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.learning import (
+    Database,
+    Learner,
+    stats,
+)
 from alto.learning.database import ItemRecord
 from alto.theory.pitch import Note
 

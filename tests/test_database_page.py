@@ -6,20 +6,34 @@ import json
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtCore import (
+    QModelIndex,
+    Qt,
+)
+from PySide6.QtGui import (
+    QKeySequence,
+    QShortcut,
+)
+from PySide6.QtTest import QSignalSpy
+
 from alto.exercises import REGISTRY
 from alto.exercises.base import Question
 from alto.learning import Learner
 from alto.learning.database import ItemRecord
 from alto.ui import database_page
-from alto.ui.database_page import ROW_ROLE, DatabasePage, RowsModel
-from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QKeySequence, QShortcut
-from PySide6.QtTest import QSignalSpy
+from alto.ui.database_page import (
+    ROW_ROLE,
+    DatabasePage,
+    RowsModel,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from PySide6.QtWidgets import QApplication, QWidget
+    from PySide6.QtWidgets import (
+        QApplication,
+        QWidget,
+    )
 
 
 def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app: QApplication) -> None:

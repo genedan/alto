@@ -17,9 +17,16 @@ import json
 import random
 import time
 
-from ..exercises.base import Exercise, Question
-from . import scheduler
-from .database import Database, ItemRecord, Profile
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.learning import scheduler
+from alto.learning.database import (
+    Database,
+    ItemRecord,
+    Profile,
+)
 
 
 class Learner:
@@ -67,8 +74,8 @@ class Learner:
 
         Examples
         --------
-        >>> db = Database()
-        >>> learner = Learner(db, profile=db.add_profile("Ada"))
+        >>> database = Database()
+        >>> learner = Learner(database, profile=database.add_profile("Ada"))
         >>> learner.profile.name
         'Ada'
         """
@@ -179,6 +186,7 @@ class Learner:
         >>> learner.record(NoteNames(), question=q, answer=q.answer, correct=True, attempt_no=2, seconds=1.0)
         >>> [row["correct"] for row in db.attempts(learner.profile.id)]
         [0, 1]
+        >>> # noinspection PyUnresolvedReferences
         >>> db.get_item(learner.profile.id, exercise="NoteNames", item_key=q.item_key()).wrong_attempts
         1
         """

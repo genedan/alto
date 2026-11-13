@@ -3,23 +3,55 @@
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING, Any, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    cast,
+)
 
 import pytest
+from PySide6.QtCore import (
+    QSize,
+    Qt,
+)
+from PySide6.QtGui import QKeySequence
+from PySide6.QtTest import (
+    QSignalSpy,
+    QTest,
+)
+from PySide6.QtWidgets import (
+    QApplication,
+    QDialog,
+    QLabel,
+    QListWidget,
+)
+
+from alto import __main__ as entry
 from alto.exercises import REGISTRY
-from alto.exercises.base import Exercise, Question
-from alto.learning import Database, Learner
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.learning import (
+    Database,
+    Learner,
+)
 from alto.ui import main_window as mw
 from alto.ui.exercise_view import ExerciseView
-from alto.ui.home import CARD_W, EXERCISE_ICONS, ExerciseCard, HomePage
+from alto.ui.home import (
+    CARD_W,
+    EXERCISE_ICONS,
+    ExerciseCard,
+    HomePage,
+)
 from alto.ui.main_window import MainWindow
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QKeySequence
-from PySide6.QtTest import QSignalSpy, QTest
-from PySide6.QtWidgets import QApplication, QDialog, QLabel, QListWidget
+from alto.ui.store import store
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import (
+        Callable,
+        Iterator,
+    )
     from pathlib import Path
 
     from PySide6.QtWidgets import QWidget
@@ -196,10 +228,10 @@ def test_each_exercise_in_the_list_sits_under_its_own_category_heading(window: M
     heading = None
     shown = []
     for i in range(window.nav.count()):
-        entry = window.nav.item(i)
-        cls = entry.data(Qt.ItemDataRole.UserRole)
+        row = window.nav.item(i)
+        cls = row.data(Qt.ItemDataRole.UserRole)
         if cls is None:
-            heading = entry.text()
+            heading = row.text()
             shown.append(heading)
         else:
             assert heading == cls.category.upper(), f"{cls.name} is under {heading}"
@@ -273,7 +305,6 @@ def test_the_exercise_list_can_be_collapsed_and_the_choice_is_remembered(window:
     settle()
     assert window.sidebar_width() > 0 and window._sidebar_pref
     assert abs(window.sidebar_width() - open_width) < 60
-    from alto.ui.store import store
 
     assert str(store().value("ui/sidebarCollapsed")) == "false"
     window.splitter.setSizes([0, 800])  # dragging the handle shut counts as the user's choice too
@@ -393,7 +424,6 @@ def test_switching_profile_changes_who_is_practising_and_goes_home(
     # noinspection PyUnresolvedReferences
     assert window.learner.profile == ben and window.profile_action.text() == "Profile: Ben…"
     assert window.stack.currentWidget() is window.home
-    from alto.ui.store import store
 
     assert int(store().value("profile/last")) == ben.id
 
@@ -602,8 +632,8 @@ def test_the_exercise_list_item_is_a_list_widget_entry(window: MainWindow) -> No
         The main window under test.
     """
     assert isinstance(window.nav, QListWidget) and QSignalSpy(window.nav.itemClicked).isValid()
-    entry = next(window.nav.item(i) for i in range(window.nav.count()) if window.nav.item(i).data(Qt.ItemDataRole.UserRole))
-    window.nav.itemClicked.emit(entry)
+    row = next(window.nav.item(i) for i in range(window.nav.count()) if window.nav.item(i).data(Qt.ItemDataRole.UserRole))
+    window.nav.itemClicked.emit(row)
     assert isinstance(window.stack.currentWidget(), ExerciseView)
 
 
@@ -661,8 +691,6 @@ def test_the_app_opens_a_window_for_the_chosen_profile(
     tmp_path : Path
         A scratch folder unique to this test.
     """
-    from alto import __main__ as entry
-
     db_profile = Database().add_profile("Ada")
     # noinspection PyUnresolvedReferences
     monkeypatch.setattr(entry, "QApplication", FakeApp)
@@ -690,8 +718,6 @@ def test_the_app_quits_quietly_if_no_profile_is_chosen(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto import __main__ as entry
-
     # noinspection PyUnresolvedReferences
     monkeypatch.setattr(entry, "QApplication", FakeApp)
     # noinspection PyUnresolvedReferences

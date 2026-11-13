@@ -10,16 +10,24 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 import pytest
 
 pytest.importorskip("PySide6")
+from PySide6.QtCore import (
+    QEvent,
+    Qt,
+)
+from PySide6.QtTest import QTest
+from PySide6.QtWidgets import QApplication
+
 from alto.audio import sounds
 from alto.ui import instrument_picker
-from alto.ui.instrument_picker import InstrumentPicker
-from PySide6.QtCore import Qt
-from PySide6.QtTest import QTest
+from alto.ui.instrument_picker import (
+    InstrumentPicker,
+    load_instrument,
+    save_instrument,
+)
+from alto.ui.store import store
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-
-    from PySide6.QtWidgets import QApplication
 
 
 @pytest.fixture
@@ -294,9 +302,6 @@ def test_a_theme_change_redraws_the_summary_in_the_new_colours(picker: Instrumen
     picker : InstrumentPicker
         The instrument picker under test.
     """
-    from PySide6.QtCore import QEvent
-    from PySide6.QtWidgets import QApplication
-
     picker.select("viola_bowed")
     before = picker.title.text()
     QApplication.sendEvent(picker, QEvent(QEvent.Type.PaletteChange))
@@ -312,9 +317,6 @@ def test_the_chosen_instrument_is_saved_and_read_back(app: QApplication) -> None
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.instrument_picker import load_instrument, save_instrument
-    from alto.ui.store import store
-
     sounds.instrument = "marimba"
     save_instrument()
     assert store().value("audio/instrument") == "marimba"

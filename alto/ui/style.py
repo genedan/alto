@@ -13,7 +13,7 @@ from pathlib import Path
 
 from PySide6.QtGui import QPalette
 
-from .colors import blend_name
+from alto.ui.colors import blend_name
 
 RADIUS = 10
 
@@ -37,7 +37,8 @@ def app_style(palette: QPalette) -> str:
 
     Examples
     --------
-    >>> sheet = app_style(app.palette())
+    >>> from PySide6.QtWidgets import QApplication
+    >>> sheet = app_style(QApplication.palette())
     >>> "QPushButton" in sheet and "border-radius" in sheet
     True
     """

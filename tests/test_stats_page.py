@@ -7,13 +7,24 @@ import time
 from typing import TYPE_CHECKING
 
 import pytest
-from alto.exercises import REGISTRY
-from alto.learning import Database, Learner
-from alto.ui import stats_dialog
-from alto.ui.stats_dialog import StatsPage, format_duration, since_for
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QKeySequence, QShortcut
+from PySide6.QtGui import (
+    QKeySequence,
+    QShortcut,
+)
 from PySide6.QtTest import QSignalSpy
+
+from alto.exercises import REGISTRY
+from alto.learning import (
+    Database,
+    Learner,
+)
+from alto.ui import stats_dialog
+from alto.ui.stats_dialog import (
+    StatsPage,
+    format_duration,
+    since_for,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable

@@ -13,13 +13,23 @@ True
 
 from __future__ import annotations
 
-from dataclasses import KW_ONLY, dataclass
+from collections.abc import Callable
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+)
 
 from PySide6.QtCore import QPointF
-from PySide6.QtGui import QBrush, QColor, QLinearGradient
-from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import (
+    QBrush,
+    QColor,
+    QLinearGradient,
+)
 
-from .store import store
+from alto.ui.store import (
+    store,
+    text_value,
+)
 
 DEFAULT_CASE = "#2b2b30"
 
@@ -411,12 +421,12 @@ def load_style() -> None:
     global _current
     saved = store()
     for part, default in DEFAULT_CUSTOM.items():
-        value = str(saved.value(f"ui/keyboardCustom/{part}", default or "none"))
+        value = text_value(saved, key=f"ui/keyboardCustom/{part}", default=default or "none")
         if value == "none" and part in ("case", "felt", "caps"):
             _custom[part] = None
         else:
             _custom[part] = value if QColor(value).isValid() else default
-    _current = style_for(str(saved.value("ui/keyboard", DEFAULT)))
+    _current = style_for(text_value(saved, key="ui/keyboard", default=DEFAULT))
 
 
 def set_style(key: str) -> None:
@@ -469,21 +479,45 @@ def set_custom_colour(
     set_style(CUSTOM)
 
 
+_redraw_hooks: list[Callable[[], None]] = []
+
+
+def on_redraw(hook: Callable[[], None]) -> None:
+    """
+    Register a function to call whenever the keyboard style changes.
+
+    The keyboard widgets live in a module that imports this one, so they register themselves here instead of being found by
+    this module.
+
+    Parameters
+    ----------
+    hook : Callable
+        A function with no arguments that lays out and repaints what depends on the style.
+
+    Examples
+    --------
+    >>> calls = []
+    >>> def repaint() -> None:
+    ...     calls.append(1)
+    >>> on_redraw(repaint)
+    >>> _redraw()
+    >>> calls
+    [1]
+    >>> _redraw_hooks.remove(repaint)
+    """
+    _redraw_hooks.append(hook)
+
+
 def _redraw() -> None:
     """
-    Ask every keyboard on screen to lay itself out and paint again.
+    Ask every keyboard on screen to lay itself out and paint again, through the registered hooks.
 
     Examples
     --------
     >>> _redraw()  # with no keyboards open, nothing happens
     """
-    from .keyboard import KeyboardSpan, KeyboardWidget  # imported here: keyboard.py imports this module
-
-    for w in QApplication.allWidgets():
-        if isinstance(w, KeyboardWidget):
-            w.refit()
-        elif isinstance(w, KeyboardSpan):
-            w.update()
+    for hook in _redraw_hooks:
+        hook()
 
 
 # -- colours --------------------------------------------------------------------------------------------------------

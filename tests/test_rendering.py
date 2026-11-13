@@ -2,18 +2,55 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import pytest
-from alto.theory.pitch import Note
-from alto.ui import keyboard_styles, notation
-from PySide6.QtCore import QEvent, QPoint, QPointF, Qt
-from PySide6.QtGui import QImage, QMouseEvent
+from PySide6.QtCore import (
+    QEvent,
+    QPoint,
+    QPointF,
+    QSettings,
+    Qt,
+)
+from PySide6.QtGui import (
+    QColor,
+    QImage,
+    QMouseEvent,
+)
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import (
+    QApplication,
+    QVBoxLayout,
+    QWidget,
+)
 
-if TYPE_CHECKING:
-    from PySide6.QtWidgets import QWidget
+from alto.theory.pitch import Note
+from alto.ui import (
+    keyboard_styles,
+    notation,
+    notes,
+    pictures,
+    theme,
+)
+from alto.ui.keyboard import (
+    KeyboardSpan,
+    KeyboardWidget,
+)
+from alto.ui.staff import (
+    BOTTOM_LINE,
+    KEY_STEP,
+    MAX_STEP,
+    MIN_COLUMNS,
+    StaffWidget,
+)
+from alto.ui.staff_input import StaffInput
+from alto.ui.store import (
+    int_value,
+    store,
+)
+from alto.ui.style import app_style
+from alto.ui.widgets import (
+    HelpButton,
+    SidebarToggle,
+)
 
 
 def dark_pixels(
@@ -76,8 +113,6 @@ def test_a_staff_is_drawn_in_every_notation_style(
     style : notation.NotationStyle
         The drawing style under test.
     """
-    from alto.ui.staff import StaffWidget
-
     staff = StaffWidget()
     staff.notation_style = style
     for clef in (
@@ -123,8 +158,6 @@ def test_every_note_value_is_drawn(
     value : str
         The value under test.
     """
-    from alto.ui.staff import StaffWidget
-
     staff = StaffWidget()
     for style in notation.STYLES:
         staff.notation_style = style
@@ -146,12 +179,9 @@ def test_a_staff_can_colour_its_notes_and_follows_the_chosen_style(app: QApplica
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import StaffWidget
-
     staff = StaffWidget()
     staff.show_notes(COLUMNS[:2], clef="treble")
     plain = dark_pixels(staff)
-    from PySide6.QtGui import QColor
 
     staff.set_note_color(QColor("red"))
     assert staff.note_color is not None and dark_pixels(staff) < plain  # red is lighter than black
@@ -176,7 +206,6 @@ def test_the_chosen_style_is_remembered(app: QApplication) -> None:
     notation.set_style("leland")
     notation.load_style()
     assert notation.current().key == "leland"
-    from alto.ui.store import store
 
     store().setValue("ui/notation", "gone")
     notation.load_style()
@@ -192,8 +221,6 @@ def test_a_staff_without_the_music_font_still_draws_with_the_built_in_shapes(app
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import StaffWidget
-
     staff = StaffWidget()
     staff.notation_style = notation.BY_KEY["noto"]  # read from the system, so it has no SMuFL font here
     for clef in (
@@ -216,8 +243,6 @@ def test_a_compact_staff_sizes_itself(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import StaffWidget
-
     small = StaffWidget(
         gap=6.5,
         side=8.0,
@@ -240,8 +265,6 @@ def test_note_shapes(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui import notes
-
     for value in (
         "breve",
         "whole",
@@ -268,9 +291,6 @@ def test_clicking_the_staff_places_the_nearest_note(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import BOTTOM_LINE
-    from alto.ui.staff_input import StaffInput
-
     staff = StaffInput()
     staff.resize(520, 260)
     staff.show()
@@ -332,8 +352,6 @@ def test_the_staff_input_previews_and_locks(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto.ui.staff_input import StaffInput
-
     staff = StaffInput()
     staff.resize(520, 260)
     staff.reset("bass")
@@ -370,8 +388,6 @@ def test_the_grand_staff_input_splits_at_middle_c(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff_input import StaffInput
-
     staff = StaffInput()
     staff.resize(520, 360)
     staff.reset("grand")
@@ -398,9 +414,6 @@ def test_the_keyboard_highlights_a_key_and_changes_its_range(app: QApplication) 
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.keyboard import KeyboardWidget
-    from PySide6.QtGui import QColor
-
     keyboard = KeyboardWidget()
     keyboard.resize(700, 140)
     for midi, span in (
@@ -434,8 +447,6 @@ def test_a_keyboard_is_drawn_in_every_style(
     style : keyboard_styles.KeyboardStyle
         The drawing style under test.
     """
-    from alto.ui.keyboard import KeyboardSpan, KeyboardWidget
-
     keyboard = KeyboardWidget()
     keyboard.style_override = style
     keyboard.show_key(64, span=(48, 77))  # a span that reaches below the organ's reversed octave, with sharps at both ends
@@ -457,9 +468,6 @@ def test_choosing_a_keyboard_style_is_saved_and_redraws_open_keyboards(app: QApp
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.keyboard import KeyboardSpan, KeyboardWidget
-    from alto.ui.store import store
-
     span = KeyboardSpan()  # redrawn too, though its size does not change
     keyboard = KeyboardWidget()
     keyboard.resize(600, 300)
@@ -488,8 +496,6 @@ def test_custom_keyboard_colours_are_saved_loaded_and_checked(app: QApplication)
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.store import store
-
     keyboard_styles.set_custom_colour("naturals", colour="#ead9aa")
     keyboard_styles.set_custom_colour("case", colour=None)
     keyboard_styles.set_custom_colour("caps", colour="#eee3c8")
@@ -517,8 +523,6 @@ def test_a_keyboard_span_shows_the_range_in_miniature(app: QApplication) -> None
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.keyboard import KeyboardSpan
-
     for compact in (False, True):
         span = KeyboardSpan(compact=compact)
         span.set_span(48, hi=72)
@@ -536,10 +540,6 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app: QAppl
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.keyboard import KeyboardSpan
-    from PySide6.QtCore import QPointF, Qt
-    from PySide6.QtGui import QMouseEvent
-
     span = KeyboardSpan()
     span.resize(880, 64)
     span.set_span(48, hi=72)
@@ -690,8 +690,6 @@ def test_the_settings_pictures_draw_and_make_icons(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui import pictures
-
     clefs = pictures.ClefPictures(
         [
             "treble",
@@ -766,8 +764,6 @@ def test_the_range_picture_shrinks_to_fit_and_the_key_signature_picture_draws_wi
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui import pictures
-
     ranges = pictures.RangePictures([("treble", 28, 41)] * 5, max_width=120)
     assert ranges.scale < 1.0 and "Treble: C4 to " in ranges.toolTip()
     notation.set_style("noto")  # a style with no SMuFL font: the signs are the built-in characters
@@ -785,8 +781,6 @@ def test_a_keyboard_with_no_width_or_no_white_keys_draws_nothing_and_does_not_fa
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.keyboard import KeyboardWidget
-
     keyboard = KeyboardWidget()
     keyboard.resize(0, 0)
     assert keyboard._key_width() == keyboard.max_key_width
@@ -806,9 +800,6 @@ def test_the_theme_is_saved_and_applied(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui import theme
-    from alto.ui.style import app_style
-
     assert theme.saved_theme() == "system"
     theme.save_theme("dark")
     assert theme.saved_theme() == "dark"
@@ -829,9 +820,6 @@ def test_the_settings_store_brings_over_the_old_names_once(app: QApplication) ->
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.store import int_value, store
-    from PySide6.QtCore import QSettings
-
     old = QSettings("mtheory", "mtheory")
     old.setValue("ui/theme", "light")
     old.sync()
@@ -857,8 +845,6 @@ def test_the_sidebar_button_and_help_button(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.widgets import HelpButton, SidebarToggle
-
     toggle = SidebarToggle()
     assert toggle.toolTip() == "Hide exercise list"
     toggle.set_open(False)
@@ -891,8 +877,6 @@ def test_a_capped_staff_gets_a_share_of_width_for_each_column_of_notes(app: QApp
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import KEY_STEP, MAX_STEP, MIN_COLUMNS, StaffWidget
-
     staff = StaffWidget(max_step=MAX_STEP)
     staff.show_notes([[Note(4, letter=0)]], clef="treble")
     one = staff.maximumWidth()
@@ -916,8 +900,6 @@ def test_a_staff_without_a_cap_is_left_as_it_was(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import StaffWidget
-
     staff = StaffWidget()
     staff.show_notes([[Note(4, letter=0)]], clef="treble")
     assert staff.maximumWidth() == 16777215 and staff.max_step is None
@@ -942,9 +924,6 @@ def test_a_capped_staff_in_a_narrow_space_shrinks_to_fit_and_in_a_wide_one_is_ce
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import MAX_STEP, StaffWidget
-    from PySide6.QtWidgets import QVBoxLayout, QWidget
-
     holder = QWidget()
     lay = QVBoxLayout(holder)
     lay.setContentsMargins(

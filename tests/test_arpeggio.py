@@ -10,17 +10,37 @@ from typing import TYPE_CHECKING
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 import pytest
+from PySide6.QtCore import QEvent
+from PySide6.QtTest import QTest
+from PySide6.QtWidgets import (
+    QApplication,
+    QLabel,
+)
+
 from alto import settings
-from alto.exercises.library import ARPEGGIO_WINDOWS, ArpeggioNames
+from alto.audio import sounds
+from alto.exercises.base import Question
+from alto.exercises.library import (
+    ARPEGGIO_WINDOWS,
+    ArpeggioNames,
+)
 from alto.theory.pitch import Note
-from alto.theory.scales import CHORDS, INVERSION_NAMES, arpeggio
+from alto.theory.scales import (
+    CHORDS,
+    INVERSION_NAMES,
+    arpeggio,
+)
+from alto.ui import settings_panel
+from alto.ui.exercise_view import ExerciseView
+from alto.ui.settings_panel import ArpeggioSettingsPanel
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+    from collections.abc import (
+        Iterable,
+        Iterator,
+    )
 
     from alto.settings import ArpeggioSettings
-    from alto.ui.exercise_view import ExerciseView
-    from PySide6.QtWidgets import QApplication
 
 
 @pytest.fixture
@@ -221,8 +241,6 @@ def test_the_question_survives_being_stored_and_asked_again(cfg: ArpeggioSetting
     cfg : ArpeggioSettings
         The settings under test.
     """
-    from alto.exercises.base import Question
-
     q = ArpeggioNames().generate(random.Random(8))
     again = Question.from_dict(q.to_dict())
     assert again == q and again.item_key() == q.item_key()
@@ -327,12 +345,6 @@ def view(
     ExerciseView
         The view; it is closed afterwards.
     """
-    from alto.audio import sounds
-    from alto.ui import settings_panel
-    from alto.ui.exercise_view import ExerciseView
-    from PySide6.QtCore import QEvent
-    from PySide6.QtWidgets import QApplication
-
     # noinspection PyUnresolvedReferences
     monkeypatch.setattr(settings_panel, "store", lambda: FakeStore())
     cfg.types, cfg.inversions, cfg.clefs = {"major", "minor"}, {0, 1}, {"treble"}
@@ -392,8 +404,6 @@ def test_a_wrong_pair_is_a_miss_and_the_buttons_reset(view: ExerciseView) -> Non
     view : ExerciseView
         The exercise view under test.
     """
-    from PySide6.QtTest import QTest
-
     q = view.question
     # noinspection PyUnresolvedReferences
     kind, inversion = q.answer.split(q.joiner)
@@ -418,8 +428,6 @@ def test_the_inversion_row_is_labelled_inversion(view: ExerciseView) -> None:
     view : ExerciseView
         The exercise view under test.
     """
-    from PySide6.QtWidgets import QLabel
-
     labels = [view.octave_box.itemAt(i).widget() for i in range(view.octave_box.count())]
     assert [w.text() for w in labels if isinstance(w, QLabel)] == ["Inversion"]
 
@@ -441,9 +449,6 @@ def test_the_settings_panel_edits_and_saves_the_settings(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto.ui import settings_panel
-    from alto.ui.settings_panel import ArpeggioSettingsPanel
-
     saved = FakeStore()
     # noinspection PyUnresolvedReferences
     monkeypatch.setattr(settings_panel, "store", lambda: saved)
@@ -478,8 +483,6 @@ def test_the_saved_settings_are_read_back(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto.ui import settings_panel
-
     # noinspection PyUnresolvedReferences
     monkeypatch.setattr(
         settings_panel,

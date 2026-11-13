@@ -16,7 +16,10 @@ Interval(number=5, quality='P')
 
 from __future__ import annotations
 
-from dataclasses import KW_ONLY, dataclass
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+)
 
 LETTERS = "CDEFGAB"
 NATURAL_SEMITONES = (

@@ -5,10 +5,20 @@ from __future__ import annotations
 import random
 
 import pytest
+
 from alto import settings
 from alto.exercises import REGISTRY
-from alto.exercises.base import Exercise, Question
-from alto.exercises.library import ARPEGGIO_WINDOWS, ArpeggioNames, KeyboardNotes, NoteConstruction
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.exercises.library import (
+    ARPEGGIO_WINDOWS,
+    ArpeggioNames,
+    KeyboardNotes,
+    NoteConstruction,
+    NoteNames,
+)
 from alto.settings import diatonic_name
 from alto.theory.pitch import Note
 from alto.theory.scales import all_tonics
@@ -138,8 +148,6 @@ def test_a_stored_question_is_only_asked_again_under_the_settings_it_was_made_fo
     """
     Check that a stored question is only asked again under the settings it was made for.
     """
-    from alto.exercises.library import NoteNames
-
     for exercise, change in (
         (NoteNames(), lambda: setattr(settings.note_names, "naming", "solfege")),
         (KeyboardNotes(), lambda: setattr(settings.keyboard, "black_keys", False)),

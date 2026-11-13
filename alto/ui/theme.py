@@ -13,8 +13,11 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QApplication
 
-from .store import store
-from .style import app_style
+from alto.ui.store import (
+    store,
+    text_value,
+)
+from alto.ui.style import app_style
 
 THEMES = (("system", "System"), ("light", "Light"), ("dark", "Dark"))
 _SCHEMES = {"system": Qt.ColorScheme.Unknown, "light": Qt.ColorScheme.Light, "dark": Qt.ColorScheme.Dark}
@@ -36,7 +39,7 @@ def saved_theme() -> str:
     'dark'
     >>> save_theme("system")
     """
-    key = str(store().value("ui/theme", "system"))
+    key = text_value(store(), key="ui/theme", default="system")
     return key if key in _SCHEMES else "system"
 
 
@@ -71,6 +74,7 @@ def apply_theme(key: str) -> None:
     Examples
     --------
     >>> apply_theme("system")
+    >>> # noinspection PyUnresolvedReferences
     >>> app.styleSheet() != ""
     True
     """

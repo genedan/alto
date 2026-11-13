@@ -5,6 +5,7 @@ Examples
 --------
 >>> db = Database()
 >>> remember_profile(db.add_profile("Ada"))
+>>> # noinspection PyUnresolvedReferences
 >>> startup_profile(db).name  # the one used last time, with no dialog
 'Ada'
 """
@@ -25,8 +26,14 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..learning import Database, Profile
-from .store import int_value, store
+from alto.learning import (
+    Database,
+    Profile,
+)
+from alto.ui.store import (
+    int_value,
+    store,
+)
 
 
 class ProfileDialog(QDialog):
@@ -78,9 +85,9 @@ class ProfileDialog(QDialog):
 
         Examples
         --------
-        >>> db = Database()
-        >>> _ = db.add_profile("Ada")
-        >>> ProfileDialog(db).windowTitle()
+        >>> database = Database()
+        >>> _ = database.add_profile("Ada")
+        >>> ProfileDialog(database).windowTitle()
         'Profile'
         """
         super().__init__(parent)
@@ -158,6 +165,7 @@ class ProfileDialog(QDialog):
         'Enter a name for the profile.'
         >>> dialog.name.setText("Ada")
         >>> dialog._create()
+        >>> # noinspection PyUnresolvedReferences
         >>> dialog.chosen.name
         'Ada'
         """
@@ -178,6 +186,7 @@ class ProfileDialog(QDialog):
         >>> _ = db.add_profile("Ada")
         >>> dialog = ProfileDialog(db)
         >>> dialog._use_selected()
+        >>> # noinspection PyUnresolvedReferences
         >>> dialog.chosen.name
         'Ada'
         """
@@ -221,10 +230,11 @@ def startup_profile(db: Database) -> Profile | None:
 
     Examples
     --------
-    >>> db = Database()
-    >>> ada = db.add_profile("Ada")
+    >>> database = Database()
+    >>> ada = database.add_profile("Ada")
     >>> remember_profile(ada)
-    >>> startup_profile(db).name
+    >>> # noinspection PyUnresolvedReferences
+    >>> startup_profile(database).name
     'Ada'
     """
     profiles = db.profiles()

@@ -7,8 +7,15 @@ import time
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from alto.exercises.base import Exercise, Question
-from alto.learning import Database, Learner, stats
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.learning import (
+    Database,
+    Learner,
+    stats,
+)
 from alto.theory.pitch import Note
 
 if TYPE_CHECKING:
@@ -257,10 +264,6 @@ def test_daily_counts_count_first_answers_per_local_day_and_follow_the_exercise(
     practised_learner : Callable[..., Learner]
         Builds a learner with a history of answers.
     """
-    from datetime import datetime
-
-    from alto.learning import stats
-
     learner = practised_learner()
     now = time.time()
     everything = stats.daily_counts(learner.db, profile_ids=[learner.profile.id], now=now)

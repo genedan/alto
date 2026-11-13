@@ -8,6 +8,7 @@ Examples
 --------
 >>> from alto.exercises.library import NoteNames
 >>> view = ExerciseView(NoteNames(), rng=random.Random(1))
+>>> # noinspection PyUnresolvedReferences
 >>> view.question.answer in [button.text() for button in view.buttons]
 True
 """
@@ -17,8 +18,18 @@ from __future__ import annotations
 import random
 import time
 
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QSize, Qt, QTimer, QVariantAnimation
-from PySide6.QtGui import QColor, QPalette
+from PySide6.QtCore import (
+    QEasingCurve,
+    QPropertyAnimation,
+    QSize,
+    Qt,
+    QTimer,
+    QVariantAnimation,
+)
+from PySide6.QtGui import (
+    QColor,
+    QPalette,
+)
 from PySide6.QtWidgets import (
     QButtonGroup,
     QFrame,
@@ -32,19 +43,33 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .. import settings as app_settings
-from ..audio import sounds
-from ..exercises.base import Exercise, Question
-from ..learning import Learner
-from ..settings import spell
-from ..theory.pitch import Note
-from .colors import blend
-from .icons import SLIDERS, SPEAKER_MUTED, SPEAKER_ON, svg_icon
-from .keyboard import KeyboardWidget
-from .settings_panel import settings_panel_for
-from .staff import MAX_STEP, StaffWidget
-from .staff_input import StaffInput
-from .widgets import HelpButton, SidebarToggle
+from alto import settings as app_settings
+from alto.audio import sounds
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.learning import Learner
+from alto.settings import spell
+from alto.theory.pitch import Note
+from alto.ui.colors import blend
+from alto.ui.icons import (
+    SLIDERS,
+    SPEAKER_MUTED,
+    SPEAKER_ON,
+    svg_icon,
+)
+from alto.ui.keyboard import KeyboardWidget
+from alto.ui.settings_panel import settings_panel_for
+from alto.ui.staff import (
+    MAX_STEP,
+    StaffWidget,
+)
+from alto.ui.staff_input import StaffInput
+from alto.ui.widgets import (
+    HelpButton,
+    SidebarToggle,
+)
 
 
 class ExerciseView(QWidget):
@@ -171,6 +196,9 @@ class ExerciseView(QWidget):
         )  # key signature only
         self.key_staff.setFixedWidth(210)
         self.choice_box = QGridLayout()
+        self._pair_token = 0  # counts questions, so a pending 'try again' reset can tell it is out of date
+        self._pending: dict[str, tuple[str, QPushButton]] = {}
+        self._busy = False
         self._advance = QTimer(self)
         self._advance.setSingleShot(True)
         self._advance.timeout.connect(self.next_question)
@@ -350,6 +378,7 @@ class ExerciseView(QWidget):
         >>> from alto.exercises.library import NoteNames
         >>> view = ExerciseView(NoteNames(), rng=random.Random(1))
         >>> view.next_question()
+        >>> # noinspection PyUnresolvedReferences
         >>> view.answered, len(view.buttons) == len(view.question.choices)
         (False, True)
         """
@@ -360,7 +389,7 @@ class ExerciseView(QWidget):
         self.missed = False
         self._attempts = 0
         self._clock = time.monotonic()
-        self._pair_token = getattr(self, "_pair_token", 0) + 1  # cancels a pending 'try again' reset
+        self._pair_token += 1  # cancels a pending 'try again' reset
         self._pending = {}  # 'name' / 'octave' -> (text, button), for two-part answers
         self._busy = False
         self.prompt.setText(q.prompt)
@@ -625,6 +654,7 @@ class ExerciseView(QWidget):
         >>> from alto.exercises.library import NoteConstruction
         >>> sounds.enabled = False
         >>> view = ExerciseView(NoteConstruction(), rng=random.Random(2))
+        >>> # noinspection PyTypeChecker,PyUnresolvedReferences
         >>> view._place(view.question.construct)
         >>> view.answered, view.correct
         (True, 1)
@@ -736,8 +766,9 @@ class ExerciseView(QWidget):
         >>> from alto.exercises.library import ArpeggioNames
         >>> sounds.enabled = False
         >>> view = ExerciseView(ArpeggioNames(), rng=random.Random(11))
+        >>> # noinspection PyUnresolvedReferences
         >>> kind, inversion = view.question.answer.split(view.question.joiner)
-        >>> by_text = {button.text(): button for button in view.buttons}
+        >>> by_text = {button_.text(): button_ for button_ in view.buttons}
         >>> view._pick("name", text=kind, button=by_text[kind])
         >>> view._pick("octave", text=inversion, button=by_text[inversion])
         >>> view.answered
@@ -767,6 +798,7 @@ class ExerciseView(QWidget):
         >>> sounds.enabled = False
         >>> view = ExerciseView(ArpeggioNames(), rng=random.Random(11))
         >>> by_text = {button.text(): button for button in view.buttons}
+        >>> # noinspection PyUnresolvedReferences
         >>> wrong_kind = next(c for c in view.question.choices if c != view.question.answer.split(view.question.joiner)[0])
         >>> view._pending = {"name": (wrong_kind, by_text[wrong_kind]), "octave": ("root position", by_text["root position"])}
         >>> view._submit_pair()
@@ -800,9 +832,9 @@ class ExerciseView(QWidget):
             """
             if token != self._pair_token:  # a new question replaced these buttons
                 return
-            for b in (name_btn, octave_btn):
-                b.setStyleSheet("")
-                b.setChecked(False)
+            for pressed in (name_btn, octave_btn):
+                pressed.setStyleSheet("")
+                pressed.setChecked(False)
             self._pending = {}
             self._busy = False
 
@@ -833,11 +865,14 @@ class ExerciseView(QWidget):
         >>> sounds.enabled = False
         >>> view = ExerciseView(NoteNames(), rng=random.Random(1))
         >>> question = view.question
+        >>> # noinspection PyUnresolvedReferences
         >>> wrong = next(b for b in view.buttons if b.text() != question.answer)
         >>> view.submit(wrong.text(), button=wrong)
         >>> view.missed, wrong.isEnabled()
         (True, False)
+        >>> # noinspection PyUnresolvedReferences
         >>> right = next(b for b in view.buttons if b.text() == question.answer)
+        >>> # noinspection PyUnresolvedReferences
         >>> view.submit(question.answer, button=right)
         >>> view.answered
         True

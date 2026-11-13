@@ -14,8 +14,23 @@ Examples
 
 from __future__ import annotations
 
-from PySide6.QtCore import QEvent, QPointF, QRectF, QSize, Qt, Signal
-from PySide6.QtGui import QColor, QPainter, QPainterPath, QPaintEvent, QPalette, QPen, QPolygonF
+from PySide6.QtCore import (
+    QEvent,
+    QPointF,
+    QRectF,
+    QSize,
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import (
+    QColor,
+    QPainter,
+    QPainterPath,
+    QPaintEvent,
+    QPalette,
+    QPen,
+    QPolygonF,
+)
 from PySide6.QtWidgets import (
     QButtonGroup,
     QColorDialog,
@@ -36,14 +51,22 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..theory.pitch import Note
-from . import keyboard_styles, notation
-from .colors import blend
-from .instrument_picker import InstrumentPicker
-from .keyboard import KeyboardWidget
-from .pictures import ClefPictures
-from .staff import StaffWidget
-from .theme import THEMES, apply_theme, save_theme, saved_theme
+from alto.theory.pitch import Note
+from alto.ui import (
+    keyboard_styles,
+    notation,
+)
+from alto.ui.colors import blend
+from alto.ui.instrument_picker import InstrumentPicker
+from alto.ui.keyboard import KeyboardWidget
+from alto.ui.pictures import ClefPictures
+from alto.ui.staff import StaffWidget
+from alto.ui.theme import (
+    THEMES,
+    apply_theme,
+    save_theme,
+    saved_theme,
+)
 
 
 class StyleCard(QPushButton):
@@ -169,6 +192,7 @@ class KeyboardCard(QPushButton):
 
         Examples
         --------
+        >>> # noinspection PyUnresolvedReferences
         >>> KeyboardCard(keyboard_styles.BY_KEY["classic"]).keys.style_override.key
         'classic'
         """
@@ -229,6 +253,7 @@ class KeyboardCard(QPushButton):
         --------
         >>> card = KeyboardCard(keyboard_styles.BY_KEY["classic"])
         >>> card.show_style(keyboard_styles.BY_KEY["modern"])
+        >>> # noinspection PyUnresolvedReferences
         >>> card.keys.style_override.key
         'modern'
         """
@@ -343,8 +368,8 @@ class KeyboardBuilder(QFrame):
 
         Examples
         --------
-        >>> chip = KeyboardBuilder._chip("Ivory  #f1e5c6", colour="#f1e5c6")
-        >>> chip.toolTip()
+        >>> chip_ = KeyboardBuilder._chip("Ivory  #f1e5c6", colour="#f1e5c6")
+        >>> chip_.toolTip()
         'Ivory  #f1e5c6'
         """
         chip = QToolButton()
@@ -762,7 +787,7 @@ class AppSettingsDialog(QDialog):
 
         Examples
         --------
-        >>> page, layout = AppSettingsDialog._page()
+        >>> page_, layout = AppSettingsDialog._page()
         >>> layout.count()
         0
         """
@@ -851,8 +876,8 @@ class AppSettingsDialog(QDialog):
 
         Examples
         --------
-        >>> page = QWidget()
-        >>> AppSettingsDialog._scrolling(page).widget() is page
+        >>> page_ = QWidget()
+        >>> AppSettingsDialog._scrolling(page_).widget() is page_
         True
         """
         area = QScrollArea()

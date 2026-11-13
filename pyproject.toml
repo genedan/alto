@@ -60,6 +60,8 @@ select = [
     "RET", "PERF", "FURB", "ERA", "A", "PLE", "ICN", "RSE", "LOG", "G", "INP", "PGH", "FLY",
     "PIE",  # no needless range(0, n), pass, or duplicated class fields
     "ISC",  # a string split over lines inside a list must be wrapped in brackets, so a missing comma cannot hide in it
+    "TID252",  # absolute imports only: `from alto.ui.store import store`, never `from .store import store`
+    "PLC0415",  # every import is at the top of its file, not inside a function
     "PLR0917",  # only the first parameter may be positional; the rest are keyword-only, so calls name their arguments
     # Every module, class, function and method has a NumPy-style docstring that describes each parameter and the return value,
     # and every signature is annotated. Packages not yet documented are excluded below, and each line goes when its package is done.
@@ -73,6 +75,12 @@ ignore = [
     "B905",  # zip() without strict=: the zipped sequences are built to the same length
     "E741",  # one-letter names such as `l` for a letter name are normal in the music code
 ]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+known-first-party = ["alto"]  # `alto` is its own section, after the third-party packages (PySide6, numpy, pytest), in tests as well
 
 [tool.ruff.lint.pylint]
 max-positional-args = 1

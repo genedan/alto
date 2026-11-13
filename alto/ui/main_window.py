@@ -14,8 +14,17 @@ from __future__ import annotations
 
 import sys
 
-from PySide6.QtCore import QProcess, QSize, Qt, QVariantAnimation
-from PySide6.QtGui import QFont, QKeySequence, QPalette
+from PySide6.QtCore import (
+    QProcess,
+    QSize,
+    Qt,
+    QVariantAnimation,
+)
+from PySide6.QtGui import (
+    QFont,
+    QKeySequence,
+    QPalette,
+)
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -33,23 +42,39 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..exercises import REGISTRY
-from ..exercises.base import Exercise
-from ..learning import Learner
-from . import icons
-from .app_settings import AppSettingsDialog
-from .colors import blend
-from .database_page import DatabasePage
-from .exercise_view import ExerciseView
-from .home import EXERCISE_ICONS, HomePage
-from .icons import svg_icon
-from .instrument_picker import load_instrument
-from .keyboard_styles import load_style as load_keyboard_style
-from .notation import load_style as load_notation_style
-from .profile_dialog import ProfileDialog, remember_profile
-from .settings_panel import load_arpeggio, load_construction, load_key_signatures, load_keyboard, load_note_names
-from .stats_dialog import StatsPage
-from .store import int_value, store
+from alto.exercises import REGISTRY
+from alto.exercises.base import Exercise
+from alto.learning import Learner
+from alto.ui import icons
+from alto.ui.app_settings import AppSettingsDialog
+from alto.ui.colors import blend
+from alto.ui.database_page import DatabasePage
+from alto.ui.exercise_view import ExerciseView
+from alto.ui.home import (
+    EXERCISE_ICONS,
+    HomePage,
+)
+from alto.ui.icons import svg_icon
+from alto.ui.instrument_picker import load_instrument
+from alto.ui.keyboard_styles import load_style as load_keyboard_style
+from alto.ui.notation import load_style as load_notation_style
+from alto.ui.profile_dialog import (
+    ProfileDialog,
+    remember_profile,
+)
+from alto.ui.settings_panel import (
+    load_arpeggio,
+    load_construction,
+    load_key_signatures,
+    load_keyboard,
+    load_note_names,
+)
+from alto.ui.stats_dialog import StatsPage
+from alto.ui.store import (
+    int_value,
+    store,
+    text_value,
+)
 
 
 class MainWindow(QMainWindow):
@@ -103,10 +128,10 @@ class MainWindow(QMainWindow):
         --------
         >>> from alto.learning import Database
         >>> db = Database()
-        >>> window = MainWindow(Learner(db, profile=db.add_profile("Ada")))
-        >>> window.stats_button.isVisibleTo(window)
+        >>> window_ = MainWindow(Learner(db, profile=db.add_profile("Ada")))
+        >>> window_.stats_button.isVisibleTo(window_)
         True
-        >>> MainWindow().stats_button.isVisibleTo(window)  # no profile, no statistics
+        >>> MainWindow().stats_button.isVisibleTo(window_)  # no profile, no statistics
         False
         """
         super().__init__()
@@ -153,6 +178,7 @@ class MainWindow(QMainWindow):
             item.setSizeHint(QSize(0, 38))
             self.nav.addItem(item)
             self._items[cls] = item
+        # noinspection PyShadowingNames
         self.nav.itemClicked.connect(lambda item: self.open_exercise(item.data(Qt.ItemDataRole.UserRole)))
 
         # Hamburger menu above the exercise list (replaces the menu bar).
@@ -212,7 +238,7 @@ class MainWindow(QMainWindow):
         self.splitter.setCollapsible(1, False)
         self._sidebar_width = int_value(store(), key="ui/sidebarWidth", default=self.SIDEBAR_DEFAULT)
         # Whether the user wants the list shown on exercise pages. The start screen never shows it.
-        self._sidebar_pref = str(store().value("ui/sidebarCollapsed", "false")).lower() != "true"
+        self._sidebar_pref = text_value(store(), key="ui/sidebarCollapsed", default="false").lower() != "true"
         self._sidebar_anim: QVariantAnimation | None = None
         self.splitter.splitterMoved.connect(self._sidebar_dragged)
         self.splitter.setSizes([0, 10_000])  # start on the home screen, with no list
@@ -321,7 +347,8 @@ class MainWindow(QMainWindow):
         is_open = self.sidebar_width() > 0
         for i in range(self.stack.count()):
             button = getattr(self.stack.widget(i), "sidebar_button", None)
-            if button:
+            if button is not None:
+                # noinspection PyUnresolvedReferences
                 button.set_open(is_open)
 
     def _save_sidebar(self) -> None:
@@ -415,7 +442,7 @@ class MainWindow(QMainWindow):
         anim.finished.connect(done)
         anim.start()
 
-    def open_exercise(self, cls: type[Exercise]) -> None:
+    def open_exercise(self, cls: type[Exercise] | None) -> None:
         """
         Show an exercise.
 
@@ -474,6 +501,7 @@ class MainWindow(QMainWindow):
         fresh.setWindowState(self.windowState())
         app = QApplication.instance()
         if app is not None:
+            # noinspection PyUnresolvedReferences
             app.main_window = fresh  # pyright: ignore[reportAttributeAccessIssue]  (see alto/__main__.py)
         fresh.show()
         self.close()
@@ -601,9 +629,12 @@ class MainWindow(QMainWindow):
         if not self.learner:
             return
         dialog = ProfileDialog(self.learner.db, current=self.learner.profile, parent=self)
-        if dialog.exec() == QDialog.DialogCode.Accepted and dialog.chosen and dialog.chosen != self.learner.profile:
-            self.learner.profile = dialog.chosen
-            remember_profile(dialog.chosen)
+        accepted = dialog.exec() == QDialog.DialogCode.Accepted
+        chosen = dialog.chosen
+        if accepted and chosen is not None and chosen != self.learner.profile:
+            self.learner.profile = chosen
+            # noinspection PyTypeChecker
+            remember_profile(chosen)
             self._show_profile()
             self.show_home()
 
@@ -650,10 +681,14 @@ class MainWindow(QMainWindow):
         """
         if old is None:
             return
-        if old is not self.home and old is not self.stack.currentWidget():
-            self.stack.removeWidget(old)
-            old.deleteLater()
+        if old is self.home or old is self.stack.currentWidget():
+            return
+        # noinspection PyTypeChecker
+        self.stack.removeWidget(old)
+        # noinspection PyUnresolvedReferences
+        old.deleteLater()
 
+    # noinspection PyMethodMayBeStatic
     def restart_app(self) -> None:
         """
         Launch a fresh copy of the app, then close this one.

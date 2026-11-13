@@ -1,6 +1,7 @@
 """Setup for the doctests in alto/: a Qt application for examples that make widgets, and settings kept away from the real ones."""
 
 import atexit
+import gc
 import os
 import shutil
 import tempfile
@@ -13,6 +14,8 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 atexit.register(lambda: shutil.rmtree(_HOME, ignore_errors=True))
 
 import pytest  # noqa: E402
+from PySide6.QtCore import QEvent  # noqa: E402
+from PySide6.QtWidgets import QApplication  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -39,7 +42,6 @@ def _qt_application_for_doctests(
     """
     if type(request.node).__name__ != "DoctestItem":
         return
-    from PySide6.QtWidgets import QApplication
 
     doctest_namespace["app"] = QApplication.instance() or QApplication([])
 
@@ -56,11 +58,6 @@ def pytest_sessionfinish() -> None:
     >>> callable(pytest_sessionfinish)
     True
     """
-    import gc
-
-    from PySide6.QtCore import QEvent
-    from PySide6.QtWidgets import QApplication
-
     if QApplication.instance() is None:
         return
     for widget in QApplication.topLevelWidgets():

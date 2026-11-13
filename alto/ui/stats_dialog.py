@@ -16,8 +16,14 @@ from __future__ import annotations
 import time
 from datetime import datetime
 
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QKeySequence, QShortcut
+from PySide6.QtCore import (
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import (
+    QKeySequence,
+    QShortcut,
+)
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QComboBox,
@@ -35,9 +41,17 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..exercises import REGISTRY
-from ..learning import Learner, stats
-from .charts import HBarChart, HeatmapChart, LineChart, StackedBarChart
+from alto.exercises import REGISTRY
+from alto.learning import (
+    Learner,
+    stats,
+)
+from alto.ui.charts import (
+    HBarChart,
+    HeatmapChart,
+    LineChart,
+    StackedBarChart,
+)
 
 DAY = 86400.0
 TIMEFRAMES = (
@@ -360,6 +374,7 @@ class StatsPage(QWidget):
             signal.connect(lambda *_: self.refresh())
         self.refresh()
 
+    # noinspection PyMethodMayBeStatic
     def _names(self) -> dict[str, str]:
         """
         Return the title of each exercise, by class name.
@@ -410,9 +425,10 @@ class StatsPage(QWidget):
             else f"No answers recorded for {who} in this selection yet. Practise an exercise, then come back.",
         )
         self.tiles["questions"].show_value(str(s.questions))
-        self.tiles["accuracy"].show_value("–" if s.accuracy is None else f"{s.accuracy:.0f}%")
+        accuracy, tries = s.accuracy, s.attempts_per_question
+        self.tiles["accuracy"].show_value("–" if accuracy is None else f"{accuracy:.0f}%")
         self.tiles["speed"].show_value("–" if s.median_seconds is None else f"{s.median_seconds:.1f} s")
-        self.tiles["tries"].show_value("–" if s.attempts_per_question is None else f"{s.attempts_per_question:.2f}")
+        self.tiles["tries"].show_value("–" if tries is None else f"{tries:.2f}")
         self.tiles["days"].show_value(str(s.days_practised))
         self.tiles["time"].show_value(format_duration(s.practice_seconds))
 

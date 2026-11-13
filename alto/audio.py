@@ -17,18 +17,27 @@ from __future__ import annotations
 
 import io
 import tempfile
+import time
 import wave
-from collections.abc import Iterable, Sequence
-from dataclasses import KW_ONLY, dataclass
+from collections.abc import (
+    Iterable,
+    Sequence,
+)
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+)
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import numpy as np
+from PySide6.QtCore import (
+    QPropertyAnimation,
+    QTimer,
+    QUrl,
+)
+from PySide6.QtMultimedia import QSoundEffect
 
-from .theory.pitch import Note
-
-if TYPE_CHECKING:
-    from PySide6.QtMultimedia import QSoundEffect
+from alto.theory.pitch import Note
 
 SAMPLE_RATE = 44100
 
@@ -85,6 +94,7 @@ def synth_piano(
     # hammer thump: very short band-limited noise burst
     n_th = int(0.02 * SAMPLE_RATE)
     thump = rng.standard_normal(n_th)
+    # noinspection PyTypeChecker
     thump = np.convolve(thump, np.ones(24) / 24, mode="same") * np.exp(-np.arange(n_th) / (0.004 * SAMPLE_RATE))
     out[:n_th] += 0.25 * thump * (1.0 / (1 + (midi - 40) / 30))
     out *= np.minimum(1.0, (duration - t) / 0.05)  # fade out to avoid a click
@@ -195,7 +205,7 @@ def instrument_groups() -> list[tuple[str, list[Instrument]]]:
     --------
     >>> [name for name, _ in instrument_groups()]
     ['Piano', 'Flute', 'French Horn', 'Viola', 'Marimba', 'Vibraphone']
-    >>> [inst.variant for inst in dict(instrument_groups())["Viola"]]
+    >>> [inst_.variant for inst_ in dict(instrument_groups())["Viola"]]
     ['Arco', 'Pizzicato']
     """
     groups: dict[str, list[Instrument]] = {}
@@ -221,9 +231,9 @@ def read_wav(path: Path) -> tuple[np.ndarray, int]:
     Examples
     --------
     >>> import tempfile
-    >>> path = Path(tempfile.mkdtemp()) / "silence.wav"
-    >>> _ = path.write_bytes(to_wav_bytes(np.zeros(10)))
-    >>> samples, rate = read_wav(path)
+    >>> path_ = Path(tempfile.mkdtemp()) / "silence.wav"
+    >>> _ = path_.write_bytes(to_wav_bytes(np.zeros(10)))
+    >>> samples, rate = read_wav(path_)
     >>> len(samples), rate
     (10, 44100)
     """
@@ -461,9 +471,6 @@ class Sounds:
         key = (inst.key, midi)
         fx = self._effects.get(key)
         if fx is None:
-            from PySide6.QtCore import QUrl
-            from PySide6.QtMultimedia import QSoundEffect
-
             fx = QSoundEffect()
             fx.setSource(QUrl.fromLocalFile(str(self._note_file(inst, midi=midi))))
             self._effects[key] = fx
@@ -480,10 +487,11 @@ class Sounds:
 
         Examples
         --------
+        >>> from PySide6.QtMultimedia import QSoundEffect
+        >>> effect = QSoundEffect()
+        >>> # noinspection PyProtectedMember
         >>> sounds._release(effect)  # doctest: +SKIP
         """
-        from PySide6.QtCore import QPropertyAnimation
-
         fade = QPropertyAnimation(fx, b"volume")
         fade.setDuration(self.FADE_MS)
         fade.setStartValue(fx.volume())
@@ -682,10 +690,6 @@ class Sounds:
         >>> s._sequence_run
         1
         """
-        import time
-
-        from PySide6.QtCore import QTimer
-
         self._sequence_run += 1
         run = self._sequence_run
         if not (self.enabled or force) or not steps:
@@ -712,8 +716,7 @@ class Sounds:
             >>> loading()  # doctest: +SKIP
             False
             """
-            from PySide6.QtMultimedia import QSoundEffect
-
+            # noinspection PyNoneFunctionAssignment
             return any(getattr(fx, "status", lambda: None)() == QSoundEffect.Status.Loading for fx in effects)
 
         def step(i: int) -> None:

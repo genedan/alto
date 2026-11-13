@@ -6,6 +6,8 @@ import random
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtTest import QTest
+
 from alto import settings
 from alto.audio import sounds
 from alto.exercises.library import (
@@ -18,12 +20,15 @@ from alto.exercises.library import (
 )
 from alto.theory.pitch import Note
 from alto.ui.exercise_view import ExerciseView
-from PySide6.QtTest import QTest
 
 if TYPE_CHECKING:
-    from alto.exercises.base import Exercise, Question
-    from alto.learning import Learner
     from PySide6.QtWidgets import QApplication
+
+    from alto.exercises.base import (
+        Exercise,
+        Question,
+    )
+    from alto.learning import Learner
 
 
 def view_of(

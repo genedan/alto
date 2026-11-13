@@ -14,13 +14,37 @@ Examples
 
 from __future__ import annotations
 
-from PySide6.QtCore import QPointF, QRectF, Qt, Signal
-from PySide6.QtGui import QColor, QMouseEvent, QPainter, QPainterPath, QPaintEvent, QPalette, QPen, QResizeEvent
-from PySide6.QtWidgets import QSizePolicy, QWidget
+from PySide6.QtCore import (
+    QPointF,
+    QRectF,
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import (
+    QColor,
+    QMouseEvent,
+    QPainter,
+    QPainterPath,
+    QPaintEvent,
+    QPalette,
+    QPen,
+    QResizeEvent,
+)
+from PySide6.QtWidgets import (
+    QApplication,
+    QSizePolicy,
+    QWidget,
+)
 
-from ..settings import KEYBOARD_DEFAULT, KEYBOARD_FULL
-from . import keyboard_styles
-from .keyboard_styles import KeyboardStyle
+from alto.settings import (
+    KEYBOARD_DEFAULT,
+    KEYBOARD_FULL,
+)
+from alto.ui import keyboard_styles
+from alto.ui.keyboard_styles import (
+    KeyboardStyle,
+    on_redraw,
+)
 
 WHITE_PITCH_CLASSES = (
     0,
@@ -167,6 +191,7 @@ class KeyboardWidget(QWidget):
         self._fit_height()
 
     # geometry
+    # noinspection PyMethodOverriding
     @property
     def style(self) -> KeyboardStyle:
         """
@@ -514,8 +539,8 @@ class KeyboardWidget(QWidget):
         >>> from PySide6.QtGui import QImage
         >>> image = QImage(10, 10, QImage.Format.Format_ARGB32)  # kept, so it outlives the painter
         >>> painter = QPainter(image)
-        >>> style = keyboard_styles.BY_KEY["classic"]
-        >>> KeyboardWidget._outline(painter, path=QPainterPath(), style=style, midi=60, black=False, width=1.0)
+        >>> style_ = keyboard_styles.BY_KEY["classic"]
+        >>> KeyboardWidget._outline(painter, path=QPainterPath(), style=style_, midi=60, black=False, width=1.0)
         >>> painter.pen().color().name()
         '#9a9a9f'
         >>> painter.end()
@@ -695,8 +720,8 @@ class KeyboardSpan(QWidget):
         --------
         >>> span = KeyboardSpan()
         >>> span.resize(500, 64)
-        >>> left, right = span._edges()
-        >>> span._grab(left), span._grab((left + right) / 2), span._grab(5)
+        >>> left_, right_ = span._edges()
+        >>> span._grab(left_), span._grab((left_ + right_) / 2), span._grab(5)
         ('lo', 'pan', 'new')
         """
         left, right = self._edges()
@@ -945,3 +970,21 @@ class KeyboardSpan(QWidget):
             )
             p.setBrush(Qt.BrushStyle.NoBrush)
             p.drawPath(chevron)
+
+
+def _refit_keyboards() -> None:
+    """
+    Lay out and paint every keyboard on screen again, after the keyboard style changed.
+
+    Examples
+    --------
+    >>> _refit_keyboards()  # with no keyboards open, nothing happens
+    """
+    for w in QApplication.allWidgets():
+        if isinstance(w, KeyboardWidget):
+            w.refit()
+        elif isinstance(w, KeyboardSpan):
+            w.update()
+
+
+on_redraw(_refit_keyboards)

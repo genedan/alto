@@ -13,11 +13,16 @@ Examples
 
 from __future__ import annotations
 
-from dataclasses import KW_ONLY, dataclass
+from collections.abc import Callable
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+)
 
-from PySide6.QtWidgets import QApplication
-
-from .store import store
+from alto.ui.store import (
+    store,
+    text_value,
+)
 
 
 @dataclass(frozen=True)
@@ -232,8 +237,8 @@ def load_style() -> None:
     """
     global _current
     global _baritone
-    _current = BY_KEY.get(str(store().value("ui/notation", DEFAULT)), BY_KEY[DEFAULT])
-    saved = str(store().value("ui/baritoneClef", DEFAULT_BARITONE))
+    _current = BY_KEY.get(text_value(store(), key="ui/notation", default=DEFAULT), BY_KEY[DEFAULT])
+    saved = text_value(store(), key="ui/baritoneClef", default=DEFAULT_BARITONE)
     _baritone = saved if saved in BARITONE_CLEFS else DEFAULT_BARITONE
 
 
@@ -259,16 +264,42 @@ def set_style(key: str) -> None:
     _redraw()
 
 
+_redraw_hooks: list[Callable[[], None]] = []
+
+
+def on_redraw(hook: Callable[[], None]) -> None:
+    """
+    Register a function to call whenever the notation style changes.
+
+    The staff widgets live in a module that imports this one, so they register themselves here instead of being found by
+    this module.
+
+    Parameters
+    ----------
+    hook : Callable
+        A function with no arguments that repaints what depends on the style.
+
+    Examples
+    --------
+    >>> calls = []
+    >>> def repaint() -> None:
+    ...     calls.append(1)
+    >>> on_redraw(repaint)
+    >>> _redraw()
+    >>> calls
+    [1]
+    >>> _redraw_hooks.remove(repaint)
+    """
+    _redraw_hooks.append(hook)
+
+
 def _redraw() -> None:
     """
-    Ask every staff on screen to paint itself again.
+    Ask every staff on screen to paint itself again, through the registered hooks.
 
     Examples
     --------
     >>> _redraw()  # with no staffs open, nothing happens
     """
-    from .staff import StaffWidget  # imported here: staff.py imports this module
-
-    for w in QApplication.allWidgets():
-        if isinstance(w, StaffWidget):
-            w.update()
+    for hook in _redraw_hooks:
+        hook()

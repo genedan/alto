@@ -10,10 +10,22 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 import pytest
 
 pytest.importorskip("PySide6")
-from alto.ui import app_settings
-from alto.ui.app_settings import AppSettingsDialog
 from PySide6.QtCore import QEvent
-from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import (
+    QColor,
+    QPixmap,
+)
+from PySide6.QtWidgets import (
+    QApplication,
+    QToolButton,
+)
+
+from alto.ui import (
+    app_settings,
+    keyboard_styles,
+    theme,
+)
+from alto.ui.app_settings import AppSettingsDialog
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -69,8 +81,6 @@ def test_the_theme_previews_draw_without_error(dialog: AppSettingsDialog) -> Non
     dialog : AppSettingsDialog
         The dialog under test.
     """
-    from PySide6.QtGui import QPixmap
-
     for card in dialog.theme_cards.values():
         pix = QPixmap(card.size())
         card.render(pix)
@@ -102,8 +112,6 @@ def test_a_palette_change_restyles_the_segmented_control(dialog: AppSettingsDial
     dialog : AppSettingsDialog
         The dialog under test.
     """
-    from PySide6.QtCore import QEvent
-
     before = dialog.segments.styleSheet()
     QApplication.sendEvent(dialog, QEvent(QEvent.Type.PaletteChange))
     assert dialog.segments.styleSheet() == before  # same palette, same style: redrawn without error
@@ -123,8 +131,6 @@ def test_choosing_a_theme_saves_and_applies_it(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto.ui import theme
-
     applied = []
     # noinspection PyUnresolvedReferences
     monkeypatch.setattr(app_settings, "apply_theme", applied.append)
@@ -142,9 +148,6 @@ def test_each_keyboard_style_has_a_card_and_the_classic_one_is_chosen_by_default
     dialog : AppSettingsDialog
         The dialog under test.
     """
-    from alto.ui import keyboard_styles
-    from PySide6.QtGui import QPixmap
-
     assert list(dialog.keyboard_cards) == [*(s.key for s in keyboard_styles.STYLES), "custom"]
     assert [k for k, c in dialog.keyboard_cards.items() if c.isChecked()] == ["classic"]
     dialog.segment_buttons[2].click()
@@ -164,8 +167,6 @@ def test_clicking_a_keyboard_card_applies_the_style(dialog: AppSettingsDialog) -
     dialog : AppSettingsDialog
         The dialog under test.
     """
-    from alto.ui import keyboard_styles
-
     dialog.keyboard_cards["harpsichord-french"].click()
     assert keyboard_styles.current().key == "harpsichord-french"
 
@@ -179,8 +180,6 @@ def test_the_builder_colours_each_part_and_selects_the_custom_style(dialog: AppS
     dialog : AppSettingsDialog
         The dialog under test.
     """
-    from alto.ui import keyboard_styles
-
     dialog.builder._set("naturals", colour="#ead9aa")  # boxwood
     assert keyboard_styles.current().key == "custom" and keyboard_styles.custom_colours()["naturals"] == "#ead9aa"
     assert dialog.keyboard_cards["custom"].isChecked()
@@ -200,9 +199,6 @@ def test_the_builder_has_a_chip_for_every_material_and_none_for_optional_parts(d
     dialog : AppSettingsDialog
         The dialog under test.
     """
-    from alto.ui import keyboard_styles
-    from PySide6.QtWidgets import QToolButton
-
     chips = dialog.builder.findChildren(QToolButton)
     required = sum(1 for _, _, optional in keyboard_styles.COMPONENTS if not optional)
     optional = len(keyboard_styles.COMPONENTS) - required
@@ -225,9 +221,6 @@ def test_the_builder_opens_the_colour_picker_and_keeps_a_chosen_colour(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto.ui import keyboard_styles
-    from PySide6.QtGui import QColor
-
     picked = iter([QColor("#336699"), QColor()])  # then the dialog is cancelled
     monkeypatch.setattr(app_settings.QColorDialog, "getColor", lambda *a, **k: next(picked))
     dialog.builder.swatches["case"].click()

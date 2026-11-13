@@ -2,16 +2,32 @@
 
 from __future__ import annotations
 
+from datetime import (
+    date,
+    timedelta,
+)
 from typing import TYPE_CHECKING
 
 import pytest
-from alto.ui import charts
-from PySide6.QtCore import QPoint, QPointF, Qt
-from PySide6.QtGui import QMouseEvent
+from PySide6.QtCore import (
+    QPoint,
+    QPointF,
+    Qt,
+)
+from PySide6.QtGui import (
+    QImage,
+    QMouseEvent,
+    QPainter,
+)
 from PySide6.QtTest import QTest
 
+from alto.ui import charts
+
 if TYPE_CHECKING:
-    from PySide6.QtWidgets import QApplication, QWidget
+    from PySide6.QtWidgets import (
+        QApplication,
+        QWidget,
+    )
 
 
 def ink(
@@ -298,8 +314,6 @@ def test_an_axis_with_no_labels_draws_nothing(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from PySide6.QtGui import QImage, QPainter
-
     chart = charts.StackedBarChart("Nothing")
     image = QImage(200, 100, QImage.Format.Format_ARGB32)
     image.fill(0)
@@ -318,8 +332,6 @@ def test_the_heatmap_shades_days_by_how_busy_they_were(app: QApplication) -> Non
     app : QApplication
         The shared Qt application.
     """
-    from datetime import date, timedelta
-
     today = date(2026, 11, 13)  # a Friday
     chart = charts.HeatmapChart("Reviews")
     chart.set_data({today: 40, today - timedelta(days=1): 20, today - timedelta(days=2): 1}, today=today)
@@ -345,8 +357,6 @@ def test_the_heatmap_names_the_day_under_the_pointer(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from datetime import date
-
     shown, hidden = [], []
     monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
     monkeypatch.setattr(charts.QToolTip, "hideText", lambda: hidden.append(1))

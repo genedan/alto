@@ -1,8 +1,17 @@
 """Music theory: notes, intervals, scales, chords and key signatures."""
 
 import pytest
-from alto.theory.pitch import Interval, Note
-from alto.theory.scales import CHORDS, SCALES, build, key_signature
+
+from alto.theory.pitch import (
+    Interval,
+    Note,
+)
+from alto.theory.scales import (
+    CHORDS,
+    SCALES,
+    build,
+    key_signature,
+)
 
 
 def test_parse_and_midi() -> None:

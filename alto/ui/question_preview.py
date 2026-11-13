@@ -11,14 +11,24 @@ Examples
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
-from .. import settings as app_settings
-from ..audio import sounds
-from ..exercises.base import Question
-from ..settings import spell
-from .keyboard import KeyboardWidget
-from .staff import MAX_STEP, StaffWidget
+from alto import settings as app_settings
+from alto.audio import sounds
+from alto.exercises.base import Question
+from alto.settings import spell
+from alto.ui.keyboard import KeyboardWidget
+from alto.ui.staff import (
+    MAX_STEP,
+    StaffWidget,
+)
 
 
 class QuestionPreview(QDialog):
@@ -64,8 +74,8 @@ class QuestionPreview(QDialog):
         Examples
         --------
         >>> from alto.theory.pitch import Note
-        >>> question = Question("", choices=["C"], answer="C", keyboard=Note.parse("C4"))
-        >>> QuestionPreview("Keyboard Identification", question=question).minimumWidth()
+        >>> question_ = Question("", choices=["C"], answer="C", keyboard=Note.parse("C4"))
+        >>> QuestionPreview("Keyboard Identification", question=question_).minimumWidth()
         560
         """
         super().__init__(parent)

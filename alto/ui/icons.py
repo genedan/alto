@@ -12,8 +12,16 @@ False
 
 from __future__ import annotations
 
-from PySide6.QtCore import QByteArray, Qt
-from PySide6.QtGui import QColor, QIcon, QPainter, QPixmap
+from PySide6.QtCore import (
+    QByteArray,
+    Qt,
+)
+from PySide6.QtGui import (
+    QColor,
+    QIcon,
+    QPainter,
+    QPixmap,
+)
 from PySide6.QtSvg import QSvgRenderer
 
 _BODY = '<path d="M3 9h4l5-4v14l-5-4H3z" fill="COLOR"/>'

@@ -14,9 +14,17 @@ Examples
 
 from __future__ import annotations
 
-from dataclasses import KW_ONLY, dataclass, field
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+    field,
+)
 
-from .theory.pitch import ACCIDENTAL_SYMBOLS, LETTERS, Note
+from alto.theory.pitch import (
+    ACCIDENTAL_SYMBOLS,
+    LETTERS,
+    Note,
+)
 
 # The clefs with a single staff. The C clefs differ only in the line the clef sits on: soprano on the bottom line, mezzo-soprano
 # on the second, alto on the middle, tenor on the fourth and baritone on the top line.
@@ -93,10 +101,10 @@ RANGE_LIMITS = {
         max(MIN_DIATONIC, _BOTTOM_LINES["bass"].diatonic - 10),
         min(MAX_DIATONIC, _BOTTOM_LINES["treble"].diatonic + 8 + 10),
     ),
+    # The treble range runs from D3 to F7 and the bass range from F1 to A5. These are also the furthest the pickers go.
+    "treble": DEFAULT_RANGES["treble"],
+    "bass": DEFAULT_RANGES["bass"],
 }
-# The treble range runs from D3 to F7 and the bass range from F1 to A5. These are also the furthest the pickers go.
-RANGE_LIMITS["treble"] = DEFAULT_RANGES["treble"]
-RANGE_LIMITS["bass"] = DEFAULT_RANGES["bass"]
 
 
 def spell(
