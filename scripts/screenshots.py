@@ -28,7 +28,7 @@ OUT = ROOT / "docs" / "assets" / "img"
 THEMES = ("light", "dark")
 # The pictures this script makes. A docs page includes each of them with shot.html.
 SHOTS = ("home", "note-identification", "keyboard", "note-construction", "intervals", "arpeggios", "key-signatures", "stats",
-         "database", "question-preview", "settings", "settings-sound")
+         "stats-heatmap", "database", "question-preview", "settings", "settings-sound")
 
 
 def main() -> int:
@@ -96,7 +96,7 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
             pixmap = pixmap.scaledToWidth(width, Qt.TransformationMode.SmoothTransformation)
         pixmap.save(str(out / f"{name}{suffix}.png"), "PNG")
 
-    # A made-up profile: five weeks of answers that slowly get better.
+    # A made-up profile: five weeks of answers that slowly get better, after about a year of lighter practice.
     db = Database()
     learner = Learner(db, db.add_profile("Ada"))
     rng = random.Random(11)
@@ -117,6 +117,20 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
                     break
                 attempt += 1
                 seconds = rng.uniform(1, 4)
+    # The year before that, from its own generator so the recent weeks above come out the same as ever: mostly short
+    # sessions on a few days a week, with a lull in the summer, which is what a real heatmap looks like.
+    old = random.Random(12)
+    for day in range(364, 34, -1):
+        month = (time.localtime(now - day * 86400).tm_mon)
+        chance = 0.22 if month in (6, 7) else 0.55
+        if old.random() > chance:
+            continue
+        for _ in range(old.choice((3, 6, 10, 14, 20, 28, 38))):
+            ex = old.choice(REGISTRY)()
+            q = ex.generate(old)
+            t = now - day * 86400 - old.randint(0, 20000)
+            ok = old.random() < 0.5 + 0.3 * (364 - day) / 330
+            learner.record(ex, q, q.answer if ok else "?", ok, 1, max(0.7, old.gauss(ex.par_seconds * 1.5, 1)), now=t)
 
     window = MainWindow(learner)
     window.resize(1100, 720)
@@ -142,6 +156,14 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     window.open_stats()
     wait(400)
     save(window, "stats", 1500)
+    if "stats-heatmap" in names:  # scroll down to the calendar of reviews and show it with the table under it
+        from PySide6.QtWidgets import QScrollArea
+
+        stats_page = window._overlay
+        scroller = stats_page.findChild(QScrollArea)
+        scroller.verticalScrollBar().setValue(stats_page.heatmap.y() - 16)
+        wait(300)
+        save(window, "stats-heatmap", 1500)
     window.open_database()
     wait(400)
     save(window, "database")
