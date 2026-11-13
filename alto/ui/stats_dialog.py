@@ -1,5 +1,6 @@
 """The statistics screen: a few numbers and charts about how practice is going for the active profile, filterable by
 exercise and by timeframe."""
+
 from __future__ import annotations
 
 import time
@@ -29,8 +30,14 @@ from ..learning import Learner, stats
 from .charts import HBarChart, HeatmapChart, LineChart, StackedBarChart
 
 DAY = 86400.0
-TIMEFRAMES = (("Today", "today"), ("Last 7 days", 7), ("Last 30 days", 30), ("Last 90 days", 90),
-              ("Last year", 365), ("All time", None))
+TIMEFRAMES = (
+    ("Today", "today"),
+    ("Last 7 days", 7),
+    ("Last 30 days", 30),
+    ("Last 90 days", 90),
+    ("Last year", 365),
+    ("All time", None),
+)
 
 
 def since_for(span: str | int | None, now: float) -> float | None:
@@ -110,9 +117,17 @@ class StatsPage(QWidget):
         self.note.setWordWrap(True)
         lay.addWidget(self.note)
 
-        self.tiles = {key: Tile(caption) for key, caption in (
-            ("questions", "Questions answered"), ("accuracy", "Right first time"), ("speed", "Typical first answer"),
-            ("tries", "Attempts per question"), ("days", "Days practised"), ("time", "Time practising"))}
+        self.tiles = {
+            key: Tile(caption)
+            for key, caption in (
+                ("questions", "Questions answered"),
+                ("accuracy", "Right first time"),
+                ("speed", "Typical first answer"),
+                ("tries", "Attempts per question"),
+                ("days", "Days practised"),
+                ("time", "Time practising"),
+            )
+        }
         tiles = QGridLayout()
         tiles.setSpacing(10)
         for i, tile in enumerate(self.tiles.values()):
@@ -166,13 +181,21 @@ class StatsPage(QWidget):
     def refresh(self) -> None:
         now = time.time()
         profiles = [self.learner.profile.id]  # only the active profile's answers
-        s = stats.collect(self.learner.db, profiles, self.exercise.currentData(),
-                          since_for(self.timeframe.currentData(), now), now)
+        s = stats.collect(
+            self.learner.db,
+            profiles,
+            self.exercise.currentData(),
+            since_for(self.timeframe.currentData(), now),
+            now,
+        )
         names = self._names()
 
         who = self.learner.profile.name
-        self.note.setText(f"Showing {who}. A question counts as right only if the first answer was right." if s.questions
-                          else f"No answers recorded for {who} in this selection yet. Practise an exercise, then come back.")
+        self.note.setText(
+            f"Showing {who}. A question counts as right only if the first answer was right."
+            if s.questions
+            else f"No answers recorded for {who} in this selection yet. Practise an exercise, then come back.",
+        )
         self.tiles["questions"].show_value(str(s.questions))
         self.tiles["accuracy"].show_value("–" if s.accuracy is None else f"{s.accuracy:.0f}%")
         self.tiles["speed"].show_value("–" if s.median_seconds is None else f"{s.median_seconds:.1f} s")
@@ -188,9 +211,16 @@ class StatsPage(QWidget):
         self.accuracy.set_data(labels, [b.accuracy for b in s.buckets])
         self.speed.title = f"Typical time to first answer, per {per}"
         self.speed.set_data(labels, [b.median_seconds for b in s.buckets])
-        self.by_exercise.set_data([(names.get(e.exercise, e.exercise), e.accuracy,
-                                    f"{e.accuracy:.0f}%  ·  {e.questions} q  ·  {e.median_seconds:.1f} s")
-                                   for e in s.by_exercise])
+        self.by_exercise.set_data(
+            [
+                (
+                    names.get(e.exercise, e.exercise),
+                    e.accuracy,
+                    f"{e.accuracy:.0f}%  ·  {e.questions} q  ·  {e.median_seconds:.1f} s",
+                )
+                for e in s.by_exercise
+            ],
+        )
 
         counts = stats.daily_counts(self.learner.db, profiles, self.exercise.currentData(), now=now)
         self.heatmap.set_data(counts, datetime.fromtimestamp(now).date())

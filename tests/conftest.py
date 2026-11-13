@@ -1,4 +1,5 @@
 """Shared test setup: one Qt application for the whole run, and settings and data kept away from the real ones."""
+
 import atexit
 import copy
 import os

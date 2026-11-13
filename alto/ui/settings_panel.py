@@ -192,9 +192,11 @@ class KeyDiagram(QWidget):
     def __init__(self, keys: set[int] | None = None, parent=None):
         super().__init__(parent)
         self.keys: set[int] = set(keys or ())
-        self.first_column = self.PAD + 2 * self.DOT + 7 + self.DOT          # x of the 1-sharp / 1-flat dots
-        self.setFixedSize(int(self.first_column + 6 * self.PITCH + self.DOT + self.PAD) + 1,
-                          int(self.ROW_GAP + 2 * self.DOT + 2 * self.PAD) + 3)
+        self.first_column = self.PAD + 2 * self.DOT + 7 + self.DOT  # x of the 1-sharp / 1-flat dots
+        self.setFixedSize(
+            int(self.first_column + 6 * self.PITCH + self.DOT + self.PAD) + 1,
+            int(self.ROW_GAP + 2 * self.DOT + 2 * self.PAD) + 3,
+        )
         self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)  # the row underneath is the click target
         self._update_tip()
 
@@ -1133,9 +1135,13 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         staff_page = _subpage("Staff", body, lambda: self._go(0))
 
         # layer 2: arpeggio types, and inversions
-        self.types = ChoiceChecklist([("Triads", [(t, t.capitalize()) for t in settings.ARPEGGIO_TRIADS]),
-                                      ("Seventh chords", [(t, t.capitalize()) for t in settings.ARPEGGIO_SEVENTHS])],
-                                     cfg.types)
+        self.types = ChoiceChecklist(
+            [
+                ("Triads", [(t, t.capitalize()) for t in settings.ARPEGGIO_TRIADS]),
+                ("Seventh chords", [(t, t.capitalize()) for t in settings.ARPEGGIO_SEVENTHS]),
+            ],
+            cfg.types,
+        )
         self.types.changed.connect(self._types_edited)
         types_page = _subpage("Arpeggio types", self.types, lambda: self._go(0))
         names = settings_inversion_names()
@@ -1173,8 +1179,9 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         types = cfg.active_types()
         self.types_row.value.setText(f"{len(types)} of {len(settings.ARPEGGIO_TYPES)}")
         inversions = cfg.active_inversions()
-        self.inversions_row.value.setText("All" if len(inversions) == len(settings.INVERSIONS)
-                                          else ", ".join(_INVERSION_SHORT[i] for i in inversions))
+        self.inversions_row.value.setText(
+            "All" if len(inversions) == len(settings.INVERSIONS) else ", ".join(_INVERSION_SHORT[i] for i in inversions),
+        )
         _show_keys(self.keys_row, self.keys_diagram, cfg.key_signature, set(cfg.active_keys()))
 
     def _save_and_emit(self):
@@ -1257,8 +1264,10 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         # layer 2: the kinds of question
         self.questions = ChoiceChecklist([("", [(k, v) for k, v in settings.KEY_QUESTIONS.items()])], cfg.questions)
         self.questions.changed.connect(self._questions_edited)
-        questions_note = QLabel("A key signature is drawn on a staff and you name its key, or a key is named and you count "
-                                "its sharps and flats. One of the checked kinds is picked at random.")
+        questions_note = QLabel(
+            "A key signature is drawn on a staff and you name its key, or a key is named and you count "
+            "its sharps and flats. One of the checked kinds is picked at random.",
+        )
         questions_note.setWordWrap(True)
         questions_note.setStyleSheet("color: gray;")
         questions_body = QWidget()
@@ -1287,8 +1296,10 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         # layer 2: the scales, so the key can be a major or minor key or a mode
         self.modes = ChoiceChecklist([("", [(m, settings.MODE_LABELS[m]) for m in settings.KEY_MODES])], cfg.modes)
         self.modes.changed.connect(self._modes_edited)
-        modes_note = QLabel("A mode has the key signature of a major key and starts from another note of it: D Dorian has "
-                            "the signature of C major.")
+        modes_note = QLabel(
+            "A mode has the key signature of a major key and starts from another note of it: D Dorian has "
+            "the signature of C major.",
+        )
         modes_note.setWordWrap(True)
         modes_note.setStyleSheet("color: gray;")
         modes_body = QWidget()
@@ -1317,8 +1328,9 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
     def _refresh_summaries(self):
         cfg = self.cfg
         questions = cfg.active_questions()
-        self.questions_row.value.setText("Both" if len(questions) == len(settings.KEY_QUESTIONS)
-                                         else "Read" if questions == ["read"] else "Count")
+        self.questions_row.value.setText(
+            "Both" if len(questions) == len(settings.KEY_QUESTIONS) else "Read" if questions == ["read"] else "Count",
+        )
         self.clef_pictures.set_clefs(cfg.active_clefs())
         modes = cfg.active_modes()
         self.modes_row.value.setText(f"{len(modes)} of {len(settings.KEY_MODES)}")

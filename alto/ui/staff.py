@@ -13,18 +13,34 @@ from .notes import draw_note
 # Diatonic index of the bottom staff line.
 BOTTOM_LINE = {
     "treble": Note(4, 2).diatonic,  # E4
-    "bass": Note(2, 4).diatonic,    # G2
-    "alto": Note(3, 3).diatonic,    # F3
-    "tenor": Note(3, 1).diatonic,   # D3
-    "soprano": Note(4, 0).diatonic,   # C4
-    "mezzo": Note(3, 5).diatonic,     # A3
+    "bass": Note(2, 4).diatonic,  # G2
+    "alto": Note(3, 3).diatonic,  # F3
+    "tenor": Note(3, 1).diatonic,  # D3
+    "soprano": Note(4, 0).diatonic,  # C4
+    "mezzo": Note(3, 5).diatonic,  # A3
     "baritone": Note(2, 6).diatonic,  # B2
 }
-CLEF_GLYPH = {"treble": "𝄞", "bass": "𝄢", "alto": "𝄡", "tenor": "𝄡", "soprano": "𝄡", "mezzo": "𝄡", "baritone_c": "𝄡",
-              "baritone_f": "𝄢"}
+CLEF_GLYPH = {
+    "treble": "𝄞",
+    "bass": "𝄢",
+    "alto": "𝄡",
+    "tenor": "𝄡",
+    "soprano": "𝄡",
+    "mezzo": "𝄡",
+    "baritone_c": "𝄡",
+    "baritone_f": "𝄢",
+}
 # (glyph top, glyph bottom) measured upward from the bottom staff line, in staff gaps
-CLEF_EXTENT = {"treble": (6.6, -2.2), "bass": (4.0, 0.7), "alto": (4.0, 0.0), "tenor": (5.0, 1.0),
-               "soprano": (2.0, -2.0), "mezzo": (3.0, -1.0), "baritone_c": (6.0, 2.0), "baritone_f": (3.0, -0.3)}
+CLEF_EXTENT = {
+    "treble": (6.6, -2.2),
+    "bass": (4.0, 0.7),
+    "alto": (4.0, 0.0),
+    "tenor": (5.0, 1.0),
+    "soprano": (2.0, -2.0),
+    "mezzo": (3.0, -1.0),
+    "baritone_c": (6.0, 2.0),
+    "baritone_f": (3.0, -0.3),
+}
 MIDDLE_C = Note(4, 0).diatonic
 
 # Where each key-signature accidental sits, in order of appearance. Each is a fourth up or a fifth down from the one before
@@ -61,8 +77,18 @@ GRAND_BETWEEN = 3.5
 CORNER_RADIUS = 14
 
 
-def draw_key_signature(p: QPainter, clef: str, key: int, x: float, bottom: float, gap: float, color: QColor,
-                       step: float = KEY_STEP, size: float = 2.0, font: str | None = None) -> None:
+def draw_key_signature(
+    p: QPainter,
+    clef: str,
+    key: int,
+    x: float,
+    bottom: float,
+    gap: float,
+    color: QColor,
+    step: float = KEY_STEP,
+    size: float = 2.0,
+    font: str | None = None,
+) -> None:
     """Draw the sharps or flats of a key signature (`key` sharps if positive, flats if negative) starting at x.
     `font` is a SMuFL font to engrave them in; None uses the built-in sharp and flat characters."""
     if not key:
@@ -87,8 +113,16 @@ def draw_key_signature(p: QPainter, clef: str, key: int, x: float, bottom: float
 
 
 class StaffWidget(QWidget):
-    def __init__(self, parent=None, gap: float = 16.0, side: float = 20.0, note_offset: float = 100.0,
-                 margin: float = 8.0, compact: bool = False, max_step: float | None = None):
+    def __init__(
+        self,
+        parent=None,
+        gap: float = 16.0,
+        side: float = 20.0,
+        note_offset: float = 100.0,
+        margin: float = 8.0,
+        compact: bool = False,
+        max_step: float | None = None,
+    ):
         """`gap` is the distance between staff lines in pixels; `margin` is the space (in gaps) kept above
         and below the staff for ledger lines; `compact` sizes the widget to fit instead of the 220 px default.
         `max_step`, if given, is the most width each column of notes may take: the staff then stops growing once
@@ -106,8 +140,14 @@ class StaffWidget(QWidget):
         self._fit_height("treble")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
-    def show_notes(self, columns: list[list[Note]], clef: str = "treble", key: int = 0, value: str = "whole",
-                   caption: str = "") -> None:
+    def show_notes(
+        self,
+        columns: list[list[Note]],
+        clef: str = "treble",
+        key: int = 0,
+        value: str = "whole",
+        caption: str = "",
+    ) -> None:
         self.columns, self.clef, self.key, self.value, self.caption = columns, clef, key, value, caption
         self.note_color = None
         self._fit_height(clef)
@@ -186,8 +226,11 @@ class StaffWidget(QWidget):
             p.setFont(caption_font)
             p.setPen(fg)
             top = max(staves.values()) + 2.5 * gap  # below the lowest staff, clear of its ledger lines
-            p.drawText(QRectF(left, top, right - left, max(self.height() - top - gap, gap * 2)),
-                       Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter, self.caption)
+            p.drawText(
+                QRectF(left, top, right - left, max(self.height() - top - gap, gap * 2)),
+                Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter,
+                self.caption,
+            )
 
         n = max(len(self.columns), 1)
         x0 = left + self.note_offset + KEY_STEP * abs(self.key)
@@ -224,13 +267,29 @@ class StaffWidget(QWidget):
                         p.drawText(QPointF(ax, y + gap * 0.5), sign)
                     acc_slot += 1
 
-    def _draw_key_signature(self, p: QPainter, clef: str, x: float, bottom: float, gap: float, color: QColor,
-                            font: str | None = None) -> None:
+    def _draw_key_signature(
+        self,
+        p: QPainter,
+        clef: str,
+        x: float,
+        bottom: float,
+        gap: float,
+        color: QColor,
+        font: str | None = None,
+    ) -> None:
         draw_key_signature(p, clef, self.key, x, bottom, gap, color, font=font)
 
     @staticmethod
-    def _note(p: QPainter, x: float, y: float, gap: float, color: QColor, value: str, stem_down: bool,
-              font: str | None = None) -> None:
+    def _note(
+        p: QPainter,
+        x: float,
+        y: float,
+        gap: float,
+        color: QColor,
+        value: str,
+        stem_down: bool,
+        font: str | None = None,
+    ) -> None:
         """Draw a note of the given value; the head is centred on (x, y)."""
         if font and value != "breve":  # the breve is always the square form, whatever the music font
             engraving.draw_note(p, font, value, x, y, gap, color, stem_down)
@@ -240,8 +299,15 @@ class StaffWidget(QWidget):
             draw_note(p, value, x, y, gap, color, stem_down)
 
     @staticmethod
-    def _draw_clef(p: QPainter, clef: str, x: float, bottom: float, gap: float, color: QColor = QColor("black"),
-                   font: str | None = None) -> None:
+    def _draw_clef(
+        p: QPainter,
+        clef: str,
+        x: float,
+        bottom: float,
+        gap: float,
+        color: QColor = QColor("black"),
+        font: str | None = None,
+    ) -> None:
         """Draw the clef: from a SMuFL font if given, else as a Noto Music path scaled to its extent in gaps."""
         clef = clef_shape(clef)  # the baritone clef is an F clef or a C clef, as chosen in the settings
         if font:

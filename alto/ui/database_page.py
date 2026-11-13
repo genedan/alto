@@ -1,4 +1,5 @@
 """A read-only look at what is stored: every answer, every question's record, and the profiles."""
+
 from __future__ import annotations
 
 import json
@@ -33,8 +34,14 @@ ROW_ROLE = Qt.ItemDataRole.UserRole + 1  # a row's hidden details
 class RowsModel(QAbstractTableModel):
     """Rows of (text shown, value to sort by) cells. Numbers are right-aligned."""
 
-    def __init__(self, headers: list[str], rows: list[list[tuple[str, object]]], numeric: Iterable[int] = (),
-                 extras: list[dict] | None = None, parent=None):
+    def __init__(
+        self,
+        headers: list[str],
+        rows: list[list[tuple[str, object]]],
+        numeric: Iterable[int] = (),
+        extras: list[dict] | None = None,
+        parent=None,
+    ):
         """`extras` holds something about each row that is not shown, such as the stored question (see ROW_ROLE)."""
         super().__init__(parent)
         self.headers, self.rows, self.numeric = headers, rows, set(numeric)
@@ -91,9 +98,11 @@ class DatabasePage(QWidget):
         self.group = QButtonGroup(self)
         self.group.setExclusive(True)
         self.tabs: dict[str, QPushButton] = {}
-        for key, label, tip in (("answers", "Answers", "Every answer given, newest first"),
-                                ("questions", "Questions", "What is known about each question asked"),
-                                ("profiles", "Profiles", "Everyone who has a profile")):
+        for key, label, tip in (
+            ("answers", "Answers", "Every answer given, newest first"),
+            ("questions", "Questions", "What is known about each question asked"),
+            ("profiles", "Profiles", "Everyone who has a profile"),
+        ):
             b = QPushButton(label)
             b.setCheckable(True)
             b.setToolTip(tip)
@@ -156,17 +165,37 @@ class DatabasePage(QWidget):
         rows, extras = [], []
         for r in db.attempt_rows(pid, ROW_LIMIT):
             seconds = r["duration_ms"] / 1000
-            extras.append({"exercise": r["exercise"], "payload": r["payload"], "details": [
-                (f"<b>You answered:</b> {r['answer'] or '–'} ({'right' if r['correct'] else 'wrong'}, attempt {r['attempt_no']}, "
-                 f"{seconds:.1f} s)"), f"<span style='color: gray;'>{_when(r['answered_at'])[0]}</span>"]})
-            rows.append([_when(r["answered_at"]), (self._names.get(r["exercise"], r["exercise"]),) * 2,
-                         (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2, (r["answer"],) * 2,
-                         ("Right", 1) if r["correct"] else ("Wrong", 0), (str(r["attempt_no"]), r["attempt_no"]),
-                         (f"{seconds:.1f} s", seconds)])
+            extras.append(
+                {
+                    "exercise": r["exercise"],
+                    "payload": r["payload"],
+                    "details": [
+                        (
+                            f"<b>You answered:</b> {r['answer'] or '–'} ({'right' if r['correct'] else 'wrong'}, "
+                            f"attempt {r['attempt_no']}, {seconds:.1f} s)"
+                        ),
+                        f"<span style='color: gray;'>{_when(r['answered_at'])[0]}</span>",
+                    ],
+                },
+            )
+            rows.append(
+                [
+                    _when(r["answered_at"]),
+                    (self._names.get(r["exercise"], r["exercise"]),) * 2,
+                    (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2,
+                    (r["answer"],) * 2,
+                    ("Right", 1) if r["correct"] else ("Wrong", 0),
+                    (str(r["attempt_no"]), r["attempt_no"]),
+                    (f"{seconds:.1f} s", seconds),
+                ],
+            )
         total = db.count_attempts(pid)
         who = self.learner.profile.name
-        note = (f"{total:,} answers by {who}. Showing the newest {ROW_LIMIT:,}." if total > ROW_LIMIT
-                else f"{total:,} answers by {who}.")
+        note = (
+            f"{total:,} answers by {who}. Showing the newest {ROW_LIMIT:,}."
+            if total > ROW_LIMIT
+            else f"{total:,} answers by {who}."
+        )
         model = RowsModel(["When", "Exercise", "Question", "Answer given", "Result", "Attempt", "Time"], rows, {5, 6}, extras)
         return model, note
 
@@ -174,25 +203,58 @@ class DatabasePage(QWidget):
         rows, extras = [], []
         for r in self.learner.db.item_rows(self.learner.profile.id, ROW_LIMIT):
             typical = r["total_first_ms"] / r["seen"] / 1000 if r["seen"] else 0.0
-            extras.append({"exercise": r["exercise"], "payload": r["payload"], "details": [
-                (f"<b>History:</b> answered {r['seen']} time{'s' if r['seen'] != 1 else ''}, right first time "
-                 f"{r['first_try_right']}, {r['wrong_attempts']} missed attempt{'s' if r['wrong_attempts'] != 1 else ''}, "
-                 f"typically {typical:.1f} s"), f"<b>Strain:</b> {r['strain']:.1f} (higher comes back sooner)"]})
-            rows.append([(self._names.get(r["exercise"], r["exercise"]),) * 2,
-                         (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2,
-                         (f"{r['strain']:.1f}", r["strain"]), (str(r["seen"]), r["seen"]),
-                         (str(r["first_try_right"]), r["first_try_right"]), (str(r["wrong_attempts"]), r["wrong_attempts"]),
-                         (f"{typical:.1f} s", typical), _when(r["last_seen"])])
-        model = RowsModel(["Exercise", "Question", "Strain", "Answered", "Right first time", "Missed", "Typical time",
-                           "Last seen"], rows, {2, 3, 4, 5, 6}, extras)
-        return model, (f"{len(rows):,} questions asked of {self.learner.profile.name}. "
-                       "Strain is how much practice a question needs: higher comes back sooner.")
+            extras.append(
+                {
+                    "exercise": r["exercise"],
+                    "payload": r["payload"],
+                    "details": [
+                        (
+                            f"<b>History:</b> answered {r['seen']} time{'s' if r['seen'] != 1 else ''}, right first time "
+                            f"{r['first_try_right']}, {r['wrong_attempts']} "
+                            f"missed attempt{'s' if r['wrong_attempts'] != 1 else ''}, "
+                            f"typically {typical:.1f} s"
+                        ),
+                        f"<b>Strain:</b> {r['strain']:.1f} (higher comes back sooner)",
+                    ],
+                },
+            )
+            rows.append(
+                [
+                    (self._names.get(r["exercise"], r["exercise"]),) * 2,
+                    (self._question_text(r["exercise"], r["item_key"], r["payload"]),) * 2,
+                    (f"{r['strain']:.1f}", r["strain"]),
+                    (str(r["seen"]), r["seen"]),
+                    (str(r["first_try_right"]), r["first_try_right"]),
+                    (str(r["wrong_attempts"]), r["wrong_attempts"]),
+                    (f"{typical:.1f} s", typical),
+                    _when(r["last_seen"]),
+                ],
+            )
+        model = RowsModel(
+            ["Exercise", "Question", "Strain", "Answered", "Right first time", "Missed", "Typical time", "Last seen"],
+            rows,
+            {2, 3, 4, 5, 6},
+            extras,
+        )
+        return model, (
+            f"{len(rows):,} questions asked of {self.learner.profile.name}. "
+            "Strain is how much practice a question needs: higher comes back sooner."
+        )
 
     def _profiles(self) -> tuple[RowsModel, str]:
-        rows = [[(r["name"],) * 2, _when(r["created_at"]), (f"{r['attempts']:,}", r["attempts"]),
-                 (f"{r['questions']:,}", r["questions"])] for r in self.learner.db.profile_rows()]
-        return (RowsModel(["Name", "Created", "Answers", "Questions"], rows, {2, 3}),
-                f"{len(rows)} profile{'s' if len(rows) != 1 else ''}.")
+        rows = [
+            [
+                (r["name"],) * 2,
+                _when(r["created_at"]),
+                (f"{r['attempts']:,}", r["attempts"]),
+                (f"{r['questions']:,}", r["questions"]),
+            ]
+            for r in self.learner.db.profile_rows()
+        ]
+        return (
+            RowsModel(["Name", "Created", "Answers", "Questions"], rows, {2, 3}),
+            f"{len(rows)} profile{'s' if len(rows) != 1 else ''}.",
+        )
 
     def show_table(self, key: str) -> None:
         model, note = {"answers": self._answers, "questions": self._questions, "profiles": self._profiles}[key]()

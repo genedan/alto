@@ -1,4 +1,5 @@
 """Pitches and intervals, spelled correctly (C# is not Db)."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -113,7 +114,7 @@ class Interval:
     @classmethod
     def parse(cls, text: str) -> Interval:
         quality = text.rstrip("0123456789")
-        return cls(int(text[len(quality):]), quality)
+        return cls(int(text[len(quality) :]), quality)
 
 
 QUALITY_NAMES = {
@@ -129,9 +130,24 @@ QUALITY_NAMES = {
 
 # Key signatures: count > 0 is that many sharps, count < 0 that many flats.
 SHARP_ORDER = (3, 0, 4, 1, 5, 2, 6)  # letter indexes: F C G D A E B
-FLAT_ORDER = (6, 2, 5, 1, 4, 0, 3)   # B E A D G C F
-MAJOR_KEYS = {0: "C", 1: "G", 2: "D", 3: "A", 4: "E", 5: "B", 6: "F♯", 7: "C♯",
-              -1: "F", -2: "B♭", -3: "E♭", -4: "A♭", -5: "D♭", -6: "G♭", -7: "C♭"}
+FLAT_ORDER = (6, 2, 5, 1, 4, 0, 3)  # B E A D G C F
+MAJOR_KEYS = {
+    0: "C",
+    1: "G",
+    2: "D",
+    3: "A",
+    4: "E",
+    5: "B",
+    6: "F♯",
+    7: "C♯",
+    -1: "F",
+    -2: "B♭",
+    -3: "E♭",
+    -4: "A♭",
+    -5: "D♭",
+    -6: "G♭",
+    -7: "C♭",
+}
 
 
 def key_accidental(letter: int, count: int) -> int:

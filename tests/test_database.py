@@ -1,4 +1,5 @@
 """The database: profiles, the stored questions and answers, and the read-only views the browser uses."""
+
 import json
 
 import pytest

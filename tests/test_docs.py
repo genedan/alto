@@ -1,5 +1,6 @@
 """The docs and their screenshots stay in step: every picture a page shows exists in both themes, and each one can be
 regenerated with scripts/screenshots.py."""
+
 import importlib.util
 import re
 from pathlib import Path

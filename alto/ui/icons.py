@@ -1,4 +1,5 @@
 """Small monochrome icons drawn from SVG, tinted with the current theme's text colour."""
+
 from __future__ import annotations
 
 from PySide6.QtCore import QByteArray, Qt
@@ -34,6 +35,7 @@ def svg_icon(inner: str, color: QColor, size: int = 24, scale: float = 2.0) -> Q
     px.setDevicePixelRatio(scale)
     return QIcon(px)
 
+
 # Sidebar toggle: an edge bar with a chevron pointing toward the edge while the list is shown
 # (click to hide) and away from it while hidden (click to show).
 _SIDEBAR_STROKE = 'fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'
@@ -68,8 +70,10 @@ def _beamed_notes() -> str:
         top = beam_start[1] + (stem - beam_start[0]) * (beam_end[1] - beam_start[1]) / (beam_end[0] - beam_start[0])
         out.append(f'<ellipse cx="{x}" cy="{y}" rx="2.7" ry="1.9" transform="rotate(-20 {x} {y})" {_NOTE}/>')
         out.append(f'<path d="M{stem} {y - 0.3}V{top:.2f}" {_LINE}/>')
-    out.append(f'<path d="M{beam_start[0]} {beam_start[1]}L{beam_end[0]} {beam_end[1]}" stroke="COLOR" stroke-width="2.6" '
-               'stroke-linecap="butt" fill="none"/>')
+    out.append(
+        f'<path d="M{beam_start[0]} {beam_start[1]}L{beam_end[0]} {beam_end[1]}" stroke="COLOR" stroke-width="2.6" '
+        'stroke-linecap="butt" fill="none"/>',
+    )
     return "".join(out)
 
 
@@ -91,9 +95,11 @@ EXERCISE_KEYBOARD = (
 )
 
 # Help: a question mark in a circle.
-HELP = ('<circle cx="12" cy="12" r="9" fill="none" stroke="COLOR" stroke-width="2"/>'
-        '<path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.9.5-1.3 1.1-1.3 2" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round"/>'
-        '<circle cx="12" cy="16.9" r="1.15" fill="COLOR"/>')
+HELP = (
+    '<circle cx="12" cy="12" r="9" fill="none" stroke="COLOR" stroke-width="2"/>'
+    '<path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.9.5-1.3 1.1-1.3 2" fill="none" stroke="COLOR" stroke-width="2" stroke-linecap="round"/>'
+    '<circle cx="12" cy="16.9" r="1.15" fill="COLOR"/>'
+)
 
 # Note construction: a staff with a note being dropped onto it.
 EXERCISE_CONSTRUCTION = (
@@ -106,17 +112,23 @@ EXERCISE_CONSTRUCTION = (
 _MENU = 'fill="none" stroke="COLOR" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'
 HOME = f'<path d="M3.5 11.2L12 4l8.5 7.2M6 9.6V20h4.4v-5.2h3.2V20H18V9.6" {_MENU}/>'
 RESTART = f'<path d="M19 12a7 7 0 1 1-2.05-4.95M17.6 3.6v4h-4" {_MENU}/>'
-GEAR = (f'<circle cx="12" cy="12" r="3" {_MENU}/><circle cx="12" cy="12" r="6.4" {_MENU}/>'
-        '<path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7" '
-        'fill="none" stroke="COLOR" stroke-width="2.6" stroke-linecap="round"/>')
+GEAR = (
+    f'<circle cx="12" cy="12" r="3" {_MENU}/><circle cx="12" cy="12" r="6.4" {_MENU}/>'
+    '<path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7" '
+    'fill="none" stroke="COLOR" stroke-width="2.6" stroke-linecap="round"/>'
+)
 # Quit: a power symbol, a broken ring with a line through the gap.
 QUIT = f'<path d="M12 3.5v8M7.2 6.6a7.2 7.2 0 1 0 9.6 0" {_MENU}/>'
 # Profile: a head and shoulders.
 PROFILE = f'<circle cx="12" cy="8.2" r="3.6" {_MENU}/><path d="M4.6 20c.7-4 3.7-6 7.4-6s6.7 2 7.4 6" {_MENU}/>'
 # Statistics: a line graph, a rising line with its points over a pair of axes.
-CHART = (f'<path d="M4 4v16h16" {_MENU}/><path d="M8 15l3.6-4.4 3 2.6 4.4-6" {_MENU}/>'
-         '<circle cx="8" cy="15" r="1.2" fill="COLOR"/><circle cx="11.6" cy="10.6" r="1.2" fill="COLOR"/>'
-         '<circle cx="14.6" cy="13.2" r="1.2" fill="COLOR"/><circle cx="19" cy="7.2" r="1.2" fill="COLOR"/>')
+CHART = (
+    f'<path d="M4 4v16h16" {_MENU}/><path d="M8 15l3.6-4.4 3 2.6 4.4-6" {_MENU}/>'
+    '<circle cx="8" cy="15" r="1.2" fill="COLOR"/><circle cx="11.6" cy="10.6" r="1.2" fill="COLOR"/>'
+    '<circle cx="14.6" cy="13.2" r="1.2" fill="COLOR"/><circle cx="19" cy="7.2" r="1.2" fill="COLOR"/>'
+)
 # Database: a stack of discs, drawn as a cylinder.
-DATABASE = (f'<ellipse cx="12" cy="6" rx="7" ry="2.6" {_MENU}/>'
-            f'<path d="M5 6v12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6V6M5 12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6" {_MENU}/>')
+DATABASE = (
+    f'<ellipse cx="12" cy="6" rx="7" ry="2.6" {_MENU}/>'
+    f'<path d="M5 6v12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6V6M5 12c0 1.45 3.1 2.6 7 2.6s7-1.15 7-2.6" {_MENU}/>'
+)

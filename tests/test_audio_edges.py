@@ -1,4 +1,5 @@
 """The audio engine's less common paths: far notes, fades, errors and a sequence that is replaced while it waits."""
+
 import wave
 
 import pytest

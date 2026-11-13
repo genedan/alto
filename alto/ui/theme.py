@@ -1,4 +1,5 @@
 """The colour theme: follow the system, or force light or dark."""
+
 from __future__ import annotations
 
 from PySide6.QtCore import Qt

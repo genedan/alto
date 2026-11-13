@@ -1,4 +1,5 @@
 """The database browser: three read-only tables, a search box, and a popup for the question a row is about."""
+
 import json
 
 from alto.exercises import REGISTRY

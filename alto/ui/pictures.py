@@ -3,6 +3,7 @@
 Each picture is drawn in fixed units and then scaled, so the same picture serves as a summary in a menu row and,
 larger, as the label of a choice. Colours come from the palette, so they work in light and dark themes.
 """
+
 from __future__ import annotations
 
 from PySide6.QtCore import QPoint, QPointF, QRectF, Qt
@@ -16,11 +17,27 @@ from .colors import blend
 from .notation import current as current_style
 from .staff import BOTTOM_LINE, MIDDLE_C, StaffWidget
 
-CLEF_NAMES = {"treble": "Treble", "bass": "Bass", "alto": "Alto", "tenor": "Tenor", "soprano": "Soprano",
-              "mezzo": "Mezzo-soprano", "baritone": "Baritone", "grand": "Grand staff",
-              "baritone_f": "Baritone (F clef)", "baritone_c": "Baritone (C clef)"}  # the two ways of writing the baritone clef
-VALUE_NAMES = {"breve": "Breve", "whole": "Whole", "half": "Half", "quarter": "Quarter", "eighth": "Eighth",
-               "sixteenth": "16th", "thirty_second": "32nd"}
+CLEF_NAMES = {
+    "treble": "Treble",
+    "bass": "Bass",
+    "alto": "Alto",
+    "tenor": "Tenor",
+    "soprano": "Soprano",
+    "mezzo": "Mezzo-soprano",
+    "baritone": "Baritone",
+    "grand": "Grand staff",
+    "baritone_f": "Baritone (F clef)",
+    "baritone_c": "Baritone (C clef)",
+}  # the two ways of writing the baritone clef
+VALUE_NAMES = {
+    "breve": "Breve",
+    "whole": "Whole",
+    "half": "Half",
+    "quarter": "Quarter",
+    "eighth": "Eighth",
+    "sixteenth": "16th",
+    "thirty_second": "32nd",
+}
 
 
 class _Picture(QWidget):
@@ -156,8 +173,7 @@ class ValuePictures(_Picture):
             wide = value in ("breve", "whole")  # the heads without stems are wider, so centre them in the box
             y = self.H / 2 if wide and self.centre_stemless else self.HEAD_Y
             # drawn by the same routine as the staff, so the symbol matches the one in the exercise
-            StaffWidget._note(p, x + (self.W / 2 if wide else self.HEAD_X), y, self.GAP, text, value, False,
-                              current_style().font)
+            StaffWidget._note(p, x + (self.W / 2 if wide else self.HEAD_X), y, self.GAP, text, value, False, current_style().font)
 
 
 class KeySignaturePicture(_Picture):
@@ -210,8 +226,13 @@ class RangePictures(_Picture):
     H, W, SPACING = 38, 46, 6
     MAX_SCALE = 1.9
 
-    def __init__(self, items: list[tuple[str, int, int]] | None = None, scale: float = 1.0, max_width: float | None = None,
-                 parent=None):
+    def __init__(
+        self,
+        items: list[tuple[str, int, int]] | None = None,
+        scale: float = 1.0,
+        max_width: float | None = None,
+        parent=None,
+    ):
         """With `max_width` the picture is enlarged to use that width (up to MAX_SCALE) however many clefs there are."""
         super().__init__(scale, parent)
         self.max_width = max_width
@@ -226,8 +247,11 @@ class RangePictures(_Picture):
         if self.max_width:
             self.scale = min(self.MAX_SCALE, self.max_width / natural)
         self._fit(natural, self.H)
-        tip = [f"{CLEF_NAMES[c]}: {Note.from_diatonic(lo).name}{Note.from_diatonic(lo).octave} to "
-               f"{Note.from_diatonic(hi).name}{Note.from_diatonic(hi).octave}" for c, lo, hi in self.items]
+        tip = [
+            f"{CLEF_NAMES[c]}: {Note.from_diatonic(lo).name}{Note.from_diatonic(lo).octave} to "
+            f"{Note.from_diatonic(hi).name}{Note.from_diatonic(hi).octave}"
+            for c, lo, hi in self.items
+        ]
         self.setToolTip("\n".join(tip))
         self.update()
 

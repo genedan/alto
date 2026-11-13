@@ -76,13 +76,20 @@ error stops the push. Run the commit checks by hand with `pre-commit run --all-f
 
 ## Linting
 
-Alto uses [Ruff](https://docs.astral.sh/ruff/) for linting. It is installed with the `dev` extra and configured in
-`pyproject.toml` (pycodestyle, pyflakes, import sorting, pyupgrade and bugbear rules, with a 130-character line limit).
+Alto uses [Ruff](https://docs.astral.sh/ruff/) for linting and formatting. It is installed with the `dev` extra and
+configured in `pyproject.toml` (pycodestyle, pyflakes, import sorting, pyupgrade, bugbear and a few more rules, with a
+130-character line limit).
 
 ```bash
-ruff check alto tests          # report problems
-ruff check --fix alto tests    # apply the safe fixes
+ruff format alto tests scripts        # format the code
+ruff check --fix alto tests scripts   # report problems and apply the safe fixes
 ```
+
+Run them in that order. Anything that does not fit on a line, whether a list, a dictionary, a call or a signature, is put
+one element per line with a trailing comma, and a trailing comma you write yourself keeps a short one exploded. The
+`ruff-format` pre-commit hook does this on every commit. Ruff warns that the trailing-comma rule can conflict with the
+formatter. Run in this order, it does not: the formatter leaves out a comma after a lone long argument, the check adds it,
+and the formatter keeps it.
 
 ## Adding an exercise
 
@@ -95,7 +102,7 @@ class MyExercise(Exercise):
     name = "My exercise"
     category = "Intervals"
     description = "One line shown on the home screen."
-    par_seconds = 5.0   # a good first-answer time; see How practice adapts
+    par_seconds = 5.0  # a good first-answer time; see How practice adapts
 
     def generate(self, rng):
         ...

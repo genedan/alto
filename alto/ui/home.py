@@ -34,8 +34,9 @@ class ExerciseCard(QPushButton):
         lay.setSpacing(6)
         icon = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
         color = self.palette().color(QPalette.ColorRole.WindowText)
-        icon.setPixmap(icons.svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), color, size=56)
-                       .pixmap(QSize(56, 56)))
+        icon.setPixmap(
+            icons.svg_icon(EXERCISE_ICONS.get(cls.__name__, icons.EXERCISE_NOTE_NAMES), color, size=56).pixmap(QSize(56, 56)),
+        )
         category = QLabel(cls.category.upper(), alignment=Qt.AlignmentFlag.AlignCenter)
         category.setStyleSheet("color: gray; font-size: 8pt; letter-spacing: 1px;")
         name = QLabel(f"<b>{cls.name}</b>", alignment=Qt.AlignmentFlag.AlignCenter)
@@ -103,7 +104,7 @@ class HomePage(QWidget):
             row = QHBoxLayout()
             row.setSpacing(GAP)
             row.addStretch(1)
-            for card in self.cards[start:start + columns]:
+            for card in self.cards[start : start + columns]:
                 row.addWidget(card)
             row.addStretch(1)
             self.rows.addLayout(row)

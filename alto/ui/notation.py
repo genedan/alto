@@ -1,4 +1,5 @@
 """Notation styles: which music font the staff, clefs, notes and accidentals are engraved in."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -12,9 +13,9 @@ from .store import store
 class NotationStyle:
     key: str
     label: str
-    note: str            # a few words on where this look comes from
-    font: str | None     # key in engraving.json, or None for the built-in Noto Music drawing
-    line: float = 1.4    # staff line weight in pixels, for the built-in drawing (the SMuFL fonts state their own)
+    note: str  # a few words on where this look comes from
+    font: str | None  # key in engraving.json, or None for the built-in Noto Music drawing
+    line: float = 1.4  # staff line weight in pixels, for the built-in drawing (the SMuFL fonts state their own)
 
 
 STYLES = (
@@ -82,6 +83,7 @@ def set_style(key: str) -> None:
 
 def _redraw() -> None:
     from .staff import StaffWidget  # imported here: staff.py imports this module
+
     for w in QApplication.allWidgets():
         if isinstance(w, StaffWidget):
             w.update()

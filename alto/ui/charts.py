@@ -1,4 +1,5 @@
 """Small charts drawn with QPainter, in the application's theme colours: stacked bars, a line, and horizontal bars."""
+
 from __future__ import annotations
 
 import math
@@ -50,8 +51,12 @@ class _Chart(QWidget):
         return blend(self.palette().color(QPalette.ColorRole.Base), self._ink(), 0.16)
 
     def _plot(self) -> QRectF:
-        return QRectF(self.LEFT, self.TOP, max(self.width() - self.LEFT - self.RIGHT, 10),
-                      max(self.height() - self.TOP - self.BOTTOM, 10))
+        return QRectF(
+            self.LEFT,
+            self.TOP,
+            max(self.width() - self.LEFT - self.RIGHT, 10),
+            max(self.height() - self.TOP - self.BOTTOM, 10),
+        )
 
     # -- shared drawing ---------------------------------------------------------------------------------------------------
 
@@ -147,9 +152,14 @@ class StackedBarChart(_Chart):
         self._category_axis(p, centres, self.labels)
 
     def mouseMoveEvent(self, event):
-        self._hover(event, self._centres(), [
-            f"{lab}\n{r + w} question{'s' if r + w != 1 else ''}: {r} right first time, {w} missed"
-            for lab, r, w in zip(self.labels, self.right, self.wrong)])
+        self._hover(
+            event,
+            self._centres(),
+            [
+                f"{lab}\n{r + w} question{'s' if r + w != 1 else ''}: {r} right first time, {w} missed"
+                for lab, r, w in zip(self.labels, self.right, self.wrong)
+            ],
+        )
 
 
 class LineChart(_Chart):
@@ -185,8 +195,10 @@ class LineChart(_Chart):
         top, ticks = self._top_and_ticks()
         self._value_axis(p, ticks, top, self.fmt)
         plot, centres = self._plot(), self._centres()
-        points = [QPointF(cx, plot.bottom() - plot.height() * min(v, top) / top) if v is not None else None
-                  for cx, v in zip(centres, self.values)]
+        points = [
+            QPointF(cx, plot.bottom() - plot.height() * min(v, top) / top) if v is not None else None
+            for cx, v in zip(centres, self.values)
+        ]
         accent = self.palette().color(QPalette.ColorRole.Highlight)
         run: list[QPointF] = []
         for pt in [*points, None]:  # draw each unbroken run of points as one line
@@ -210,8 +222,11 @@ class LineChart(_Chart):
         self._category_axis(p, centres, self.labels)
 
     def mouseMoveEvent(self, event):
-        self._hover(event, self._centres(), [f"{lab}\n{self.fmt(v) if v is not None else 'no answers'}"
-                                             for lab, v in zip(self.labels, self.values)])
+        self._hover(
+            event,
+            self._centres(),
+            [f"{lab}\n{self.fmt(v) if v is not None else 'no answers'}" for lab, v in zip(self.labels, self.values)],
+        )
 
 
 class HBarChart(_Chart):
@@ -241,8 +256,11 @@ class HBarChart(_Chart):
         for i, (name, value, text) in enumerate(self.rows):
             y = self.TOP + i * self.ROW
             p.setPen(self._ink())
-            p.drawText(QRectF(0, y, label_w - 8, self.ROW - 6), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
-                       p.fontMetrics().elidedText(name, Qt.TextElideMode.ElideRight, int(label_w - 8)))
+            p.drawText(
+                QRectF(0, y, label_w - 8, self.ROW - 6),
+                Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
+                p.fontMetrics().elidedText(name, Qt.TextElideMode.ElideRight, int(label_w - 8)),
+            )
             p.setPen(Qt.PenStyle.NoPen)
             p.setBrush(self._grid())
             p.drawRoundedRect(QRectF(x0, y + 4, x1 - x0, self.ROW - 14), 4, 4)
@@ -358,5 +376,6 @@ class HeatmapChart(_Chart):
             return
         n = self.counts.get(day, 0)
         text = f"{day.strftime('%a')} {day.strftime('%b')} {day.day}, {day.year}\n" + (
-            f"{n} question{'s' if n != 1 else ''}" if n else "no questions")
+            f"{n} question{'s' if n != 1 else ''}" if n else "no questions"
+        )
         QToolTip.showText(event.globalPosition().toPoint(), text, self)

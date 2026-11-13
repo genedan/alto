@@ -123,6 +123,7 @@ def test_changing_the_settings_changes_the_settings_signature(cfg):
 
 # -- the exercise screen and its settings panel ---------------------------------------------------------------------
 
+
 class FakeStore:
     def __init__(self, values=None):
         self.values = dict(values or {})
@@ -212,9 +213,19 @@ def test_the_settings_panel_edits_and_saves_the_settings(view, cfg, monkeypatch)
 def test_the_saved_settings_are_read_back(cfg, monkeypatch):
     from alto.ui import settings_panel
 
-    monkeypatch.setattr(settings_panel, "store", lambda: FakeStore({
-        "arpeggio/clefs": "alto,tenor", "arpeggio/types": "minor 7th,half-diminished 7th,nonsense",
-        "arpeggio/inversions": "2,3", "arpeggio/keySignature": "true", "arpeggio/keys": "-1,2"}))
+    monkeypatch.setattr(
+        settings_panel,
+        "store",
+        lambda: FakeStore(
+            {
+                "arpeggio/clefs": "alto,tenor",
+                "arpeggio/types": "minor 7th,half-diminished 7th,nonsense",
+                "arpeggio/inversions": "2,3",
+                "arpeggio/keySignature": "true",
+                "arpeggio/keys": "-1,2",
+            },
+        ),
+    )
     settings_panel.load_arpeggio()
     assert cfg.clefs == {"alto", "tenor"} and cfg.types == {"minor 7th", "half-diminished 7th"}
     assert cfg.inversions == {2, 3} and cfg.key_signature and cfg.keys == {-1, 2}

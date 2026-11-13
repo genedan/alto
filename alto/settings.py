@@ -1,4 +1,5 @@
 """User settings. Pure Python (no Qt); persistence lives in ui/settings_panel.py."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -14,13 +15,13 @@ RANGE_KEYS = (*CLEFS, "grand")  # clefs that can have a note range
 # Inclusive diatonic range of notes that may be asked, per clef (defaults sit comfortably on the staff).
 DEFAULT_RANGES = {
     "treble": (Note(3, 1).diatonic, Note(7, 3).diatonic),  # D3..F7
-    "bass": (Note(1, 3).diatonic, Note(5, 5).diatonic),    # F1..A5
-    "alto": (Note(3, 0).diatonic, Note(5, 0).diatonic),    # C3..C5
-    "tenor": (Note(2, 5).diatonic, Note(4, 5).diatonic),   # A2..A4
-    "soprano": (Note(3, 4).diatonic, Note(5, 4).diatonic),   # G3..G5
-    "mezzo": (Note(3, 2).diatonic, Note(5, 2).diatonic),     # E3..E5
+    "bass": (Note(1, 3).diatonic, Note(5, 5).diatonic),  # F1..A5
+    "alto": (Note(3, 0).diatonic, Note(5, 0).diatonic),  # C3..C5
+    "tenor": (Note(2, 5).diatonic, Note(4, 5).diatonic),  # A2..A4
+    "soprano": (Note(3, 4).diatonic, Note(5, 4).diatonic),  # G3..G5
+    "mezzo": (Note(3, 2).diatonic, Note(5, 2).diatonic),  # E3..E5
     "baritone": (Note(2, 3).diatonic, Note(4, 3).diatonic),  # F2..F4
-    "grand": (Note(2, 0).diatonic, Note(6, 0).diatonic),   # C2..C6
+    "grand": (Note(2, 0).diatonic, Note(6, 0).diatonic),  # C2..C6
 }
 # Bounds for the range pickers: C1..C7.
 MIN_DIATONIC, MAX_DIATONIC = Note(1, 0).diatonic, Note(7, 0).diatonic
@@ -32,12 +33,21 @@ SOLFEGE = ("Do", "Re", "Mi", "Fa", "Sol", "La", "Si")
 
 
 # How far the range arrows may go: up to 5 ledger lines (10 steps) beyond the staff.
-_BOTTOM_LINES = {"treble": Note(4, 2), "bass": Note(2, 4), "alto": Note(3, 3), "tenor": Note(3, 1),  # E4 G2 F3 D3
-                 "soprano": Note(4, 0), "mezzo": Note(3, 5), "baritone": Note(2, 6)}  # C4 A3 B2
+_BOTTOM_LINES = {
+    "treble": Note(4, 2),
+    "bass": Note(2, 4),
+    "alto": Note(3, 3),
+    "tenor": Note(3, 1),  # E4 G2 F3 D3
+    "soprano": Note(4, 0),
+    "mezzo": Note(3, 5),
+    "baritone": Note(2, 6),
+}  # C4 A3 B2
 RANGE_LIMITS = {
     **{c: (max(MIN_DIATONIC, n.diatonic - 10), min(MAX_DIATONIC, n.diatonic + 8 + 10)) for c, n in _BOTTOM_LINES.items()},
-    "grand": (max(MIN_DIATONIC, _BOTTOM_LINES["bass"].diatonic - 10),
-              min(MAX_DIATONIC, _BOTTOM_LINES["treble"].diatonic + 8 + 10)),
+    "grand": (
+        max(MIN_DIATONIC, _BOTTOM_LINES["bass"].diatonic - 10),
+        min(MAX_DIATONIC, _BOTTOM_LINES["treble"].diatonic + 8 + 10),
+    ),
 }
 # The treble range runs from D3 to F7 and the bass range from F1 to A5. These are also the furthest the pickers go.
 RANGE_LIMITS["treble"] = DEFAULT_RANGES["treble"]
@@ -165,8 +175,15 @@ arpeggio = ArpeggioSettings()
 # Key signature exercise: read the signature on a staff and name the key, or count its sharps and flats.
 KEY_QUESTIONS = {"read": "Name the key from its signature", "count": "Count the sharps or flats"}
 KEY_MODES = ("Major (Ionian)", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Natural minor (Aeolian)", "Locrian")
-MODE_LABELS = {"Major (Ionian)": "Major (Ionian)", "Dorian": "Dorian", "Phrygian": "Phrygian", "Lydian": "Lydian",
-               "Mixolydian": "Mixolydian", "Natural minor (Aeolian)": "Minor (Aeolian)", "Locrian": "Locrian"}
+MODE_LABELS = {
+    "Major (Ionian)": "Major (Ionian)",
+    "Dorian": "Dorian",
+    "Phrygian": "Phrygian",
+    "Lydian": "Lydian",
+    "Mixolydian": "Mixolydian",
+    "Natural minor (Aeolian)": "Minor (Aeolian)",
+    "Locrian": "Locrian",
+}
 
 
 @dataclass

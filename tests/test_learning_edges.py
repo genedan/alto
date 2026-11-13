@@ -1,4 +1,5 @@
 """Less common paths of the learner and of the statistics text."""
+
 import json
 import random
 
@@ -10,6 +11,7 @@ from alto.theory.pitch import Note
 
 class Fixed(Exercise):
     """Always the same question, so that the only other candidates are stored ones."""
+
     name, par_seconds = "Fixed", 4.0
 
     def generate(self, rng):

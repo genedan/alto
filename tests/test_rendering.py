@@ -1,4 +1,5 @@
 """Drawing: every staff, clef, note value and picture is painted at least once, and shows something."""
+
 import pytest
 from alto.theory.pitch import Note
 from alto.ui import keyboard_styles, notation
@@ -12,8 +13,12 @@ def dark_pixels(widget, size=(520, 220), step=2) -> int:
     """How many pixels of the widget are dark: a blank drawing has none."""
     widget.resize(*size)
     image: QImage = widget.grab().toImage()
-    return sum(1 for y in range(0, image.height(), step) for x in range(0, image.width(), step)
-               if image.pixelColor(x, y).lightness() < 100)
+    return sum(
+        1
+        for y in range(0, image.height(), step)
+        for x in range(0, image.width(), step)
+        if image.pixelColor(x, y).lightness() < 100
+    )
 
 
 # -- the staff ------------------------------------------------------------------------------------------------------
@@ -106,6 +111,7 @@ def test_note_shapes(app):
 
 # -- placing a note by clicking the staff ---------------------------------------------------------------------------
 
+
 def test_clicking_the_staff_places_the_nearest_note(app):
     from alto.ui.staff import BOTTOM_LINE
     from alto.ui.staff_input import StaffInput
@@ -128,8 +134,17 @@ def test_clicking_the_staff_places_the_nearest_note(app):
 def move(widget, x, y):
     """Move the pointer over the widget (sent as an event, so it does not depend on the real pointer)."""
     point = QPointF(x, y)
-    QApplication.sendEvent(widget, QMouseEvent(QMouseEvent.Type.MouseMove, point, point, Qt.MouseButton.NoButton,
-                                               Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+    QApplication.sendEvent(
+        widget,
+        QMouseEvent(
+            QMouseEvent.Type.MouseMove,
+            point,
+            point,
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.NoModifier,
+        ),
+    )
 
 
 def test_the_staff_input_previews_and_locks(app, monkeypatch):
@@ -176,6 +191,7 @@ def test_the_grand_staff_input_splits_at_middle_c(app):
 
 
 # -- the keyboard ---------------------------------------------------------------------------------------------------
+
 
 def test_the_keyboard_highlights_a_key_and_changes_its_range(app):
     from alto.ui.keyboard import KeyboardWidget
@@ -278,8 +294,11 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app):
     def send(kind, x, y=50.0, button=Qt.MouseButton.LeftButton):
         pos = QPointF(x, y)
         event = QMouseEvent(kind, pos, span.mapToGlobal(pos), button, button, Qt.KeyboardModifier.NoModifier)
-        {QEvent.Type.MouseButtonPress: span.mousePressEvent, QEvent.Type.MouseMove: span.mouseMoveEvent,
-         QEvent.Type.MouseButtonRelease: span.mouseReleaseEvent}[kind](event)
+        {
+            QEvent.Type.MouseButtonPress: span.mousePressEvent,
+            QEvent.Type.MouseMove: span.mouseMoveEvent,
+            QEvent.Type.MouseButtonRelease: span.mouseReleaseEvent,
+        }[kind](event)
 
     def x_of(midi):  # the middle of a white key
         whites = [m for m in range(21, 109) if m % 12 in (0, 2, 4, 5, 7, 9, 11)]
@@ -345,6 +364,7 @@ def test_a_keyboard_span_is_chosen_by_dragging_its_edges_or_the_whole(app):
 
 # -- the little pictures in the settings ----------------------------------------------------------------------------
 
+
 def test_the_settings_pictures_draw_and_make_icons(app):
     from alto.ui import pictures
 
@@ -354,7 +374,8 @@ def test_the_settings_pictures_draw_and_make_icons(app):
     values.set_values(["half", "sixteenth", "thirty_second"])
     keys = [pictures.KeySignaturePicture(k) for k in (0, 1, 7, -1, -7)]
     ranges = pictures.RangePictures(
-        [("treble", 28, 41), ("bass", 16, 29), ("grand", 14, 42), ("alto", 21, 35), ("tenor", 19, 33)])
+        [("treble", 28, 41), ("bass", 16, 29), ("grand", 14, 42), ("alto", 21, 35), ("tenor", 19, 33)],
+    )
     assert dark_pixels(ranges, ranges.sizeHint().toTuple(), step=1) > 0
     ranges.set_items([("treble", 20, 45), ("bass", 10, 16), ("alto", 31, 35)])  # below, above and inside the staff
     names = pictures.NamePicture("letters")
@@ -362,13 +383,18 @@ def test_the_settings_pictures_draw_and_make_icons(app):
     for widget in (clefs, values, *keys, ranges, names):
         widget.resize(widget.sizeHint())
         assert dark_pixels(widget, widget.size().toTuple(), step=1) > 0, type(widget).__name__
-    for icon in (pictures.ClefPictures.icon("treble"), pictures.ValuePictures.icon("quarter"),
-                 pictures.KeySignaturePicture.icon(3), pictures.NamePicture.icon("letters")):
+    for icon in (
+        pictures.ClefPictures.icon("treble"),
+        pictures.ValuePictures.icon("quarter"),
+        pictures.KeySignaturePicture.icon(3),
+        pictures.NamePicture.icon("letters"),
+    ):
         assert not icon.isNull()
     assert not pictures.ClefPictures(["alto"]).to_icon().isNull()
 
 
 # -- theme, settings storage and the small widgets ------------------------------------------------------------------
+
 
 def test_the_range_picture_shrinks_to_fit_and_the_key_signature_picture_draws_without_a_font(app):
     from alto.ui import pictures

@@ -200,7 +200,7 @@ def test_keyboard_key_signature_requires_the_right_spelling():
         qs = [KeyboardNotes().generate(rng) for _ in range(400)]
         assert all(q.key == 2 and q.key_staff and len(q.choices) == 21 for q in qs)
         by_midi = {keyboard_of(q).midi: q for q in qs}
-        assert by_midi[66].answer == "F♯" and not by_midi[66].check("G♭")   # no enharmonic
+        assert by_midi[66].answer == "F♯" and not by_midi[66].check("G♭")  # no enharmonic
         assert by_midi[70].answer == "A♯" and not by_midi[70].check("B♭")
         assert all(q.accept == () for q in qs)
 
@@ -240,17 +240,17 @@ def test_note_construction():
         for q in qs:
             lo, hi = settings.DEFAULT_RANGES[q.clef]
             assert lo <= construct_of(q).diatonic <= hi and construct_of(q).accidental == 0
-            assert q.answer in q.prompt                                 # the question shows the note's name and octave
+            assert q.answer in q.prompt  # the question shows the note's name and octave
         q = qs[0]
         assert q.check_placed(construct_of(q))
-        assert not q.check_placed(Note(construct_of(q).octave, construct_of(q).letter, 1))             # wrong accidental
-        assert not q.check_placed(Note.from_diatonic(construct_of(q).diatonic + 1))                # next line or space
+        assert not q.check_placed(Note(construct_of(q).octave, construct_of(q).letter, 1))  # wrong accidental
+        assert not q.check_placed(Note.from_diatonic(construct_of(q).diatonic + 1))  # next line or space
 
         cfg.accidentals = True
         qs = [NoteConstruction().generate(rng) for _ in range(300)]
         assert any(construct_of(q).accidental for q in qs) and any(construct_of(q).accidental == 0 for q in qs)
         assert all(q.accidentals for q in qs)
-        sharp = next(q for q in qs if construct_of(q).accidental == 1)       # G sharp is not A flat: same sound, wrong spelling
+        sharp = next(q for q in qs if construct_of(q).accidental == 1)  # G sharp is not A flat: same sound, wrong spelling
         enharmonic = Note.from_diatonic(construct_of(sharp).diatonic + 1, -1)
         assert enharmonic.midi == construct_of(sharp).midi and not sharp.check_placed(enharmonic)
     finally:
@@ -300,7 +300,7 @@ def test_note_construction_key_signature():
         qs = [NoteConstruction().generate(rng) for _ in range(600)]
         differing = [q for q in qs if construct_of(q).accidental != key_accidental(construct_of(q).letter, q.key)]
         assert differing and len(differing) < len(qs)
-        assert any(construct_of(q).accidental == 0 for q in differing)       # an explicit natural
+        assert any(construct_of(q).accidental == 0 for q in differing)  # an explicit natural
         assert all("needs its own" in q.explanation for q in differing)
 
         cfg.key_signature = False  # off: no signature, and the old behaviour

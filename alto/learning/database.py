@@ -1,4 +1,5 @@
 """The SQLite store: profiles, every answer given, and what is known about each question. Pure Python (no Qt)."""
+
 from __future__ import annotations
 
 import sqlite3
@@ -115,8 +116,10 @@ class Database:
     # -- answers and what they say about each question -----------------------------------------------------------
 
     def get_item(self, profile_id: int, exercise: str, item_key: str) -> ItemRecord | None:
-        r = self.conn.execute("SELECT * FROM items WHERE profile_id = ? AND exercise = ? AND item_key = ?",
-                              (profile_id, exercise, item_key)).fetchone()
+        r = self.conn.execute(
+            "SELECT * FROM items WHERE profile_id = ? AND exercise = ? AND item_key = ?",
+            (profile_id, exercise, item_key),
+        ).fetchone()
         return self._item(r) if r else None
 
     def save_item(self, profile_id: int, exercise: str, item_key: str, item: ItemRecord) -> None:
@@ -128,16 +131,38 @@ class Database:
                 "seen = excluded.seen, first_try_right = excluded.first_try_right, "
                 "wrong_attempts = excluded.wrong_attempts, total_first_ms = excluded.total_first_ms, "
                 "last_seen = excluded.last_seen, signature = excluded.signature, payload = excluded.payload",
-                (profile_id, exercise, item_key, item.strain, item.seen, item.first_try_right, item.wrong_attempts,
-                 item.total_first_ms, item.last_seen, item.signature, item.payload))
+                (
+                    profile_id,
+                    exercise,
+                    item_key,
+                    item.strain,
+                    item.seen,
+                    item.first_try_right,
+                    item.wrong_attempts,
+                    item.total_first_ms,
+                    item.last_seen,
+                    item.signature,
+                    item.payload,
+                ),
+            )
 
-    def add_attempt(self, profile_id: int, exercise: str, item_key: str, attempt_no: int, answer: str, correct: bool,
-                    duration_ms: int, answered_at: float) -> None:
+    def add_attempt(
+        self,
+        profile_id: int,
+        exercise: str,
+        item_key: str,
+        attempt_no: int,
+        answer: str,
+        correct: bool,
+        duration_ms: int,
+        answered_at: float,
+    ) -> None:
         with self.conn:
             self.conn.execute(
                 "INSERT INTO attempts (profile_id, exercise, item_key, attempt_no, answer, correct, duration_ms, "
                 "answered_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                (profile_id, exercise, item_key, attempt_no, answer, int(correct), duration_ms, answered_at))
+                (profile_id, exercise, item_key, attempt_no, answer, int(correct), duration_ms, answered_at),
+            )
 
     def attempts(self, profile_id: int, exercise: str | None = None) -> list[sqlite3.Row]:
         sql, args = "SELECT * FROM attempts WHERE profile_id = ?", [profile_id]
@@ -160,22 +185,37 @@ class Database:
             args.append(since)
         return " AND ".join(clauses), args
 
-    def attempts_in(self, profile_ids: list[int] | None = None, exercise: str | None = None,
-                    since: float | None = None) -> list[sqlite3.Row]:
+    def attempts_in(
+        self,
+        profile_ids: list[int] | None = None,
+        exercise: str | None = None,
+        since: float | None = None,
+    ) -> list[sqlite3.Row]:
         """Answers given, oldest first. `profile_ids` of None means every profile."""
         where, args = self._scope(profile_ids, exercise, "answered_at", since)
-        return self.conn.execute("SELECT exercise, attempt_no, correct, duration_ms, answered_at FROM attempts "
-                                 f"WHERE {where} ORDER BY answered_at, id", args).fetchall()
+        return self.conn.execute(
+            "SELECT exercise, attempt_no, correct, duration_ms, answered_at FROM attempts "
+            f"WHERE {where} ORDER BY answered_at, id",
+            args,
+        ).fetchall()
 
-    def strained_items(self, profile_ids: list[int] | None = None, exercise: str | None = None,
-                       since: float | None = None, min_strain: float = 0.0, limit: int = 10) -> list[sqlite3.Row]:
+    def strained_items(
+        self,
+        profile_ids: list[int] | None = None,
+        exercise: str | None = None,
+        since: float | None = None,
+        min_strain: float = 0.0,
+        limit: int = 10,
+    ) -> list[sqlite3.Row]:
         """The questions that need most practice, the same question from different profiles counted together."""
         where, args = self._scope(profile_ids, exercise, "last_seen", since)
         return self.conn.execute(
             "SELECT exercise, item_key, AVG(strain) AS strain, SUM(seen) AS seen, SUM(wrong_attempts) AS wrong, "
             "MAX(payload) AS payload FROM items "
             f"WHERE {where} GROUP BY exercise, item_key HAVING SUM(seen) > 0 AND AVG(strain) >= ? "
-            "ORDER BY strain DESC, wrong DESC LIMIT ?", (*args, min_strain, limit)).fetchall()
+            "ORDER BY strain DESC, wrong DESC LIMIT ?",
+            (*args, min_strain, limit),
+        ).fetchall()
 
     # -- for browsing ----------------------------------------------------------------------------------------------
 
@@ -187,20 +227,31 @@ class Database:
         return self.conn.execute(
             "SELECT a.answered_at, a.exercise, a.item_key, a.answer, a.correct, a.attempt_no, a.duration_ms, i.payload "
             "FROM attempts a LEFT JOIN items i ON i.profile_id = a.profile_id AND i.exercise = a.exercise "
-            "AND i.item_key = a.item_key WHERE a.profile_id = ? ORDER BY a.id DESC LIMIT ?", (profile_id, limit)).fetchall()
+            "AND i.item_key = a.item_key WHERE a.profile_id = ? ORDER BY a.id DESC LIMIT ?",
+            (profile_id, limit),
+        ).fetchall()
 
     def item_rows(self, profile_id: int, limit: int = 10000) -> list[sqlite3.Row]:
-        return self.conn.execute("SELECT * FROM items WHERE profile_id = ? ORDER BY strain DESC, last_seen DESC LIMIT ?",
-                                 (profile_id, limit)).fetchall()
+        return self.conn.execute(
+            "SELECT * FROM items WHERE profile_id = ? ORDER BY strain DESC, last_seen DESC LIMIT ?",
+            (profile_id, limit),
+        ).fetchall()
 
     def profile_rows(self) -> list[sqlite3.Row]:
         return self.conn.execute(
             "SELECT p.id, p.name, p.created_at, (SELECT COUNT(*) FROM attempts a WHERE a.profile_id = p.id) AS attempts, "
             "(SELECT COUNT(*) FROM items i WHERE i.profile_id = p.id) AS questions FROM profiles p "
-            "ORDER BY p.name COLLATE NOCASE").fetchall()
+            "ORDER BY p.name COLLATE NOCASE",
+        ).fetchall()
 
-    def replay_candidates(self, profile_id: int, exercise: str, signature: str, hardest: int = 25,
-                          random_extra: int = 10) -> list[ItemRecord]:
+    def replay_candidates(
+        self,
+        profile_id: int,
+        exercise: str,
+        signature: str,
+        hardest: int = 25,
+        random_extra: int = 10,
+    ) -> list[ItemRecord]:
         """Questions asked before under these same settings: the ones that need most practice, plus a few at random."""
         base = "FROM items WHERE profile_id = ? AND exercise = ? AND signature = ?"
         args = (profile_id, exercise, signature)
@@ -215,5 +266,14 @@ class Database:
 
     @staticmethod
     def _item(r: sqlite3.Row) -> ItemRecord:
-        return ItemRecord(r["strain"], r["seen"], r["first_try_right"], r["wrong_attempts"], r["total_first_ms"],
-                          r["last_seen"], r["signature"], r["payload"], r["item_key"])
+        return ItemRecord(
+            r["strain"],
+            r["seen"],
+            r["first_try_right"],
+            r["wrong_attempts"],
+            r["total_first_ms"],
+            r["last_seen"],
+            r["signature"],
+            r["payload"],
+            r["item_key"],
+        )

@@ -9,6 +9,7 @@ often while well-known ones fade into the background.
 * The first answer's speed, against the exercise's `par_seconds`, adds or removes strain on top: very quick
   answers take off up to FAST_BONUS, and slow ones add up to SLOW_PENALTY.
 """
+
 from __future__ import annotations
 
 import math
@@ -23,8 +24,8 @@ CORRECT_REWARD = 0.5
 RETRY_REWARD = 0.2
 FAST_BONUS = 0.6
 SLOW_PENALTY = 1.0
-VERY_FAST = 0.5   # at or below this fraction of par counts as very quick
-VERY_SLOW = 4.0   # at or above this many times par counts as as slow as it gets
+VERY_FAST = 0.5  # at or below this fraction of par counts as very quick
+VERY_SLOW = 4.0  # at or above this many times par counts as as slow as it gets
 WEIGHT_SLOPE = 0.6
 BASE_COOLDOWN = 120.0  # seconds a question of strain 3 stays out of the running before it can recur freely
 MIN_RECENCY = 0.02

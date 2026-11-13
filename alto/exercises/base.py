@@ -1,4 +1,5 @@
 """Exercise framework. To add an exercise: subclass Exercise, decorate with @register."""
+
 from __future__ import annotations
 
 import hashlib
@@ -45,10 +46,19 @@ class Question:
     def item_key(self) -> str:
         """A stable identity for this question, so the same one can be recognised when it comes round again.
         It covers what is asked and where it is drawn, but not the note value or the order of the buttons."""
+
         def spelled(n: Note | None):
             return None if n is None else [n.octave, n.letter, n.accidental]
-        data = [self.prompt, self.answer, self.clef, [[spelled(n) for n in col] for col in self.staff], self.key,
-                spelled(self.keyboard), spelled(self.construct)]
+
+        data = [
+            self.prompt,
+            self.answer,
+            self.clef,
+            [[spelled(n) for n in col] for col in self.staff],
+            self.key,
+            spelled(self.keyboard),
+            spelled(self.construct),
+        ]
         return hashlib.sha1(json.dumps(data).encode()).hexdigest()[:20]
 
     def to_dict(self) -> dict:
@@ -78,6 +88,7 @@ def note_from(v: dict | None) -> Note | None:
 def signature(*parts) -> str:
     """A short description of the exercise settings in force, so a stored question is only asked again under the
     settings it was made for."""
+
     def plain(o):
         if is_dataclass(o) and not isinstance(o, type):
             return plain(asdict(o))
@@ -88,6 +99,7 @@ def signature(*parts) -> str:
         if isinstance(o, (list, tuple)):
             return [plain(x) for x in o]
         return o
+
     return json.dumps(plain(parts), sort_keys=True)
 
 

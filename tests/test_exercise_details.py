@@ -1,4 +1,5 @@
 """Help texts, stored questions, and the small helpers around the exercises."""
+
 import random
 
 import pytest
@@ -49,9 +50,22 @@ def test_the_note_construction_help_follows_the_settings():
 
 
 def test_a_stored_question_comes_back_exactly():
-    q = Question("Which?", ["a", "b", "c"], "b", [[Note(4, 0), Note(4, 2)]], clef="bass", key=-2, value="half",
-                 grid={"a": (0, 0), "b": (1, 0), "c": (1, 1)}, keyboard=Note(3, 4, 1), keyboard_range=(48, 72),
-                 octaves=["3", "4"], construct=Note(2, 1), accidentals=True, accept=("B", "b"))
+    q = Question(
+        "Which?",
+        ["a", "b", "c"],
+        "b",
+        [[Note(4, 0), Note(4, 2)]],
+        clef="bass",
+        key=-2,
+        value="half",
+        grid={"a": (0, 0), "b": (1, 0), "c": (1, 1)},
+        keyboard=Note(3, 4, 1),
+        keyboard_range=(48, 72),
+        octaves=["3", "4"],
+        construct=Note(2, 1),
+        accidentals=True,
+        accept=("B", "b"),
+    )
     again = Question.from_dict(q.to_dict())
     assert again == q
     assert again.grid == {"a": (0, 0), "b": (1, 0), "c": (1, 1)} and again.keyboard_range == (48, 72)
@@ -75,9 +89,11 @@ def test_diatonic_names_and_tonics():
 def test_a_stored_question_is_only_asked_again_under_the_settings_it_was_made_for():
     from alto.exercises.library import NoteNames
 
-    for exercise, change in ((NoteNames(), lambda: setattr(settings.note_names, "naming", "solfege")),
-                             (KeyboardNotes(), lambda: setattr(settings.keyboard, "black_keys", False)),
-                             (NoteConstruction(), lambda: setattr(settings.construction, "accidentals", True))):
+    for exercise, change in (
+        (NoteNames(), lambda: setattr(settings.note_names, "naming", "solfege")),
+        (KeyboardNotes(), lambda: setattr(settings.keyboard, "black_keys", False)),
+        (NoteConstruction(), lambda: setattr(settings.construction, "accidentals", True)),
+    ):
         before = exercise.settings_signature()
         change()
         assert exercise.settings_signature() != before, type(exercise).__name__

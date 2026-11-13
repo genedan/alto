@@ -1,4 +1,5 @@
 """Note playback: recorded instrument samples (University of Iowa), with pitch-shifting for missing notes."""
+
 from __future__ import annotations
 
 import io
@@ -23,7 +24,7 @@ def synth_piano(midi: int, duration: float = 1.6) -> np.ndarray:
         f = n * f0 * np.sqrt(1 + inharm * n * n)
         if f > 12000:
             break
-        amp = 1.0 / n ** 1.15
+        amp = 1.0 / n**1.15
         if n % 7 == 0:  # strike-point comb: hammer hits ~1/7 along the string
             amp *= 0.3
         decay = 2.2 + 1.1 * n + (midi - 60) * 0.03  # higher partials/notes die faster
@@ -174,8 +175,14 @@ class Sounds:
         for fx in sounding:
             self._release(fx)
 
-    def play_midi(self, midi: int, volume: float = 1.0, instrument: str | None = None, force: bool = False,
-                  release_previous: bool = True) -> None:
+    def play_midi(
+        self,
+        midi: int,
+        volume: float = 1.0,
+        instrument: str | None = None,
+        force: bool = False,
+        release_previous: bool = True,
+    ) -> None:
         """Play a note in the chosen instrument (or `instrument`). `force` plays even while muted, for previews.
 
         A sustained instrument (bowed or blown) ends the notes still sounding first, as a player would, unless
@@ -270,8 +277,11 @@ class Sounds:
 
     def play_notes(self, columns, gap_ms: int = 450) -> None:
         """Play staff columns left to right, evenly spaced; the notes within a column sound together."""
-        self._play_sequence(self.instrument, [([n.midi for n in col], min(1.0, 1.4 / len(col) ** 0.5)) for col in columns],
-                            gap_ms)
+        self._play_sequence(
+            self.instrument,
+            [([n.midi for n in col], min(1.0, 1.4 / len(col) ** 0.5)) for col in columns],
+            gap_ms,
+        )
 
     def play_correct(self, streak: int) -> None:
         """Climb the C major scale (C5..C6) as the streak grows, then wrap."""

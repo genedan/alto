@@ -3,6 +3,7 @@
 A "question" here is one showing of a question, scored by its first answer: it is right if that answer was right.
 Later attempts at the same showing show up as extra attempts per question, not as extra questions.
 """
+
 from __future__ import annotations
 
 import json
@@ -117,8 +118,10 @@ def _label(t: datetime, gran: str) -> str:
 
 def describe(question: Question) -> str:
     """A short line saying what a question was, for the list of questions that need practice."""
+
     def spelled(n: Note) -> str:
         return f"{n.name}{n.octave}"
+
     clef = question.clef.capitalize()
     if question.show_staff:
         what = f"{clef}: {format_key_signature(question.key)}. {question.prompt}"
@@ -138,8 +141,13 @@ def describe(question: Question) -> str:
     return what if question.construct is not None or question.answer in what else f"{what} → {question.answer}"
 
 
-def daily_counts(db: Database, profile_ids: list[int] | None, exercise: str | None = None, weeks: int = 53,
-                 now: float | None = None) -> dict[date, int]:
+def daily_counts(
+    db: Database,
+    profile_ids: list[int] | None,
+    exercise: str | None = None,
+    weeks: int = 53,
+    now: float | None = None,
+) -> dict[date, int]:
     """Questions answered on each day (local time) for the last `weeks` calendar weeks up to today, for the review
     heatmap. Days with no answers are left out. Counts questions, not attempts, like everything else here."""
     now = time.time() if now is None else now
@@ -154,8 +162,14 @@ def daily_counts(db: Database, profile_ids: list[int] | None, exercise: str | No
     return counts
 
 
-def collect(db: Database, profile_ids: list[int] | None, exercise: str | None = None, since: float | None = None,
-            now: float | None = None, hardest: int = 8) -> Stats:
+def collect(
+    db: Database,
+    profile_ids: list[int] | None,
+    exercise: str | None = None,
+    since: float | None = None,
+    now: float | None = None,
+    hardest: int = 8,
+) -> Stats:
     """Everything the statistics screen shows for these profiles (None = all of them), this exercise (None = all) and
     answers from `since` (a timestamp, None = from the start) up to now."""
     now = time.time() if now is None else now
@@ -192,8 +206,12 @@ def collect(db: Database, profile_ids: list[int] | None, exercise: str | None = 
         out.days_practised = len(days)
         out.median_seconds = statistics.median(times) if times else None
         out.by_exercise = sorted(
-            (ExerciseStats(name, len(v), 100.0 * sum(ok for ok, _ in v) / len(v), statistics.median(t for _, t in v))
-             for name, v in per_exercise.items()), key=lambda e: e.exercise)
+            (
+                ExerciseStats(name, len(v), 100.0 * sum(ok for ok, _ in v) / len(v), statistics.median(t for _, t in v))
+                for name, v in per_exercise.items()
+            ),
+            key=lambda e: e.exercise,
+        )
     for r in db.strained_items(profile_ids, exercise, since, min_strain=scheduler.NEW_STRAIN, limit=hardest):
         try:
             text = describe(Question.from_dict(json.loads(r["payload"])))

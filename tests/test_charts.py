@@ -1,4 +1,5 @@
 """The three charts: axes, bars and lines are drawn, empty data shows a message, and hovering explains a bar."""
+
 import pytest
 from alto.ui import charts
 from PySide6.QtCore import QPoint, QPointF, Qt
@@ -9,8 +10,9 @@ from PySide6.QtTest import QTest
 def ink(widget, size=(560, 260)) -> int:
     widget.resize(*size)
     image = widget.grab().toImage()
-    return sum(1 for y in range(0, image.height(), 3) for x in range(0, image.width(), 3)
-               if image.pixelColor(x, y).lightness() < 140)
+    return sum(
+        1 for y in range(0, image.height(), 3) for x in range(0, image.width(), 3) if image.pixelColor(x, y).lightness() < 140
+    )
 
 
 def test_ticks_are_round_numbers_up_to_just_above_the_top():
@@ -41,22 +43,54 @@ def test_a_bar_names_itself_when_hovered(app, monkeypatch):
     chart.set_data(["Mon", "Tue"], [3, 1], [1, 0])
     plot = chart._plot()
     inside = QPoint(round(chart._centres()[0]), round(plot.center().y()))
-    chart.mouseMoveEvent(QMouseEvent(QMouseEvent.Type.MouseMove, QPointF(inside), QPointF(inside), Qt.MouseButton.NoButton,
-                                     Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+    chart.mouseMoveEvent(
+        QMouseEvent(
+            QMouseEvent.Type.MouseMove,
+            QPointF(inside),
+            QPointF(inside),
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.NoModifier,
+        ),
+    )
     assert shown and shown[-1].startswith("Mon") and "4 questions" in shown[-1]
     outside = QPointF(5, 5)
-    chart.mouseMoveEvent(QMouseEvent(QMouseEvent.Type.MouseMove, outside, outside, Qt.MouseButton.NoButton,
-                                     Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+    chart.mouseMoveEvent(
+        QMouseEvent(
+            QMouseEvent.Type.MouseMove,
+            outside,
+            outside,
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.NoModifier,
+        ),
+    )
     assert hidden
     empty = charts.StackedBarChart("Empty")
-    empty.mouseMoveEvent(QMouseEvent(QMouseEvent.Type.MouseMove, outside, outside, Qt.MouseButton.NoButton,
-                                     Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))  # no data: nothing to say
+    empty.mouseMoveEvent(
+        QMouseEvent(
+            QMouseEvent.Type.MouseMove,
+            outside,
+            outside,
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.NoModifier,
+        ),
+    )  # no data: nothing to say
     one = charts.StackedBarChart("One")
     one.resize(560, 260)
     one.set_data(["x"], [1], [0])
     point = QPointF(one._centres()[0], one._plot().center().y())
-    one.mouseMoveEvent(QMouseEvent(QMouseEvent.Type.MouseMove, point, point, Qt.MouseButton.NoButton,
-                                   Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+    one.mouseMoveEvent(
+        QMouseEvent(
+            QMouseEvent.Type.MouseMove,
+            point,
+            point,
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.NoModifier,
+        ),
+    )
     assert "1 question:" in shown[-1]  # one question is not "1 questions"
 
 
@@ -80,15 +114,28 @@ def test_a_line_chart_point_names_itself_when_hovered(app, monkeypatch):
     plot = chart._plot()
     for i, expected in ((0, "Mon\n2.0 s"), (1, "Tue\nno answers"), (2, "Wed\n4.5 s")):
         point = QPointF(chart._centres()[i], plot.center().y())
-        chart.mouseMoveEvent(QMouseEvent(QMouseEvent.Type.MouseMove, point, point, Qt.MouseButton.NoButton,
-                                         Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+        chart.mouseMoveEvent(
+            QMouseEvent(
+                QMouseEvent.Type.MouseMove,
+                point,
+                point,
+                Qt.MouseButton.NoButton,
+                Qt.MouseButton.NoButton,
+                Qt.KeyboardModifier.NoModifier,
+            ),
+        )
         assert shown[-1] == expected
 
 
 def test_the_horizontal_bar_chart_lists_its_rows(app):
     chart = charts.HBarChart("By exercise")
-    chart.set_data([("Note Identification", 92.0, "92%"), ("A very long exercise name that has to be shortened", 40.0, "40%"),
-                    ("Zero", 0.0, "0%")])
+    chart.set_data(
+        [
+            ("Note Identification", 92.0, "92%"),
+            ("A very long exercise name that has to be shortened", 40.0, "40%"),
+            ("Zero", 0.0, "0%"),
+        ],
+    )
     assert chart.minimumHeight() >= 190 and ink(chart) > 100
     chart.set_data([])
     assert ink(chart) > 0
@@ -116,6 +163,7 @@ def test_an_axis_with_no_labels_draws_nothing(app):
 
 def test_the_heatmap_shades_days_by_how_busy_they_were(app):
     from datetime import date, timedelta
+
     today = date(2026, 11, 13)  # a Friday
     chart = charts.HeatmapChart("Reviews")
     chart.set_data({today: 40, today - timedelta(days=1): 20, today - timedelta(days=2): 1}, today)
@@ -129,6 +177,7 @@ def test_the_heatmap_shades_days_by_how_busy_they_were(app):
 
 def test_the_heatmap_names_the_day_under_the_pointer(app, monkeypatch):
     from datetime import date
+
     shown, hidden = [], []
     monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
     monkeypatch.setattr(charts.QToolTip, "hideText", lambda: hidden.append(1))
@@ -140,8 +189,17 @@ def test_the_heatmap_names_the_day_under_the_pointer(app, monkeypatch):
 
     def move(x, y):
         pt = QPointF(x, y)
-        chart.mouseMoveEvent(QMouseEvent(QMouseEvent.Type.MouseMove, pt, pt, Qt.MouseButton.NoButton,
-                                         Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+        chart.mouseMoveEvent(
+            QMouseEvent(
+                QMouseEvent.Type.MouseMove,
+                pt,
+                pt,
+                Qt.MouseButton.NoButton,
+                Qt.MouseButton.NoButton,
+                Qt.KeyboardModifier.NoModifier,
+            ),
+        )
+
     move(x0 + 52.5 * cell, y0 + 4.5 * cell)  # last column, Friday
     assert shown[-1].startswith("Fri Nov 13, 2026") and "3 questions" in shown[-1]
     move(x0 + 52.5 * cell, y0 + 6.5 * cell)  # Sunday, in the future

@@ -65,6 +65,7 @@ def test_pitch_shift_moves_the_frequency():
 
 # -- sustained and ringing notes ------------------------------------------------------------------------------------
 
+
 class FakeEffect:
     """Stands in for QSoundEffect, so these tests need no audio hardware."""
 
@@ -163,6 +164,7 @@ def test_the_two_ways_of_playing_the_viola_are_listed_together():
 
 # -- hearing an instrument (the preview in the settings) ------------------------------------------------------------
 
+
 def preview_engine(monkeypatch, instrument="viola_bowed"):
     """An engine whose notes are recorded with the time they were started."""
     import os
@@ -224,6 +226,7 @@ def test_starting_a_second_preview_ends_the_first(monkeypatch):
 
 
 # -- the rhythm of a melody (the arpeggio that plays on a right answer) ----------------------------------------------
+
 
 def melody(n):
     from alto.theory.pitch import Note

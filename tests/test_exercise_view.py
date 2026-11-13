@@ -1,4 +1,5 @@
 """The exercise screen: the sound and settings buttons, placing notes on the staff, and what is ignored."""
+
 import random
 
 import pytest

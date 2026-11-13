@@ -117,8 +117,10 @@ class KeyboardBuilder(QFrame):
         lay.setContentsMargins(0, 8, 0, 0)
         lay.setSpacing(6)
         lay.addWidget(QLabel("<b>Build your own</b>"))
-        about = QLabel("Choose a colour for each part, from a material or with the colour picker. "
-                       "Changing any part switches to the Custom style.")
+        about = QLabel(
+            "Choose a colour for each part, from a material or with the colour picker. "
+            "Changing any part switches to the Custom style.",
+        )
         about.setWordWrap(True)
         about.setStyleSheet("color: gray;")
         lay.addWidget(about)
@@ -169,8 +171,11 @@ class KeyboardBuilder(QFrame):
         for part, colour in keyboard_styles.custom_colours().items():
             swatch = self.swatches[part]
             swatch.setText("" if colour else "none")
-            swatch.setStyleSheet(f"QPushButton {{ background: {colour}; border: 1px solid {RIM}; border-radius: 6px; }}"
-                                 if colour else f"QPushButton {{ border: 1px dashed {RIM}; border-radius: 6px; color: gray; }}")
+            swatch.setStyleSheet(
+                f"QPushButton {{ background: {colour}; border: 1px solid {RIM}; border-radius: 6px; }}"
+                if colour
+                else f"QPushButton {{ border: 1px dashed {RIM}; border-radius: 6px; color: gray; }}",
+            )
 
     def _set(self, part: str, colour: str | None) -> None:
         keyboard_styles.set_custom_colour(part, colour)
@@ -187,10 +192,24 @@ class KeyboardBuilder(QFrame):
 class ThemeCard(QPushButton):
     """A selectable tile that previews a theme: a miniature of the app window in light, in dark, or split for System."""
 
-    LIGHT = dict(window="#efefef", panel="#ffffff", line="#c9c9c9", ink="#2a2a2a", faint="#b9b9b9",
-                 accent="#3b8ed0", tint="#c9dce8")
-    DARK = dict(window="#2b2b2b", panel="#232323", line="#454545", ink="#ececec", faint="#5a5a5a",
-                accent="#2f7fe0", tint="#22364f")
+    LIGHT = dict(
+        window="#efefef",
+        panel="#ffffff",
+        line="#c9c9c9",
+        ink="#2a2a2a",
+        faint="#b9b9b9",
+        accent="#3b8ed0",
+        tint="#c9dce8",
+    )
+    DARK = dict(
+        window="#2b2b2b",
+        panel="#232323",
+        line="#454545",
+        ink="#ececec",
+        faint="#5a5a5a",
+        accent="#2f7fe0",
+        tint="#22364f",
+    )
 
     def __init__(self, key: str, label: str, note: str, parent=None):
         super().__init__(parent)
@@ -226,8 +245,16 @@ class ThemeCard(QPushButton):
         if self.theme_key == "system":  # light on the left, dark on the right, split on a slant
             self._mock(p, r, self.LIGHT)
             right = QPainterPath()
-            right.addPolygon(QPolygonF([QPointF(r.center().x() + 14, r.top()), r.topRight(), r.bottomRight(),
-                                        QPointF(r.center().x() - 14, r.bottom())]))
+            right.addPolygon(
+                QPolygonF(
+                    [
+                        QPointF(r.center().x() + 14, r.top()),
+                        r.topRight(),
+                        r.bottomRight(),
+                        QPointF(r.center().x() - 14, r.bottom()),
+                    ],
+                ),
+            )
             p.setClipPath(right.intersected(clip))
             self._mock(p, r, self.DARK)
         else:
@@ -269,7 +296,6 @@ class ThemeCard(QPushButton):
 
 class AppSettingsDialog(QDialog):
     """Application-wide settings. Changes apply immediately."""
-
 
     def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
@@ -376,7 +402,8 @@ class AppSettingsDialog(QDialog):
             f"QFrame#segments {{ background: {track.name()}; border-radius: 12px; }}"
             "QFrame#segments QPushButton { border: 0; border-radius: 9px; padding: 6px 18px; background: transparent; }"
             f"QFrame#segments QPushButton:checked {{ background: {base.name()}; color: {accent.name()}; "
-            f"border: 1px solid {pal.color(QPalette.ColorRole.Mid).name()}; }}")
+            f"border: 1px solid {pal.color(QPalette.ColorRole.Mid).name()}; }}",
+        )
 
     def changeEvent(self, event) -> None:
         if event.type() == QEvent.Type.PaletteChange and hasattr(self, "segments"):
@@ -480,9 +507,12 @@ class AppSettingsDialog(QDialog):
 
     def _sound_page(self) -> QWidget:
         page, lay = self._page()
-        self._heading(lay, "Instrument",
-                      "The sound used for notes and for the correct-answer chime. Choose an instrument to see what it is "
-                      "made from, and press Hear it to listen.")
+        self._heading(
+            lay,
+            "Instrument",
+            "The sound used for notes and for the correct-answer chime. Choose an instrument to see what it is "
+            "made from, and press Hear it to listen.",
+        )
         self.instruments = InstrumentPicker()
         lay.addWidget(self.instruments, 1)
         return page

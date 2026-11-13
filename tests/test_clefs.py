@@ -1,5 +1,6 @@
 """The seven clefs with one staff (treble, bass, and the C clefs from soprano to baritone), how they are grouped on the
 settings pages, and that every exercise with a clef setting works on each of them."""
+
 import random
 import time
 
@@ -89,12 +90,15 @@ def test_the_arpeggio_windows_sit_the_same_way_on_every_clef_but_the_treble():
         assert (lo.diatonic - BOTTOM_LINE[clef], hi.diatonic - BOTTOM_LINE[clef]) == (-4, 12), clef
 
 
-@pytest.mark.parametrize("panel_class, config, expect_grand", [
-    (sp.NoteNameSettingsPanel, settings.note_names, True),
-    (sp.NoteConstructionSettingsPanel, settings.construction, True),
-    (sp.ArpeggioSettingsPanel, settings.arpeggio, False),
-    (sp.KeySignatureSettingsPanel, settings.key_signatures, False),
-])
+@pytest.mark.parametrize(
+    "panel_class, config, expect_grand",
+    [
+        (sp.NoteNameSettingsPanel, settings.note_names, True),
+        (sp.NoteConstructionSettingsPanel, settings.construction, True),
+        (sp.ArpeggioSettingsPanel, settings.arpeggio, False),
+        (sp.KeySignatureSettingsPanel, settings.key_signatures, False),
+    ],
+)
 def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(app, panel_class, config, expect_grand):
     panel = panel_class(config)
     panel.resize(272, 800)
@@ -123,6 +127,7 @@ def test_the_clef_pages_list_the_clefs_one_under_another_with_their_names(app, p
 def baritone():
     """Put the baritone clef's style back to the default after the test."""
     from alto.ui import notation
+
     yield notation
     notation.set_baritone_clef(notation.DEFAULT_BARITONE)
 
@@ -150,6 +155,7 @@ def test_the_baritone_clef_is_an_f_clef_unless_the_c_clef_is_chosen(app, bariton
 
 def test_the_baritone_clef_choice_is_saved_and_read_back(baritone):
     from alto.ui.store import store
+
     baritone.set_baritone_clef("c")
     assert store().value("ui/baritoneClef") == "c"
     baritone.set_baritone_clef("f")
@@ -179,6 +185,7 @@ def test_both_baritone_clefs_draw_in_a_music_font_and_in_the_built_in_one(app, b
 
 def test_the_settings_dialog_offers_both_ways_of_writing_the_baritone_clef(app, baritone):
     from alto.ui.app_settings import AppSettingsDialog
+
     dialog = AppSettingsDialog()
     buttons = dialog.baritone_buttons
     assert set(buttons) == {"f", "c"} and buttons["f"].isChecked() and not buttons["c"].isChecked()

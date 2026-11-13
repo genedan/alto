@@ -13,9 +13,15 @@ def test_parse_and_midi():
 @pytest.mark.parametrize(
     "low,high,expected",
     [
-        ("C4", "E4", "M3"), ("C4", "Eb4", "m3"), ("C4", "G4", "P5"),
-        ("C4", "F#4", "A4"), ("C4", "Gb4", "d5"), ("C4", "C5", "P8"),
-        ("E4", "C5", "m6"), ("B3", "F4", "d5"), ("C4", "B#4", "A7"),
+        ("C4", "E4", "M3"),
+        ("C4", "Eb4", "m3"),
+        ("C4", "G4", "P5"),
+        ("C4", "F#4", "A4"),
+        ("C4", "Gb4", "d5"),
+        ("C4", "C5", "P8"),
+        ("E4", "C5", "m6"),
+        ("B3", "F4", "d5"),
+        ("C4", "B#4", "A7"),
     ],
 )
 def test_between(low, high, expected):

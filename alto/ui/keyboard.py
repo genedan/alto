@@ -246,8 +246,12 @@ class KeyboardSpan(QWidget):
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self._mode is None:
-            cursor = {"lo": Qt.CursorShape.SizeHorCursor, "hi": Qt.CursorShape.SizeHorCursor,
-                      "pan": Qt.CursorShape.OpenHandCursor, "new": Qt.CursorShape.PointingHandCursor}
+            cursor = {
+                "lo": Qt.CursorShape.SizeHorCursor,
+                "hi": Qt.CursorShape.SizeHorCursor,
+                "pan": Qt.CursorShape.OpenHandCursor,
+                "new": Qt.CursorShape.PointingHandCursor,
+            }
             self.setCursor(cursor[self._grab(event.position().x())])
             return
         here = self.key_at(event.position())

@@ -1,4 +1,5 @@
 """Choosing the instrument: a list of instruments, and for the selected one a summary of its recordings."""
+
 from __future__ import annotations
 
 from PySide6.QtCore import QEvent, QSize, Qt, Signal
@@ -40,9 +41,14 @@ def tokens(widget: QWidget) -> dict[str, str]:
     base, text = pal.color(QPalette.ColorRole.Base), pal.color(QPalette.ColorRole.Text)
     accent = pal.color(QPalette.ColorRole.Highlight)
     window = pal.color(QPalette.ColorRole.Window)
-    out = dict(accent=blend_name(accent, text, 0.35),  # as text, a little towards the text colour so it reads on either theme
-                accent_soft=blend_name(base, accent, 0.18), muted=blend_name(text, base, 0.42),
-               line=pal.color(QPalette.ColorRole.Mid).name(), panel=base.name(), well=blend_name(window, text, 0.05))
+    out = dict(
+        accent=blend_name(accent, text, 0.35),  # as text, a little towards the text colour so it reads on either theme
+        accent_soft=blend_name(base, accent, 0.18),
+        muted=blend_name(text, base, 0.42),
+        line=pal.color(QPalette.ColorRole.Mid).name(),
+        panel=base.name(),
+        well=blend_name(window, text, 0.05),
+    )
     for kind, hue in (("good", QColor("#2e9e50")), ("warn", QColor("#d08a00")), ("bad", QColor("#d64a37"))):
         out[kind] = blend_name(text, hue, 0.65)  # the text colour leaning towards the hue, so it stays readable
         out[kind + "_soft"] = blend_name(base, hue, 0.16)
@@ -262,23 +268,34 @@ class InstrumentPicker(QWidget):
         missing = [m for m, h in zip(members, have) if not h.installed]
         if missing:
             which = group if len(missing) == len(members) else " and ".join(m.variant for m in missing)
-            self.banner.setText(f"No recordings are installed for {which} in this copy of Alto, so it would play as the "
-                                "synthesized piano. It is listed so you can see what it is made from.")
+            self.banner.setText(
+                f"No recordings are installed for {which} in this copy of Alto, so it would play as the "
+                "synthesized piano. It is listed so you can see what it is made from.",
+            )
         self.banner.setVisible(bool(missing))
 
         # The facts. What all the ways of playing share is shown once; what differs is shown for each.
         self._clear(self.facts)
         urls = {i.source_url for i in infos}
-        source = (self._link(infos[0].source_url, infos[0].source) if len(urls) == 1 else
-                  "<br>".join(f"{m.variant}: {self._link(i.source_url, i.source)}" for m, i in zip(members, infos)))
+        source = (
+            self._link(infos[0].source_url, infos[0].source)
+            if len(urls) == 1
+            else "<br>".join(f"{m.variant}: {self._link(i.source_url, i.source)}" for m, i in zip(members, infos))
+        )
         rows = [
             ("Source", source, True),
             ("Performer", self._per_way(members, [i.performer for i in infos]), False),
             ("Recorded", self._per_way(members, [i.recorded for i in infos]), False),
             ("Includes", self._per_way(members, [i.includes for i in infos]), False),
             ("Notes", self._per_way(members, [h.describe() for h in have]), False),
-            ("Size", self._per_way(members, [format_size(sum(p.stat().st_size for p in f.values())) if h.installed else ""
-                                             for f, h in zip(files, have)]), False),
+            (
+                "Size",
+                self._per_way(
+                    members,
+                    [format_size(sum(p.stat().st_size for p in f.values())) if h.installed else "" for f, h in zip(files, have)],
+                ),
+                False,
+            ),
             ("Terms", self._per_way(members, [i.terms for i in infos]), False),
             ("About", self._per_way(members, [i.note for i in infos]), False),
         ]
@@ -291,12 +308,15 @@ class InstrumentPicker(QWidget):
         for m, h in zip(members, have):
             suffix = f" ({m.variant})" if many else ""
             in_use = m.key == sounds.instrument
-            use = QPushButton(f"In use{suffix}" if in_use else f"Use this instrument{suffix}" if h.installed
-                              else f"Not installed{suffix}")
+            use = QPushButton(
+                f"In use{suffix}" if in_use else f"Use this instrument{suffix}" if h.installed else f"Not installed{suffix}",
+            )
             use.setEnabled(h.installed and not in_use)
             if in_use:
-                use.setStyleSheet(f"QPushButton:disabled {{ background: {t['accent_soft']}; color: {t['accent']}; "
-                                  f"border-color: {t['accent_soft']}; }}")
+                use.setStyleSheet(
+                    f"QPushButton:disabled {{ background: {t['accent_soft']}; color: {t['accent']}; "
+                    f"border-color: {t['accent_soft']}; }}",
+                )
             use.clicked.connect(lambda _=False, k=m.key: self.use(k))
             hear = QPushButton("▶  Hear it")
             hear.setEnabled(h.installed)

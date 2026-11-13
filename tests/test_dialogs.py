@@ -1,4 +1,5 @@
 """The profile dialog and the question preview popup."""
+
 import pytest
 from alto import settings
 from alto.exercises.base import Question
@@ -125,8 +126,15 @@ def texts(dialog):
 def test_a_staff_question_shows_its_notes_answer_choices_and_explanation(app, monkeypatch):
     played = []
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
-    q = Question("Which?", ["major", "minor"], "minor", [[Note(4, 0)], [Note(4, 2)]], explanation="C minor",
-                 octaves=["root position", "1st inversion"], second_label="Inversion")
+    q = Question(
+        "Which?",
+        ["major", "minor"],
+        "minor",
+        [[Note(4, 0)], [Note(4, 2)]],
+        explanation="C minor",
+        octaves=["root position", "1st inversion"],
+        second_label="Inversion",
+    )
     dialog = QuestionPreview("Chord", q, ["<b>You answered:</b> major"])
     shown = texts(dialog)
     assert "Which?" in shown and "<b>Answer:</b> minor" in shown and "Choices: major  ·  minor" in shown

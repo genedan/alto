@@ -1,4 +1,5 @@
 """Choosing who is practising. There is no password: a profile is just a name that keeps its own history."""
+
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
@@ -35,8 +36,10 @@ class ProfileDialog(QDialog):
         lay.setSpacing(10)
         if first_run:
             lay.addWidget(QLabel("<h2>Welcome to Alto</h2>"))
-            about = QLabel("Create a profile so your progress is remembered. Questions you find hard come back more "
-                           "often, and ones you answer quickly and correctly fade away. There is no password.")
+            about = QLabel(
+                "Create a profile so your progress is remembered. Questions you find hard come back more "
+                "often, and ones you answer quickly and correctly fade away. There is no password.",
+            )
         else:
             lay.addWidget(QLabel("<h3>Who is practising?</h3>"))
             about = QLabel("Each profile keeps its own history.")

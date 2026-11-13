@@ -4,6 +4,7 @@ A SMuFL font has the parts of a note rather than whole notes: the head, the flag
 glyphs, all measured in staff spaces (four to the em). The stem is a plain rectangle that the code draws, placed
 using the stem anchors the font publishes for each head. Heights are measured upward, so they are flipped on screen.
 """
+
 from __future__ import annotations
 
 import json
@@ -15,26 +16,50 @@ from PySide6.QtGui import QColor, QFont, QFontDatabase, QPainter, QPainterPath, 
 
 _DIR = Path(__file__).resolve().parent.parent / "assets" / "fonts"
 _FILES = {
-    "bravura": "Bravura.otf", "leland": "Leland.otf", "petaluma": "Petaluma.otf", "musejazz": "MuseJazz.otf",
-    "eugene": "Eugene.otf", "leipzig": "Leipzig.otf", "sebastian": "Sebastian.otf", "goldenage": "GoldenAge.otf",
-    "finalemaestro": "FinaleMaestro.otf", "finalebroadway": "FinaleBroadway.otf",
+    "bravura": "Bravura.otf",
+    "leland": "Leland.otf",
+    "petaluma": "Petaluma.otf",
+    "musejazz": "MuseJazz.otf",
+    "eugene": "Eugene.otf",
+    "leipzig": "Leipzig.otf",
+    "sebastian": "Sebastian.otf",
+    "goldenage": "GoldenAge.otf",
+    "finalemaestro": "FinaleMaestro.otf",
+    "finalebroadway": "FinaleBroadway.otf",
 }
 _PX = 100.0  # glyph outlines are taken at 100 px to the em, so one staff space is 25 units
 _SPACE = _PX / 4
 
 CODEPOINTS = {
     "brace": 0xE000,
-    "gClef": 0xE050, "fClef": 0xE062, "cClef": 0xE05C,
-    "noteheadDoubleWhole": 0xE0A0, "noteheadWhole": 0xE0A2, "noteheadHalf": 0xE0A3, "noteheadBlack": 0xE0A4,
-    "flag8thUp": 0xE240, "flag8thDown": 0xE241, "flag16thUp": 0xE242, "flag16thDown": 0xE243,
-    "flag32ndUp": 0xE244, "flag32ndDown": 0xE245,
-    "accidentalFlat": 0xE260, "accidentalNatural": 0xE261, "accidentalSharp": 0xE262,
-    "accidentalDoubleSharp": 0xE263, "accidentalDoubleFlat": 0xE264,
+    "gClef": 0xE050,
+    "fClef": 0xE062,
+    "cClef": 0xE05C,
+    "noteheadDoubleWhole": 0xE0A0,
+    "noteheadWhole": 0xE0A2,
+    "noteheadHalf": 0xE0A3,
+    "noteheadBlack": 0xE0A4,
+    "flag8thUp": 0xE240,
+    "flag8thDown": 0xE241,
+    "flag16thUp": 0xE242,
+    "flag16thDown": 0xE243,
+    "flag32ndUp": 0xE244,
+    "flag32ndDown": 0xE245,
+    "accidentalFlat": 0xE260,
+    "accidentalNatural": 0xE261,
+    "accidentalSharp": 0xE262,
+    "accidentalDoubleSharp": 0xE263,
+    "accidentalDoubleFlat": 0xE264,
 }
 HEADS = {"breve": "noteheadDoubleWhole", "whole": "noteheadWhole", "half": "noteheadHalf"}
 FLAGS = {"eighth": "8th", "sixteenth": "16th", "thirty_second": "32nd"}
-ACCIDENTALS = {-2: "accidentalDoubleFlat", -1: "accidentalFlat", 0: "accidentalNatural",
-               1: "accidentalSharp", 2: "accidentalDoubleSharp"}
+ACCIDENTALS = {
+    -2: "accidentalDoubleFlat",
+    -1: "accidentalFlat",
+    0: "accidentalNatural",
+    1: "accidentalSharp",
+    2: "accidentalDoubleSharp",
+}
 STEM_LENGTH = {"half": 3.5, "quarter": 3.5, "eighth": 3.5, "sixteenth": 4.0, "thirty_second": 4.5}  # staff spaces
 
 _family: dict[str, str] = {}
@@ -106,8 +131,16 @@ def _fill(p: QPainter, path: QPainterPath, colour: QColor) -> None:
     p.restore()
 
 
-def draw_note(p: QPainter, font: str, value: str, x: float, y: float, gap: float, colour: QColor,
-              stem_down: bool = False) -> None:
+def draw_note(
+    p: QPainter,
+    font: str,
+    value: str,
+    x: float,
+    y: float,
+    gap: float,
+    colour: QColor,
+    stem_down: bool = False,
+) -> None:
     """A note of this value with its head centred on (x, y); `gap` is the distance between staff lines."""
     head_name = HEADS.get(value, "noteheadBlack")
     left, _, right, _ = _ink(font, head_name)
@@ -118,7 +151,7 @@ def draw_note(p: QPainter, font: str, value: str, x: float, y: float, gap: float
     stem_down = bool(stem_down)
     ax, ay = _anchor(font, head_name, "stemDownNW" if stem_down else "stemUpSE")
     thick = _metrics(font)["stem"] * gap
-    sx = ox + ax * gap                       # the stem's edge that touches the head
+    sx = ox + ax * gap  # the stem's edge that touches the head
     sy = oy - ay * gap
     end = y + (1 if stem_down else -1) * STEM_LENGTH[value] * gap  # the far end of the stem, on screen
     left = sx if stem_down else sx - thick
@@ -138,13 +171,29 @@ def draw_note(p: QPainter, font: str, value: str, x: float, y: float, gap: float
 def draw_clef(p: QPainter, font: str, clef: str, x: float, bottom: float, gap: float, colour: QColor) -> None:
     """The clef with its left edge at x; `bottom` is the y of the staff's bottom line."""
     # `line` is how many gaps above the bottom staff line the clef's reference line (the G, F or middle C) is
-    name, line = {"treble": ("gClef", 1), "bass": ("fClef", 3), "alto": ("cClef", 2), "tenor": ("cClef", 3),
-                  "soprano": ("cClef", 0), "mezzo": ("cClef", 1), "baritone_c": ("cClef", 4), "baritone_f": ("fClef", 2)}[clef]
+    name, line = {
+        "treble": ("gClef", 1),
+        "bass": ("fClef", 3),
+        "alto": ("cClef", 2),
+        "tenor": ("cClef", 3),
+        "soprano": ("cClef", 0),
+        "mezzo": ("cClef", 1),
+        "baritone_c": ("cClef", 4),
+        "baritone_f": ("fClef", 2),
+    }[clef]
     _fill(p, _place(_outline(font, name), x, bottom - line * gap, gap), colour)
 
 
-def draw_accidental(p: QPainter, font: str, sign: int, x: float, y: float, gap: float, colour: QColor,
-                    fit: float | None = None) -> float:
+def draw_accidental(
+    p: QPainter,
+    font: str,
+    sign: int,
+    x: float,
+    y: float,
+    gap: float,
+    colour: QColor,
+    fit: float | None = None,
+) -> float:
     """An accidental with its left edge at x and its reference line at y. If `fit` is given, the glyph is
     shrunk to be no wider than that many pixels. Returns the width drawn."""
     name = ACCIDENTALS[sign]

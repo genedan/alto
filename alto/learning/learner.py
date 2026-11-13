@@ -1,4 +1,5 @@
 """Ties the profile, the database and the scheduler together for the exercise screen."""
+
 from __future__ import annotations
 
 import json
@@ -44,8 +45,16 @@ class Learner:
         questions, weights = zip(*options.values())
         return scheduler.choose(questions, weights, rng)
 
-    def record(self, exercise: Exercise, question: Question, answer: str, correct: bool, attempt_no: int,
-               seconds: float, now: float | None = None) -> None:
+    def record(
+        self,
+        exercise: Exercise,
+        question: Question,
+        answer: str,
+        correct: bool,
+        attempt_no: int,
+        seconds: float,
+        now: float | None = None,
+    ) -> None:
         """Log one answer and update what is known about the question."""
         now = time.time() if now is None else now
         name, key = type(exercise).__name__, question.item_key()
@@ -54,11 +63,18 @@ class Learner:
         strain = old.strain if old else scheduler.NEW_STRAIN
         strain = scheduler.update_strain(strain, correct, attempt_no, seconds, exercise.par_seconds)
         first = attempt_no == 1
-        self.db.save_item(self.profile.id, name, key, ItemRecord(
-            strain=strain,
-            seen=(old.seen if old else 0) + (1 if first else 0),
-            first_try_right=(old.first_try_right if old else 0) + (1 if first and correct else 0),
-            wrong_attempts=(old.wrong_attempts if old else 0) + (0 if correct else 1),
-            total_first_ms=(old.total_first_ms if old else 0) + (round(seconds * 1000) if first else 0),
-            last_seen=now, signature=exercise.settings_signature(), payload=json.dumps(question.to_dict()),
-        ))
+        self.db.save_item(
+            self.profile.id,
+            name,
+            key,
+            ItemRecord(
+                strain=strain,
+                seen=(old.seen if old else 0) + (1 if first else 0),
+                first_try_right=(old.first_try_right if old else 0) + (1 if first and correct else 0),
+                wrong_attempts=(old.wrong_attempts if old else 0) + (0 if correct else 1),
+                total_first_ms=(old.total_first_ms if old else 0) + (round(seconds * 1000) if first else 0),
+                last_seen=now,
+                signature=exercise.settings_signature(),
+                payload=json.dumps(question.to_dict()),
+            ),
+        )

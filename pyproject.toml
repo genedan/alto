@@ -43,6 +43,9 @@ target-version = "py311"
 line-length = 130
 src = ["alto", "tests"]
 
+[tool.ruff.format]
+skip-magic-trailing-comma = false  # a trailing comma keeps a list, dict or call one element per line (the default, kept on purpose)
+
 [tool.ruff.lint]
 select = [
     "E", "F", "W", "I", "UP", "B",

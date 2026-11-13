@@ -93,6 +93,7 @@ def test_an_instrument_with_no_recordings_cannot_be_chosen(picker, monkeypatch):
 
 def test_hear_it_plays_a_short_arpeggio_in_that_instrument(picker, monkeypatch):
     played = []
+
     def record(midi, volume=1.0, instrument=None, force=False, **kwargs):
         played.append((midi, instrument, force))
 

@@ -75,7 +75,7 @@ def test_buckets_run_without_gaps_from_first_answer_to_now():
 
 def test_long_spans_use_coarser_buckets():
     db, ada, _ = fill()
-    assert stats.collect(db, None, now=NOW).granularity == "day"           # 20 days
+    assert stats.collect(db, None, now=NOW).granularity == "day"  # 20 days
     assert stats.collect(db, None, since=NOW - 120 * DAY, now=NOW).granularity == "week"
     assert stats.collect(db, None, since=NOW - 400 * DAY, now=NOW).granularity == "month"
     assert stats.collect(db, [ada.id], since=NOW - 3600 * 5, now=NOW).granularity == "hour"
@@ -98,6 +98,7 @@ def test_daily_counts_count_first_answers_per_local_day_and_follow_the_exercise(
     from datetime import datetime
 
     from alto.learning import stats
+
     learner = practised_learner()
     now = time.time()
     everything = stats.daily_counts(learner.db, [learner.profile.id], now=now)

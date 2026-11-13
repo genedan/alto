@@ -7,13 +7,14 @@ from alto.theory.pitch import Note
 
 # -- the scheduler --------------------------------------------------------------------------------------------------
 
+
 def test_speed_term_runs_from_bonus_to_penalty():
     par = 4.0
-    assert scheduler.speed_term(0.5, par) == -scheduler.FAST_BONUS      # very quick
-    assert scheduler.speed_term(par, par) == 0.0                        # right on par
+    assert scheduler.speed_term(0.5, par) == -scheduler.FAST_BONUS  # very quick
+    assert scheduler.speed_term(par, par) == 0.0  # right on par
     assert scheduler.speed_term(par * 10, par) == scheduler.SLOW_PENALTY  # as slow as it counts
     samples = [scheduler.speed_term(par * r / 10, par) for r in range(1, 60)]
-    assert samples == sorted(samples)                                   # never rewards slowness
+    assert samples == sorted(samples)  # never rewards slowness
 
 
 def test_quick_correct_answer_ends_up_easier_than_slow_one():
@@ -54,6 +55,7 @@ def test_a_question_just_seen_is_held_back_and_hard_ones_return_sooner():
 
 # -- the database ---------------------------------------------------------------------------------------------------
 
+
 def test_profiles_are_unique_ignoring_case_and_need_a_name():
     db = Database()
     first = db.add_profile("  Ada   Lovelace ")
@@ -73,8 +75,10 @@ def test_database_is_created_on_disk_and_reopened(tmp_path):
 
 # -- the learner ----------------------------------------------------------------------------------------------------
 
+
 class Stub(Exercise):
     """A question per note A0..: one correct button, with a pool big enough that fresh ones rarely repeat."""
+
     name, par_seconds = "Stub", 4.0
 
     def generate(self, rng):
@@ -119,6 +123,7 @@ def test_more_attempts_and_slower_answers_leave_a_question_more_strained():
     learner.record(ex, fumbled, "A", True, 3, 4.0, now=3.0)
     learner.record(ex, slow, "A", True, 1, 30.0, now=1.0)
     learner.record(ex, quick, "A", True, 1, 0.5, now=1.0)
+
     def strain_of(q):
         item = learner.db.get_item(learner.profile.id, "Stub", q.item_key())
         assert item is not None
@@ -178,12 +183,15 @@ def test_each_profile_has_its_own_history():
 
 # -- the exercise screen --------------------------------------------------------------------------------------------
 
+
 def test_exercise_view_records_each_answer_with_its_timing():
     import os
+
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from alto.exercises.library import KeySignatures
     from alto.ui.exercise_view import ExerciseView
     from PySide6.QtWidgets import QApplication
+
     _app = QApplication.instance() or QApplication([])  # kept alive for the widgets below
     learner, _ = make_learner()
     view = ExerciseView(KeySignatures(), random.Random(7), learner=learner)

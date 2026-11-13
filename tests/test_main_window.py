@@ -1,4 +1,5 @@
 """The home screen, the main window with its exercise list and menu, and starting the app."""
+
 from typing import Any, cast
 
 import pytest

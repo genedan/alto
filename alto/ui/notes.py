@@ -6,6 +6,7 @@ they sweep up from the stem's end, as an engraver would write them.
 
 All numbers are in glyph units at a font size of 100, where one staff space is STAFF_SPACE units.
 """
+
 from __future__ import annotations
 
 from PySide6.QtCore import QRectF, Qt
@@ -13,16 +14,25 @@ from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QTransform
 
 STAFF_SPACE = 33.5  # a note head is one staff space tall
 GLYPHS = {  # the breve is not here: its square form is drawn by _square_breve (the font only has the oval one)
-    "whole": "\U0001D15D", "half": "\U0001D15E", "quarter": "\U0001D15F",
-    "eighth": "\U0001D160", "sixteenth": "\U0001D161", "thirty_second": "\U0001D162",
+    "whole": "\U0001d15d",
+    "half": "\U0001d15e",
+    "quarter": "\U0001d15f",
+    "eighth": "\U0001d160",
+    "sixteenth": "\U0001d161",
+    "thirty_second": "\U0001d162",
 }
 HEAD_CENTRE = {  # centre of the note head, from the glyph's origin
-    "breve": (0.0, 0.0), "whole": (34.2, -17.85), "half": (26.5, -17.9), "quarter": (26.6, -18.1),
-    "eighth": (26.6, -18.1), "sixteenth": (26.6, -18.1), "thirty_second": (26.6, -18.1),
+    "breve": (0.0, 0.0),
+    "whole": (34.2, -17.85),
+    "half": (26.5, -17.9),
+    "quarter": (26.6, -18.1),
+    "eighth": (26.6, -18.1),
+    "sixteenth": (26.6, -18.1),
+    "thirty_second": (26.6, -18.1),
 }
 FLAGS = {"eighth": 1, "sixteenth": 2, "thirty_second": 3}
 STEM_LEFT, STEM_RIGHT = 43.09, 46.55  # the stem of the stem-up quarter note
-FLAG_CLIP = 46.9                      # flags are the part of a glyph to the right of this
+FLAG_CLIP = 46.9  # flags are the part of a glyph to the right of this
 STEM_TOP = {"half": -134.2, "quarter": -134.2, "eighth": -134.2, "sixteenth": -134.2, "thirty_second": -153.5}
 
 _glyphs: dict[str, QPainterPath] = {}
@@ -44,10 +54,10 @@ def _square_breve() -> QPainterPath:
         return path
 
     outer, inner = 0.825, 0.655  # the uprights run from `inner` to `outer`, either side of the middle
-    shape = rect(-outer, -0.62, outer, 0.62)                                   # the heavy bars above and below the slot
-    shape = shape.united(rect(-outer, -0.725, -inner, 0.725, 0.03))             # the uprights, a little taller than the bars
+    shape = rect(-outer, -0.62, outer, 0.62)  # the heavy bars above and below the slot
+    shape = shape.united(rect(-outer, -0.725, -inner, 0.725, 0.03))  # the uprights, a little taller than the bars
     shape = shape.united(rect(inner, -0.725, outer, 0.725, 0.03))
-    return shape.subtracted(rect(-inner, -0.16, inner, 0.16, 0.10))            # the slot between the uprights
+    return shape.subtracted(rect(-inner, -0.16, inner, 0.16, 0.10))  # the slot between the uprights
 
 
 def _glyph(value: str) -> QPainterPath:

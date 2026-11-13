@@ -1,4 +1,5 @@
 """A popup showing a stored question the way the exercise showed it, with its answer."""
+
 from __future__ import annotations
 
 from PySide6.QtCore import Qt

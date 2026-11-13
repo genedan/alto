@@ -1,4 +1,5 @@
 """The exercise settings panes: the menus, the pages behind them, and the settings they save and load."""
+
 import pytest
 from alto import settings
 from alto.ui import settings_panel as sp
@@ -207,8 +208,13 @@ def names(app):
 
 
 def test_the_menu_opens_each_page_and_back_returns_to_the_menu(names):
-    for row, index in ((names.clefs_row, 1), (names.range_row, 2), (names.keys_row, 3), (names.values_row, 4),
-                       (names.names_row, 5)):
+    for row, index in (
+        (names.clefs_row, 1),
+        (names.range_row, 2),
+        (names.keys_row, 3),
+        (names.values_row, 4),
+        (names.names_row, 5),
+    ):
         row.click()
         slide()
         assert names.stack.currentIndex() == index

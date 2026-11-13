@@ -1,5 +1,6 @@
 """The key signature exercise: reading a signature drawn on a staff, counting the sharps and flats of a named key, and the
 scales (major, minor and the modes) and the staffs and signatures it can use."""
+
 import random
 
 import pytest
@@ -28,7 +29,14 @@ def questions(n=300, seed=1, **choose):
 
 def test_each_mode_starts_where_its_signature_says():
     assert [mode_tonic(2, m).name for m in (MAJOR, "Dorian", "Phrygian", "Lydian", "Mixolydian", MINOR, "Locrian")] == [
-        "D", "E", "F♯", "G", "A", "B", "C♯"]
+        "D",
+        "E",
+        "F♯",
+        "G",
+        "A",
+        "B",
+        "C♯",
+    ]
     assert mode_tonic(-3, MINOR).name == "C" and mode_tonic(0, "Locrian").name == "B"
     assert mode_tonic(7, "Lydian").name == "F♯" and mode_tonic(-7, "Locrian").name == "B♭"
 
@@ -80,7 +88,11 @@ def test_a_settings_choice_with_nothing_ticked_falls_back_to_something_sensible(
     cfg = settings.key_signatures
     cfg.questions, cfg.clefs, cfg.modes, cfg.keys = set(), set(), set(), set()
     assert (cfg.active_questions(), cfg.active_clefs(), cfg.active_modes(), cfg.active_keys()) == (
-        ["read"], ["treble"], [MAJOR], [0])
+        ["read"],
+        ["treble"],
+        [MAJOR],
+        [0],
+    )
 
 
 def test_a_question_comes_back_with_its_staff_and_its_scale():
@@ -123,6 +135,7 @@ def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(app, monkeypatch
 def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(app, monkeypatch):
     from alto.exercises.library import NoteNames
     from alto.ui.exercise_view import sounds
+
     monkeypatch.setattr(sounds, "enabled", True)
     assert KeySignatures.has_sound is False and NoteNames.has_sound is True
     for exercise in (KeySignatures(), NoteNames()):
@@ -251,6 +264,7 @@ def test_the_kind_of_scale_is_written_under_the_staff_not_above_it(app):
 
     from alto.exercises.library import KeySignatures
     from alto.ui.exercise_view import ExerciseView
+
     asked = questions(200)
     assert {q.caption for q in asked if q.show_staff} == {"_ Major", "_ minor"}
     assert all(q.caption == "" for q in asked if not q.show_staff)  # counting questions keep their line of text

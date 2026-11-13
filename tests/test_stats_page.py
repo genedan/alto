@@ -1,4 +1,5 @@
 """The statistics page: its numbers follow the answers recorded and the filters chosen."""
+
 import random
 import time
 

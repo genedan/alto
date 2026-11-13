@@ -14,6 +14,7 @@ on each machine, so regenerate on the machine you normally use and check the pic
 
 Never add a picture of the exercise-level settings (the pane behind the sliders button) here. See CLAUDE.md.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -27,8 +28,21 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "assets" / "img"
 THEMES = ("light", "dark")
 # The pictures this script makes. A docs page includes each of them with shot.html.
-SHOTS = ("home", "note-identification", "keyboard", "note-construction", "intervals", "arpeggios", "key-signatures", "stats",
-         "stats-heatmap", "database", "question-preview", "settings", "settings-sound")
+SHOTS = (
+    "home",
+    "note-identification",
+    "keyboard",
+    "note-construction",
+    "intervals",
+    "arpeggios",
+    "key-signatures",
+    "stats",
+    "stats-heatmap",
+    "database",
+    "question-preview",
+    "settings",
+    "settings-sound",
+)
 
 
 def main() -> int:
@@ -80,7 +94,12 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
 
     original = ev.ExerciseView.__init__
     ev.ExerciseView.__init__ = lambda self, exercise, rng=None, parent=None, learner=None: original(
-        self, exercise, random.Random(5), parent, learner)
+        self,
+        exercise,
+        random.Random(5),
+        parent,
+        learner,
+    )
 
     def wait(ms: int = 450) -> None:
         end = time.time() + ms / 1000
@@ -121,7 +140,7 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     # sessions on a few days a week, with a lull in the summer, which is what a real heatmap looks like.
     old = random.Random(12)
     for day in range(364, 34, -1):
-        month = (time.localtime(now - day * 86400).tm_mon)
+        month = time.localtime(now - day * 86400).tm_mon
         chance = 0.22 if month in (6, 7) else 0.55
         if old.random() > chance:
             continue
@@ -138,9 +157,14 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     wait()
     save(window, "home")
     by_class = {c.__name__: c for c in REGISTRY}
-    for cls, name in (("NoteNames", "note-identification"), ("KeyboardNotes", "keyboard"),
-                      ("NoteConstruction", "note-construction"), ("IntervalNames", "intervals"),
-                      ("ArpeggioNames", "arpeggios"), ("KeySignatures", "key-signatures")):
+    for cls, name in (
+        ("NoteNames", "note-identification"),
+        ("KeyboardNotes", "keyboard"),
+        ("NoteConstruction", "note-construction"),
+        ("IntervalNames", "intervals"),
+        ("ArpeggioNames", "arpeggios"),
+        ("KeySignatures", "key-signatures"),
+    ):
         if cls == "KeySignatures":  # show a signature to read, on an alto clef staff, whatever the default is
             from alto import settings
 
@@ -176,8 +200,12 @@ def capture(theme: str, names: tuple[str, ...], out: Path) -> None:
     wait(200)
     row = next(page.proxy.index(r, 0) for r in range(page.proxy.rowCount()) if "Chord" in page.proxy.index(r, 1).data())
     answer = row.data(ROW_ROLE)
-    preview = QuestionPreview(page._names[answer["exercise"]], Question.from_dict(json.loads(answer["payload"])),
-                              answer["details"], window)
+    preview = QuestionPreview(
+        page._names[answer["exercise"]],
+        Question.from_dict(json.loads(answer["payload"])),
+        answer["details"],
+        window,
+    )
     preview.show()
     wait(300)
     save(preview, "question-preview", 900)

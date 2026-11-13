@@ -1,4 +1,5 @@
 """Scales, modes, key signatures and chords, built from spelled intervals."""
+
 from __future__ import annotations
 
 from .pitch import LETTERS, MAJOR_KEYS, Interval, Note
@@ -37,8 +38,15 @@ CHORDS: dict[str, list[Interval]] = {
 
 
 # Which degree of the major scale a mode starts on: the Dorian mode on D uses the notes (and so the key signature) of C major.
-MODE_DEGREE = {"Major (Ionian)": 0, "Dorian": 1, "Phrygian": 2, "Lydian": 3, "Mixolydian": 4, "Natural minor (Aeolian)": 5,
-               "Locrian": 6}
+MODE_DEGREE = {
+    "Major (Ionian)": 0,
+    "Dorian": 1,
+    "Phrygian": 2,
+    "Lydian": 3,
+    "Mixolydian": 4,
+    "Natural minor (Aeolian)": 5,
+    "Locrian": 6,
+}
 # How a mode is named in a question: "major key", "minor key", "Dorian scale".
 MODE_WORDS = {"Major (Ionian)": "major key", "Natural minor (Aeolian)": "minor key"}
 
@@ -88,12 +96,21 @@ def format_key_signature(count: int) -> str:
 
 def all_tonics(max_accidentals: int = 1) -> list[Note]:
     """Every spelled tonic (octave 4) with |accidental| <= max_accidentals."""
-    return [
-        Note(4, letter, acc)
-        for letter in range(7)
-        for acc in range(-max_accidentals, max_accidentals + 1)
-    ]
+    return [Note(4, letter, acc) for letter in range(7) for acc in range(-max_accidentals, max_accidentals + 1)]
 
 
-__all__ = ["SCALES", "CHORDS", "MODE_DEGREE", "MODE_WORDS", "major_key_tonic", "mode_tonic", "INVERSION_NAMES", "arpeggio",
-           "build", "key_signature", "format_key_signature", "all_tonics", "LETTERS"]
+__all__ = [
+    "SCALES",
+    "CHORDS",
+    "MODE_DEGREE",
+    "MODE_WORDS",
+    "major_key_tonic",
+    "mode_tonic",
+    "INVERSION_NAMES",
+    "arpeggio",
+    "build",
+    "key_signature",
+    "format_key_signature",
+    "all_tonics",
+    "LETTERS",
+]

@@ -19,7 +19,7 @@ from .base import Exercise, Question, pick_distractors, register, signature
 
 CLEF_RANGES = {  # inclusive diatonic range that sits comfortably on the staff
     "treble": (Note(3, 5), Note(5, 5)),  # A3..A5
-    "bass": (Note(2, 0), Note(4, 0)),    # C2..C4
+    "bass": (Note(2, 0), Note(4, 0)),  # C2..C4
 }
 
 
@@ -41,9 +41,11 @@ class NoteNames(Exercise):
         return signature(settings.note_names, self.accidentals)
 
     def instructions(self) -> str:
-        return ("<b>Note Identification</b><br>A note is shown on the staff. Press the button with its name.<br><br>"
-                "Use the sliders button to choose the clefs, the range of notes, key signatures (the name then has to "
-                "match the signature), note values, letter or solfège names, and whether sharps, flats and naturals appear.")
+        return (
+            "<b>Note Identification</b><br>A note is shown on the staff. Press the button with its name.<br><br>"
+            "Use the sliders button to choose the clefs, the range of notes, key signatures (the name then has to "
+            "match the signature), note values, letter or solfège names, and whether sharps, flats and naturals appear."
+        )
 
     def __init__(self, accidentals: bool = False):
         self.accidentals = accidentals
@@ -92,10 +94,12 @@ class IntervalNames(Exercise):
     par_seconds = 6.0
 
     def instructions(self) -> str:
-        return ("<b>Interval identification</b><br>Two notes are shown. Name the interval from the lower note to the "
-                "higher one.<br><br>An interval has a quality followed by a number. The number counts the letter names it "
-                "spans, including both notes. The quality is P (perfect), M (major), m (minor), A (augmented) or "
-                "d (diminished).")
+        return (
+            "<b>Interval identification</b><br>Two notes are shown. Name the interval from the lower note to the "
+            "higher one.<br><br>An interval has a quality followed by a number. The number counts the letter names it "
+            "spans, including both notes. The quality is P (perfect), M (major), m (minor), A (augmented) or "
+            "d (diminished)."
+        )
 
     QUALITIES = {1: "P A d", 2: "M m A d", 3: "M m A d", 4: "P A d", 5: "P A d", 6: "M m A d", 7: "M m A d", 8: "P"}
 
@@ -132,12 +136,14 @@ class KeySignatures(Exercise):
         return signature(settings.key_signatures)
 
     def instructions(self) -> str:
-        return ("<b>Key signatures</b><br>Two kinds of question. In one a key signature is drawn on a staff: press the "
-                "tonic of the scale it belongs to (the question says whether it is a major key, a minor key or a mode such "
-                "as Dorian). In the other a key is named: press how many sharps or flats it has.<br><br>"
-                "Sharp keys add sharps (G, D, A ...) and flat keys add flats (F, B♭, E♭ ...). A mode uses the signature of a "
-                "major key, started from another degree: D Dorian has the signature of C major, started from its second note."
-                "<br><br>Use the sliders button to choose the kinds of question, the clefs, the scales and the key signatures.")
+        return (
+            "<b>Key signatures</b><br>Two kinds of question. In one a key signature is drawn on a staff: press the "
+            "tonic of the scale it belongs to (the question says whether it is a major key, a minor key or a mode such "
+            "as Dorian). In the other a key is named: press how many sharps or flats it has.<br><br>"
+            "Sharp keys add sharps (G, D, A ...) and flat keys add flats (F, B♭, E♭ ...). A mode uses the signature of a "
+            "major key, started from another degree: D Dorian has the signature of C major, started from its second note."
+            "<br><br>Use the sliders button to choose the kinds of question, the clefs, the scales and the key signatures."
+        )
 
     def generate(self, rng):
         cfg = settings.key_signatures
@@ -168,10 +174,16 @@ class KeySignatures(Exercise):
         notes = [*build(tonic, SCALES[mode]), tonic.transpose(Interval(8, "P"))]  # the scale, up to its octave
         scale = _scale_name(mode)
         blank = f"_ {scale if scale == 'minor' else scale[0].upper() + scale[1:]}"  # "_ Major", "_ minor", "_ Dorian"
-        return Question(f"Which {word} has this key signature?", choices, correct, clef=clef, key=count, show_staff=True,
-                        caption=blank,
-                        explanation=f"{format_key_signature(count)}: {tonic.name} {_scale_name(mode)}: "
-                        + " ".join(n.name for n in notes))
+        return Question(
+            f"Which {word} has this key signature?",
+            choices,
+            correct,
+            clef=clef,
+            key=count,
+            show_staff=True,
+            caption=blank,
+            explanation=f"{format_key_signature(count)}: {tonic.name} {_scale_name(mode)}: " + " ".join(n.name for n in notes),
+        )
 
 
 @register
@@ -182,8 +194,10 @@ class ScaleDegrees(Exercise):
     par_seconds = 8.0
 
     def instructions(self) -> str:
-        return ("<b>Scale spelling</b><br>Work out the note at the given degree of the scale or mode and press its name. "
-                "Each scale uses every letter name once, so use a sharp or flat where the pattern needs one.")
+        return (
+            "<b>Scale spelling</b><br>Work out the note at the given degree of the scale or mode and press its name. "
+            "Each scale uses every letter name once, so use a sharp or flat where the pattern needs one."
+        )
 
     def generate(self, rng):
         scale = rng.choice(list(SCALES))
@@ -197,8 +211,12 @@ class ScaleDegrees(Exercise):
         near = [Note.from_diatonic(target.diatonic, a).name for a in (-1, 0, 1)]
         choices = pick_distractors(target.name, near + pool, 5, rng)
         spelled = " ".join(n.name for n in notes)
-        return Question(f"In {tonic.name} {scale}, what is scale degree {degree}?", choices, target.name,
-                        explanation=f"{tonic.name} {scale}: {spelled}")
+        return Question(
+            f"In {tonic.name} {scale}, what is scale degree {degree}?",
+            choices,
+            target.name,
+            explanation=f"{tonic.name} {scale}: {spelled}",
+        )
 
 
 @register
@@ -209,8 +227,10 @@ class ChordQualities(Exercise):
     par_seconds = 6.0
 
     def instructions(self) -> str:
-        return ("<b>Chord quality</b><br>A chord is shown in root position. Press its type. Check the size of the "
-                "intervals stacked above the lowest note to tell the types apart.")
+        return (
+            "<b>Chord quality</b><br>A chord is shown in root position. Press its type. Check the size of the "
+            "intervals stacked above the lowest note to tell the types apart."
+        )
 
     def generate(self, rng):
         clef = rng.choice(("treble", "bass"))
@@ -228,12 +248,12 @@ class ChordQualities(Exercise):
 # Where the lowest and highest note of an arpeggio may sit on each clef (up to two ledger lines either side of the staff).
 ARPEGGIO_WINDOWS = {
     "treble": (Note(3, 6), Note(6, 0)),  # B3..C6
-    "bass": (Note(2, 0), Note(4, 2)),    # C2..E4
-    "alto": (Note(2, 6), Note(5, 1)),    # B2..D5
-    "tenor": (Note(2, 4), Note(4, 6)),   # G2..B4
-    "soprano": (Note(3, 3), Note(5, 5)),    # F3..A5
-    "mezzo": (Note(3, 1), Note(5, 3)),      # D3..F5
-    "baritone": (Note(2, 2), Note(4, 4)),   # E2..G4
+    "bass": (Note(2, 0), Note(4, 2)),  # C2..E4
+    "alto": (Note(2, 6), Note(5, 1)),  # B2..D5
+    "tenor": (Note(2, 4), Note(4, 6)),  # G2..B4
+    "soprano": (Note(3, 3), Note(5, 5)),  # F3..A5
+    "mezzo": (Note(3, 1), Note(5, 3)),  # D3..F5
+    "baritone": (Note(2, 2), Note(4, 4)),  # E2..G4
 }
 
 
@@ -248,12 +268,14 @@ class ArpeggioNames(Exercise):
         return signature(settings.arpeggio)
 
     def instructions(self) -> str:
-        return ("<b>Arpeggio identification</b><br>A chord is played one note at a time, rising from its lowest note to "
-                "the same note an octave higher. Press its type, then its inversion.<br><br>"
-                "Find the chord's root by looking for the notes a third apart. The inversion is which chord tone is "
-                "lowest: the root (root position), the third (1st inversion), the fifth (2nd inversion) or the seventh "
-                "(3rd inversion, seventh chords only).<br><br>"
-                "Use the sliders button to choose the clefs, the types of arpeggio, the inversions and key signatures.")
+        return (
+            "<b>Arpeggio identification</b><br>A chord is played one note at a time, rising from its lowest note to "
+            "the same note an octave higher. Press its type, then its inversion.<br><br>"
+            "Find the chord's root by looking for the notes a third apart. The inversion is which chord tone is "
+            "lowest: the root (root position), the third (1st inversion), the fifth (2nd inversion) or the seventh "
+            "(3rd inversion, seventh chords only).<br><br>"
+            "Use the sliders button to choose the clefs, the types of arpeggio, the inversions and key signatures."
+        )
 
     def generate(self, rng):
         cfg = settings.arpeggio
@@ -285,9 +307,20 @@ class ArpeggioNames(Exercise):
         answer = f"{chord_type}{joiner}{INVERSION_NAMES[inversion]}"
         grid = {t: divmod(i, 5) for i, t in enumerate(types)} if len(types) > 5 else None  # two rows once there are many
         expl = f"{root.name} {chord_type}, {INVERSION_NAMES[inversion]}: " + " ".join(n.name for n in notes)
-        return Question("What type of arpeggio is this, and which inversion?", types, answer, [[n] for n in notes], clef,
-                        expl, key=key, value="quarter", grid=grid, octaves=[INVERSION_NAMES[i] for i in inversions],
-                        second_label="Inversion", joiner=joiner)
+        return Question(
+            "What type of arpeggio is this, and which inversion?",
+            types,
+            answer,
+            [[n] for n in notes],
+            clef,
+            expl,
+            key=key,
+            value="quarter",
+            grid=grid,
+            octaves=[INVERSION_NAMES[i] for i in inversions],
+            second_label="Inversion",
+            joiner=joiner,
+        )
 
 
 # Black keys: pitch class -> (letter, accidental) for the sharp name and for the flat name.
@@ -342,12 +375,13 @@ class KeyboardNotes(Exercise):
         cfg = settings.keyboard
         text = ["<b>Keyboard Identification</b><br>One key on the keyboard is highlighted. Press the button with its name."]
         if cfg.require_octave:
-            text.append("Choose its octave too, from the row below. Octaves count up from C, so middle C is the C in "
-                        "octave 4.")
+            text.append("Choose its octave too, from the row below. Octaves count up from C, so middle C is the C in octave 4.")
         if cfg.key_signature:
-            text.append("A key signature is shown above the keyboard. Name the key the way that signature spells it. Only "
-                        "that spelling counts, so F♯ and G♭ are not interchangeable. A black key that is not in the key "
-                        "is spelled with sharps in a sharp key and with flats in a flat key.")
+            text.append(
+                "A key signature is shown above the keyboard. Name the key the way that signature spells it. Only "
+                "that spelling counts, so F♯ and G♭ are not interchangeable. A black key that is not in the key "
+                "is spelled with sharps in a sharp key and with flats in a flat key.",
+            )
         else:
             text.append("Black keys have two names, such as C♯ and D♭. Either one is accepted.")
         return "<br><br>".join(text)
@@ -389,8 +423,11 @@ class KeyboardNotes(Exercise):
         if cfg.key_signature:
             extra = [(letter, acc, 0 if acc > 0 else 2) for letter in range(7) for acc in (1, -1)]
         elif cfg.black_keys:
-            extra = [(letter, acc, row) for (sharp, flat) in _BLACK_KEY_NAMES.values()
-                     for (letter, acc), row in ((sharp, 0), (flat, 2))]
+            extra = [
+                (letter, acc, row)
+                for (sharp, flat) in _BLACK_KEY_NAMES.values()
+                for (letter, acc), row in ((sharp, 0), (flat, 2))
+            ]
         else:
             extra = []
         for letter, acc, row in extra:
@@ -398,8 +435,19 @@ class KeyboardNotes(Exercise):
             choices.append(n)
             grid[n] = (row, letter)
 
-        return Question("", choices, answer, keyboard=key, accept=accept, explanation=explanation, grid=grid,
-                        keyboard_range=(lo, hi), octaves=octaves, key=count or 0, key_staff=cfg.key_signature)
+        return Question(
+            "",
+            choices,
+            answer,
+            keyboard=key,
+            accept=accept,
+            explanation=explanation,
+            grid=grid,
+            keyboard_range=(lo, hi),
+            octaves=octaves,
+            key=count or 0,
+            key_staff=cfg.key_signature,
+        )
 
 
 @register
@@ -414,17 +462,25 @@ class NoteConstruction(Exercise):
 
     def instructions(self) -> str:
         cfg = settings.construction
-        text = [("<b>Note Construction</b><br>A note name is shown. Click the staff where that note belongs. The octave "
-                 "counts: the number says which C-to-B you mean, and middle C is C4. On a grand staff, click the upper "
-                 "staff for notes from middle C up and the lower staff for the notes below it.")]
+        text = [
+            (
+                "<b>Note Construction</b><br>A note name is shown. Click the staff where that note belongs. The octave "
+                "counts: the number says which C-to-B you mean, and middle C is C4. On a grand staff, click the upper "
+                "staff for notes from middle C up and the lower staff for the notes below it."
+            ),
+        ]
         if cfg.key_signature:
-            text.append("A key signature is drawn at the start of the staff. It already applies to every note of that "
-                        "letter, so in G major you place F♯ on the F line with no sign. A note that the key does not "
-                        "give you needs its own sign.")
+            text.append(
+                "A key signature is drawn at the start of the staff. It already applies to every note of that "
+                "letter, so in G major you place F♯ on the F line with no sign. A note that the key does not "
+                "give you needs its own sign.",
+            )
         if cfg.accidentals:
-            text.append("To give a note its own sign, choose ♯, ♮ or ♭ first, then click the staff. You can also right "
-                        "click the staff to step through them. ♮ cancels a sharp or flat from the key signature. Only the "
-                        "exact spelling counts, so G♯ is not A♭.")
+            text.append(
+                "To give a note its own sign, choose ♯, ♮ or ♭ first, then click the staff. You can also right "
+                "click the staff to step through them. ♮ cancels a sharp or flat from the key signature. Only the "
+                "exact spelling counts, so G♯ is not A♭.",
+            )
         text.append("A wrong click shows the note you placed so you can adjust and try again.")
         return "<br><br>".join(text)
 
@@ -448,5 +504,13 @@ class NoteConstruction(Exercise):
                 explanation = f"In {key_name} the key signature already makes this a {word[implied]}, so it needs no sign."
             elif accidental != implied:
                 explanation = f"In {key_name} this note needs its own {word[accidental]} sign."
-        return Question(f"Place {name} on the staff.", [], name, clef=clef, construct=note, accidentals=cfg.accidentals,
-                        key=count, explanation=explanation)
+        return Question(
+            f"Place {name} on the staff.",
+            [],
+            name,
+            clef=clef,
+            construct=note,
+            accidentals=cfg.accidentals,
+            key=count,
+            explanation=explanation,
+        )
