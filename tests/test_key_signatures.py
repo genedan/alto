@@ -7,7 +7,6 @@ from alto import settings
 from alto.exercises.base import Question
 from alto.exercises.library import KeySignatures
 from alto.learning import stats
-from alto.theory.pitch import Note
 from alto.theory.scales import MODE_DEGREE, SCALES, build, mode_tonic
 from alto.ui import settings_panel as sp
 from alto.ui.exercise_view import ExerciseView
@@ -57,9 +56,9 @@ def test_reading_a_signature_shows_a_staff_and_asks_for_the_tonic():
     for q in questions(200, questions={"read"}, modes={"Dorian"}, clefs={"alto"}, keys={2}):
         assert q.show_staff and q.staff == [] and q.clef == "alto" and q.key == 2
         assert q.prompt == "Which Dorian scale has this key signature?"
+        assert q.caption == "_ Dorian"  # written under the staff, where the tonic goes
         assert q.answer == "E" and q.answer in q.choices and len(q.choices) == 6 and len(set(q.choices)) == 6
-        assert [n[0].name for n in q.play] == ["E", "F♯", "G", "A", "B", "C♯", "D", "E"]  # E Dorian, up to its octave
-        assert q.play[-1][0].octave == q.play[0][0].octave + 1
+        assert q.explanation.endswith("E F♯ G A B C♯ D E")  # E Dorian, up to its octave
         assert "2 sharps: E Dorian" in q.explanation
 
 
@@ -87,7 +86,7 @@ def test_a_settings_choice_with_nothing_ticked_falls_back_to_something_sensible(
 def test_a_question_comes_back_with_its_staff_and_its_scale():
     for q in questions(50, questions={"read"}):
         again = Question.from_dict(q.to_dict())
-        assert again == q and again.show_staff and again.play == q.play and again.item_key() == q.item_key()
+        assert again == q and again.show_staff and again.item_key() == q.item_key()
 
 
 def test_the_exercise_signature_follows_the_settings():
@@ -104,15 +103,16 @@ def test_a_key_signature_question_is_described_by_its_signature_in_the_lists_of_
 # -- the exercise screen ----------------------------------------------------------------------------------------------
 
 
-def test_a_signature_is_drawn_and_the_right_answer_plays_the_scale(app, monkeypatch):
-    played = []
+def test_a_signature_is_drawn_and_the_right_answer_plays_only_the_ordinary_chime(app, monkeypatch):
+    played, chimes = [], []
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_notes", lambda notes: played.append(notes))
+    monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: chimes.append(streak))
     settings.key_signatures.questions = {"read"}
     view = ExerciseView(KeySignatures(), random.Random(3))
     q = view.question
     assert q is not None and view.staff.isVisibleTo(view) and view.staff.key == q.key and view.staff.clef == q.clef
     next(b for b in view.buttons if b.text() == q.answer).click()
-    assert played == [q.play]
+    assert played == [] and len(chimes) == 1  # no scale is played
     view._advance.stop()
 
 
@@ -127,13 +127,17 @@ def test_a_counting_question_shows_no_staff(app):
     view._advance.stop()
 
 
-def test_the_preview_shows_the_signature_and_plays_the_scale(app, monkeypatch):
-    played = []
-    monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
+def test_the_preview_shows_the_signature_and_the_caption(app):
     q = questions(1, questions={"read"})[0]
     dialog = QuestionPreview("Key signatures", q)
-    next(b for b in dialog.findChildren(QPushButton) if b.text() == "Play").click()
-    assert played == [q.play] and dialog.grab().width() > 0
+    assert q.caption and dialog.grab().width() > 0
+    assert not [b for b in dialog.findChildren(QPushButton) if b.text() == "Play"]  # there is nothing to play
+
+
+def test_a_question_stored_with_a_scale_to_play_still_loads():
+    q = questions(1, questions={"read"})[0]
+    old = {**q.to_dict(), "play": [[{"octave": 4, "letter": 0, "accidental": 0}]]}
+    assert Question.from_dict(old) == q
 
 
 # -- the settings pane ------------------------------------------------------------------------------------------------
@@ -215,6 +219,24 @@ def test_the_exercises_help_describes_both_kinds_of_question():
     assert "drawn on a staff" in text and "how many sharps or flats" in text and "Dorian" in text
 
 
-def test_the_played_scale_runs_from_the_tonic_up_to_its_octave():
+def test_the_explanation_spells_the_scale_from_the_tonic_up_to_its_octave():
     q = questions(1, questions={"read"}, keys={0}, modes={MAJOR})[0]
-    assert [n[0] for n in q.play][0] == Note(4, 0) and q.play[-1][0] == Note(5, 0)  # C major, C4 to C5
+    assert q.explanation.endswith("C D E F G A B C")
+
+
+def test_the_kind_of_scale_is_written_under_the_staff_not_above_it(app):
+    import random
+
+    from alto.exercises.library import KeySignatures
+    from alto.ui.exercise_view import ExerciseView
+    asked = questions(200)
+    assert {q.caption for q in asked if q.show_staff} == {"_ Major", "_ minor"}
+    assert all(q.caption == "" for q in asked if not q.show_staff)  # counting questions keep their line of text
+    view = ExerciseView(KeySignatures(), random.Random(1))
+    view.resize(900, 600)
+    view.show()
+    for _ in range(30):
+        q = view.question
+        assert q is not None
+        assert view.staff.caption == q.caption and view.prompt.isHidden() == bool(q.caption or not q.prompt)
+        view.next_question()

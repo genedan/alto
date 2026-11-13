@@ -33,7 +33,7 @@ class Question:
     accidentals: bool = False  # show the sharp / flat / natural buttons for a construct question
     accept: tuple[str, ...] = ()  # other answers that count as correct (e.g. the enharmonic name of a black key)
     show_staff: bool = False  # draw the staff even with no notes on it, to show only its clef and key signature
-    play: list[list[Note]] = field(default_factory=list)  # what to play on a right answer when no notes are drawn
+    caption: str = ""  # text written on the staff itself, under the music, in place of the prompt above it
 
     def check_placed(self, note: Note) -> bool:
         """Is this the note we asked for? The spelling and octave must match exactly, so G♯4 is not A♭4."""
@@ -61,7 +61,7 @@ class Question:
     def from_dict(cls, d: dict) -> Question:
         d = dict(d)
         d["staff"] = [[Note(**n) for n in col] for col in d.get("staff", [])]
-        d["play"] = [[Note(**n) for n in col] for col in d.get("play", [])]
+        d.pop("play", None)  # questions stored by an older version carried the notes of a scale to play
         d["keyboard"], d["construct"] = note_from(d.get("keyboard")), note_from(d.get("construct"))
         if d.get("grid") is not None:
             d["grid"] = {k: tuple(v) for k, v in d["grid"].items()}

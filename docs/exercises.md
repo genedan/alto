@@ -59,8 +59,7 @@ is m3.
 Two kinds of question, asked at random:
 
 - **Read the signature.** A key signature is drawn on a staff and you press the tonic of the scale it belongs to. The
-  question says what kind of scale: "Which major key has this key signature?", "Which minor key ...?" or, for a mode,
-  "Which Dorian scale ...?". A right answer plays the scale.
+  kind of scale is written under the staff with a blank for the tonic: "_ Major", "_ minor" or, for a mode, "_ Dorian".
 - **Count the sharps or flats.** A key is named, such as "How many sharps or flats are in D major?" or "... in E Dorian?",
   and you press how many it has.
 
@@ -73,7 +72,7 @@ In the exercise settings you can choose:
 - **Scales:** major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.
 - **Key signatures:** which of the fifteen signatures, from seven flats to seven sharps, can appear.
 
-{% include shot.html src="key-signatures.png" alt="Key signatures showing three flats on an alto clef staff, asking which major key has this key signature" %}
+{% include shot.html src="key-signatures.png" alt="Key signatures showing three flats on an alto clef staff, with the caption _ Major under the staff" %}
 
 ## Scale spelling
 

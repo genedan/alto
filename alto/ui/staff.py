@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QPointF, QSize, Qt
+from PySide6.QtCore import QPointF, QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPen, QTransform
 from PySide6.QtWidgets import QSizePolicy, QWidget
 
@@ -81,11 +81,13 @@ class StaffWidget(QWidget):
         self.notation_style: NotationStyle | None = None  # None follows the style chosen in settings
         self.key = 0
         self.value = "whole"
+        self.caption = ""  # text written under the staff, inside the paper
         self._fit_height("treble")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
 
-    def show_notes(self, columns: list[list[Note]], clef: str = "treble", key: int = 0, value: str = "whole") -> None:
-        self.columns, self.clef, self.key, self.value = columns, clef, key, value
+    def show_notes(self, columns: list[list[Note]], clef: str = "treble", key: int = 0, value: str = "whole",
+                   caption: str = "") -> None:
+        self.columns, self.clef, self.key, self.value, self.caption = columns, clef, key, value, caption
         self.note_color = None
         self._fit_height(clef)
         self._fit_width()
@@ -156,6 +158,15 @@ class StaffWidget(QWidget):
             ys = list(staves.values())
             p.drawLine(QPointF(left, ys[0] - 4 * gap), QPointF(left, ys[1]))
             self._brace(p, left - 3, ys[0] - 4 * gap, ys[1], fg, font=font)
+
+        if self.caption:
+            caption_font = QFont(self.font())
+            caption_font.setPixelSize(max(int(gap * 1.6), 12))
+            p.setFont(caption_font)
+            p.setPen(fg)
+            top = max(staves.values()) + 2.5 * gap  # below the lowest staff, clear of its ledger lines
+            p.drawText(QRectF(left, top, right - left, max(self.height() - top - gap, gap * 2)),
+                       Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter, self.caption)
 
         n = max(len(self.columns), 1)
         x0 = left + self.note_offset + KEY_STEP * abs(self.key)

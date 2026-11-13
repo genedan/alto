@@ -165,8 +165,10 @@ class KeySignatures(Exercise):
         choices = pick_distractors(correct, near + everyone, 5, rng)
         word = MODE_WORDS.get(mode, f"{mode} scale")
         notes = [*build(tonic, SCALES[mode]), tonic.transpose(Interval(8, "P"))]  # the scale, up to its octave
+        scale = _scale_name(mode)
+        blank = f"_ {scale if scale == 'minor' else scale[0].upper() + scale[1:]}"  # "_ Major", "_ minor", "_ Dorian"
         return Question(f"Which {word} has this key signature?", choices, correct, clef=clef, key=count, show_staff=True,
-                        play=[[n] for n in notes],
+                        caption=blank,
                         explanation=f"{format_key_signature(count)}: {tonic.name} {_scale_name(mode)}: "
                         + " ".join(n.name for n in notes))
 
