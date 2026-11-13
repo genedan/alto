@@ -34,7 +34,27 @@
           {% assign pages = site.pages | where_exp: "p", "p.nav_order" | sort: "nav_order" %}
           <ul>
             {% for p in pages %}
-            <li><a href="{{ p.url | relative_url }}"{% if p.url == page.url %} aria-current="page"{% endif %}>{{ p.title }}</a></li>
+            <li><a href="{{ p.url | relative_url }}"{% if p.url == page.url %} aria-current="page"{% endif %}>{{ p.title }}</a>
+              {% if p.children and page.url contains p.permalink %}
+              {% assign child_pages = site.pages | where: "parent", p.children | sort: "order" %}
+              {% assign last_package = "" %}
+              <ul class="sub-nav">
+                {% for a in child_pages %}
+                {% if a.package and a.package != last_package %}
+                {% unless last_package == "" %}</ul></li>{% endunless %}
+                <li class="sub-group"><span>{{ a.package }}</span>
+                  <ul>
+                {% assign last_package = a.package %}
+                {% endif %}
+                    <li><a href="{{ a.url | relative_url }}"{% if a.url == page.url %} aria-current="page"{% endif %}>{% if a.package %}{{ a.title | remove_first: a.package | remove_first: "." }}{% else %}{{ a.title }}{% endif %}</a></li>
+                {% endfor %}
+                {% if last_package != "" %}
+                  </ul>
+                </li>
+                {% endif %}
+              </ul>
+              {% endif %}
+            </li>
             {% endfor %}
           </ul>
         </nav>
