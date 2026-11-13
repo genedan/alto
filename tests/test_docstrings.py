@@ -25,6 +25,7 @@ DOCUMENTED = [
     "alto/settings.py",
     "alto/ui/__init__.py",
     "alto/ui/colors.py",
+    "alto/ui/app_settings.py",
     "alto/ui/charts.py",
     "alto/ui/database_page.py",
     "alto/ui/pictures.py",

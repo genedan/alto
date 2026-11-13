@@ -82,11 +82,10 @@ convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
 # Not documented yet. Remove a line when that package has its docstrings and annotations.
-"alto/ui/app_settings.py" = ["D", "DOC", "ANN"]
 "alto/ui/icons.py" = ["E501"]  # E501: SVG path data
-"alto/ui/settings_panel.py" = ["D", "DOC", "ANN"]
 "alto/ui/style.py" = ["E501"]  # E501: the stylesheet template
 "tests/**" = ["D", "DOC", "ANN", "PLR0917"]  # PLR0917: pytest passes fixtures to test functions as plain parameters
+"alto/ui/settings_panel.py" = ["D", "DOC"]  # annotated; docstrings still to do
 "scripts/**" = ["D", "DOC", "ANN"]
 
 [tool.ruff.lint.flake8-bugbear]

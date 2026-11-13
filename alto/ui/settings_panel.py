@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
+
 from PySide6.QtCore import (
     QEasingCurve,
     QParallelAnimationGroup,
@@ -11,7 +13,7 @@ from PySide6.QtCore import (
     QVariantAnimation,
     Signal,
 )
-from PySide6.QtGui import QColor, QPainter, QPalette, QPen
+from PySide6.QtGui import QColor, QPainter, QPaintEvent, QPalette, QPen
 from PySide6.QtWidgets import (
     QAbstractButton,
     QBoxLayout,
@@ -31,6 +33,7 @@ from PySide6.QtWidgets import (
 )
 
 from .. import settings
+from ..exercises.base import Exercise
 from ..settings import (
     CLEFS,
     DEFAULT_RANGES,
@@ -47,7 +50,16 @@ from ..theory.pitch import MAJOR_KEYS, Note
 from ..theory.scales import INVERSION_NAMES
 from .colors import blend
 from .keyboard import KeyboardSpan
-from .pictures import CLEF_NAMES, VALUE_NAMES, ClefPictures, KeySignaturePicture, NamePicture, RangePictures, ValuePictures
+from .pictures import (
+    CLEF_NAMES,
+    VALUE_NAMES,
+    ClefPictures,
+    KeySignaturePicture,
+    NamePicture,
+    RangePictures,
+    ValuePictures,
+    _Picture,
+)
 from .staff import StaffWidget
 from .store import int_value, store
 
@@ -95,7 +107,7 @@ def save_note_names() -> None:
 
 
 def _guard_last(
-    boxes,
+    boxes: Iterable[QAbstractButton],
     *,
     enabled: bool = True,
 ) -> None:
@@ -136,8 +148,8 @@ class RangeEditor(QWidget):
         *,
         low: int,
         high: int,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.key, self.low, self.high = key, low, high
         self.limits = RANGE_LIMITS[key]
@@ -209,13 +221,13 @@ class RangeEditor(QWidget):
         low: int = 0,
         *,
         high: int = 0,
-    ):
+    ) -> None:
         self.low = min(max(self.low + low, self.limits[0]), self.high)  # the lower bound can't pass the upper
         self.high = max(min(self.high + high, self.limits[1]), self.low)
         self._refresh()
         self.edited.emit(self.key, self.low, self.high)
 
-    def _refresh(self):
+    def _refresh(self) -> None:
         self.caption_text.setText(f"<b>{diatonic_name(self.low)} – {diatonic_name(self.high)}</b>")
         self.staff.show_notes([[Note.from_diatonic(self.low)], [Note.from_diatonic(self.high)]], clef=self.key)
         self.low_up.setEnabled(self.low < self.high)
@@ -234,8 +246,8 @@ class KeyDiagram(QWidget):
         self,
         keys: set[int] | None = None,
         *,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.keys: set[int] = set(keys or ())
         self.first_column = self.PAD + 2 * self.DOT + 7 + self.DOT  # x of the 1-sharp / 1-flat dots
@@ -255,7 +267,7 @@ class KeyDiagram(QWidget):
         names = [MAJOR_KEYS[k] for k in sorted(self.keys, key=lambda k: (k < 0, abs(k)))]
         self.setToolTip(", ".join(names))
 
-    def paintEvent(self, _):
+    def paintEvent(self, _: QPaintEvent) -> None:
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         pal = self.palette()
@@ -284,7 +296,7 @@ ROW_PICTURE_WIDTH = 238  # room for a picture on its own line in a menu row (pan
 def _label_with_picture(
     button: QAbstractButton,
     *,
-    picture,
+    picture: _Picture,
     name: str,
 ) -> None:
     """Label a checkbox or radio button with a picture (a clef, a note value ...) instead of text. The name stays
@@ -365,7 +377,7 @@ class _Row(QPushButton):
         *,
         chevron: bool = True,
         tall: bool = False,
-    ):
+    ) -> None:
         super().__init__()
         self.tall = tall
         self._contents: QBoxLayout  # the layout inside the row
@@ -431,7 +443,7 @@ class Switch(QAbstractButton):
 
     W, H = 42, 24
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setCheckable(True)
         self.setFixedSize(self.W, self.H)
@@ -443,22 +455,22 @@ class Switch(QAbstractButton):
         self._anim.valueChanged.connect(self._set_pos)
         self.toggled.connect(self._slide)
 
-    def _set_pos(self, value):
+    def _set_pos(self, value: float) -> None:
         self._pos = float(value)
         self.update()
 
-    def _slide(self, on: bool):
+    def _slide(self, on: bool) -> None:
         self._anim.stop()
         self._anim.setStartValue(self._pos)
         self._anim.setEndValue(1.0 if on else 0.0)
         self._anim.start()
 
-    def setChecked(self, on: bool):  # no animation when set programmatically
+    def setChecked(self, on: bool) -> None:  # no animation when set programmatically
         super().setChecked(on)
         self._anim.stop()
         self._set_pos(1.0 if on else 0.0)
 
-    def paintEvent(self, _):
+    def paintEvent(self, _: QPaintEvent) -> None:
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         pal = self.palette()
@@ -474,7 +486,7 @@ class Switch(QAbstractButton):
         p.setBrush(QColor("white"))
         p.drawEllipse(QPointF(x, self.H / 2), r, r)
 
-    def sizeHint(self):
+    def sizeHint(self) -> QSize:
         return QSize(self.W, self.H)
 
 
@@ -483,7 +495,7 @@ class _ToggleRow(_Row):
 
     switched = Signal(bool)
 
-    def __init__(self, title: str):
+    def __init__(self, title: str) -> None:
         super().__init__(title, chevron=False)
         self.value.hide()
         self.switch = Switch()
@@ -491,7 +503,7 @@ class _ToggleRow(_Row):
         self._contents.addWidget(self.switch)
         self.clicked.connect(lambda: self._set(not self.switch.isChecked()))
 
-    def _set(self, on: bool):
+    def _set(self, on: bool) -> None:
         self.switch.setChecked(on)
         self.switch.update()
         self.switched.emit(on)
@@ -499,7 +511,7 @@ class _ToggleRow(_Row):
     def isOn(self) -> bool:
         return self.switch.isChecked()
 
-    def setOn(self, on: bool):
+    def setOn(self, on: bool) -> None:
         self.switch.setChecked(on)
 
 
@@ -507,7 +519,7 @@ def _subpage(
     title: str,
     *,
     body: QWidget,
-    back,
+    back: Callable[[], object],
     fill: bool = False,
 ) -> QWidget:
     """A second-layer page: a Back button and title above `body`."""
@@ -537,7 +549,7 @@ def _subpage(
 class SlideStack(QStackedWidget):
     """A stacked widget whose pages slide in from the right (going deeper) or the left (going back)."""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._slide: QParallelAnimationGroup | None = None
 
@@ -570,7 +582,7 @@ class SlideStack(QStackedWidget):
             anim.setEndValue(QPoint(end, 0))
             group.addAnimation(anim)
 
-        def done():
+        def done() -> None:
             self.setCurrentIndex(index)
             old.move(0, 0)
             new.move(0, 0)
@@ -594,8 +606,8 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self,
         cfg: NoteNameSettings,
         *,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
@@ -758,7 +770,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self._refresh_summaries()
 
     # navigation
-    def _go(self, index: int):
+    def _go(self, index: int) -> None:
         if self.stack.sliding or index == self.stack.currentIndex():
             return  # ignore clicks mid-transition
         if index == 0:
@@ -770,7 +782,7 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
     def _active_keys(self) -> list[str]:
         return self.cfg.active_clefs()
 
-    def _refresh_summaries(self):
+    def _refresh_summaries(self) -> None:
         keys = self._active_keys()
         self.clef_pictures.set_clefs(keys)
         self.range_pictures.set_items([(k, *self.cfg.range_for(k)) for k in keys])
@@ -785,37 +797,37 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         self.name_picture.set_naming(self.cfg.naming)
 
     # clefs page
-    def _clefs_edited(self):
+    def _clefs_edited(self) -> None:
         self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
         _guard_last(list(self.boxes.values()))  # the last checked clef can't be unchecked
         save_note_names()
         self.changed.emit()
 
     # key signatures / note values / note names pages
-    def _keys_edited(self):
+    def _keys_edited(self) -> None:
         self.cfg.key_signatures = {k for k, b in self.key_boxes.items() if b.isChecked()}
         _guard_last(list(self.key_boxes.values()))
         self._save_and_emit()
 
-    def _values_edited(self):
+    def _values_edited(self) -> None:
         self.cfg.note_values = {v for v, b in self.value_boxes.items() if b.isChecked()}
         _guard_last(list(self.value_boxes.values()))
         self._save_and_emit()
 
-    def _names_edited(self):
+    def _names_edited(self) -> None:
         self.cfg.naming = next(k for k, r in self.naming_radios.items() if r.isChecked())
         self._save_and_emit()
 
-    def _accidentals_toggled(self, on: bool):
+    def _accidentals_toggled(self, on: bool) -> None:
         self.cfg.accidentals = on
         self._save_and_emit()
 
-    def _save_and_emit(self):
+    def _save_and_emit(self) -> None:
         save_note_names()
         self.changed.emit()
 
     # range page
-    def _build_range_rows(self):
+    def _build_range_rows(self) -> None:
         while self.range_lay.count():
             item = self.range_lay.takeAt(0)
             widget = item.widget() if item is not None else None
@@ -838,11 +850,11 @@ class NoteNameSettingsPanel(ExerciseSettingsPanel):
         key: str,
         low: int,
         high: int,
-    ):
+    ) -> None:
         self.cfg.ranges[key] = (low, high)
         self._save_and_emit()
 
-    def _reset_ranges(self):
+    def _reset_ranges(self) -> None:
         self.cfg.ranges.clear()
         save_note_names()
         self._build_range_rows()
@@ -888,8 +900,8 @@ class KeyChecklist(QWidget):
         self,
         selected: set[int],
         *,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.boxes = {k: QCheckBox() for k in range(-7, 8)}
         for k, box in self.boxes.items():  # each key is labelled with its signature, as written after a treble clef
@@ -924,7 +936,7 @@ class KeyChecklist(QWidget):
     def selected(self) -> set[int]:
         return {k for k, box in self.boxes.items() if box.isChecked()}
 
-    def _toggled(self):
+    def _toggled(self) -> None:
         _guard_last(list(self.boxes.values()))
         self.changed.emit()
 
@@ -939,8 +951,8 @@ class KeySignaturePage(QWidget):
         enabled: bool,
         *,
         selected: set[int],
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         lay = QVBoxLayout(self)
         lay.setContentsMargins(
@@ -966,7 +978,7 @@ class KeySignaturePage(QWidget):
     def selected(self) -> set[int]:
         return self.checklist.selected()
 
-    def _switched(self, on: bool):
+    def _switched(self, on: bool) -> None:
         self.checklist.setEnabled(on)
         self.changed.emit()
 
@@ -979,8 +991,8 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         self,
         cfg: settings.KeyboardSettings,
         *,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
@@ -1078,12 +1090,12 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         self._refresh_range()
         self._show_keys()
 
-    def _go(self, index: int):
+    def _go(self, index: int) -> None:
         if self.stack.sliding or index == self.stack.currentIndex():
             return
         self.stack.slide_to(index)
 
-    def _refresh_range(self):
+    def _refresh_range(self) -> None:
         cfg = self.cfg
         self.low_label.setText(key_name(cfg.low))
         self.high_label.setText(key_name(cfg.high))
@@ -1101,7 +1113,7 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         which: str,
         *,
         delta: int,
-    ):
+    ) -> None:
         low, high = self.cfg.low, self.cfg.high
         first, last = settings.KEYBOARD_FULL
         if which == "low":
@@ -1114,22 +1126,22 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
         self,
         low: int,
         high: int,
-    ):
+    ) -> None:
         if (low, high) == (self.cfg.low, self.cfg.high):
             return
         self.cfg.low, self.cfg.high = low, high
         self._refresh_range()
         self._save_and_emit()
 
-    def _black_keys_toggled(self, on: bool):
+    def _black_keys_toggled(self, on: bool) -> None:
         self.cfg.black_keys = on
         self._save_and_emit()
 
-    def _octave_toggled(self, on: bool):
+    def _octave_toggled(self, on: bool) -> None:
         self.cfg.require_octave = on
         self._save_and_emit()
 
-    def _show_keys(self):
+    def _show_keys(self) -> None:
         _show_keys(
             self.keys_row,
             diagram=self.keys_diagram,
@@ -1137,13 +1149,13 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
             keys=set(self.cfg.active_keys()),
         )
 
-    def _keys_edited(self):
+    def _keys_edited(self) -> None:
         self.cfg.key_signature = self.key_page.enabled()
         self.cfg.keys = self.key_page.selected()
         self._show_keys()
         self._save_and_emit()
 
-    def _save_and_emit(self):
+    def _save_and_emit(self) -> None:
         save_keyboard()
         self.changed.emit()
 
@@ -1170,8 +1182,8 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
         self,
         cfg: settings.ConstructionSettings,
         *,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
@@ -1241,18 +1253,18 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
             self.stack.addWidget(page)
         self._refresh_summaries()
 
-    def _go(self, index: int):
+    def _go(self, index: int) -> None:
         if self.stack.sliding or index == self.stack.currentIndex():
             return
         if index == 0:
             self._refresh_summaries()
         self.stack.slide_to(index)
 
-    def _refresh_summaries(self):
+    def _refresh_summaries(self) -> None:
         self.clef_pictures.set_clefs(self.cfg.active_clefs())
         self._show_keys()
 
-    def _save_and_emit(self):
+    def _save_and_emit(self) -> None:
         saved_settings = store()
         cfg = self.cfg
         saved_settings.setValue("construction/clefs", ",".join(c for c in settings.RANGE_KEYS if c in cfg.clefs))
@@ -1261,16 +1273,16 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
         saved_settings.setValue("construction/keys", ",".join(str(k) for k in cfg.active_keys()))
         self.changed.emit()
 
-    def _clefs_edited(self):
+    def _clefs_edited(self) -> None:
         self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
         _guard_last(list(self.boxes.values()))  # the last checked choice can't be unchecked
         self._save_and_emit()
 
-    def _accidentals_toggled(self, on: bool):
+    def _accidentals_toggled(self, on: bool) -> None:
         self.cfg.accidentals = on
         self._save_and_emit()
 
-    def _show_keys(self):
+    def _show_keys(self) -> None:
         _show_keys(
             self.keys_row,
             diagram=self.keys_diagram,
@@ -1278,7 +1290,7 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
             keys=set(self.cfg.active_keys()),
         )
 
-    def _keys_edited(self):
+    def _keys_edited(self) -> None:
         self.cfg.key_signature = self.key_page.enabled()
         self.cfg.keys = self.key_page.selected()
         self._show_keys()
@@ -1314,8 +1326,8 @@ class ChoiceChecklist(QWidget):
         groups: list[tuple[str, list[tuple[object, str]]]],
         *,
         selected: set,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.boxes: dict[object, QCheckBox] = {}
         lay = QVBoxLayout(self)
@@ -1342,7 +1354,7 @@ class ChoiceChecklist(QWidget):
     def selected(self) -> set:
         return {k for k, box in self.boxes.items() if box.isChecked()}
 
-    def _toggled(self):
+    def _toggled(self) -> None:
         _guard_last(list(self.boxes.values()))
         self.changed.emit()
 
@@ -1363,8 +1375,8 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         self,
         cfg: settings.ArpeggioSettings,
         *,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
@@ -1473,14 +1485,14 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
             self.stack.addWidget(page)
         self._refresh_summaries()
 
-    def _go(self, index: int):
+    def _go(self, index: int) -> None:
         if self.stack.sliding or index == self.stack.currentIndex():
             return
         if index == 0:
             self._refresh_summaries()
         self.stack.slide_to(index)
 
-    def _refresh_summaries(self):
+    def _refresh_summaries(self) -> None:
         cfg = self.cfg
         self.clef_pictures.set_clefs(cfg.active_clefs())
         types = cfg.active_types()
@@ -1496,7 +1508,7 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
             keys=set(cfg.active_keys()),
         )
 
-    def _save_and_emit(self):
+    def _save_and_emit(self) -> None:
         saved_settings = store()
         cfg = self.cfg
         saved_settings.setValue("arpeggio/clefs", ",".join(cfg.active_clefs()))
@@ -1506,20 +1518,20 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
         saved_settings.setValue("arpeggio/keys", ",".join(str(k) for k in cfg.active_keys()))
         self.changed.emit()
 
-    def _clefs_edited(self):
+    def _clefs_edited(self) -> None:
         self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
         _guard_last(list(self.boxes.values()))
         self._save_and_emit()
 
-    def _types_edited(self):
+    def _types_edited(self) -> None:
         self.cfg.types = self.types.selected()
         self._save_and_emit()
 
-    def _inversions_edited(self):
+    def _inversions_edited(self) -> None:
         self.cfg.inversions = self.inversions.selected()
         self._save_and_emit()
 
-    def _keys_edited(self):
+    def _keys_edited(self) -> None:
         self.cfg.key_signature = self.key_page.enabled()
         self.cfg.keys = self.key_page.selected()
         _show_keys(
@@ -1556,8 +1568,8 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         self,
         cfg: settings.KeySignatureSettings,
         *,
-        parent=None,
-    ):
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.cfg = cfg
         self.stack = SlideStack()
@@ -1679,14 +1691,14 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
             self.stack.addWidget(page)
         self._refresh_summaries()
 
-    def _go(self, index: int):
+    def _go(self, index: int) -> None:
         if self.stack.sliding or index == self.stack.currentIndex():
             return
         if index == 0:
             self._refresh_summaries()
         self.stack.slide_to(index)
 
-    def _refresh_summaries(self):
+    def _refresh_summaries(self) -> None:
         cfg = self.cfg
         questions = cfg.active_questions()
         self.questions_row.value.setText(
@@ -1702,7 +1714,7 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
             keys=set(cfg.active_keys()),
         )
 
-    def _save_and_emit(self):
+    def _save_and_emit(self) -> None:
         saved_settings = store()
         cfg = self.cfg
         saved_settings.setValue("keySignatures/questions", ",".join(cfg.active_questions()))
@@ -1711,20 +1723,20 @@ class KeySignatureSettingsPanel(ExerciseSettingsPanel):
         saved_settings.setValue("keySignatures/keys", ",".join(str(k) for k in cfg.active_keys()))
         self.changed.emit()
 
-    def _questions_edited(self):
+    def _questions_edited(self) -> None:
         self.cfg.questions = self.questions.selected()
         self._save_and_emit()
 
-    def _clefs_edited(self):
+    def _clefs_edited(self) -> None:
         self.cfg.clefs = {c for c, b in self.boxes.items() if b.isChecked()}
         _guard_last(list(self.boxes.values()))
         self._save_and_emit()
 
-    def _modes_edited(self):
+    def _modes_edited(self) -> None:
         self.cfg.modes = self.modes.selected()
         self._save_and_emit()
 
-    def _keys_edited(self):
+    def _keys_edited(self) -> None:
         self.cfg.keys = self.key_list.selected()
         self._save_and_emit()
 
@@ -1734,7 +1746,7 @@ def settings_inversion_names() -> tuple[str, ...]:
     return tuple(n.capitalize() for n in INVERSION_NAMES)
 
 
-def settings_panel_for(exercise) -> ExerciseSettingsPanel | None:
+def settings_panel_for(exercise: Exercise) -> ExerciseSettingsPanel | None:
     """The settings panel for an exercise (has a `changed` signal), or None if it has none."""
     from ..exercises.library import ArpeggioNames, KeyboardNotes, KeySignatures, NoteConstruction, NoteNames
 
