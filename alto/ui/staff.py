@@ -17,15 +17,40 @@ Examples
 
 from __future__ import annotations
 
-from PySide6.QtCore import QPointF, QRectF, QSize, Qt
-from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPaintEvent, QPen, QTransform
-from PySide6.QtWidgets import QSizePolicy, QWidget
+from PySide6.QtCore import (
+    QPointF,
+    QRectF,
+    QSize,
+    Qt,
+)
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QPainter,
+    QPainterPath,
+    QPaintEvent,
+    QPen,
+    QTransform,
+)
+from PySide6.QtWidgets import (
+    QApplication,
+    QSizePolicy,
+    QWidget,
+)
 
-from ..theory.pitch import ACCIDENTAL_SYMBOLS, Note, key_accidental
-from . import engraving
-from .notation import NotationStyle, clef_shape
-from .notation import current as current_style
-from .notes import draw_note
+from alto.theory.pitch import (
+    ACCIDENTAL_SYMBOLS,
+    Note,
+    key_accidental,
+)
+from alto.ui import engraving
+from alto.ui.notation import (
+    NotationStyle,
+    clef_shape,
+    on_redraw,
+)
+from alto.ui.notation import current as current_style
+from alto.ui.notes import draw_note
 
 # Diatonic index of the bottom staff line.
 BOTTOM_LINE = {
@@ -210,7 +235,7 @@ def draw_key_signature(
     >>> draw_key_signature(painter, clef="treble", key=3, x=10, bottom=80, gap=12, color=QColor("black"), font="bravura")
     >>> painter.end()
     True
-    >>> any(image.pixelColor(x, y).lightness() < 128 for x in range(10, 60) for y in range(20, 100))
+    >>> any(image.pixelColor(x_, y_).lightness() < 128 for x_ in range(10, 60) for y_ in range(20, 100))
     True
     """
     if not key:
@@ -448,6 +473,7 @@ class StaffWidget(QWidget):
         --------
         >>> staff = StaffWidget()
         >>> staff.set_note_color(QColor("#2e7d32"))
+        >>> # noinspection PyUnresolvedReferences
         >>> staff.note_color.name()
         '#2e7d32'
         >>> staff.set_note_color(None)
@@ -513,6 +539,7 @@ class StaffWidget(QWidget):
 
         staves = self.staff_bottoms()
 
+        # noinspection PyShadowingNames
         def staff_for(note: Note) -> str:
             """
             Return which staff a note is on.
@@ -822,7 +849,7 @@ class StaffWidget(QWidget):
         >>> StaffWidget._draw_clef(painter, clef="treble", x=10, bottom=70, gap=10)
         >>> painter.end()
         True
-        >>> any(image.pixelColor(x, y).lightness() < 128 for x in range(10, 40) for y in range(20, 90))
+        >>> any(image.pixelColor(x_, y).lightness() < 128 for x_ in range(10, 40) for y in range(20, 90))
         True
         """
         clef = clef_shape(clef)  # the baritone clef is an F clef or a C clef, as chosen in the settings
@@ -899,7 +926,7 @@ class StaffWidget(QWidget):
         >>> StaffWidget._brace(painter, x=40, y0=10, y1=90, color=QColor("black"))
         >>> painter.end()
         True
-        >>> any(image.pixelColor(x, 50).lightness() < 128 for x in range(20, 41))
+        >>> any(image.pixelColor(x_, 50).lightness() < 128 for x_ in range(20, 41))
         True
         """
         if font and engraving.draw_brace(
@@ -1042,3 +1069,19 @@ class StaffWidget(QWidget):
         True
         """
         p.drawLine(QPointF(x - gap, y), QPointF(x + gap, y))
+
+
+def _repaint_staffs() -> None:
+    """
+    Paint every staff on screen again, after the notation style changed.
+
+    Examples
+    --------
+    >>> _repaint_staffs()  # with no staffs open, nothing happens
+    """
+    for w in QApplication.allWidgets():
+        if isinstance(w, StaffWidget):
+            w.update()
+
+
+on_redraw(_repaint_staffs)

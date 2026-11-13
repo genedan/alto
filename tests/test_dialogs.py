@@ -5,19 +5,32 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QDialog,
+    QLabel,
+    QPushButton,
+)
+
 from alto import settings
 from alto.exercises.base import Question
 from alto.learning import Database
 from alto.theory.pitch import Note
 from alto.ui import profile_dialog
-from alto.ui.profile_dialog import ProfileDialog, remember_profile, startup_profile
+from alto.ui.profile_dialog import (
+    ProfileDialog,
+    remember_profile,
+    startup_profile,
+)
 from alto.ui.question_preview import QuestionPreview
+from alto.ui.staff import StaffWidget
 from alto.ui.store import store
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QLabel, QPushButton
 
 if TYPE_CHECKING:
-    from PySide6.QtWidgets import QApplication, QWidget
+    from PySide6.QtWidgets import (
+        QApplication,
+        QWidget,
+    )
 
 # -- choosing who is practising -------------------------------------------------------------------------------------
 
@@ -38,6 +51,7 @@ def test_the_first_time_it_asks_for_a_name_and_creates_the_profile(app: QApplica
     assert dialog.error.text() and dialog.chosen is None
     dialog.name.setText("Ada Lovelace")
     dialog.name.returnPressed.emit()
+    # noinspection PyUnresolvedReferences
     assert dialog.chosen is not None and dialog.chosen.name == "Ada Lovelace" and dialog.result() == QDialog.DialogCode.Accepted
 
 
@@ -266,6 +280,7 @@ def test_a_staff_question_shows_its_notes_answer_choices_and_explanation(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     q = Question(
         "Which?",
@@ -307,6 +322,7 @@ def test_a_keyboard_question_shows_the_key(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     q = Question(
         "",
@@ -338,6 +354,7 @@ def test_a_note_construction_question_shows_the_note_that_was_asked_for(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.question_preview.sounds.play_notes", lambda notes: played.append(notes))
     settings.note_names.naming = "solfege"
     q = Question(
@@ -375,8 +392,6 @@ def test_the_staff_in_the_preview_is_capped_like_the_one_in_the_exercise(app: QA
     app : QApplication
         The shared Qt application.
     """
-    from alto.ui.staff import StaffWidget
-
     dialog = QuestionPreview(
         "Note",
         question=Question(

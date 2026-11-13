@@ -16,7 +16,10 @@ Examples
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
+from collections.abc import (
+    Callable,
+    Iterable,
+)
 
 from PySide6.QtCore import (
     QEasingCurve,
@@ -29,7 +32,13 @@ from PySide6.QtCore import (
     QVariantAnimation,
     Signal,
 )
-from PySide6.QtGui import QColor, QPainter, QPaintEvent, QPalette, QPen
+from PySide6.QtGui import (
+    QColor,
+    QPainter,
+    QPaintEvent,
+    QPalette,
+    QPen,
+)
 from PySide6.QtWidgets import (
     QAbstractButton,
     QBoxLayout,
@@ -48,9 +57,16 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .. import settings
-from ..exercises.base import Exercise
-from ..settings import (
+from alto import settings
+from alto.exercises.base import Exercise
+from alto.exercises.library import (
+    ArpeggioNames,
+    KeyboardNotes,
+    KeySignatures,
+    NoteConstruction,
+    NoteNames,
+)
+from alto.settings import (
     CLEFS,
     DEFAULT_RANGES,
     MAX_DIATONIC,
@@ -62,11 +78,14 @@ from ..settings import (
     diatonic_name,
     key_name,
 )
-from ..theory.pitch import MAJOR_KEYS, Note
-from ..theory.scales import INVERSION_NAMES
-from .colors import blend
-from .keyboard import KeyboardSpan
-from .pictures import (
+from alto.theory.pitch import (
+    MAJOR_KEYS,
+    Note,
+)
+from alto.theory.scales import INVERSION_NAMES
+from alto.ui.colors import blend
+from alto.ui.keyboard import KeyboardSpan
+from alto.ui.pictures import (
     CLEF_NAMES,
     VALUE_NAMES,
     ClefPictures,
@@ -76,8 +95,12 @@ from .pictures import (
     ValuePictures,
     _Picture,
 )
-from .staff import StaffWidget
-from .store import int_value, store
+from alto.ui.staff import StaffWidget
+from alto.ui.store import (
+    int_value,
+    store,
+    text_value,
+)
 
 
 def load_note_names() -> None:
@@ -89,14 +112,14 @@ def load_note_names() -> None:
 
     Examples
     --------
-    >>> cfg = settings.note_names
-    >>> cfg.clefs = {"alto"}
+    >>> cfg_ = settings.note_names
+    >>> cfg_.clefs = {"alto"}
     >>> save_note_names()
-    >>> cfg.clefs = {"treble"}
+    >>> cfg_.clefs = {"treble"}
     >>> load_note_names()
-    >>> cfg.clefs
+    >>> cfg_.clefs
     {'alto'}
-    >>> cfg.clefs = {"treble", "bass"}
+    >>> cfg_.clefs = {"treble", "bass"}
     >>> save_note_names()
     """
     s = store()
@@ -108,17 +131,17 @@ def load_note_names() -> None:
     if s.value("noteNames/mode") == "grand":  # an older version had a switch between the grand staff and single clefs
         cfg.clefs = {"grand"}
     s.remove("noteNames/mode")
-    keys = str(s.value("noteNames/keys", "") or "")
+    keys = text_value(s, key="noteNames/keys", default="")
     if keys:
         cfg.key_signatures = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or {0}
-    values = str(s.value("noteNames/values", "") or "")
+    values = text_value(s, key="noteNames/values", default="")
     if values:
         cfg.note_values = {v for v in values.split(",") if v in NOTE_VALUES} or {"whole"}
-    naming = str(s.value("noteNames/naming", cfg.naming))
+    naming = text_value(s, key="noteNames/naming", default=cfg.naming)
     cfg.naming = naming if naming in NAMINGS else "letters"
-    cfg.accidentals = str(s.value("noteNames/accidentals", "false")).lower() == "true"
+    cfg.accidentals = text_value(s, key="noteNames/accidentals", default="false").lower() == "true"
     cfg.ranges = {}
-    for item in str(s.value("noteNames/ranges", "") or "").split(","):  # e.g. "treble:31-33,bass:14-28"
+    for item in text_value(s, key="noteNames/ranges", default="").split(","):  # e.g. "treble:31-33,bass:14-28"
         try:
             key, span = item.split(":")
             lo, hi = (int(x) for x in span.split("-"))
@@ -134,12 +157,12 @@ def save_note_names() -> None:
 
     Examples
     --------
-    >>> cfg = settings.note_names
-    >>> cfg.naming = "solfege"
+    >>> cfg_ = settings.note_names
+    >>> cfg_.naming = "solfege"
     >>> save_note_names()
     >>> str(store().value("noteNames/naming"))
     'solfege'
-    >>> cfg.naming = "letters"
+    >>> cfg_.naming = "letters"
     >>> save_note_names()
     """
     s = store()
@@ -671,9 +694,10 @@ def _clef_list(boxes: dict[str, QCheckBox]) -> QWidget:
 
     Examples
     --------
-    >>> boxes = {clef: _clef_box(clef) for clef in ("treble", "bass", "soprano")}
-    >>> widget = _clef_list(boxes)
-    >>> widget.layout().count()  # two boxes, a dividing line, and one box
+    >>> boxes_ = {clef: _clef_box(clef) for clef in ("treble", "bass", "soprano")}
+    >>> widget_ = _clef_list(boxes_)
+    >>> # noinspection PyUnresolvedReferences
+    >>> widget_.layout().count()  # two boxes_, a dividing line, and one box
     4
     """
     widget = QWidget()
@@ -721,9 +745,9 @@ def _show_keys(
 
     Examples
     --------
-    >>> row, diagram = _Row("Key signatures"), KeyDiagram()
-    >>> _show_keys(row, diagram=diagram, enabled=False, keys={0})
-    >>> row.value.text(), diagram.isHidden()
+    >>> row_, diagram_ = _Row("Key signatures"), KeyDiagram()
+    >>> _show_keys(row_, diagram=diagram_, enabled=False, keys={0})
+    >>> row_.value.text(), diagram_.isHidden()
     ('Off', True)
     """
     diagram.set_keys(keys)
@@ -838,6 +862,7 @@ class _Row(QPushButton):
         >>> row = _Row("Clefs")
         >>> picture = ClefPictures(["treble"])
         >>> row.attach(picture)
+        >>> # noinspection PyUnresolvedReferences
         >>> row.layout().indexOf(picture)
         2
         """
@@ -1082,6 +1107,7 @@ class _ToggleRow(_Row):
         self.switch.update()
         self.switched.emit(on)
 
+    # noinspection PyPep8Naming
     def isOn(self) -> bool:
         """
         Report whether the switch is on.
@@ -1098,6 +1124,7 @@ class _ToggleRow(_Row):
         """
         return self.switch.isChecked()
 
+    # noinspection PyPep8Naming
     def setOn(self, on: bool) -> None:
         """
         Set the switch without announcing it, as when a setting is loaded.
@@ -1146,8 +1173,8 @@ def _subpage(
     Examples
     --------
     >>> calls = []
-    >>> page = _subpage("Clefs", body=QWidget(), back=lambda: calls.append("back"))
-    >>> next(b for b in page.findChildren(QToolButton) if b.text() == "‹ Back").click()
+    >>> page_ = _subpage("Clefs", body=QWidget(), back=lambda: calls.append("back"))
+    >>> next(b for b in page_.findChildren(QToolButton) if b.text() == "‹ Back").click()
     >>> calls
     ['back']
     """
@@ -1275,7 +1302,9 @@ class SlideStack(QStackedWidget):
             >>> done()  # doctest: +SKIP
             """
             self.setCurrentIndex(index)
+            # noinspection PyUnresolvedReferences
             old.move(0, 0)
+            # noinspection PyUnresolvedReferences
             new.move(0, 0)
             self._slide = None
 
@@ -1772,20 +1801,20 @@ def load_keyboard() -> None:
 
     Examples
     --------
-    >>> cfg = settings.keyboard
-    >>> cfg.require_octave = True
+    >>> cfg_ = settings.keyboard
+    >>> cfg_.require_octave = True
     >>> save_keyboard()
-    >>> cfg.require_octave = False
+    >>> cfg_.require_octave = False
     >>> load_keyboard()
-    >>> cfg.require_octave
+    >>> cfg_.require_octave
     True
-    >>> cfg.require_octave = False
+    >>> cfg_.require_octave = False
     >>> save_keyboard()
     """
     saved_settings = store()
     cfg = settings.keyboard
-    cfg.black_keys = str(saved_settings.value("keyboard/blackKeys", "true")).lower() != "false"
-    cfg.require_octave = str(saved_settings.value("keyboard/requireOctave", "false")).lower() == "true"
+    cfg.black_keys = text_value(saved_settings, key="keyboard/blackKeys", default="true").lower() != "false"
+    cfg.require_octave = text_value(saved_settings, key="keyboard/requireOctave", default="false").lower() == "true"
     try:
         low = int_value(saved_settings, key="keyboard/low", default=cfg.low)
         high = int_value(saved_settings, key="keyboard/high", default=cfg.high)
@@ -1794,8 +1823,8 @@ def load_keyboard() -> None:
     first, last = settings.KEYBOARD_FULL
     if first <= low <= high <= last:
         cfg.low, cfg.high = low, high
-    cfg.key_signature = str(saved_settings.value("keyboard/keySignature", "false")).lower() == "true"
-    keys = str(saved_settings.value("keyboard/keys", "") or "")
+    cfg.key_signature = text_value(saved_settings, key="keyboard/keySignature", default="false").lower() == "true"
+    keys = text_value(saved_settings, key="keyboard/keys", default="")
     if keys:
         cfg.keys = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or cfg.keys
 
@@ -1806,9 +1835,9 @@ def save_keyboard() -> None:
 
     Examples
     --------
-    >>> cfg = settings.keyboard
+    >>> cfg_ = settings.keyboard
     >>> save_keyboard()
-    >>> int(store().value("keyboard/low")) == cfg.low
+    >>> int(store().value("keyboard/low")) == cfg_.low
     True
     """
     saved_settings = store()
@@ -2218,9 +2247,9 @@ class KeyboardSettingsPanel(ExerciseSettingsPanel):
 
         Examples
         --------
-        >>> cfg = settings.KeyboardSettings()
-        >>> panel = KeyboardSettingsPanel(cfg)
-        >>> cfg.low = 50
+        >>> cfg_ = settings.KeyboardSettings()
+        >>> panel = KeyboardSettingsPanel(cfg_)
+        >>> cfg_.low = 50
         >>> panel._refresh_range()
         >>> panel.low_label.text()
         'D3'
@@ -2413,9 +2442,9 @@ def load_construction() -> None:
     if saved is not None:
         text = saved if isinstance(saved, str) else ",".join(saved)
         cfg.clefs = {c for c in text.split(",") if c in settings.RANGE_KEYS} or cfg.clefs
-    cfg.accidentals = str(saved_settings.value("construction/accidentals", "false")).lower() == "true"
-    cfg.key_signature = str(saved_settings.value("construction/keySignature", "false")).lower() == "true"
-    keys = str(saved_settings.value("construction/keys", "") or "")
+    cfg.accidentals = text_value(saved_settings, key="construction/accidentals", default="false").lower() == "true"
+    cfg.key_signature = text_value(saved_settings, key="construction/keySignature", default="false").lower() == "true"
+    keys = text_value(saved_settings, key="construction/keys", default="")
     if keys:
         cfg.keys = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or cfg.keys
 
@@ -2577,12 +2606,12 @@ class NoteConstructionSettingsPanel(ExerciseSettingsPanel):
 
         Examples
         --------
-        >>> cfg = settings.ConstructionSettings(accidentals=True)
-        >>> panel = NoteConstructionSettingsPanel(cfg)
+        >>> cfg_ = settings.ConstructionSettings(accidentals=True)
+        >>> panel = NoteConstructionSettingsPanel(cfg_)
         >>> panel._save_and_emit()
         >>> str(store().value("construction/accidentals"))
         'true'
-        >>> cfg.accidentals = False
+        >>> cfg_.accidentals = False
         >>> panel._save_and_emit()
         """
         saved_settings = store()
@@ -2684,18 +2713,18 @@ def load_arpeggio() -> None:
     """
     saved_settings = store()
     cfg = settings.arpeggio
-    clefs = str(saved_settings.value("arpeggio/clefs", "") or "")
+    clefs = text_value(saved_settings, key="arpeggio/clefs", default="")
     if clefs:
         cfg.clefs = {c for c in clefs.split(",") if c in CLEFS} or cfg.clefs
-    types = str(saved_settings.value("arpeggio/types", "") or "")
+    types = text_value(saved_settings, key="arpeggio/types", default="")
     if types:
         cfg.types = {t for t in types.split(",") if t in settings.ARPEGGIO_TYPES} or cfg.types
-    inversions = str(saved_settings.value("arpeggio/inversions", "") or "")
+    inversions = text_value(saved_settings, key="arpeggio/inversions", default="")
     if inversions:
         found = {int(i) for i in inversions.split(",") if i.isdigit() and int(i) in settings.INVERSIONS}
         cfg.inversions = found or cfg.inversions
-    cfg.key_signature = str(saved_settings.value("arpeggio/keySignature", "false")).lower() == "true"
-    keys = str(saved_settings.value("arpeggio/keys", "") or "")
+    cfg.key_signature = text_value(saved_settings, key="arpeggio/keySignature", default="false").lower() == "true"
+    keys = text_value(saved_settings, key="arpeggio/keys", default="")
     if keys:
         cfg.keys = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or cfg.keys
 
@@ -2743,6 +2772,7 @@ class ChoiceChecklist(QWidget):
         Examples
         --------
         >>> checklist = ChoiceChecklist([("", [(0, "Root"), (1, "1st")])], selected={0})
+        >>> # noinspection PyTypeChecker
         >>> sorted(checklist.boxes)
         [0, 1]
         """
@@ -3022,8 +3052,8 @@ class ArpeggioSettingsPanel(ExerciseSettingsPanel):
 
         Examples
         --------
-        >>> cfg = settings.ArpeggioSettings(clefs={"tenor"})
-        >>> panel = ArpeggioSettingsPanel(cfg)
+        >>> cfg_ = settings.ArpeggioSettings(clefs={"tenor"})
+        >>> panel = ArpeggioSettingsPanel(cfg_)
         >>> panel._save_and_emit()
         >>> str(store().value("arpeggio/clefs"))
         'tenor'
@@ -3127,16 +3157,16 @@ def load_key_signatures() -> None:
     """
     saved_settings = store()
     cfg = settings.key_signatures
-    questions = str(saved_settings.value("keySignatures/questions", "") or "")
+    questions = text_value(saved_settings, key="keySignatures/questions", default="")
     if questions:
         cfg.questions = {q for q in questions.split(",") if q in settings.KEY_QUESTIONS} or cfg.questions
-    clefs = str(saved_settings.value("keySignatures/clefs", "") or "")
+    clefs = text_value(saved_settings, key="keySignatures/clefs", default="")
     if clefs:
         cfg.clefs = {c for c in clefs.split(",") if c in CLEFS} or cfg.clefs
-    modes = str(saved_settings.value("keySignatures/modes", "") or "")
+    modes = text_value(saved_settings, key="keySignatures/modes", default="")
     if modes:
         cfg.modes = {m for m in modes.split("|") if m in settings.KEY_MODES} or cfg.modes
-    keys = str(saved_settings.value("keySignatures/keys", "") or "")
+    keys = text_value(saved_settings, key="keySignatures/keys", default="")
     if keys:
         cfg.keys = {int(k) for k in keys.split(",") if k.lstrip("-").isdigit() and abs(int(k)) <= 7} or cfg.keys
 
@@ -3483,8 +3513,6 @@ def settings_panel_for(exercise: Exercise) -> ExerciseSettingsPanel | None:
     >>> settings_panel_for(IntervalNames()) is None
     True
     """
-    from ..exercises.library import ArpeggioNames, KeyboardNotes, KeySignatures, NoteConstruction, NoteNames
-
     if isinstance(exercise, NoteNames):
         return NoteNameSettingsPanel(settings.note_names)
     if isinstance(exercise, KeyboardNotes):

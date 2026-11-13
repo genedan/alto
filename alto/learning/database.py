@@ -15,7 +15,10 @@ from __future__ import annotations
 
 import sqlite3
 import time
-from dataclasses import KW_ONLY, dataclass
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+)
 from pathlib import Path
 
 SCHEMA_VERSION = 1
@@ -236,6 +239,7 @@ class Database:
         --------
         >>> db = Database()
         >>> ada = db.add_profile("Ada")
+        >>> # noinspection PyUnresolvedReferences
         >>> db.profile(ada.id).name
         'Ada'
         >>> db.profile(999) is None
@@ -281,8 +285,9 @@ class Database:
                 cur = self.conn.execute("INSERT INTO profiles (name, created_at) VALUES (?, ?)", (name, time.time()))
         except sqlite3.IntegrityError:
             raise ValueError(f"There is already a profile called {name}.") from None
-        assert cur.lastrowid is not None  # an INSERT always gives the new row an id
-        return Profile(cur.lastrowid, name=name)
+        row_id = cur.lastrowid
+        assert row_id is not None  # an INSERT always gives the new row an id
+        return Profile(row_id, name=name)
 
     def delete_profile(self, profile_id: int) -> None:
         """
@@ -372,6 +377,7 @@ class Database:
         >>> record = ItemRecord(2.0, seen=1, first_try_right=0, wrong_attempts=1, total_first_ms=3000,
         ...                     last_seen=100.0, signature="s", payload="{}")
         >>> db.save_item(ada.id, exercise="NoteNames", item_key="k", item=record)
+        >>> # noinspection PyUnresolvedReferences
         >>> db.get_item(ada.id, exercise="NoteNames", item_key="k").strain
         2.0
         """
@@ -797,7 +803,7 @@ class Database:
         >>> item = ItemRecord(3.0, seen=1, first_try_right=0, wrong_attempts=1, total_first_ms=1000,
         ...                   last_seen=1.0, signature="s1", payload="{}")
         >>> db.save_item(ada.id, exercise="NoteNames", item_key="k", item=item)
-        >>> [r.item_key for r in db.replay_candidates(ada.id, exercise="NoteNames", signature="s1")]
+        >>> [row_.item_key for row_ in db.replay_candidates(ada.id, exercise="NoteNames", signature="s1")]
         ['k']
         >>> db.replay_candidates(ada.id, exercise="NoteNames", signature="other settings")
         []

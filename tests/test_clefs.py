@@ -9,19 +9,45 @@ from __future__ import annotations
 
 import random
 import time
-from typing import TYPE_CHECKING, Any
+from typing import (
+    TYPE_CHECKING,
+    Any,
+)
 
 import pytest
+from PySide6.QtWidgets import (
+    QApplication,
+    QCheckBox,
+)
+
 from alto import settings
-from alto.exercises.library import ARPEGGIO_WINDOWS, ArpeggioNames, KeySignatures, NoteConstruction, NoteNames
+from alto.exercises.library import (
+    ARPEGGIO_WINDOWS,
+    ArpeggioNames,
+    KeySignatures,
+    NoteConstruction,
+    NoteNames,
+)
 from alto.theory.pitch import Note
+from alto.ui import notation
 from alto.ui import settings_panel as sp
+from alto.ui.app_settings import AppSettingsDialog
 from alto.ui.pictures import CLEF_NAMES
-from alto.ui.staff import _KEY_POSITIONS, BOTTOM_LINE, MIDDLE_C, StaffWidget
-from PySide6.QtWidgets import QApplication, QCheckBox
+
+# noinspection PyProtectedMember
+from alto.ui.staff import (
+    _KEY_POSITIONS,
+    BOTTOM_LINE,
+    MIDDLE_C,
+    StaffWidget,
+)
+from alto.ui.store import store
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import (
+        Callable,
+        Iterator,
+    )
     from types import ModuleType
 
     from PySide6.QtWidgets import QWidget
@@ -229,8 +255,6 @@ def baritone() -> Iterator[ModuleType]:
     ModuleType
         The notation module; the default baritone clef is put back afterwards.
     """
-    from alto.ui import notation
-
     yield notation
     notation.set_baritone_clef(notation.DEFAULT_BARITONE)
 
@@ -291,8 +315,6 @@ def test_the_baritone_clef_choice_is_saved_and_read_back(baritone: ModuleType) -
     baritone : ModuleType
         The notation module, with the baritone clef style restored afterwards.
     """
-    from alto.ui.store import store
-
     baritone.set_baritone_clef("c")
     assert store().value("ui/baritoneClef") == "c"
     baritone.set_baritone_clef("f")
@@ -350,8 +372,6 @@ def test_the_settings_dialog_offers_both_ways_of_writing_the_baritone_clef(
     baritone : ModuleType
         The notation module, with the baritone clef style restored afterwards.
     """
-    from alto.ui.app_settings import AppSettingsDialog
-
     dialog = AppSettingsDialog()
     buttons = dialog.baritone_buttons
     assert set(buttons) == {"f", "c"} and buttons["f"].isChecked() and not buttons["c"].isChecked()

@@ -17,14 +17,37 @@ Examples
 from __future__ import annotations
 
 import math
-from collections.abc import Callable, Sequence
-from datetime import date, timedelta
+from collections.abc import (
+    Callable,
+    Sequence,
+)
+from datetime import (
+    date,
+    timedelta,
+)
 
-from PySide6.QtCore import QPointF, QRectF, Qt
-from PySide6.QtGui import QColor, QFont, QMouseEvent, QPainter, QPainterPath, QPaintEvent, QPalette, QPen
-from PySide6.QtWidgets import QSizePolicy, QToolTip, QWidget
+from PySide6.QtCore import (
+    QPointF,
+    QRectF,
+    Qt,
+)
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QMouseEvent,
+    QPainter,
+    QPainterPath,
+    QPaintEvent,
+    QPalette,
+    QPen,
+)
+from PySide6.QtWidgets import (
+    QSizePolicy,
+    QToolTip,
+    QWidget,
+)
 
-from .colors import blend
+from alto.ui.colors import blend
 
 GOOD, BAD = QColor("#2e7d32"), QColor("#c62828")  # the same greens and reds the exercise feedback uses
 
@@ -411,9 +434,9 @@ class _Chart(QWidget):
         >>> chart = _Chart("Speed")
         >>> chart.resize(400, 300)
         >>> point = QPointF(100, 100)
-        >>> event = QMouseEvent(QEvent.Type.MouseMove, point, point, Qt.MouseButton.NoButton,
+        >>> event_ = QMouseEvent(QEvent.Type.MouseMove, point, point, Qt.MouseButton.NoButton,
         ...                     Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier)
-        >>> chart._hover(event, centres=[100.0, 200.0], texts=["First", "Second"])
+        >>> chart._hover(event_, centres=[100.0, 200.0], texts=["First", "Second"])
         """
         if not centres:
             return
@@ -565,28 +588,30 @@ class StackedBarChart(_Chart):
         p.setPen(Qt.PenStyle.NoPen)
         for cx, r, w in zip(centres, self.right, self.wrong):
             h_right, h_wrong = plot.height() * r / top, plot.height() * w / top
-            p.setBrush(GOOD)
-            p.drawRoundedRect(
-                QRectF(
-                    cx - bar / 2,
-                    plot.bottom() - h_right,
-                    bar,
-                    h_right,
-                ),
-                2,
-                2,
-            ) if r else None
-            p.setBrush(BAD)
-            p.drawRoundedRect(
-                QRectF(
-                    cx - bar / 2,
-                    plot.bottom() - h_right - h_wrong,
-                    bar,
-                    h_wrong,
-                ),
-                2,
-                2,
-            ) if w else None
+            if r:
+                p.setBrush(GOOD)
+                p.drawRoundedRect(
+                    QRectF(
+                        cx - bar / 2,
+                        plot.bottom() - h_right,
+                        bar,
+                        h_right,
+                    ),
+                    2,
+                    2,
+                )
+            if w:
+                p.setBrush(BAD)
+                p.drawRoundedRect(
+                    QRectF(
+                        cx - bar / 2,
+                        plot.bottom() - h_right - h_wrong,
+                        bar,
+                        h_wrong,
+                    ),
+                    2,
+                    2,
+                )
         self._category_axis(p, centres=centres, labels=self.labels)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
@@ -1179,10 +1204,10 @@ class HeatmapChart(_Chart):
         >>> chart = HeatmapChart("Reviews")
         >>> chart.resize(760, 190)
         >>> chart.set_data({}, today=date(2026, 11, 13))
-        >>> cell, (x0, y0) = chart._cell(), chart._origin()
-        >>> chart.day_at(QPointF(x0 + 52.5 * cell, y0 + 4.5 * cell))  # the last column, Friday
+        >>> cell_, (x0_, y0_) = chart._cell(), chart._origin()
+        >>> chart.day_at(QPointF(x0_ + 52.5 * cell_, y0_ + 4.5 * cell_))  # the last column, Friday
         datetime.date(2026, 11, 13)
-        >>> chart.day_at(QPointF(x0 + 52.5 * cell, y0 + 6.5 * cell)) is None  # Sunday: not yet
+        >>> chart.day_at(QPointF(x0_ + 52.5 * cell_, y0_ + 6.5 * cell_)) is None  # Sunday: not yet
         True
         """
         cell, (x0, y0) = self._cell(), self._origin()

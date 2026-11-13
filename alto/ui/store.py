@@ -77,18 +77,55 @@ def int_value(
 
     Examples
     --------
-    >>> settings = store()
-    >>> settings.setValue("demo/count", "42")
-    >>> int_value(settings, key="demo/count", default=0)
+    >>> settings_ = store()
+    >>> settings_.setValue("demo/count", "42")
+    >>> int_value(settings_, key="demo/count", default=0)
     42
-    >>> int_value(settings, key="demo/missing", default=7)
+    >>> int_value(settings_, key="demo/missing", default=7)
     7
-    >>> settings.setValue("demo/count", "many")
-    >>> int_value(settings, key="demo/count", default=0)
+    >>> settings_.setValue("demo/count", "many")
+    >>> int_value(settings_, key="demo/count", default=0)
     Traceback (most recent call last):
         ...
     ValueError: invalid literal for int() with base 10: 'many'
-    >>> settings.remove("demo")
+    >>> settings_.remove("demo")
     """
     value = settings.value(key, default)
     return int(value) if isinstance(value, (int, float, str)) else default
+
+
+def text_value(
+    settings: QSettings,
+    *,
+    key: str,
+    default: str,
+) -> str:
+    """
+    Read a saved setting as text.
+
+    Parameters
+    ----------
+    settings : QSettings
+        The settings to read.
+    key : str
+        The setting's name. Keyword-only.
+    default : str
+        What to return if nothing is saved. Keyword-only.
+
+    Returns
+    -------
+    str
+        The saved text, or `default` if there is none (or it is not text).
+
+    Examples
+    --------
+    >>> settings_ = store()
+    >>> settings_.setValue("demo/name", "viola")
+    >>> text_value(settings_, key="demo/name", default="piano")
+    'viola'
+    >>> text_value(settings_, key="demo/missing", default="piano")
+    'piano'
+    >>> settings_.remove("demo")
+    """
+    value = settings.value(key, default)
+    return value if isinstance(value, str) else default

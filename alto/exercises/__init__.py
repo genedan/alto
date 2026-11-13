@@ -11,7 +11,11 @@ True
 True
 """
 
-from . import library  # noqa: F401  (registers exercises)
-from .base import REGISTRY, Exercise, Question
+from alto.exercises import library  # noqa: F401  (registers exercises)
+from alto.exercises.base import (
+    REGISTRY,
+    Exercise,
+    Question,
+)
 
 __all__ = ["REGISTRY", "Exercise", "Question"]

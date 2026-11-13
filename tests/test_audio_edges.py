@@ -3,16 +3,24 @@
 from __future__ import annotations
 
 import wave
-from typing import TYPE_CHECKING, Never
+from typing import (
+    TYPE_CHECKING,
+    Never,
+)
 
 import pytest
-from alto.audio import INSTRUMENT_BY_KEY, Sounds
+from PySide6.QtMultimedia import QSoundEffect
+from PySide6.QtTest import QTest
+
+from alto.audio import (
+    INSTRUMENT_BY_KEY,
+    Sounds,
+)
 from alto.theory.pitch import Note
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from PySide6.QtMultimedia import QSoundEffect
     from PySide6.QtWidgets import QApplication
 
 
@@ -37,6 +45,7 @@ class Effect:
         """
         self.playing, self.loading, self.volume_set, self.stopped = playing, loading, [], 0
 
+    # noinspection PyPep8Naming
     def isPlaying(self) -> bool:
         """
         Say whether the effect is playing.
@@ -48,6 +57,7 @@ class Effect:
         """
         return self.playing
 
+    # noinspection PyPep8Naming
     def setVolume(self, v: float) -> None:
         """
         Record a volume that was set.
@@ -59,6 +69,7 @@ class Effect:
         """
         self.volume_set.append(v)
 
+    # noinspection PyMethodMayBeStatic
     def volume(self) -> float:
         """
         Return the volume.
@@ -92,8 +103,6 @@ class Effect:
         QSoundEffect.Status
             Loading while the loading flag is set, otherwise Ready.
         """
-        from PySide6.QtMultimedia import QSoundEffect
-
         return QSoundEffect.Status.Loading if self.loading else QSoundEffect.Status.Ready
 
 
@@ -140,9 +149,6 @@ def test_a_released_note_fades_out_and_stops(app: QApplication) -> None:
     app : QApplication
         The shared Qt application.
     """
-    from PySide6.QtMultimedia import QSoundEffect
-    from PySide6.QtTest import QTest
-
     s = Sounds()
     fx = QSoundEffect()
     s._release(fx)
@@ -164,6 +170,7 @@ def test_playing_a_note_again_cancels_its_fade() -> None:
         A fade-out that records when it is stopped.
         """
 
+        # noinspection PyMethodMayBeStatic
         def stop(self) -> None:
             """
             Record that the fade was cancelled.
@@ -190,6 +197,7 @@ def test_stop_all_silences_what_is_playing_and_cancels_fades() -> None:
         A fade-out that records when it is cancelled.
         """
 
+        # noinspection PyMethodMayBeStatic
         def stop(self) -> None:
             """
             Record that the fade was cancelled.
@@ -238,6 +246,7 @@ def test_a_failure_in_the_sound_system_is_reported_not_raised(
         midi : int
             The note.
         """
+        del inst, midi  # accepted to match what it stands in for, but not needed
         raise RuntimeError("no sound card")
 
     monkeypatch.setattr(s, "_effect", broken)
@@ -274,8 +283,6 @@ def test_a_sequence_waiting_for_its_notes_to_load_gives_way_to_a_newer_one(
     app : QApplication
         The shared Qt application.
     """
-    from PySide6.QtTest import QTest
-
     s = Sounds()
     slow, ready = Effect(loading=True), Effect()
     played = []

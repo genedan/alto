@@ -5,15 +5,27 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtTest import QTest
+from PySide6.QtWidgets import (
+    QLabel,
+    QToolButton,
+)
+
 from alto import settings
 from alto.ui import settings_panel as sp
 from alto.ui.store import store
-from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QToolButton
 
 if TYPE_CHECKING:
-    from alto.ui.settings_panel import KeyboardSettingsPanel, NoteConstructionSettingsPanel, NoteNameSettingsPanel
-    from PySide6.QtWidgets import QApplication, QWidget
+    from PySide6.QtWidgets import (
+        QApplication,
+        QWidget,
+    )
+
+    from alto.ui.settings_panel import (
+        KeyboardSettingsPanel,
+        NoteConstructionSettingsPanel,
+        NoteNameSettingsPanel,
+    )
 
 
 def slide() -> None:
@@ -185,8 +197,6 @@ def test_a_menu_row_can_hold_a_picture_inline_or_on_its_own_line(app: QApplicati
     app : QApplication
         The shared Qt application.
     """
-    from PySide6.QtWidgets import QLabel
-
     plain = sp._Row("Plain")
     plain.attach(QLabel("inline"))
     plain.fit()  # only a tall row needs fitting
@@ -206,8 +216,6 @@ def test_a_page_slides_in_and_ignores_requests_while_sliding(app: QApplication) 
     app : QApplication
         The shared Qt application.
     """
-    from PySide6.QtWidgets import QLabel
-
     stack = sp.SlideStack()
     stack.resize(200, 100)
     for text in ("one", "two", "three"):

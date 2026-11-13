@@ -13,10 +13,16 @@ from PySide6.QtCore import QStandardPaths
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
-from .learning import Database, Learner
-from .ui.main_window import MainWindow
-from .ui.profile_dialog import startup_profile
-from .ui.theme import apply_theme, saved_theme
+from alto.learning import (
+    Database,
+    Learner,
+)
+from alto.ui.main_window import MainWindow
+from alto.ui.profile_dialog import startup_profile
+from alto.ui.theme import (
+    apply_theme,
+    saved_theme,
+)
 
 
 def main() -> int:
@@ -47,7 +53,9 @@ def main() -> int:
         return 0
     learner = Learner(db, profile=profile)
     window = MainWindow(learner)
+    # noinspection PyUnresolvedReferences
     app.learner = learner  # pyright: ignore[reportAttributeAccessIssue]  (kept on the app so a theme change can swap in a fresh window)
+    # noinspection PyUnresolvedReferences
     app.main_window = window  # pyright: ignore[reportAttributeAccessIssue]
     window.show()
     return app.exec()

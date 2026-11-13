@@ -2,18 +2,29 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from alto.audio import Sounds
-    from alto.theory.pitch import Note
-
 import io
+import os
+import time
 import wave
 
 import numpy as np
 import pytest
-from alto.audio import SAMPLE_RATE, synth_piano, to_wav_bytes
+from PySide6.QtTest import QTest
+from PySide6.QtWidgets import QApplication
+
+from alto.audio import (
+    ASSET_DIR,
+    INSTRUMENT_BY_KEY,
+    INSTRUMENTS,
+    SAMPLE_RATE,
+    Sounds,
+    instrument_groups,
+    read_wav,
+    shift_pitch,
+    synth_piano,
+    to_wav_bytes,
+)
+from alto.theory.pitch import Note
 
 
 def test_synth_is_normalized_and_finite() -> None:
@@ -52,8 +63,6 @@ def test_bundled_samples_cover_staff_range() -> None:
     """
     Check that bundled samples cover staff range.
     """
-    from alto.audio import ASSET_DIR
-
     for midi in range(36, 97):
         with wave.open(str(ASSET_DIR / f"{midi}.wav")) as w:
             assert w.getnchannels() == 1 and w.getframerate() == SAMPLE_RATE
@@ -65,8 +74,6 @@ def test_every_instrument_has_recordings_and_covers_the_notes() -> None:
     """
     Check that every instrument has recordings and covers the notes.
     """
-    from alto.audio import INSTRUMENTS, Sounds, read_wav
-
     assert len(INSTRUMENTS) >= 7 and INSTRUMENTS[0].key == "piano"
     # instruments whose recordings ship with Alto; any other is still being sourced
     shipped = {
@@ -101,8 +108,6 @@ def test_pitch_shift_moves_the_frequency() -> None:
     """
     Check that pitch shift moves the frequency.
     """
-    from alto.audio import shift_pitch
-
     t = np.arange(SAMPLE_RATE) / SAMPLE_RATE
     tone = np.sin(2 * np.pi * 440 * t)
     shifted = shift_pitch(tone, semitones=2)  # up a whole tone: ~493.9 Hz
@@ -134,6 +139,7 @@ class FakeEffect:
         """
         self.label, self.log, self._volume = label, log, 1.0
 
+    # noinspection PyPep8Naming
     def setVolume(self, v: float) -> None:
         """
         Set the volume, as QSoundEffect does.
@@ -189,8 +195,6 @@ def engine(
     tuple of Sounds and list of object
         The engine, and the log of plays, stops and releases.
     """
-    from alto.audio import Sounds
-
     log, effects = [], {}
     s = Sounds()
     s.instrument = instrument
@@ -203,8 +207,6 @@ def test_only_bowed_and_blown_instruments_are_sustained() -> None:
     """
     Check that only bowed and blown instruments are sustained.
     """
-    from alto.audio import INSTRUMENT_BY_KEY
-
     sustained = {k for k, i in INSTRUMENT_BY_KEY.items() if i.sustained}
     assert {"viola_bowed", "flute", "horn"} <= sustained
     assert not sustained & {
@@ -260,8 +262,6 @@ def test_the_notes_of_a_chord_sound_together_and_end_together(monkeypatch: pytes
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto.theory.pitch import Note
-
     s, log = engine(monkeypatch, instrument="viola_bowed")
     s.play_notes([[Note(4, letter=0), Note(4, letter=2), Note(4, letter=4)]])  # C4 E4 G4 at once
     assert log == [("play", 60), ("play", 64), ("play", 67)]  # none of them cuts off another
@@ -283,12 +283,7 @@ def test_a_melody_hands_over_from_note_to_note(monkeypatch: pytest.MonkeyPatch) 
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    import os
-
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-    from alto.theory.pitch import Note
-    from PySide6.QtTest import QTest
-    from PySide6.QtWidgets import QApplication
 
     _app = QApplication.instance() or QApplication([])  # kept alive for the timers
     s, log = engine(monkeypatch, instrument="viola_bowed")
@@ -323,8 +318,6 @@ def test_the_two_ways_of_playing_the_viola_are_listed_together() -> None:
     """
     Check that the two ways of playing the viola are listed together.
     """
-    from alto.audio import instrument_groups
-
     groups = dict(instrument_groups())
     assert [i.key for i in groups["Viola"]] == ["viola_bowed", "viola_plucked"]
     assert [i.variant for i in groups["Viola"]] == ["Arco", "Pizzicato"]
@@ -333,12 +326,8 @@ def test_the_two_ways_of_playing_the_viola_are_listed_together() -> None:
 
 
 # -- hearing an instrument (the preview in the settings) ------------------------------------------------------------
-
-
 def preview_engine(
     monkeypatch: pytest.MonkeyPatch,
-    *,
-    instrument: str = "viola_bowed",
 ) -> tuple[Sounds, list[tuple[int, float]]]:
     """
     Build an engine whose notes are recorded with the time they were started.
@@ -347,21 +336,15 @@ def preview_engine(
     ----------
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
-    instrument : str
-        The instrument to play.
 
     Returns
     -------
     tuple of Sounds and list of tuple
         The engine, and the notes started so far as (note, time) pairs.
     """
-    import os
-    import time
-
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-    from alto.audio import Sounds
-    from PySide6.QtWidgets import QApplication
 
+    # noinspection PyGlobalUndefined
     global _preview_app
     _preview_app = QApplication.instance() or QApplication([])  # kept alive for the timers
     s, started = Sounds(), []
@@ -371,6 +354,7 @@ def preview_engine(
         An effect that never reports that it is still playing.
         """
 
+        # noinspection PyMethodMayBeStatic,PyPep8Naming
         def isPlaying(self) -> bool:
             """
             Say that the effect is not playing.
@@ -396,8 +380,6 @@ def test_a_preview_plays_its_notes_in_order_one_step_apart(monkeypatch: pytest.M
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
     s.preview("viola_bowed", midis=(60, 64, 67), step_ms=60)
     QTest.qWait(400)
@@ -415,10 +397,6 @@ def test_a_pause_in_the_program_delays_the_notes_instead_of_making_them_sound_to
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    import time
-
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
     s.preview("viola_bowed", midis=(60, 64, 67), step_ms=80)
     time.sleep(0.5)  # the sound system starting up, say, which blocks the timers
@@ -437,8 +415,6 @@ def test_starting_a_second_preview_ends_the_first(monkeypatch: pytest.MonkeyPatc
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
     s.preview("viola_bowed", midis=(60, 64, 67), step_ms=80)
     QTest.qWait(100)  # the first note, and maybe the second, have started
@@ -466,8 +442,6 @@ def melody(n: int) -> list[list[Note]]:
     list of list of Note
         One chord (of one note) per step.
     """
-    from alto.theory.pitch import Note
-
     return [[Note(4, letter=i % 7)] for i in range(n)]
 
 
@@ -480,8 +454,6 @@ def test_the_notes_of_a_melody_are_evenly_spaced(monkeypatch: pytest.MonkeyPatch
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
     s.play_notes(melody(5), gap_ms=70)
     QTest.qWait(600)
@@ -499,10 +471,6 @@ def test_a_note_that_is_slow_to_start_does_not_upset_the_rhythm(monkeypatch: pyt
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    import time
-
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
 
     def slow_start(
@@ -522,6 +490,7 @@ def test_a_note_that_is_slow_to_start_does_not_upset_the_rhythm(monkeypatch: pyt
         kwargs : object
             Ignored.
         """
+        del args, kwargs  # accepted to match what it stands in for, but not needed
         if not started:
             time.sleep(0.06)
         started.append((midi, time.monotonic()))
@@ -542,10 +511,6 @@ def test_a_stall_delays_the_notes_instead_of_bunching_them(monkeypatch: pytest.M
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    import time
-
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
     s.play_notes(melody(4), gap_ms=80)
     time.sleep(0.4)  # the program is busy, so the timers are late
@@ -563,8 +528,6 @@ def test_a_new_melody_cancels_the_notes_still_waiting_from_the_last(monkeypatch:
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
     s.play_notes(melody(5), gap_ms=80)
     QTest.qWait(100)
@@ -584,8 +547,6 @@ def test_a_muted_melody_plays_nothing(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from PySide6.QtTest import QTest
-
     s, started = preview_engine(monkeypatch)
     s.enabled = False
     s.play_notes(melody(3), gap_ms=30)

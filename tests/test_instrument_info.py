@@ -1,7 +1,10 @@
 """The facts shown about each instrument: who recorded it, how many notes and the range."""
 
 from alto.audio import INSTRUMENTS
-from alto.instrument_info import INFO, coverage
+from alto.instrument_info import (
+    INFO,
+    coverage,
+)
 
 
 def test_every_instrument_has_a_summary_with_a_source_and_terms() -> None:

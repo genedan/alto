@@ -4,12 +4,15 @@ Spaced repetition: who is learning (profiles), what they answered (a database) a
 Examples
 --------
 >>> db = Database()
->>> learner = Learner(db, profile=db.add_profile("Ada"))
->>> learner.profile.name
+>>> learner_ = Learner(db, profile=db.add_profile("Ada"))
+>>> learner_.profile.name
 'Ada'
 """
 
-from .database import Database, Profile
-from .learner import Learner
+from alto.learning.database import (
+    Database,
+    Profile,
+)
+from alto.learning.learner import Learner
 
 __all__ = ["Database", "Learner", "Profile"]

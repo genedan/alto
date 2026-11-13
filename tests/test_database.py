@@ -2,10 +2,18 @@
 
 import json
 import random
+import sqlite3
 
 import pytest
-from alto.exercises.base import Exercise, Question
-from alto.learning import Database, Learner
+
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.learning import (
+    Database,
+    Learner,
+)
 from alto.learning.database import ItemRecord
 from alto.theory.pitch import Note
 
@@ -161,8 +169,6 @@ def test_a_closed_database_refuses_further_work() -> None:
     """
     Check that a closed database refuses further work.
     """
-    import sqlite3
-
     db = Database()
     db.close()
     with pytest.raises(sqlite3.ProgrammingError):

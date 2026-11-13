@@ -14,7 +14,12 @@ Examples
 
 from __future__ import annotations
 
-from .pitch import LETTERS, MAJOR_KEYS, Interval, Note
+from alto.theory.pitch import (
+    LETTERS,
+    MAJOR_KEYS,
+    Interval,
+    Note,
+)
 
 I = Interval.parse
 

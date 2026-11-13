@@ -24,11 +24,38 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QWidget
 
 import argparse
+import json
 import os
+import random
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
+
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QApplication,
+    QScrollArea,
+)
+
+import alto.ui.exercise_view as ev
+from alto import settings
+from alto.exercises import REGISTRY
+from alto.exercises.base import Question
+from alto.learning import (
+    Database,
+    Learner,
+)
+from alto.ui.app_settings import AppSettingsDialog
+from alto.ui.database_page import (
+    ROW_ROLE,
+    DatabasePage,
+)
+from alto.ui.main_window import MainWindow
+from alto.ui.question_preview import QuestionPreview
+from alto.ui.stats_dialog import StatsPage
+from alto.ui.theme import apply_theme
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "assets" / "img"
@@ -130,30 +157,12 @@ def capture(
     --------
     >>> capture("dark", names=("home",), out=Path("/tmp/shots"))  # doctest: +SKIP
     """
-    import json
-    import random
-    import time
-
-    from PySide6.QtCore import Qt
-    from PySide6.QtWidgets import QApplication
-
-    sys.path.insert(0, str(ROOT))
-    from alto.exercises import REGISTRY
-    from alto.exercises.base import Question
-    from alto.learning import Database, Learner
-    from alto.ui.app_settings import AppSettingsDialog
-    from alto.ui.database_page import ROW_ROLE, DatabasePage
-    from alto.ui.main_window import MainWindow
-    from alto.ui.question_preview import QuestionPreview
-    from alto.ui.theme import apply_theme
-
     suffix = "" if theme == "light" else "-dark"
     app = QApplication([])
     apply_theme(theme)
 
-    import alto.ui.exercise_view as ev  # the same questions in both themes, so the light and dark pictures match
-
     original = ev.ExerciseView.__init__
+    # noinspection PyShadowingNames
     ev.ExerciseView.__init__ = lambda self, exercise, *, rng=None, parent=None, learner=None: original(
         self,
         exercise,
@@ -179,6 +188,7 @@ def capture(
         while time.time() < end:
             app.processEvents()
 
+    # noinspection PyShadowingNames
     def save(
         widget: QWidget,
         *,
@@ -288,8 +298,6 @@ def capture(
         ("KeySignatures", "key-signatures"),
     ):
         if cls == "KeySignatures":  # show a signature to read, on an alto clef staff, whatever the default is
-            from alto import settings
-
             settings.key_signatures.questions = {"read"}
             settings.key_signatures.clefs = {"alto"}
             settings.key_signatures.modes = {"Major (Ionian)"}
@@ -303,9 +311,7 @@ def capture(
     wait(400)
     save(window, name="stats", width=1500)
     if "stats-heatmap" in names:  # scroll down to the calendar of reviews and show it with the table under it
-        from alto.ui.stats_dialog import StatsPage
-        from PySide6.QtWidgets import QScrollArea
-
+        # noinspection PyProtectedMember
         stats_page = window._overlay
         assert isinstance(stats_page, StatsPage)
         scroller = stats_page.findChild(QScrollArea)
@@ -316,12 +322,14 @@ def capture(
     window.open_database()
     wait(400)
     save(window, name="database")
+    # noinspection PyProtectedMember
     page = window._overlay
     assert isinstance(page, DatabasePage)
     page.tabs["answers"].click()
     wait(200)
     row = next(page.proxy.index(r, 0) for r in range(page.proxy.rowCount()) if "Chord" in page.proxy.index(r, 1).data())
     answer = row.data(ROW_ROLE)
+    # noinspection PyProtectedMember
     preview = QuestionPreview(
         page._names[answer["exercise"]],
         question=Question.from_dict(json.loads(answer["payload"])),

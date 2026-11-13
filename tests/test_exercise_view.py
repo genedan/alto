@@ -6,6 +6,8 @@ import random
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtTest import QTest
+
 from alto import settings
 from alto.audio import sounds
 from alto.exercises.library import (
@@ -18,12 +20,15 @@ from alto.exercises.library import (
 )
 from alto.theory.pitch import Note
 from alto.ui.exercise_view import ExerciseView
-from PySide6.QtTest import QTest
 
 if TYPE_CHECKING:
-    from alto.exercises.base import Exercise, Question
-    from alto.learning import Learner
     from PySide6.QtWidgets import QApplication
+
+    from alto.exercises.base import (
+        Exercise,
+        Question,
+    )
+    from alto.learning import Learner
 
 
 def view_of(
@@ -256,8 +261,11 @@ def test_right_click_steps_through_the_signs(construction: ExerciseView) -> None
     assert construction.input_staff.accidental == 0  # under a key signature there is a natural too
     construction.input_staff.accidental_cycled.emit()
     assert construction.input_staff.accidental is None
+    # noinspection PyUnreachableCode
     construction.input_staff.accidental = 99  # something outside the cycle starts it again
+    # noinspection PyUnreachableCode
     construction.input_staff.accidental_cycled.emit()
+    # noinspection PyUnreachableCode
     assert construction.input_staff.accidental is None
 
 
@@ -333,6 +341,7 @@ def test_a_new_question_cancels_the_clearing_of_the_old_one(construction: Exerci
         The note construction view or panel under test.
     """
     q = asked(construction)
+    # noinspection PyUnresolvedReferences
     construction._place(Note(q.construct.octave, letter=(q.construct.letter + 2) % 7))
     construction.next_question()  # before the 900 ms are up
     assert not construction._busy

@@ -11,21 +11,40 @@ import random
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtTest import QTest
+from PySide6.QtWidgets import (
+    QPushButton,
+    QToolButton,
+)
+
 from alto import settings
 from alto.exercises.base import Question
-from alto.exercises.library import KeySignatures
+from alto.exercises.library import (
+    KeySignatures,
+    NoteNames,
+)
 from alto.learning import stats
-from alto.theory.scales import MODE_DEGREE, SCALES, build, mode_tonic
+from alto.theory.scales import (
+    MODE_DEGREE,
+    SCALES,
+    build,
+    mode_tonic,
+)
 from alto.ui import settings_panel as sp
-from alto.ui.exercise_view import ExerciseView
+from alto.ui.exercise_view import (
+    ExerciseView,
+    sounds,
+)
 from alto.ui.question_preview import QuestionPreview
 from alto.ui.store import store
-from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QPushButton, QToolButton
 
 if TYPE_CHECKING:
+    from PySide6.QtWidgets import (
+        QApplication,
+        QWidget,
+    )
+
     from alto.ui.settings_panel import KeySignatureSettingsPanel
-    from PySide6.QtWidgets import QApplication, QWidget
 
 MAJOR, MINOR = "Major (Ionian)", "Natural minor (Aeolian)"
 
@@ -235,7 +254,9 @@ def test_a_signature_is_drawn_and_a_right_answer_makes_no_sound(
         Replaces settings, functions or attributes for the length of the test.
     """
     played = []
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_notes", lambda notes: played.append(notes))
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr("alto.ui.exercise_view.sounds.play_correct", lambda streak: played.append(streak))
     for kind in ({"read"}, {"count"}):
         settings.key_signatures.questions = kind
@@ -264,9 +285,7 @@ def test_the_sound_button_is_a_global_mute_that_works_in_every_exercise(
     monkeypatch : pytest.MonkeyPatch
         Replaces settings, functions or attributes for the length of the test.
     """
-    from alto.exercises.library import NoteNames
-    from alto.ui.exercise_view import sounds
-
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(sounds, "enabled", True)
     assert KeySignatures.has_sound is False and NoteNames.has_sound is True
     for exercise in (KeySignatures(), NoteNames()):
@@ -479,11 +498,6 @@ def test_the_kind_of_scale_is_written_under_the_staff_not_above_it(app: QApplica
     app : QApplication
         The shared Qt application.
     """
-    import random
-
-    from alto.exercises.library import KeySignatures
-    from alto.ui.exercise_view import ExerciseView
-
     asked = questions(200)
     assert {q.caption for q in asked if q.show_staff} == {"_ Major", "_ minor"}
     assert all(q.caption == "" for q in asked if not q.show_staff)  # counting questions keep their line of text

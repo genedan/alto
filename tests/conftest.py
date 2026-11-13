@@ -5,17 +5,22 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import (
+        Callable,
+        Iterator,
+    )
     from pathlib import Path
 
-    from alto.learning import Learner
     from PySide6.QtCore import QCoreApplication
+
 
 import atexit
 import copy
 import os
+import random
 import shutil
 import tempfile
+import time
 
 # Alto saves its settings (QSettings) and its database under the XDG folders. Point them at a throwaway folder before
 # anything reads them, so no test can read or change the real ones.
@@ -23,9 +28,23 @@ _HOME = tempfile.mkdtemp(prefix="alto-tests-")
 os.environ["XDG_CONFIG_HOME"] = f"{_HOME}/config"
 os.environ["XDG_DATA_HOME"] = f"{_HOME}/data"
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-atexit.register(shutil.rmtree, _HOME, ignore_errors=True)
+atexit.register(lambda: shutil.rmtree(_HOME, ignore_errors=True))
 
 import pytest  # noqa: E402
+from PySide6.QtCore import (  # noqa: E402
+    QEvent,
+    QSettings,
+)
+from PySide6.QtWidgets import QApplication  # noqa: E402
+
+from alto import settings  # noqa: E402
+from alto.audio import sounds  # noqa: E402
+from alto.exercises import REGISTRY  # noqa: E402
+from alto.learning import (  # noqa: E402
+    Database,
+    Learner,
+)
+from alto.ui import keyboard_styles  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -39,16 +58,12 @@ def app() -> QCoreApplication:
         The shared application, created on first use.
     """
     pytest.importorskip("PySide6")
-    from PySide6.QtWidgets import QApplication
 
     return QApplication.instance() or QApplication([])
 
 
 def _close_every_window() -> None:
     """Close and delete every window a test left open, so none is torn down by Qt after the application is gone."""
-    from PySide6.QtCore import QEvent
-    from PySide6.QtWidgets import QApplication
-
     if QApplication.instance() is None:
         return
     for widget in QApplication.topLevelWidgets():
@@ -67,9 +82,6 @@ def _isolated_state() -> Iterator[None]:
     None
         Control, while the test runs with fresh settings.
     """
-    from alto import settings
-    from alto.audio import sounds
-
     names = (
         "note_names",
         "keyboard",
@@ -83,22 +95,18 @@ def _isolated_state() -> Iterator[None]:
     yield
     _close_every_window()
     sounds.enabled = muted
-    from alto.ui import keyboard_styles
 
     keyboard_styles._current = keyboard_styles.BY_KEY[keyboard_styles.DEFAULT]
+    # noinspection PyProtectedMember
     keyboard_styles._custom.clear()
+    # noinspection PyProtectedMember
     keyboard_styles._custom.update(keyboard_styles.DEFAULT_CUSTOM)
     for n in names:
         getattr(settings, n).__dict__.clear()
         getattr(settings, n).__dict__.update(before[n])
-    try:
-        from PySide6.QtCore import QSettings
-
-        saved = QSettings("alto", "alto")
-        saved.clear()
-        saved.sync()
-    except ImportError:  # pragma: no cover  (PySide6 is a requirement; this only guards a broken install)
-        pass
+    saved = QSettings("alto", "alto")
+    saved.clear()
+    saved.sync()
 
 
 @pytest.fixture
@@ -111,11 +119,6 @@ def practised_learner() -> Callable[..., Learner]:
     Callable[..., Learner]
         A function that builds a learner with a history of answers.
     """
-    import random
-    import time
-
-    from alto.exercises import REGISTRY
-    from alto.learning import Database, Learner
 
     def make(
         days: int = 120,
@@ -197,8 +200,6 @@ def _close_databases(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     None
         Control, while the test runs; every database opened meanwhile is closed afterwards.
     """
-    from alto.learning import Database
-
     opened = []
     original = Database.__init__
 
@@ -219,6 +220,7 @@ def _close_databases(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
         kwargs : str or Path
             The keyword arguments of `Database`.
         """
+        # noinspection PyTypeChecker
         original(self, *args, **kwargs)
         opened.append(self)
 

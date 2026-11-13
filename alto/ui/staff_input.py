@@ -10,13 +10,28 @@ True
 
 from __future__ import annotations
 
-from PySide6.QtCore import QEvent, Qt, Signal
-from PySide6.QtGui import QColor, QMouseEvent
+from PySide6.QtCore import (
+    QEvent,
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import (
+    QColor,
+    QMouseEvent,
+)
 from PySide6.QtWidgets import QWidget
 
-from ..settings import RANGE_LIMITS
-from ..theory.pitch import Note, key_accidental
-from .staff import BOTTOM_LINE, MAX_STEP, MIDDLE_C, StaffWidget
+from alto.settings import RANGE_LIMITS
+from alto.theory.pitch import (
+    Note,
+    key_accidental,
+)
+from alto.ui.staff import (
+    BOTTOM_LINE,
+    MAX_STEP,
+    MIDDLE_C,
+    StaffWidget,
+)
 
 PREVIEW = QColor(
     53,

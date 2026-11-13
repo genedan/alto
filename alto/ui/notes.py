@@ -17,8 +17,17 @@ True
 
 from __future__ import annotations
 
-from PySide6.QtCore import QRectF, Qt
-from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QTransform
+from PySide6.QtCore import (
+    QRectF,
+    Qt,
+)
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QPainter,
+    QPainterPath,
+    QTransform,
+)
 
 STAFF_SPACE = 33.5  # a note head is one staff space tall
 GLYPHS = {  # the breve is not here: its square form is drawn by _square_breve (the font only has the oval one)
@@ -67,8 +76,8 @@ def _square_breve() -> QPainterPath:
 
     Examples
     --------
-    >>> shape = _square_breve()
-    >>> round(shape.boundingRect().width() / STAFF_SPACE, 2), round(shape.boundingRect().height() / STAFF_SPACE, 2)
+    >>> shape_ = _square_breve()
+    >>> round(shape_.boundingRect().width() / STAFF_SPACE, 2), round(shape_.boundingRect().height() / STAFF_SPACE, 2)
     (1.65, 1.45)
     """
     s = STAFF_SPACE

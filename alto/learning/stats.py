@@ -14,6 +14,7 @@ Examples
 >>> stats = collect(db, profile_ids=[ada.id], now=1010.0)
 >>> stats.questions, stats.first_right
 (3, 2)
+>>> # noinspection PyTypeChecker
 >>> round(stats.accuracy)
 67
 """
@@ -23,14 +24,22 @@ from __future__ import annotations
 import json
 import statistics
 import time
-from dataclasses import KW_ONLY, dataclass, field
-from datetime import date, datetime, timedelta
+from dataclasses import (
+    KW_ONLY,
+    dataclass,
+    field,
+)
+from datetime import (
+    date,
+    datetime,
+    timedelta,
+)
 
-from ..exercises.base import Question
-from ..theory.pitch import Note
-from ..theory.scales import format_key_signature
-from . import scheduler
-from .database import Database
+from alto.exercises.base import Question
+from alto.learning import scheduler
+from alto.learning.database import Database
+from alto.theory.pitch import Note
+from alto.theory.scales import format_key_signature
 
 IDLE_CAP_S = 120.0  # one answer counts for at most this long towards practice time, so leaving the app open does not inflate it
 
@@ -489,13 +498,13 @@ def daily_counts(
 
     Examples
     --------
-    >>> db = Database()
-    >>> ada = db.add_profile("Ada")
+    >>> database = Database()
+    >>> ada = database.add_profile("Ada")
     >>> noon = datetime(2026, 11, 13, 12).timestamp()
     >>> for i in range(3):
-    ...     db.add_attempt(ada.id, exercise="NoteNames", item_key=str(i), attempt_no=1, answer="C", correct=True,
+    ...     database.add_attempt(ada.id, exercise="NoteNames", item_key=str(i), attempt_no=1, answer="C", correct=True,
     ...                    duration_ms=1000, answered_at=noon + i)
-    >>> daily_counts(db, profile_ids=[ada.id], now=noon + 60)
+    >>> daily_counts(database, profile_ids=[ada.id], now=noon + 60)
     {datetime.date(2026, 11, 13): 3}
     """
     now = time.time() if now is None else now
@@ -544,14 +553,14 @@ def collect(
 
     Examples
     --------
-    >>> db = Database()
-    >>> ada = db.add_profile("Ada")
-    >>> db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+    >>> database = Database()
+    >>> ada = database.add_profile("Ada")
+    >>> database.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
     ...                duration_ms=4000, answered_at=1000.0)
-    >>> stats = collect(db, profile_ids=[ada.id], now=1060.0)
+    >>> stats = collect(database, profile_ids=[ada.id], now=1060.0)
     >>> stats.questions, stats.median_seconds, stats.practice_seconds
     (1, 4.0, 4.0)
-    >>> collect(db, profile_ids=[999], now=1060.0).questions  # nobody has answered anything
+    >>> collect(database, profile_ids=[999], now=1060.0).questions  # nobody has answered anything
     0
     """
     now = time.time() if now is None else now

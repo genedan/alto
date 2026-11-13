@@ -15,10 +15,24 @@ from __future__ import annotations
 
 import random
 
-from .. import settings
-from ..settings import spell
-from ..theory.pitch import MAJOR_KEYS, NATURAL_SEMITONES, QUALITY_NAMES, Interval, Note, key_accidental
-from ..theory.scales import (
+from alto import settings
+from alto.exercises.base import (
+    Exercise,
+    Question,
+    pick_distractors,
+    register,
+    signature,
+)
+from alto.settings import spell
+from alto.theory.pitch import (
+    MAJOR_KEYS,
+    NATURAL_SEMITONES,
+    QUALITY_NAMES,
+    Interval,
+    Note,
+    key_accidental,
+)
+from alto.theory.scales import (
     CHORDS,
     INVERSION_NAMES,
     MODE_WORDS,
@@ -28,7 +42,6 @@ from ..theory.scales import (
     format_key_signature,
     mode_tonic,
 )
-from .base import Exercise, Question, pick_distractors, register, signature
 
 CLEF_RANGES = {  # inclusive diatonic range that sits comfortably on the staff
     "treble": (Note(3, letter=5), Note(5, letter=5)),  # A3..A5
@@ -457,6 +470,7 @@ class KeySignatures(Exercise):
 
         Examples
         --------
+        >>> # noinspection PyProtectedMember
         >>> q = KeySignatures._count_question(Note.parse("D4"), mode="Dorian", count=0, rng=random.Random(0))
         >>> q.prompt, q.answer
         ('How many sharps or flats are in D Dorian?', 'no sharps or flats')
@@ -503,6 +517,7 @@ class KeySignatures(Exercise):
 
         Examples
         --------
+        >>> # noinspection PyProtectedMember
         >>> q = KeySignatures._read_question(Note.parse("G4"), mode="Major (Ionian)", count=1, clef="treble",
         ...                                  rng=random.Random(0))
         >>> q.answer, q.caption, q.show_staff
@@ -859,9 +874,10 @@ class ArpeggioNames(Exercise):
 
         Examples
         --------
-        >>> cfg = settings.ArpeggioSettings()
-        >>> notes = arpeggio(Note.parse("C4"), intervals=CHORDS["major"])
-        >>> q = ArpeggioNames._question("major", inversion=0, root=Note.parse("C4"), notes=notes, clef="treble", key=0, cfg=cfg)
+        >>> cfg_ = settings.ArpeggioSettings()
+        >>> notes_ = arpeggio(Note.parse("C4"), intervals=CHORDS["major"])
+        >>> # noinspection PyProtectedMember
+        >>> q = ArpeggioNames._question("major", inversion=0, root=Note.parse("C4"), notes=notes_, clef="treble", key=0, cfg=cfg_)
         >>> q.answer
         'major · root position'
         """
@@ -1089,12 +1105,13 @@ class KeyboardNotes(Exercise):
         Examples
         --------
         >>> q = KeyboardNotes().generate(random.Random(14))
+        >>> # noinspection PyUnresolvedReferences
         >>> q.keyboard_range[0] <= q.keyboard.midi <= q.keyboard_range[1]
         True
         """
         cfg = settings.keyboard
         naming = settings.note_names.naming
-        lo, hi = min(cfg.low, cfg.high), max(cfg.low, cfg.high)
+        lo, hi = sorted((cfg.low, cfg.high))
         candidates = [m for m in range(lo, hi + 1) if cfg.black_keys or m % 12 in _WHITE_KEY_LETTER] or [lo]
         count = rng.choice(cfg.active_keys()) if cfg.key_signature else None
         midi = rng.choice(candidates)
@@ -1120,9 +1137,12 @@ class KeyboardNotes(Exercise):
         if len(spelled) > 1:
             explanation = f"{names[0]} and {names[1]} are the same black key."
         elif count is not None:
+            # noinspection PyTypeChecker
             in_key = midi % 12 in {n.pitch_class for n in build(_key_tonic(count), intervals=SCALES["Major (Ionian)"])}
+            # noinspection PyTypeChecker
             explanation = f"In {MAJOR_KEYS[count]} major ({format_key_signature(count)}) this key is called {names[0]}."
             if not in_key and midi % 12 not in _WHITE_KEY_LETTER:
+                # noinspection PyTypeChecker
                 explanation += f" It is not in the key, so it is spelled with {'sharps' if count > 0 else 'flats'}."
         else:
             explanation = ""

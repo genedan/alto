@@ -17,11 +17,20 @@ from __future__ import annotations
 import hashlib
 import json
 import random
-from abc import ABC, abstractmethod
-from dataclasses import KW_ONLY, asdict, dataclass, field, is_dataclass
+from abc import (
+    ABC,
+    abstractmethod,
+)
+from dataclasses import (
+    KW_ONLY,
+    asdict,
+    dataclass,
+    field,
+    is_dataclass,
+)
 from typing import Any
 
-from ..theory.pitch import Note
+from alto.theory.pitch import Note
 
 
 @dataclass
@@ -506,8 +515,8 @@ def pick_distractors(
 
     Examples
     --------
-    >>> choices = pick_distractors("C", pool=["C", "D", "E", "F"], n=2, rng=random.Random(0))
-    >>> len(choices), "C" in choices
+    >>> choices_ = pick_distractors("C", pool=["C", "D", "E", "F"], n=2, rng=random.Random(0))
+    >>> len(choices_), "C" in choices_
     (3, True)
     """
     others = [p for p in dict.fromkeys(pool) if p != correct]

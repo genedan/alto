@@ -13,8 +13,19 @@ import json
 from collections.abc import Iterable
 from datetime import datetime
 
-from PySide6.QtCore import QAbstractTableModel, QModelIndex, QObject, QPersistentModelIndex, QSortFilterProxyModel, Qt, Signal
-from PySide6.QtGui import QKeySequence, QShortcut
+from PySide6.QtCore import (
+    QAbstractTableModel,
+    QModelIndex,
+    QObject,
+    QPersistentModelIndex,
+    QSortFilterProxyModel,
+    Qt,
+    Signal,
+)
+from PySide6.QtGui import (
+    QKeySequence,
+    QShortcut,
+)
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QButtonGroup,
@@ -28,10 +39,13 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from ..exercises import REGISTRY
-from ..exercises.base import Question
-from ..learning import Learner, stats
-from .question_preview import QuestionPreview
+from alto.exercises import REGISTRY
+from alto.exercises.base import Question
+from alto.learning import (
+    Learner,
+    stats,
+)
+from alto.ui.question_preview import QuestionPreview
 
 ROW_LIMIT = 10000
 SORT_ROLE = Qt.ItemDataRole.UserRole
@@ -417,16 +431,16 @@ class DatabasePage(QWidget):
         Examples
         --------
         >>> from alto.learning import Database
-        >>> db = Database()
-        >>> page = DatabasePage(Learner(db, profile=db.add_profile("Ada")))
-        >>> model, note = page._answers()
-        >>> model.rowCount(), note
+        >>> database = Database()
+        >>> page = DatabasePage(Learner(database, profile=database.add_profile("Ada")))
+        >>> model_, note_ = page._answers()
+        >>> model_.rowCount(), note_
         (0, '0 answers by Ada.')
         """
         db, pid = self.learner.db, self.learner.profile.id
         rows, extras = [], []
         for r in db.attempt_rows(pid, limit=ROW_LIMIT):
-            seconds = r["duration_ms"] / 1000
+            seconds = float(r["duration_ms"]) / 1000
             extras.append(
                 {
                     "exercise": r["exercise"],
@@ -488,13 +502,13 @@ class DatabasePage(QWidget):
         >>> from alto.learning import Database
         >>> db = Database()
         >>> page = DatabasePage(Learner(db, profile=db.add_profile("Ada")))
-        >>> model, note = page._questions()
-        >>> model.rowCount(), note.startswith("0 questions asked of Ada.")
+        >>> model_, note = page._questions()
+        >>> model_.rowCount(), note.startswith("0 questions asked of Ada.")
         (0, True)
         """
         rows, extras = [], []
         for r in self.learner.db.item_rows(self.learner.profile.id, limit=ROW_LIMIT):
-            typical = r["total_first_ms"] / r["seen"] / 1000 if r["seen"] else 0.0
+            typical: float = float(r["total_first_ms"]) / r["seen"] / 1000 if r["seen"] else 0.0
             extras.append(
                 {
                     "exercise": r["exercise"],
@@ -608,7 +622,9 @@ class DatabasePage(QWidget):
         '1 profile.'
         """
         model, note = {"answers": self._answers, "questions": self._questions, "profiles": self._profiles}[key]()
+        # noinspection PyAttributeOutsideInit
         self._base_note = note
+        # noinspection PyAttributeOutsideInit
         self.model = model  # keeps the model alive while the proxy uses it
         self.proxy.setSourceModel(model)
         head = self.view.horizontalHeader()

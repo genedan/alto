@@ -6,20 +6,34 @@ import json
 from typing import TYPE_CHECKING
 
 import pytest
+from PySide6.QtCore import (
+    QModelIndex,
+    Qt,
+)
+from PySide6.QtGui import (
+    QKeySequence,
+    QShortcut,
+)
+from PySide6.QtTest import QSignalSpy
+
 from alto.exercises import REGISTRY
 from alto.exercises.base import Question
 from alto.learning import Learner
 from alto.learning.database import ItemRecord
 from alto.ui import database_page
-from alto.ui.database_page import ROW_ROLE, DatabasePage, RowsModel
-from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QKeySequence, QShortcut
-from PySide6.QtTest import QSignalSpy
+from alto.ui.database_page import (
+    ROW_ROLE,
+    DatabasePage,
+    RowsModel,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from PySide6.QtWidgets import QApplication, QWidget
+    from PySide6.QtWidgets import (
+        QApplication,
+        QWidget,
+    )
 
 
 def test_the_table_model_shows_text_sorts_by_value_and_right_aligns_numbers(app: QApplication) -> None:
@@ -244,6 +258,7 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(
         A stand-in for the question preview popup that records how it was opened.
         """
 
+        # noinspection PyShadowingNames
         def __init__(
             self,
             name: str,
@@ -266,14 +281,17 @@ def test_double_clicking_a_row_shows_the_question_it_is_about(
             parent : QWidget or None
                 The owning widget.
             """
+            del parent  # accepted to match what it stands in for, but not needed
             opened.append((name, question, details))
 
+        # noinspection PyMethodMayBeStatic
         def exec(self) -> None:
             """
             Record that the popup was shown.
             """
             opened.append("exec")
 
+    # noinspection PyUnresolvedReferences
     monkeypatch.setattr(database_page, "QuestionPreview", Preview)
     learner = practised_learner(30)
     page = DatabasePage(learner)

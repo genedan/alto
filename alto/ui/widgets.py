@@ -11,11 +11,26 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from PySide6.QtCore import QPoint, QSize, Qt
+from PySide6.QtCore import (
+    QPoint,
+    QSize,
+    Qt,
+)
 from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QFrame, QLabel, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QFrame,
+    QLabel,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
+)
 
-from .icons import HELP, SIDEBAR_CLOSED, SIDEBAR_OPEN, svg_icon
+from alto.ui.icons import (
+    HELP,
+    SIDEBAR_CLOSED,
+    SIDEBAR_OPEN,
+    svg_icon,
+)
 
 
 class SidebarToggle(QToolButton):

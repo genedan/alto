@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 import importlib.util
 import re
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 IMG = ROOT / "docs" / "assets" / "img"
@@ -83,10 +84,8 @@ def test_the_python_versions_in_the_readme_badge_are_the_ones_the_tests_run_on()
     """
     Check that the python versions in the readme badge are the ones the tests run on.
     """
-    from urllib.parse import unquote
-
     workflow = (ROOT / ".github" / "workflows" / "tests.yml").read_text()
-    matrix = re.search(r"python-version:\s*\[([^\]]*)\]", workflow)
+    matrix = re.search(r"python-version:\s*\[([^]]*)]", workflow)
     assert matrix is not None
     tested = re.findall(r'"([\d.]+)"', matrix.group(1))
     badge = re.search(r"img\.shields\.io/badge/python-([^)]*?)-\w+\)", (ROOT / "README.md").read_text())

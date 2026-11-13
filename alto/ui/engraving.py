@@ -19,8 +19,18 @@ import json
 from functools import cache
 from pathlib import Path
 
-from PySide6.QtCore import QRectF, Qt
-from PySide6.QtGui import QColor, QFont, QFontDatabase, QPainter, QPainterPath, QTransform
+from PySide6.QtCore import (
+    QRectF,
+    Qt,
+)
+from PySide6.QtGui import (
+    QColor,
+    QFont,
+    QFontDatabase,
+    QPainter,
+    QPainterPath,
+    QTransform,
+)
 
 _DIR = Path(__file__).resolve().parent.parent / "assets" / "fonts"
 _FILES = {
@@ -523,7 +533,7 @@ def draw_clef(
     >>> draw_clef(painter, font="bravura", clef="treble", x=10, bottom=70, gap=10, colour=QColor("black"))
     >>> painter.end()
     True
-    >>> any(image.pixelColor(x, y).lightness() < 128 for x in range(10, 40) for y in range(20, 90))
+    >>> any(image.pixelColor(x_, y).lightness() < 128 for x_ in range(10, 40) for y in range(20, 90))
     True
     """
     # `line` is how many gaps above the bottom staff line the clef's reference line (the G, F or middle C) is

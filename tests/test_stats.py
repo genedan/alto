@@ -7,8 +7,15 @@ import time
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from alto.exercises.base import Exercise, Question
-from alto.learning import Database, Learner, stats
+from alto.exercises.base import (
+    Exercise,
+    Question,
+)
+from alto.learning import (
+    Database,
+    Learner,
+    stats,
+)
 from alto.theory.pitch import Note
 
 if TYPE_CHECKING:
@@ -137,7 +144,9 @@ def test_collects_first_attempt_accuracy_and_extra_attempts() -> None:
     s = stats.collect(db, profile_ids=[ada.id], now=NOW)
     assert (s.questions, s.first_right, s.attempts) == (3, 1, 4)
     assert s.accuracy is not None and s.attempts_per_question is not None
-    assert round(s.accuracy) == 33 and round(s.attempts_per_question, 2) == 1.33
+    accuracy, attempts = s.accuracy, s.attempts_per_question
+    assert accuracy is not None and attempts is not None
+    assert round(accuracy) == 33 and round(attempts, 2) == 1.33
     assert s.days_practised == 2
     assert s.median_seconds == 4.0  # first attempts took 2, 4 and 6 s
 
@@ -255,10 +264,6 @@ def test_daily_counts_count_first_answers_per_local_day_and_follow_the_exercise(
     practised_learner : Callable[..., Learner]
         Builds a learner with a history of answers.
     """
-    from datetime import datetime
-
-    from alto.learning import stats
-
     learner = practised_learner()
     now = time.time()
     everything = stats.daily_counts(learner.db, profile_ids=[learner.profile.id], now=now)
