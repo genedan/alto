@@ -45,13 +45,20 @@ Every answer goes into a local database under your profile. Alto scores each que
 - **Wrong answers count against it.** Every extra attempt pushes the question higher, so it returns more often.
 - **Speed counts too.** A slow answer is held against a question, even when it is right. A very quick one earns it a
   rest.
-- **Your progress is visible.** Charts show your accuracy, speed and volume over time, filtered by exercise and
-  timeframe, and a read-only browser lets you look at everything stored.
+- **Your progress is visible.** Charts show your accuracy, speed and volume over time, a calendar heatmap shows a year of
+  practice at a glance, all filtered by exercise, and a read-only browser lets you look at everything stored.
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/img/stats-dark.png">
     <img src="docs/assets/img/stats.png" alt="Alto's statistics page with accuracy, speed and volume charts" width="760">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/img/stats-heatmap-dark.png">
+    <img src="docs/assets/img/stats-heatmap.png" alt="Alto's review heatmap: a year of practice, a square per day" width="760">
   </picture>
 </p>
 

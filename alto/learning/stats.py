@@ -9,7 +9,7 @@ import json
 import statistics
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from ..exercises.base import Question
 from ..theory.pitch import Note
@@ -136,6 +136,22 @@ def describe(question: Question) -> str:
     else:
         what = question.answer
     return what if question.construct is not None or question.answer in what else f"{what} → {question.answer}"
+
+
+def daily_counts(db: Database, profile_ids: list[int] | None, exercise: str | None = None, weeks: int = 53,
+                 now: float | None = None) -> dict[date, int]:
+    """Questions answered on each day (local time) for the last `weeks` calendar weeks up to today, for the review
+    heatmap. Days with no answers are left out. Counts questions, not attempts, like everything else here."""
+    now = time.time() if now is None else now
+    today = datetime.fromtimestamp(now).date()
+    first = today - timedelta(days=today.weekday() + 7 * (weeks - 1))  # the Monday that starts the first week shown
+    since = datetime.combine(first, datetime.min.time()).timestamp()
+    counts: dict[date, int] = {}
+    for r in db.attempts_in(profile_ids, exercise, since):
+        if r["attempt_no"] == 1:
+            day = datetime.fromtimestamp(r["answered_at"]).date()
+            counts[day] = counts.get(day, 0) + 1
+    return counts
 
 
 def collect(db: Database, profile_ids: list[int] | None, exercise: str | None = None, since: float | None = None,

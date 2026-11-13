@@ -1,4 +1,5 @@
 import random
+import time
 from datetime import datetime
 
 from alto.exercises.base import Exercise, Question
@@ -91,3 +92,17 @@ def test_by_exercise_and_hardest_questions():
 def test_nothing_recorded_gives_empty_stats():
     s = stats.collect(Database(), None, now=NOW)
     assert s.questions == 0 and s.accuracy is None and s.buckets == [] and s.hardest == []
+
+
+def test_daily_counts_count_first_answers_per_local_day_and_follow_the_exercise(practised_learner):
+    from datetime import datetime
+
+    from alto.learning import stats
+    learner = practised_learner()
+    now = time.time()
+    everything = stats.daily_counts(learner.db, [learner.profile.id], now=now)
+    assert everything and datetime.fromtimestamp(now).date() >= max(everything)
+    total = sum(everything.values())
+    assert total == stats.collect(learner.db, [learner.profile.id], None, None, now).questions
+    assert stats.daily_counts(learner.db, [learner.profile.id], "NoSuchExercise", now=now) == {}
+    assert stats.daily_counts(learner.db, [learner.profile.id], weeks=1, now=now + 400 * 86400) == {}  # a year on: all too old

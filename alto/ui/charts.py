@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable, Sequence
+from datetime import date, timedelta
 
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPainterPath, QPalette, QPen
@@ -249,3 +250,113 @@ class HBarChart(_Chart):
             p.drawRoundedRect(QRectF(x0, y + 4, max((x1 - x0) * value / 100, 3), self.ROW - 14), 4, 4)
             p.setPen(self._soft())
             p.drawText(QRectF(x1 + 6, y, value_w, self.ROW - 6), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, text)
+
+
+class HeatmapChart(_Chart):
+    """A calendar of reviews: a column per week (Monday to Sunday), a square per day, darker the more questions."""
+
+    LEVELS = 4  # shades above "none"
+    LEFT, TOP, BOTTOM = 34, 44, 30
+
+    def __init__(self, title: str, parent=None):
+        super().__init__(title, parent=parent)
+        self.counts: dict[date, int] = {}
+        self.today = date.today()
+        self.weeks = 53
+        self.setMinimumSize(260, 190)
+
+    def set_data(self, counts: dict[date, int], today: date, weeks: int = 53) -> None:
+        self.counts, self.today, self.weeks = dict(counts), today, weeks
+        self.update()
+
+    def first_day(self) -> date:
+        return self.today - timedelta(days=self.today.weekday() + 7 * (self.weeks - 1))
+
+    def level(self, count: int) -> int:
+        """0 for no questions, else 1 to LEVELS by how this day compares with the busiest (so one huge day does not
+        flatten everything else: the scale is in quarters of the 90th-percentile day)."""
+        if count <= 0:
+            return 0
+        busy = sorted(self.counts.values())
+        top = max(busy[int(0.9 * (len(busy) - 1))], 1)
+        return min(self.LEVELS, max(1, math.ceil(self.LEVELS * count / top)))
+
+    def _cell(self) -> float:
+        return max(min((self.width() - self.LEFT - self.RIGHT) / self.weeks, 18.0), 4.0)
+
+    def _origin(self) -> tuple[float, float]:
+        return float(self.LEFT), float(self.TOP)
+
+    def _shade(self, level: int) -> QColor:
+        base = self.palette().color(QPalette.ColorRole.Base)
+        if level == 0:
+            return self._grid()
+        return blend(base, GOOD, 0.25 + 0.75 * level / self.LEVELS)
+
+    def day_at(self, pos: QPointF) -> date | None:
+        cell, (x0, y0) = self._cell(), self._origin()
+        col, row = int((pos.x() - x0) // cell), int((pos.y() - y0) // cell)
+        if pos.x() < x0 or pos.y() < y0 or not (0 <= col < self.weeks and 0 <= row < 7):
+            return None
+        day = self.first_day() + timedelta(days=7 * col + row)
+        return day if day <= self.today else None
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        self._frame(p)
+        cell, (x0, y0) = self._cell(), self._origin()
+        gap = 2.0 if cell >= 8 else 1.0
+        small = QFont(self.font())
+        small.setPointSizeF(max(small.pointSizeF() - 1, 7))
+        p.setFont(small)
+        first = self.first_day()
+        p.setPen(self._soft())
+        for row, name in ((0, "Mon"), (2, "Wed"), (4, "Fri")):
+            label_box = QRectF(0, y0 + row * cell, self.LEFT - 6, cell)
+            p.drawText(label_box, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, name)
+        last_month_label = -99.0
+        p.setPen(Qt.PenStyle.NoPen)
+        for col in range(self.weeks):
+            monday = first + timedelta(days=7 * col)
+            if monday > self.today:
+                break
+            x = x0 + col * cell
+            if (monday.day <= 7 or col == 0) and x - last_month_label >= 30:  # label the week a month starts in
+                p.setPen(self._soft())
+                month_box = QRectF(x, y0 - 20, 40, 16)
+                p.drawText(month_box, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, monday.strftime("%b"))
+                p.setPen(Qt.PenStyle.NoPen)
+                last_month_label = x
+            for row in range(7):
+                day = monday + timedelta(days=row)
+                if day > self.today:
+                    break
+                p.setBrush(self._shade(self.level(self.counts.get(day, 0))))
+                p.drawRoundedRect(QRectF(x, y0 + row * cell, cell - gap, cell - gap), 2, 2)
+        # the legend, bottom right: Less [squares] More
+        y = y0 + 7 * cell + 8
+        box = 11.0
+        right = self.width() - self.RIGHT
+        p.setPen(self._soft())
+        more_w = p.fontMetrics().horizontalAdvance("More")
+        p.drawText(QRectF(right - more_w, y - 2, more_w, 16), Qt.AlignmentFlag.AlignVCenter, "More")
+        p.setPen(Qt.PenStyle.NoPen)
+        for i in range(self.LEVELS, -1, -1):
+            p.setBrush(self._shade(i))
+            p.drawRoundedRect(QRectF(right - more_w - 6 - (self.LEVELS + 1 - i) * (box + 3) + 3, y, box, box), 2, 2)
+        p.setPen(self._soft())
+        left_edge = right - more_w - 6 - (self.LEVELS + 1) * (box + 3)
+        p.drawText(QRectF(left_edge - 40, y - 2, 36, 16), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, "Less")
+        if not self.counts:
+            p.setFont(self.font())
+            p.drawText(QRectF(x0, y + 0, left_edge - 50 - x0, 16), Qt.AlignmentFlag.AlignVCenter, self.empty)
+
+    def mouseMoveEvent(self, event):
+        day = self.day_at(event.position())
+        if day is None:
+            QToolTip.hideText()
+            return
+        n = self.counts.get(day, 0)
+        text = f"{day.strftime('%a')} {day.strftime('%b')} {day.day}, {day.year}\n" + (
+            f"{n} question{'s' if n != 1 else ''}" if n else "no questions")
+        QToolTip.showText(event.globalPosition().toPoint(), text, self)

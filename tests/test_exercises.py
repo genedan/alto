@@ -1,6 +1,7 @@
 import random
 
 from alto.exercises import REGISTRY
+from alto.exercises.base import Exercise, Question
 
 
 def keyboard_of(q):
@@ -13,6 +14,35 @@ def construct_of(q):
     """The note to place, for a note construction question."""
     assert q.construct is not None
     return q.construct
+
+
+def test_the_exercises_of_a_category_are_listed_together():
+    categories = [cls.category for cls in REGISTRY]
+    firsts = list(dict.fromkeys(categories))  # the categories in the order they first appear
+    assert categories == sorted(categories, key=firsts.index)  # no category comes back after another one has started
+    assert len(firsts) > 1
+
+
+def test_registering_an_exercise_puts_it_beside_the_others_of_its_category():
+    from alto.exercises.base import register
+
+    class Extra(Exercise):
+        name, category = "Extra", "Intervals"  # a category with exercises after it, not the last one
+
+        def generate(self, rng):
+            return Question("?", ["a"], "a")
+
+    before = list(REGISTRY)
+    try:
+        register(Extra)
+        last_of_category = max(i for i, c in enumerate(REGISTRY) if c.category == Extra.category and c is not Extra)
+        assert REGISTRY.index(Extra) == last_of_category + 1
+        assert [c for c in REGISTRY if c is not Extra] == before  # nothing else moved
+        brand_new = type("New", (Extra,), {"category": "A category nobody has used"})
+        register(brand_new)
+        assert REGISTRY[-1] is brand_new  # a new category goes at the end
+    finally:
+        REGISTRY[:] = before
 
 
 def test_every_exercise_generates_valid_questions():

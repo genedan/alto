@@ -25,7 +25,12 @@ profile's own answers. Use **← Back** or <kbd>Esc</kbd> to return to the page 
 - **Right first time:** your first-try accuracy over time. Days with no answers leave a gap.
 - **Typical time to first answer:** the median, over time, so a single slow answer does not distort it.
 - **By exercise:** accuracy, number of questions and typical time for each exercise.
+- **Reviews:** a calendar of the last 12 months, a square per day (weeks run left to right, Monday at the top), darker
+  the more questions you answered. Hover a square for the exact count. It follows the exercise filter but ignores the
+  timeframe.
 - **Questions that need practice:** the questions with the highest strain, how often you missed them, and how many times you have answered them.
+
+{% include shot.html src="stats-heatmap.png" alt="A calendar heatmap of the last twelve months, a square per day in shades of green, above the list of questions that need practice" caption="The Reviews calendar: a year of practice at a glance. Gaps are days off, and the darkest squares are your busiest days." %}
 
 A question counts as **right** only if your first answer was right. That is the same rule the
 [practice scheduler]({{ '/practice/' | relative_url }}) uses, so the numbers match what Alto thinks about your progress.
