@@ -33,7 +33,12 @@ appear only to say where a font comes from or is used.
 
 ## Instrument recordings
 
-The piano, flute, French horn, viola, marimba and vibraphone use recordings from the
+The piano is the [Salamander Grand Piano](https://sfzinstruments.github.io/pianos/salamander) V3 by Alexander Holm, a Yamaha C5
+grand recorded with two AKG C414 microphones, used under the
+[Creative Commons Attribution 3.0](https://creativecommons.org/licenses/by/3.0/) licence. Alto uses 30 of its recordings from one
+dynamic layer, converted to mono, trimmed, faded and levelled. The author does not endorse Alto.
+
+The flute, French horn, viola, marimba and vibraphone use recordings from the
 [Musical Instrument Samples](https://theremin.music.uiowa.edu/MIS.html) of the University of Iowa Electronic Music
 Studios, which the studio makes freely available for any project. Alto converted them to mono, trimmed and faded them.
 

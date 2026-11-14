@@ -110,7 +110,8 @@ A profile is just a name. There are no passwords and nothing leaves the machine.
 Notes are played from recordings of real instruments (University of Iowa samples) in `alto/assets/samples/<instrument>/`. A
 global `Sounds` object loads and caches `QSoundEffect`s on demand. Where an instrument has no recording for a note, it takes the
 nearest recording and shifts the pitch (`shift_pitch`). Sustained instruments fade out as the next note begins. The piano is
-recorded too (`alto/assets/piano/`), and notes outside its recorded range are synthesised in code (`synth_piano`).
+the Salamander Grand Piano (`alto/assets/piano/`, a recording every minor third from A0 to C8), and notes outside that range are
+synthesised in code (`synth_piano`).
 `instrument_info.py` holds the facts shown about each
 instrument's recordings.
 

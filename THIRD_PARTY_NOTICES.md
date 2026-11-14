@@ -23,13 +23,21 @@ All are under the SIL Open Font License 1.1 (OFL), whose texts are kept beside t
 The font names are the names their authors gave them. Alto is not affiliated with or endorsed by any of them, nor by
 Dorico, Finale, MuseScore or Verovio, which are mentioned only to say where a font is used.
 
-## Instrument recordings (`alto/assets/piano/` and `alto/assets/samples/`: marimba, vibraphone, flute, horn, viola_bowed, viola_plucked)
+## Piano recordings (`alto/assets/piano/`)
 
-The piano, marimba, vibraphone, flute, French horn and viola recordings come from the Musical Instrument Samples of the University of Iowa
+The piano is the Salamander Grand Piano V3 by Alexander Holm: a Yamaha C5 grand recorded with two AKG C414 microphones
+(https://sfzinstruments.github.io/pianos/salamander, https://github.com/sfzinstruments/SalamanderGrandPiano). It is used under the
+Creative Commons Attribution 3.0 Unported licence (CC BY 3.0, https://creativecommons.org/licenses/by/3.0/), whose text is in
+`alto/assets/piano/LICENSE-CC-BY-3.0.txt`. Alto uses 30 recordings from one dynamic layer, converted to mono 44.1 kHz, trimmed
+and faded to 2.5 s, and levelled. Details are in `alto/assets/piano/SOURCE.txt`. Alexander Holm does not endorse Alto.
+
+## Other instrument recordings (`alto/assets/samples/`: marimba, vibraphone, flute, horn, viola_bowed, viola_plucked)
+
+The marimba, vibraphone, flute, French horn and viola recordings come from the Musical Instrument Samples of the University of Iowa
 Electronic Music Studios (https://theremin.music.uiowa.edu/MIS.html). The site states that these recordings "have been
 freely available on this website and may be downloaded and used for any projects, without restrictions." They were
 converted to mono, trimmed and faded for use here. The viola is the 2012 recording by Manuel Tabora, the flute the 2000 recording by Sonja Feig and the horn the 1997 recording by Jessica Wiskus. Details are in
-each folder's `SOURCE.txt`.
+`alto/assets/samples/SOURCE.txt`.
 
 ## App icons (`alto/assets/icon.svg`, `alto/assets/icon-treble.svg`)
 
