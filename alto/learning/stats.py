@@ -401,6 +401,36 @@ def _label(
     return f"{t.strftime('%b')} {t.day}"
 
 
+def period_end(
+    start: datetime,
+    *,
+    granularity: str,
+) -> datetime:
+    """
+    Return the moment a chart period ends, which is when the next one begins.
+
+    Parameters
+    ----------
+    start : datetime
+        The start of the period, as `Bucket.start` gives it.
+    granularity : str
+        "hour", "day", "week" or "month", as `Stats.granularity` says. Keyword-only.
+
+    Returns
+    -------
+    datetime
+        The start of the following period.
+
+    Examples
+    --------
+    >>> period_end(datetime(2026, 1, 5), granularity="week")
+    datetime.datetime(2026, 1, 12, 0, 0)
+    >>> period_end(datetime(2026, 12, 1), granularity="month")
+    datetime.datetime(2027, 1, 1, 0, 0)
+    """
+    return _next(start, gran=granularity)
+
+
 def describe(question: Question) -> str:
     """
     Return a short line saying what a question was, for the list of questions that need practice.

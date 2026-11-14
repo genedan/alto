@@ -650,14 +650,27 @@ class Database:
 
     # -- for browsing ----------------------------------------------------------------------------------------------
 
-    def count_attempts(self, profile_id: int) -> int:
+    def count_attempts(
+        self,
+        profile_id: int,
+        *,
+        exercise: str | None = None,
+        since: float | None = None,
+        until: float | None = None,
+    ) -> int:
         """
-        Return how many answers a profile has given.
+        Return how many answers a profile has given, optionally of one exercise and within a period.
 
         Parameters
         ----------
         profile_id : int
             The profile's id.
+        exercise : str or None, default None
+            Count only answers to this exercise (a class name); all exercises if None. Keyword-only.
+        since : float or None, default None
+            Count only answers given at or after this time (a timestamp). Keyword-only.
+        until : float or None, default None
+            Count only answers given before this time (a timestamp). Keyword-only.
 
         Returns
         -------
@@ -670,14 +683,74 @@ class Database:
         >>> ada = db.add_profile("Ada")
         >>> db.count_attempts(ada.id)
         0
+        >>> for t in (1.0, 5.0, 9.0):
+        ...     db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+        ...                    duration_ms=1000, answered_at=t)
+        >>> db.count_attempts(ada.id, since=2.0, until=9.0)  # from the start of the period up to, not including, its end
+        1
         """
-        return self.conn.execute("SELECT COUNT(*) FROM attempts WHERE profile_id = ?", (profile_id,)).fetchone()[0]
+        where, args = self._attempt_scope(
+            profile_id,
+            exercise=exercise,
+            since=since,
+            until=until,
+        )
+        return self.conn.execute(f"SELECT COUNT(*) FROM attempts a WHERE {where}", args).fetchone()[0]
+
+    @staticmethod
+    def _attempt_scope(
+        profile_id: int,
+        *,
+        exercise: str | None,
+        since: float | None,
+        until: float | None,
+    ) -> tuple[str, list[int | str | float]]:
+        """
+        Build the WHERE clause that picks one profile's answers, optionally of one exercise and within a period.
+
+        Parameters
+        ----------
+        profile_id : int
+            The profile's id.
+        exercise : str or None
+            The exercise to keep, or None for all. Keyword-only.
+        since : float or None
+            The earliest time to keep, or None. Keyword-only.
+        until : float or None
+            The time before which to keep, or None. Keyword-only.
+
+        Returns
+        -------
+        tuple of (str, list)
+            The clause, which refers to the `attempts` table as `a`, and its parameters. Only fixed text goes into the clause;
+            every value is a parameter.
+
+        Examples
+        --------
+        >>> Database._attempt_scope(1, exercise="NoteNames", since=None, until=5.0)
+        ('a.profile_id = ? AND a.exercise = ? AND a.answered_at < ?', [1, 'NoteNames', 5.0])
+        """
+        clauses = ["a.profile_id = ?"]
+        args: list[int | str | float] = [profile_id]
+        if exercise:
+            clauses.append("a.exercise = ?")
+            args.append(exercise)
+        if since is not None:
+            clauses.append("a.answered_at >= ?")
+            args.append(since)
+        if until is not None:
+            clauses.append("a.answered_at < ?")
+            args.append(until)
+        return " AND ".join(clauses), args
 
     def attempt_rows(
         self,
         profile_id: int,
         *,
         limit: int = 10000,
+        exercise: str | None = None,
+        since: float | None = None,
+        until: float | None = None,
     ) -> list[sqlite3.Row]:
         """
         Return the newest answers first, each with the stored question it was an answer to (if that is still known).
@@ -688,6 +761,12 @@ class Database:
             The profile's id.
         limit : int, default 10000
             The most rows to return. Keyword-only.
+        exercise : str or None, default None
+            Return only answers to this exercise (a class name); all exercises if None. Keyword-only.
+        since : float or None, default None
+            Return only answers given at or after this time (a timestamp). Keyword-only.
+        until : float or None, default None
+            Return only answers given before this time (a timestamp). Keyword-only.
 
         Returns
         -------
@@ -703,12 +782,20 @@ class Database:
         ...                    duration_ms=1000, answered_at=t)
         >>> [r["answered_at"] for r in db.attempt_rows(ada.id)]
         [2.0, 1.0]
+        >>> [r["answered_at"] for r in db.attempt_rows(ada.id, since=1.5)]
+        [2.0]
         """
+        where, args = self._attempt_scope(
+            profile_id,
+            exercise=exercise,
+            since=since,
+            until=until,
+        )
         return self.conn.execute(
             "SELECT a.answered_at, a.exercise, a.item_key, a.answer, a.correct, a.attempt_no, a.duration_ms, i.payload "
             "FROM attempts a LEFT JOIN items i ON i.profile_id = a.profile_id AND i.exercise = a.exercise "
-            "AND i.item_key = a.item_key WHERE a.profile_id = ? ORDER BY a.id DESC LIMIT ?",
-            (profile_id, limit),
+            f"AND i.item_key = a.item_key WHERE {where} ORDER BY a.id DESC LIMIT ?",
+            [*args, limit],
         ).fetchall()
 
     def item_rows(

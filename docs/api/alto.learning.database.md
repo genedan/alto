@@ -459,14 +459,23 @@ Return the questions that need most practice, the same question from different p
 ### Database.count_attempts
 
 ```python
-def count_attempts(profile_id: int) -> int
+def count_attempts(
+    profile_id: int,
+    *,
+    exercise: str | None = None,
+    since: float | None = None,
+    until: float | None = None,
+) -> int
 ```
 
-Return how many answers a profile has given.
+Return how many answers a profile has given, optionally of one exercise and within a period.
 
 **Parameters**
 
 - `profile_id` (*int*): The profile's id.
+- `exercise` (*str or None, default None*): Count only answers to this exercise (a class name); all exercises if None. Keyword-only.
+- `since` (*float or None, default None*): Count only answers given at or after this time (a timestamp). Keyword-only.
+- `until` (*float or None, default None*): Count only answers given before this time (a timestamp). Keyword-only.
 
 **Returns**
 
@@ -479,6 +488,11 @@ Return how many answers a profile has given.
 >>> ada = db.add_profile("Ada")
 >>> db.count_attempts(ada.id)
 0
+>>> for t in (1.0, 5.0, 9.0):
+...     db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+...                    duration_ms=1000, answered_at=t)
+>>> db.count_attempts(ada.id, since=2.0, until=9.0)  # from the start of the period up to, not including, its end
+1
 ```
 
 ### Database.attempt_rows
@@ -488,6 +502,9 @@ def attempt_rows(
     profile_id: int,
     *,
     limit: int = 10000,
+    exercise: str | None = None,
+    since: float | None = None,
+    until: float | None = None,
 ) -> list[sqlite3.Row]
 ```
 
@@ -497,6 +514,9 @@ Return the newest answers first, each with the stored question it was an answer 
 
 - `profile_id` (*int*): The profile's id.
 - `limit` (*int, default 10000*): The most rows to return. Keyword-only.
+- `exercise` (*str or None, default None*): Return only answers to this exercise (a class name); all exercises if None. Keyword-only.
+- `since` (*float or None, default None*): Return only answers given at or after this time (a timestamp). Keyword-only.
+- `until` (*float or None, default None*): Return only answers given before this time (a timestamp). Keyword-only.
 
 **Returns**
 
@@ -512,6 +532,8 @@ Return the newest answers first, each with the stored question it was an answer 
 ...                    duration_ms=1000, answered_at=t)
 >>> [r["answered_at"] for r in db.attempt_rows(ada.id)]
 [2.0, 1.0]
+>>> [r["answered_at"] for r in db.attempt_rows(ada.id, since=1.5)]
+[2.0]
 ```
 
 ### Database.item_rows

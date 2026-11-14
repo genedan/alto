@@ -169,7 +169,7 @@ QMenu::separator {{ height: 1px; background: palette(midlight); margin: 5px 10px
 QSplitter::handle {{ background: transparent; }}
 QSplitter::handle:hover {{ background: palette(mid); border-radius: 2px; margin: 0 3px; }}
 
-QFrame#helpCard, QFrame#keyGroup {{
+QFrame#helpCard, QFrame#keyGroup, QFrame#detailPane {{
     background: palette(base);
     border: 1px solid palette(mid);
     border-radius: {rp}px;

@@ -10,11 +10,13 @@ from typing import TYPE_CHECKING
 
 import pytest
 from PySide6.QtCore import (
+    QEvent,
     QPoint,
     QPointF,
     Qt,
 )
 from PySide6.QtGui import (
+    QColor,
     QImage,
     QMouseEvent,
     QPainter,
@@ -343,6 +345,26 @@ def test_the_heatmap_shades_days_by_how_busy_they_were(app: QApplication) -> Non
     assert ink(chart, size=(760, 190)) > 0 and ink(chart, size=(760, 190)) != busy  # still drawn, with a message
 
 
+def calendar(today: date) -> charts.HeatmapChart:
+    """
+    Make a calendar chart, sized, with three questions answered on one day.
+
+    Parameters
+    ----------
+    today : date
+        The last day of the calendar, and the day with answers.
+
+    Returns
+    -------
+    charts.HeatmapChart
+        The chart.
+    """
+    chart = charts.HeatmapChart("Reviews")
+    chart.resize(760, 190)
+    chart.set_data({today: 3}, today=today)
+    return chart
+
+
 def test_the_heatmap_names_the_day_under_the_pointer(
     app: QApplication,
     monkeypatch: pytest.MonkeyPatch,
@@ -361,9 +383,7 @@ def test_the_heatmap_names_the_day_under_the_pointer(
     monkeypatch.setattr(charts.QToolTip, "showText", lambda pos, text, widget=None: shown.append(text))
     monkeypatch.setattr(charts.QToolTip, "hideText", lambda: hidden.append(1))
     today = date(2026, 11, 13)
-    chart = charts.HeatmapChart("Reviews")
-    chart.resize(760, 190)
-    chart.set_data({today: 3}, today=today)
+    chart = calendar(today)
     cell, (x0, y0) = chart._cell(), chart._origin()
 
     def move(
@@ -399,3 +419,204 @@ def test_the_heatmap_names_the_day_under_the_pointer(
     move(2, y=2)
     assert len(hidden) == 2
     assert chart.day_at(QPointF(x0 + 0.5 * cell, y0 + 0.5 * cell)) == chart.first_day()
+
+
+def mouse(
+    chart: QWidget,
+    kind: QMouseEvent.Type,
+    *,
+    at: QPointF,
+    button: Qt.MouseButton = Qt.MouseButton.LeftButton,
+) -> None:
+    """
+    Send a mouse event to a chart, as the window system would.
+
+    Parameters
+    ----------
+    chart : QWidget
+        The chart.
+    kind : QMouseEvent.Type
+        A move, press or release.
+    at : QPointF
+        Where the pointer is. Keyword-only.
+    button : Qt.MouseButton
+        The button that changed; it is held down for a move and a press. Keyword-only.
+    """
+    changed = Qt.MouseButton.NoButton if kind == QMouseEvent.Type.MouseMove else button
+    held = button if kind == QMouseEvent.Type.MouseButtonPress else Qt.MouseButton.NoButton
+    event = QMouseEvent(kind, at, at, changed, held, Qt.KeyboardModifier.NoModifier)
+    if kind == QMouseEvent.Type.MouseMove:
+        chart.mouseMoveEvent(event)
+    elif kind == QMouseEvent.Type.MouseButtonPress:
+        chart.mousePressEvent(event)
+    else:
+        chart.mouseReleaseEvent(event)
+
+
+def click(
+    chart: QWidget,
+    *,
+    at: QPointF,
+) -> None:
+    """
+    Move to a point on a chart and click there.
+
+    Parameters
+    ----------
+    chart : QWidget
+        The chart.
+    at : QPointF
+        Where to click. Keyword-only.
+    """
+    mouse(chart, QMouseEvent.Type.MouseMove, at=at)
+    mouse(chart, QMouseEvent.Type.MouseButtonPress, at=at)
+    mouse(chart, QMouseEvent.Type.MouseButtonRelease, at=at)
+
+
+def test_a_bar_chart_highlights_the_period_under_the_pointer_and_announces_a_click_on_it(app: QApplication) -> None:
+    """
+    Check that pointing at a period highlights it, a click on it is announced, and an empty period cannot be clicked.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+    chart = charts.StackedBarChart("Questions")
+    chart.resize(400, 300)
+    chart.set_data(["a", "b", "c"], right=[3, 0, 2], wrong=[1, 0, 2])
+    got: list[object] = []
+    chart.clicked.connect(got.append)
+    plot = chart._plot()
+    columns = [QPointF(c, plot.center().y()) for c in chart._centres()]
+    mouse(chart, QMouseEvent.Type.MouseMove, at=columns[0])
+    assert chart.hovered == 0 and chart.cursor().shape() == Qt.CursorShape.PointingHandCursor
+    green = QColor("#2e7d32")
+    assert chart._tone(0, colour=green).lightness() > green.lightness()  # the bar under the pointer is brighter
+    assert chart._tone(2, colour=green).alphaF() < 1.0  # and the others are fainter
+    mouse(chart, QMouseEvent.Type.MouseMove, at=columns[1])  # nothing was answered in the middle period
+    assert chart.hovered is None and chart.cursor().shape() == Qt.CursorShape.ArrowCursor
+    click(chart, at=columns[1])
+    assert got == []
+    click(chart, at=columns[2])
+    assert got == [2]
+    assert chart.grab().toImage() != ink_image_without_highlight(chart)
+
+
+def ink_image_without_highlight(
+    chart: charts.HeatmapChart | charts.LineChart | charts.HBarChart | charts.StackedBarChart,
+) -> QImage:
+    """
+    Draw a chart with nothing highlighted, to compare with how it looks when something is.
+
+    Parameters
+    ----------
+    chart : charts._Chart
+        The chart. Its highlight is cleared.
+
+    Returns
+    -------
+    QImage
+        The picture.
+    """
+    chart.hovered = chart.selected = None
+    return chart.grab().toImage()
+
+
+def test_a_press_that_does_not_come_up_on_the_same_item_is_not_a_click(app: QApplication) -> None:
+    """
+    Check that pressing on one period and releasing on another is not a click, and that leaving the chart clears the highlight.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+    chart = charts.StackedBarChart("Questions")
+    chart.resize(400, 300)
+    chart.set_data(["a", "b"], right=[3, 3], wrong=[0, 0])
+    got: list[object] = []
+    chart.clicked.connect(got.append)
+    first, second = (QPointF(c, chart._plot().center().y()) for c in chart._centres())
+    mouse(chart, QMouseEvent.Type.MouseButtonPress, at=first)
+    mouse(chart, QMouseEvent.Type.MouseButtonRelease, at=second)
+    mouse(chart, QMouseEvent.Type.MouseButtonPress, at=first, button=Qt.MouseButton.RightButton)
+    mouse(chart, QMouseEvent.Type.MouseButtonRelease, at=first, button=Qt.MouseButton.RightButton)
+    assert got == []
+    chart.hovered = 0
+    chart.leaveEvent(QEvent(QEvent.Type.Leave))
+    assert chart.hovered is None
+
+
+def test_a_line_chart_can_be_clicked_where_it_has_a_value(app: QApplication) -> None:
+    """
+    Check that a point of a line chart can be clicked, and a gap in the line cannot.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+    chart = charts.LineChart("Speed", fmt=lambda v: f"{v:.1f}")
+    chart.resize(400, 300)
+    chart.set_data(["a", "b", "c"], values=[2.0, None, 5.0])
+    got: list[object] = []
+    chart.clicked.connect(got.append)
+    for centre in chart._centres():
+        click(chart, at=QPointF(centre, chart._plot().center().y()))
+    assert got == [0, 2]
+    chart.set_selected(0)
+    assert chart.grab().toImage() != ink_image_without_highlight(chart)
+
+
+def test_a_row_of_the_bar_list_highlights_and_announces_a_click(app: QApplication) -> None:
+    """
+    Check that a row of the horizontal bar chart is highlighted under the pointer and announced when it is clicked.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+    chart = charts.HBarChart("By exercise")
+    chart.resize(400, 200)
+    chart.set_data([("A", 50.0, "50%"), ("B", 80.0, "80%")])
+    got: list[object] = []
+    chart.clicked.connect(got.append)
+    second = QPointF(100, chart.TOP + chart.ROW * 1.5)
+    mouse(chart, QMouseEvent.Type.MouseMove, at=second)
+    assert chart.hovered == 1
+    click(chart, at=second)
+    assert got == [1]
+    mouse(chart, QMouseEvent.Type.MouseMove, at=QPointF(100, chart.TOP + chart.ROW * 5))  # below the last row
+    assert chart.hovered is None
+    chart.set_selected(0)
+    assert chart.grab().toImage() != ink_image_without_highlight(chart)
+
+
+def test_the_calendar_emphasises_a_day_and_announces_a_click_only_on_days_with_answers(app: QApplication) -> None:
+    """
+    Check that a day of the calendar can be clicked only if questions were answered on it, and is emphasised when pointed at.
+
+    Parameters
+    ----------
+    app : QApplication
+        The shared Qt application.
+    """
+    today = date(2026, 11, 13)
+    chart = calendar(today)
+    cell, (x0, y0) = chart._cell(), chart._origin()
+    got: list[object] = []
+    chart.clicked.connect(got.append)
+    friday, thursday = QPointF(x0 + 52.5 * cell, y0 + 4.5 * cell), QPointF(x0 + 52.5 * cell, y0 + 3.5 * cell)
+    click(chart, at=thursday)  # the 12th had no answers
+    assert got == [] and chart.hovered is None
+    mouse(chart, QMouseEvent.Type.MouseMove, at=friday)
+    assert chart.hovered == today
+    click(chart, at=friday)
+    assert got == [today]
+    pointed_at = chart.grab().toImage()
+    assert pointed_at != ink_image_without_highlight(chart)
+    chart.set_selected(today)  # the page is still showing that day, so it stays emphasised when the pointer moves away
+    mouse(chart, QMouseEvent.Type.MouseMove, at=thursday)
+    assert chart.hovered is None and chart.grab().toImage() == pointed_at

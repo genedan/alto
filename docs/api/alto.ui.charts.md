@@ -384,6 +384,31 @@ Draw a bar with its name and value for each row, or a message when there are non
 False
 ```
 
+### HBarChart.mouseMoveEvent
+
+```python
+def mouseMoveEvent(event: QMouseEvent) -> None
+```
+
+Highlight the row under the pointer.
+
+**Parameters**
+
+- `event` (*QMouseEvent*): The mouse move.
+
+**Examples**
+
+```pycon
+>>> from PySide6.QtCore import QEvent
+>>> chart = HBarChart("By exercise")
+>>> chart.set_data([("A", 50.0, "50%")])
+>>> point = QPointF(10, chart.TOP + chart.ROW / 2)
+>>> chart.mouseMoveEvent(QMouseEvent(QEvent.Type.MouseMove, point, point, Qt.MouseButton.NoButton,
+...                                  Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier))
+>>> chart.hovered
+0
+```
+
 ## HeatmapChart
 
 ```python

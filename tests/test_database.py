@@ -173,3 +173,33 @@ def test_a_closed_database_refuses_further_work() -> None:
     db.close()
     with pytest.raises(sqlite3.ProgrammingError):
         db.profiles()
+
+
+def test_answers_can_be_listed_and_counted_for_one_exercise_and_period() -> None:
+    """
+    Check that the answers of a profile can be narrowed to an exercise and to a period that includes its start and not its end.
+    """
+    db = Database()
+    ada, ben = db.add_profile("Ada"), db.add_profile("Ben")
+    for profile, exercise, at in (
+        (ada, "NoteNames", 10.0),
+        (ada, "NoteNames", 20.0),
+        (ada, "KeyboardNotes", 20.0),
+        (ben, "NoteNames", 20.0),
+    ):
+        db.add_attempt(
+            profile.id,
+            exercise=exercise,
+            item_key="k",
+            attempt_no=1,
+            answer="C",
+            correct=True,
+            duration_ms=1000,
+            answered_at=at,
+        )
+    assert db.count_attempts(ada.id) == 3
+    assert db.count_attempts(ada.id, exercise="NoteNames") == 2
+    assert db.count_attempts(ada.id, since=10.0, until=20.0) == 1  # the start is included and the end is not
+    assert [r["exercise"] for r in db.attempt_rows(ada.id, exercise="KeyboardNotes")] == ["KeyboardNotes"]
+    assert db.attempt_rows(ada.id, until=10.0) == []
+    assert len(db.attempt_rows(ada.id, limit=2)) == 2  # another profile's answers are never counted

@@ -175,6 +175,165 @@ Return a column heading.
 'Count'
 ```
 
+## QuestionTexts
+
+```python
+QuestionTexts()
+```
+
+Describes stored questions in words, remembering each one so it is worked out only once.
+
+**Examples**
+
+```pycon
+>>> texts = QuestionTexts()
+>>> texts("NoteNames", key="k", payload=None)
+'(no longer stored)'
+```
+
+**Constructor**
+
+Create an empty memory.
+
+**Constructor examples**
+
+```pycon
+>>> QuestionTexts()._described
+{}
+```
+
+## answer_cells
+
+```python
+def answer_cells(
+    rows: Sequence[sqlite3.Row],
+    *,
+    names: dict[str, str],
+    texts: QuestionTexts,
+) -> tuple[list[list[tuple[str, object]]], list[dict]]
+```
+
+Turn answers read from the database into the cells of a table, and the hidden details of each row.
+
+**Parameters**
+
+- `rows` (*sequence of sqlite3.Row*): Answers, as `Database.attempt_rows` returns them.
+- `names` (*dict of str to str*): The title of each exercise, by class name. Keyword-only.
+- `texts` (*QuestionTexts*): Describes each question in words. Keyword-only.
+
+**Returns**
+
+- *tuple of (list, list of dict)*: The cells, in the order of `ANSWER_HEADERS`, and for each row the exercise, the stored question and the lines the question preview shows about the answer.
+
+**Examples**
+
+```pycon
+>>> from alto.learning import Database
+>>> db = Database()
+>>> ada = db.add_profile("Ada")
+>>> db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+...                duration_ms=2500, answered_at=1000.0)
+>>> table, hidden = answer_cells(
+...     db.attempt_rows(ada.id), names={"NoteNames": "Note Identification"}, texts=QuestionTexts()
+... )
+>>> [text for text, _ in table[0]][1:]
+['Note Identification', '(no longer stored)', 'C', 'Right', '1', '2.5 s']
+>>> hidden[0]["exercise"]
+'NoteNames'
+```
+
+## open_preview
+
+```python
+def open_preview(
+    index: QModelIndex,
+    *,
+    names: dict[str, str],
+    parent: QWidget,
+) -> None
+```
+
+Show the question behind a row of an answers table, if its record is still stored.
+
+**Parameters**
+
+- `index` (*QModelIndex*): A cell of the row, in a model whose rows carry `ROW_ROLE` details.
+- `names` (*dict of str to str*): The title of each exercise, by class name. Keyword-only.
+- `parent` (*QWidget*): The widget the popup belongs to. Keyword-only.
+
+**Examples**
+
+```pycon
+>>> model = RowsModel(["Name"], rows=[[("Ada", "Ada")]])
+>>> open_preview(model.index(0, 0), names={}, parent=QWidget())  # a row with no stored question shows nothing
+```
+
+## AnswerList
+
+```python
+AnswerList(
+    *,
+    names: dict[str, str],
+    parent: QWidget | None = None,
+)
+```
+
+Bases: `QTableView`
+
+A table of answers that sorts when a heading is clicked and opens the question behind a row on a double click.
+
+**Attributes**
+
+- `proxy` (*QSortFilterProxyModel*): Sorts the rows by the values in `SORT_ROLE`.
+- `model_` (*RowsModel or None*): The rows being shown; None until `show_answers` is called.
+
+**Examples**
+
+```pycon
+>>> table = AnswerList(names={})
+>>> table.show_answers([])
+>>> table.proxy.rowCount()
+0
+```
+
+**Constructor**
+
+Create an empty table.
+
+**Parameters**
+
+- `names` (*dict of str to str*): The title of each exercise, by class name. Keyword-only.
+- `parent` (*QWidget or None, default None*): The widget that owns the table. Keyword-only.
+
+**Constructor examples**
+
+```pycon
+>>> AnswerList(names={}).isSortingEnabled()
+True
+```
+
+### AnswerList.show_answers
+
+```python
+def show_answers(rows: Sequence[sqlite3.Row]) -> None
+```
+
+Show answers, newest first.
+
+**Parameters**
+
+- `rows` (*sequence of sqlite3.Row*): Answers, as `Database.attempt_rows` returns them.
+
+**Examples**
+
+```pycon
+>>> table = AnswerList(names={})
+>>> table.show_answers([])
+>>> assert table.model_ is not None
+>>> table.model_.headers[:2]
+['When', 'Exercise']
+```
+
 ## DatabasePage
 
 ```python

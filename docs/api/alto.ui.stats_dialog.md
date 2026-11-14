@@ -76,6 +76,40 @@ Write a length of time the way the statistics show it.
 '3 h 07 min'
 ```
 
+## period_title
+
+```python
+def period_title(
+    start: datetime,
+    *,
+    granularity: str,
+) -> str
+```
+
+Name a chart period in words, for the heading of its list of answers.
+
+**Parameters**
+
+- `start` (*datetime*): The start of the period.
+- `granularity` (*str*): "hour", "day", "week" or "month", as `Stats.granularity` says. Keyword-only.
+
+**Returns**
+
+- *str*: For example "Mon 5 Jan 2026", "Week of Mon 5 Jan 2026" or "January 2026".
+
+**Examples**
+
+```pycon
+>>> period_title(datetime(2026, 1, 5, 14), granularity="hour")
+'Mon 5 Jan 2026, 14:00'
+>>> period_title(datetime(2026, 1, 5), granularity="day")
+'Mon 5 Jan 2026'
+>>> period_title(datetime(2026, 1, 5), granularity="week")
+'Week of Mon 5 Jan 2026'
+>>> period_title(datetime(2026, 1, 1), granularity="month")
+'January 2026'
+```
+
 ## Tile
 
 ```python
@@ -165,6 +199,8 @@ The statistics, as a page of the main window.
 - `exercise` (*QComboBox*): The exercise filter.
 - `timeframe` (*QComboBox*): The timeframe filter.
 - `tiles` (*dict of str to Tile*): The headline numbers, by name.
+- `detail` (*QFrame*): The panel under the charts that lists the answers behind a clicked bar, point, row or day. Hidden until one is clicked.
+- `answers` (*AnswerList*): The table in the detail panel.
 
 **Examples**
 
