@@ -8,7 +8,8 @@ permalink: /api/alto.instrument_info/
 {% raw %}
 What is known about each instrument's recordings, for the summary shown in the instrument settings.
 
-The facts here come from the sources' own pages (the University of Iowa Musical Instrument Samples). What is on disk
+The facts here come from the sources' own pages (the University of Iowa Musical Instrument Samples, and the Salamander
+Grand Piano). What is on disk
 (how many notes, their range, their size) is worked out when the page is shown, not stored here. Pure Python, no Qt.
 
 **Examples**
@@ -113,7 +114,7 @@ Describe the coverage in a sentence for the instrument settings.
 
 **Returns**
 
-- *str*: The number of notes, the range, and how complete it is. Missing notes are shifted from a neighbour.
+- *str*: The number of notes, the range, and how complete it is (the spacing, when the notes are well apart). Missing notes are shifted from a neighbour.
 
 **Examples**
 
@@ -124,6 +125,8 @@ Describe the coverage in a sentence for the instrument settings.
 '4 notes, C4 to F4, almost every semitone. The few missing notes are shifted from a neighbour.'
 >>> coverage(range(48, 73, 2)).describe()
 '13 notes, C3 to C5, about every second semitone. The other notes are shifted from a neighbour.'
+>>> coverage(range(21, 109, 3)).describe()
+'30 notes, A0 to C8, about every third semitone. The other notes are shifted from a neighbour.'
 ```
 
 ## coverage

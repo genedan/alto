@@ -1,5 +1,15 @@
-Piano samples: University of Iowa Electronic Music Studios, Musical Instrument Samples
-(Steinway & Sons model B, performed by Evan Mazunik, 2001; "mf" dynamic).
-https://theremin.music.uiowa.edu/MISpiano.html
-Described by the source as freely available recordings. Converted here to mono,
-trimmed to 2.5 s with a fade-out; file names are MIDI note numbers (C2=36 .. C7=96).
+Piano samples: Salamander Grand Piano V3, by Alexander Holm.
+A Yamaha C5 grand piano recorded with two AKG C414 microphones in an AB position about 12 cm above the strings
+(48 kHz, 24-bit, 16 velocity layers, sampled in minor thirds from the lowest A).
+https://sfzinstruments.github.io/pianos/salamander   https://github.com/sfzinstruments/SalamanderGrandPiano
+
+Licence: Creative Commons Attribution 3.0 Unported (CC BY 3.0), https://creativecommons.org/licenses/by/3.0/
+The licence text is in LICENSE-CC-BY-3.0.txt in this folder.
+
+Changes made for Alto: layer 8 of 16 (medium) only, the 30 recordings (MIDI 21, 24, 27 ... 108, A0 to C8), mixed to mono and
+converted to 44.1 kHz 16-bit, the silence before each note trimmed, cut to 2.5 s with a 0.5 s fade-out, and levelled (first-second
+RMS 0.0915, peaks under 0.8). File names are MIDI note numbers. Alto pitch-shifts the nearest recording, by at most a semitone,
+for the notes in between.
+
+Every file's pitch was checked against its name: A0 to C5 are within about 20 cents of equal temperament, and the notes above
+rise to 60 cents sharp at C8, the stretch tuning of a real piano. This is left as recorded.

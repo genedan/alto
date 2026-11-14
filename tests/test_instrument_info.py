@@ -67,6 +67,14 @@ def test_a_single_missing_note_is_almost_every_semitone() -> None:
     assert "almost every semitone" in c.describe() and "C3 to A6" in c.describe()
 
 
+def test_a_set_recorded_in_minor_thirds_is_described_as_every_third_semitone() -> None:
+    """
+    Check that a set recorded in minor thirds is described as every third semitone.
+    """
+    c = coverage(range(21, 109, 3))
+    assert c.describe() == "30 notes, A0 to C8, about every third semitone. The other notes are shifted from a neighbour."
+
+
 def test_every_second_semitone_is_described_as_such() -> None:
     """
     Check that every second semitone is described as such.

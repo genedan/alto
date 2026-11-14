@@ -1,7 +1,8 @@
 """
 What is known about each instrument's recordings, for the summary shown in the instrument settings.
 
-The facts here come from the sources' own pages (the University of Iowa Musical Instrument Samples). What is on disk
+The facts here come from the sources' own pages (the University of Iowa Musical Instrument Samples, and the Salamander
+Grand Piano). What is on disk
 (how many notes, their range, their size) is worked out when the page is shown, not stored here. Pure Python, no Qt.
 
 Examples
@@ -22,6 +23,8 @@ from alto.settings import key_name
 
 IOWA = "University of Iowa Electronic Music Studios, Musical Instrument Samples"
 IOWA_TERMS = "Freely available, and may be downloaded and used for any projects, without restrictions (the studio's statement)."
+SALAMANDER = "Salamander Grand Piano V3, by Alexander Holm"
+SALAMANDER_TERMS = "Creative Commons Attribution 3.0 (CC BY 3.0): free to use with credit to the author."
 SYNTH = "Notes outside the recorded range are synthesized."
 
 
@@ -69,13 +72,16 @@ class InstrumentInfo:
 
 INFO: dict[str, InstrumentInfo] = {
     "piano": InstrumentInfo(
-        "A Steinway & Sons model B grand piano.",
-        source=IOWA,
-        source_url="https://theremin.music.uiowa.edu/MISpiano.html",
-        performer="Evan Mazunik",
-        recorded="5 and 27 November 2001, Voxman Music Building, Neumann KM 84 microphones over the strings",
-        includes="Mezzo-forte",
-        note="Each note is trimmed to 2.5 seconds with a fade-out. " + SYNTH,
+        "A Yamaha C5 grand piano.",
+        source=SALAMANDER,
+        source_url="https://sfzinstruments.github.io/pianos/salamander",
+        performer="Alexander Holm",
+        recorded="Two AKG C414 microphones in an AB position, about 12 cm above the strings",
+        includes="Medium dynamic (layer 8 of 16), a recording every minor third from A0 to C8",
+        terms=SALAMANDER_TERMS,
+        note="Each note is trimmed to 2.5 seconds with a fade-out. The notes between the recordings are shifted from a "
+        "neighbour by at most a semitone. The highest notes are a little sharp, up to about 60 cents at C8, as in a "
+        "real piano's stretch tuning. Notes outside A0 to C8 are synthesized.",
     ),
     "flute": InstrumentInfo(
         "A concert flute, played without vibrato.",
@@ -192,7 +198,8 @@ class Coverage:
         Returns
         -------
         str
-            The number of notes, the range, and how complete it is. Missing notes are shifted from a neighbour.
+            The number of notes, the range, and how complete it is (the spacing, when the notes are well apart). Missing notes
+            are shifted from a neighbour.
 
         Examples
         --------
@@ -202,6 +209,8 @@ class Coverage:
         '4 notes, C4 to F4, almost every semitone. The few missing notes are shifted from a neighbour.'
         >>> coverage(range(48, 73, 2)).describe()
         '13 notes, C3 to C5, about every second semitone. The other notes are shifted from a neighbour.'
+        >>> coverage(range(21, 109, 3)).describe()
+        '30 notes, A0 to C8, about every third semitone. The other notes are shifted from a neighbour.'
         """
         if self.lowest is None or self.highest is None:  # no notes installed
             return "None installed"
@@ -210,7 +219,9 @@ class Coverage:
             return text + ", every semitone"
         if self.gaps <= max(2, (self.highest - self.lowest + 1) // 10):
             return f"{text}, almost every semitone. The few missing notes are shifted from a neighbour."
-        return f"{text}, about every second semitone. The other notes are shifted from a neighbour."
+        step = round((self.highest - self.lowest) / (self.count - 1))
+        spacing = {2: "second", 3: "third", 4: "fourth"}.get(step, f"{step}th")
+        return f"{text}, about every {spacing} semitone. The other notes are shifted from a neighbour."
 
 
 def coverage(midis: Iterable[int]) -> Coverage:
