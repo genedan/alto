@@ -33,6 +33,7 @@ Spaced repetition: who is learning (profiles), what they answered (a database) a
 
 | Module | What it is |
 |---|---|
+| [alto.learning.backup](alto.learning.backup/) | Backup files: everything Alto keeps, in one file that can be read back into a clean install. Pure Python (no Qt). |
 | [alto.learning.database](alto.learning.database/) | The SQLite store: profiles, every answer given, and what is known about each question. Pure Python (no Qt). |
 | [alto.learning.learner](alto.learning.learner/) | Ties the profile, the database and the scheduler together for the exercise screen. |
 | [alto.learning.scheduler](alto.learning.scheduler/) | How a question's history turns into how soon it comes back. Pure Python, no database and no Qt. |
@@ -54,6 +55,7 @@ The windows, widgets and drawing code. Everything that needs Qt is in here.
 | Module | What it is |
 |---|---|
 | [alto.ui.app_settings](alto.ui.app_settings/) | The application-wide settings dialog: the colour theme, the notation font, the keyboard style and the instrument. |
+| [alto.ui.backup_flow](alto.ui.backup_flow/) | Exporting a backup and importing one: the file dialogs, the questions asked, and the safety copy made before anything is replaced. |
 | [alto.ui.charts](alto.ui.charts/) | Small charts drawn with QPainter, in the application's theme colours. |
 | [alto.ui.colors](alto.ui.colors/) | Mixing colours. The interface blends palette colours to get its soft tints and highlights. |
 | [alto.ui.database_page](alto.ui.database_page/) | A read-only look at what is stored: every answer, every question's record, and the profiles. |

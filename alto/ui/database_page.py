@@ -10,7 +10,11 @@ Examples
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable
+import sqlite3
+from collections.abc import (
+    Iterable,
+    Sequence,
+)
 from datetime import datetime
 
 from PySide6.QtCore import (
@@ -250,6 +254,273 @@ def _when(timestamp: float) -> tuple[str, float]:
     return datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S"), timestamp
 
 
+ANSWER_HEADERS = ["When", "Exercise", "Question", "Answer given", "Result", "Attempt", "Time"]
+
+
+class QuestionTexts:
+    """
+    Describes stored questions in words, remembering each one so it is worked out only once.
+
+    Examples
+    --------
+    >>> texts = QuestionTexts()
+    >>> texts("NoteNames", key="k", payload=None)
+    '(no longer stored)'
+    """
+
+    def __init__(self) -> None:
+        """
+        Create an empty memory.
+
+        Examples
+        --------
+        >>> QuestionTexts()._described
+        {}
+        """
+        self._described: dict[tuple[str, str], str] = {}
+
+    def __call__(
+        self,
+        exercise: str,
+        *,
+        key: str,
+        payload: str | None,
+    ) -> str:
+        """
+        Describe a stored question: what was shown and what the answer was.
+
+        Parameters
+        ----------
+        exercise : str
+            The exercise's class name.
+        key : str
+            The question's `item_key`. Keyword-only.
+        payload : str or None
+            The stored question as JSON, or None if its record is gone. Keyword-only.
+
+        Returns
+        -------
+        str
+            The description, "(no longer stored)" if there is no payload, or "(unreadable)" if it cannot be read. A description
+            is remembered, so asking again does not parse the payload again.
+
+        Examples
+        --------
+        >>> QuestionTexts()("NoteNames", key="broken", payload="{not json")
+        '(unreadable)'
+        """
+        if payload is None:
+            return "(no longer stored)"
+        cached = self._described.get((exercise, key))
+        if cached is None:
+            try:
+                cached = stats.describe(Question.from_dict(json.loads(payload)))
+            except (ValueError, KeyError, TypeError):
+                cached = "(unreadable)"
+            self._described[(exercise, key)] = cached
+        return cached
+
+
+def answer_cells(
+    rows: Sequence[sqlite3.Row],
+    *,
+    names: dict[str, str],
+    texts: QuestionTexts,
+) -> tuple[list[list[tuple[str, object]]], list[dict]]:
+    """
+    Turn answers read from the database into the cells of a table, and the hidden details of each row.
+
+    Parameters
+    ----------
+    rows : sequence of sqlite3.Row
+        Answers, as `Database.attempt_rows` returns them.
+    names : dict of str to str
+        The title of each exercise, by class name. Keyword-only.
+    texts : QuestionTexts
+        Describes each question in words. Keyword-only.
+
+    Returns
+    -------
+    tuple of (list, list of dict)
+        The cells, in the order of `ANSWER_HEADERS`, and for each row the exercise, the stored question and the lines the
+        question preview shows about the answer.
+
+    Examples
+    --------
+    >>> from alto.learning import Database
+    >>> db = Database()
+    >>> ada = db.add_profile("Ada")
+    >>> db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+    ...                duration_ms=2500, answered_at=1000.0)
+    >>> table, hidden = answer_cells(
+    ...     db.attempt_rows(ada.id), names={"NoteNames": "Note Identification"}, texts=QuestionTexts()
+    ... )
+    >>> [text for text, _ in table[0]][1:]
+    ['Note Identification', '(no longer stored)', 'C', 'Right', '1', '2.5 s']
+    >>> hidden[0]["exercise"]
+    'NoteNames'
+    """
+    cells, extras = [], []
+    for r in rows:
+        seconds = float(r["duration_ms"]) / 1000
+        extras.append(
+            {
+                "exercise": r["exercise"],
+                "payload": r["payload"],
+                "details": [
+                    (
+                        f"<b>You answered:</b> {r['answer'] or '–'} ({'right' if r['correct'] else 'wrong'}, "
+                        f"attempt {r['attempt_no']}, {seconds:.1f} s)"
+                    ),
+                    f"<span style='color: gray;'>{_when(r['answered_at'])[0]}</span>",
+                ],
+            },
+        )
+        cells.append(
+            [
+                _when(r["answered_at"]),
+                (names.get(r["exercise"], r["exercise"]),) * 2,
+                (texts(r["exercise"], key=r["item_key"], payload=r["payload"]),) * 2,
+                (r["answer"],) * 2,
+                ("Right", 1) if r["correct"] else ("Wrong", 0),
+                (str(r["attempt_no"]), r["attempt_no"]),
+                (f"{seconds:.1f} s", seconds),
+            ],
+        )
+    return cells, extras
+
+
+def open_preview(
+    index: QModelIndex,
+    *,
+    names: dict[str, str],
+    parent: QWidget,
+) -> None:
+    """
+    Show the question behind a row of an answers table, if its record is still stored.
+
+    Parameters
+    ----------
+    index : QModelIndex
+        A cell of the row, in a model whose rows carry `ROW_ROLE` details.
+    names : dict of str to str
+        The title of each exercise, by class name. Keyword-only.
+    parent : QWidget
+        The widget the popup belongs to. Keyword-only.
+
+    Examples
+    --------
+    >>> model = RowsModel(["Name"], rows=[[("Ada", "Ada")]])
+    >>> open_preview(model.index(0, 0), names={}, parent=QWidget())  # a row with no stored question shows nothing
+    """
+    extra = index.data(ROW_ROLE) or {}
+    if not extra.get("payload"):
+        return  # profiles have no question; a question whose record is gone cannot be shown
+    try:
+        question = Question.from_dict(json.loads(extra["payload"]))
+    except (ValueError, KeyError, TypeError):
+        return
+    name = str(names.get(extra["exercise"], extra["exercise"]))
+    QuestionPreview(
+        name,
+        question=question,
+        details=extra.get("details"),
+        parent=parent,
+    ).exec()
+
+
+class AnswerList(QTableView):
+    """
+    A table of answers that sorts when a heading is clicked and opens the question behind a row on a double click.
+
+    Attributes
+    ----------
+    proxy : QSortFilterProxyModel
+        Sorts the rows by the values in `SORT_ROLE`.
+    model_ : RowsModel or None
+        The rows being shown; None until `show_answers` is called.
+
+    Examples
+    --------
+    >>> table = AnswerList(names={})
+    >>> table.show_answers([])
+    >>> table.proxy.rowCount()
+    0
+    """
+
+    def __init__(
+        self,
+        *,
+        names: dict[str, str],
+        parent: QWidget | None = None,
+    ) -> None:
+        """
+        Create an empty table.
+
+        Parameters
+        ----------
+        names : dict of str to str
+            The title of each exercise, by class name. Keyword-only.
+        parent : QWidget or None, default None
+            The widget that owns the table. Keyword-only.
+
+        Examples
+        --------
+        >>> AnswerList(names={}).isSortingEnabled()
+        True
+        """
+        super().__init__(parent)
+        self.names = names
+        self.texts = QuestionTexts()
+        self.model_: RowsModel | None = None
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.setAlternatingRowColors(True)
+        self.setSortingEnabled(True)
+        self.verticalHeader().hide()
+        self.verticalHeader().setDefaultSectionSize(28)
+        self.horizontalHeader().setHighlightSections(False)
+        self.proxy = QSortFilterProxyModel(self)
+        self.proxy.setSortRole(SORT_ROLE)
+        self.setModel(self.proxy)
+        self.doubleClicked.connect(lambda index: open_preview(index, names=self.names, parent=self))
+
+    def show_answers(self, rows: Sequence[sqlite3.Row]) -> None:
+        """
+        Show answers, newest first.
+
+        Parameters
+        ----------
+        rows : sequence of sqlite3.Row
+            Answers, as `Database.attempt_rows` returns them.
+
+        Examples
+        --------
+        >>> table = AnswerList(names={})
+        >>> table.show_answers([])
+        >>> assert table.model_ is not None
+        >>> table.model_.headers[:2]
+        ['When', 'Exercise']
+        """
+        cells, extras = answer_cells(rows, names=self.names, texts=self.texts)
+        model = RowsModel(
+            ANSWER_HEADERS,
+            rows=cells,
+            numeric={5, 6},
+            extras=extras,
+            parent=self,
+        )
+        self.model_ = model
+        self.proxy.setSourceModel(model)
+        header = self.horizontalHeader()
+        for column in range(len(ANSWER_HEADERS)):  # the question takes what room is left; the rest fit their contents
+            header.setSectionResizeMode(
+                column,
+                QHeaderView.ResizeMode.Stretch if column == 2 else QHeaderView.ResizeMode.ResizeToContents,
+            )
+        self.sortByColumn(0, Qt.SortOrder.DescendingOrder)  # newest first, and the heading says so
+
+
 class DatabasePage(QWidget):
     """
     The tables behind the app.
@@ -309,7 +580,7 @@ class DatabasePage(QWidget):
         super().__init__(parent)
         self.learner = learner
         self._names = {cls.__name__: cls.name for cls in REGISTRY}
-        self._described: dict[tuple[str, str], str] = {}
+        self._texts = QuestionTexts()
 
         lay = QVBoxLayout(self)
         bar = QHBoxLayout()
@@ -408,16 +679,7 @@ class DatabasePage(QWidget):
         >>> page._question_text("NoteNames", key="k", payload="not json")
         '(unreadable)'
         """
-        if payload is None:
-            return "(no longer stored)"
-        cached = self._described.get((exercise, key))
-        if cached is None:
-            try:
-                cached = stats.describe(Question.from_dict(json.loads(payload)))
-            except (ValueError, KeyError, TypeError):
-                cached = "(unreadable)"
-            self._described[(exercise, key)] = cached
-        return cached
+        return self._texts(exercise, key=key, payload=payload)
 
     def _answers(self) -> tuple[RowsModel, str]:
         """
@@ -438,33 +700,7 @@ class DatabasePage(QWidget):
         (0, '0 answers by Ada.')
         """
         db, pid = self.learner.db, self.learner.profile.id
-        rows, extras = [], []
-        for r in db.attempt_rows(pid, limit=ROW_LIMIT):
-            seconds = float(r["duration_ms"]) / 1000
-            extras.append(
-                {
-                    "exercise": r["exercise"],
-                    "payload": r["payload"],
-                    "details": [
-                        (
-                            f"<b>You answered:</b> {r['answer'] or '–'} ({'right' if r['correct'] else 'wrong'}, "
-                            f"attempt {r['attempt_no']}, {seconds:.1f} s)"
-                        ),
-                        f"<span style='color: gray;'>{_when(r['answered_at'])[0]}</span>",
-                    ],
-                },
-            )
-            rows.append(
-                [
-                    _when(r["answered_at"]),
-                    (self._names.get(r["exercise"], r["exercise"]),) * 2,
-                    (self._question_text(r["exercise"], key=r["item_key"], payload=r["payload"]),) * 2,
-                    (r["answer"],) * 2,
-                    ("Right", 1) if r["correct"] else ("Wrong", 0),
-                    (str(r["attempt_no"]), r["attempt_no"]),
-                    (f"{seconds:.1f} s", seconds),
-                ],
-            )
+        rows, extras = answer_cells(db.attempt_rows(pid, limit=ROW_LIMIT), names=self._names, texts=self._texts)
         total = db.count_attempts(pid)
         who = self.learner.profile.name
         note = (
@@ -473,15 +709,7 @@ class DatabasePage(QWidget):
             else f"{total:,} answers by {who}."
         )
         model = RowsModel(
-            [
-                "When",
-                "Exercise",
-                "Question",
-                "Answer given",
-                "Result",
-                "Attempt",
-                "Time",
-            ],
+            ANSWER_HEADERS,
             rows=rows,
             numeric={5, 6},
             extras=extras,
@@ -658,20 +886,7 @@ class DatabasePage(QWidget):
         >>> page.show_table("profiles")
         >>> page._preview(page.proxy.index(0, 0))  # a profile has no question to show
         """
-        extra = index.data(ROW_ROLE) or {}
-        if not extra.get("payload"):
-            return  # profiles have no question; a question whose record is gone cannot be shown
-        try:
-            question = Question.from_dict(json.loads(extra["payload"]))
-        except (ValueError, KeyError, TypeError):
-            return
-        name = str(self._names.get(extra["exercise"], extra["exercise"]))
-        QuestionPreview(
-            name,
-            question=question,
-            details=extra.get("details"),
-            parent=self,
-        ).exec()
+        open_preview(index, names=self._names, parent=self)
 
     def _show_count(self) -> None:
         """

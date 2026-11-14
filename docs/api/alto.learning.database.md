@@ -2,7 +2,7 @@
 title: alto.learning.database
 parent: api
 package: alto.learning
-order: 6
+order: 7
 permalink: /api/alto.learning.database/
 ---
 {% raw %}
@@ -17,6 +17,37 @@ The SQLite store: profiles, every answer given, and what is known about each que
 ...                duration_ms=2000, answered_at=100.0)
 >>> db.count_attempts(ada.id)
 1
+```
+
+## check_snapshot
+
+```python
+def check_snapshot(data: bytes) -> tuple[int, int, int]
+```
+
+Check that bytes are an intact Alto database that this version can read, and say what is in it.
+
+**Parameters**
+
+- `data` (*bytes*): A snapshot, as `Database.snapshot` returns it.
+
+**Returns**
+
+- *tuple of (int, int, int)*: The schema version, the number of profiles and the number of answers.
+
+**Raises**
+
+- *ValueError*: If the data is not a SQLite database, is damaged, is not an Alto database, or has a newer schema than this version knows.
+
+**Examples**
+
+```pycon
+>>> check_snapshot(Database().snapshot())
+(1, 0, 0)
+>>> check_snapshot(b"not a database")
+Traceback (most recent call last):
+    ...
+ValueError: This is not an Alto database.
 ```
 
 ## Profile
@@ -134,6 +165,58 @@ Close the connection.
 ```pycon
 >>> db = Database()
 >>> db.close()
+```
+
+### Database.snapshot
+
+```python
+def snapshot() -> bytes
+```
+
+Return the whole database as bytes: every profile, answer and question record, exactly as they are now.
+
+**Returns**
+
+- *bytes*: A complete SQLite database, which `restore` can load into another database.
+
+**Examples**
+
+```pycon
+>>> db = Database()
+>>> ada = db.add_profile("Ada")
+>>> check_snapshot(db.snapshot())
+(1, 1, 0)
+```
+
+### Database.restore
+
+```python
+def restore(data: bytes) -> None
+```
+
+Replace everything in the database with a snapshot, so it is exactly as it was when the snapshot was taken.
+
+Profiles, answers and question records that are here now are gone afterwards, and the ones in the snapshot take their
+place with the same ids. A snapshot made by an older version of Alto is brought up to date.
+
+**Parameters**
+
+- `data` (*bytes*): A snapshot, as `snapshot` returns it.
+
+**Raises**
+
+- *ValueError*: If the data is not an intact Alto database, or was made by a newer version of Alto. The database is not changed.
+
+**Examples**
+
+```pycon
+>>> source = Database()
+>>> ada = source.add_profile("Ada")
+>>> target = Database()
+>>> _ = target.add_profile("Someone else")
+>>> target.restore(source.snapshot())
+>>> [p.name for p in target.profiles()]
+['Ada']
 ```
 
 ### Database.profiles
@@ -459,14 +542,23 @@ Return the questions that need most practice, the same question from different p
 ### Database.count_attempts
 
 ```python
-def count_attempts(profile_id: int) -> int
+def count_attempts(
+    profile_id: int,
+    *,
+    exercise: str | None = None,
+    since: float | None = None,
+    until: float | None = None,
+) -> int
 ```
 
-Return how many answers a profile has given.
+Return how many answers a profile has given, optionally of one exercise and within a period.
 
 **Parameters**
 
 - `profile_id` (*int*): The profile's id.
+- `exercise` (*str or None, default None*): Count only answers to this exercise (a class name); all exercises if None. Keyword-only.
+- `since` (*float or None, default None*): Count only answers given at or after this time (a timestamp). Keyword-only.
+- `until` (*float or None, default None*): Count only answers given before this time (a timestamp). Keyword-only.
 
 **Returns**
 
@@ -479,6 +571,11 @@ Return how many answers a profile has given.
 >>> ada = db.add_profile("Ada")
 >>> db.count_attempts(ada.id)
 0
+>>> for t in (1.0, 5.0, 9.0):
+...     db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+...                    duration_ms=1000, answered_at=t)
+>>> db.count_attempts(ada.id, since=2.0, until=9.0)  # from the start of the period up to, not including, its end
+1
 ```
 
 ### Database.attempt_rows
@@ -488,6 +585,9 @@ def attempt_rows(
     profile_id: int,
     *,
     limit: int = 10000,
+    exercise: str | None = None,
+    since: float | None = None,
+    until: float | None = None,
 ) -> list[sqlite3.Row]
 ```
 
@@ -497,6 +597,9 @@ Return the newest answers first, each with the stored question it was an answer 
 
 - `profile_id` (*int*): The profile's id.
 - `limit` (*int, default 10000*): The most rows to return. Keyword-only.
+- `exercise` (*str or None, default None*): Return only answers to this exercise (a class name); all exercises if None. Keyword-only.
+- `since` (*float or None, default None*): Return only answers given at or after this time (a timestamp). Keyword-only.
+- `until` (*float or None, default None*): Return only answers given before this time (a timestamp). Keyword-only.
 
 **Returns**
 
@@ -512,6 +615,8 @@ Return the newest answers first, each with the stored question it was an answer 
 ...                    duration_ms=1000, answered_at=t)
 >>> [r["answered_at"] for r in db.attempt_rows(ada.id)]
 [2.0, 1.0]
+>>> [r["answered_at"] for r in db.attempt_rows(ada.id, since=1.5)]
+[2.0]
 ```
 
 ### Database.item_rows

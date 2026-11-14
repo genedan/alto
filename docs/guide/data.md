@@ -154,6 +154,48 @@ platforms is a string where you stored a number:
 Adding a saved preference means: pick a key (`"ui/something"`, a "group/name" path), read it with a default at start-up, write it
 when it changes. Tests redirect the settings to a throwaway folder, so use `store()` and nothing else.
 
+## Backup and restore
+
+A backup must be complete enough that importing it into a clean install leaves the program as if nothing had changed, so it
+holds **both stores**: the whole database and every saved preference. The code is in three places.
+
+- **`alto/learning/backup.py`** (no Qt) writes and reads the file. A backup is a zip with `alto.db` (the database), `settings.json`
+  (the preferences) and `manifest.json` (a format number, the Alto version, the schema version, the counts and a SHA-256 of each
+  of the other two parts). `read_backup` checks everything before returning anything: that the file is a zip with the three
+  parts, that the format is not newer than this version knows, that both checksums match, and that the database is an intact Alto
+  database (`check_snapshot`). Any failure is a `BackupError` with a sentence fit to show the user.
+- **`Database.snapshot()` and `Database.restore()`** in `alto/learning/database.py`. A snapshot is `sqlite3.Connection.serialize()`:
+  the whole database as bytes, consistent even while the program runs. Restoring loads the bytes into a throwaway in-memory
+  database, checks it, and then copies it into the live connection with SQLite's online backup API
+  (`copy.backup(self.conn)`). The live connection is never closed or swapped, so every object that holds it keeps working, and
+  the ids of profiles and items are exactly what they were, which is why the saved "last profile" id still points at the right
+  person. (Do not use `Connection.deserialize` on the live connection: it would detach it from its file.)
+- **`export_settings()` and `import_settings()`** in `alto/ui/store.py`. Export reads every key in `QSettings`; import clears the
+  settings and sets the backup's, so a key the backup lacks does not survive. Both keep the marker `migratedFromMtheory`: without it
+  `store()` would bring old "mtheory" preferences back in on the next call.
+- **`alto/ui/backup_flow.py`** asks the questions: the file dialogs, a description of the backup before it is applied, and a
+  **safety copy** of the current data saved beside `alto.db` before anything is replaced. `MainWindow._restored` then picks up the
+  profile, applies the theme and opens a fresh window, which loads every setting as it starts.
+
+What this means when you change the program:
+
+1. **A new table or column** is in backups automatically (the whole database is copied). Give it a migration as described above, and
+   an older backup is brought up to date by `_migrate` as it is restored.
+2. **A new saved preference** is in backups automatically, whatever its key. Keep values to text, numbers, true and false, lists
+   and bytes, which is what the backup format can hold.
+3. **Anything stored somewhere else**, such as a file in the data folder, a new `QSettings` organisation, or state kept only in
+   memory that the user would expect to survive, is *not* in a backup. Add it to `write_backup` and `import_backup`, and extend
+   `tests/test_backup_flow.py`, whose end-to-end test is the statement of the promise.
+4. **A change to the backup format itself** (the files in the zip, or the manifest) must raise `FORMAT` in `backup.py` and keep
+   reading the old one. A file with a format number above the running version's is refused, which is the safe behaviour for a
+   backup made by a later Alto.
+5. **Schema compatibility only goes one way.** A backup from an older schema is migrated; one from a newer schema is refused,
+   because the older program cannot know what the newer one added.
+
+The tests (`tests/test_backup.py`, `tests/test_backup_flow.py`) cover the exact round trip of every row, the refusal of each kind of
+damaged or foreign file, a restore replacing rather than merging, the safety copy being a working undo, and an end-to-end import
+into a clean install through the real window.
+
 ## Privacy
 
 Nothing leaves the machine, and nothing should: do not add network calls, analytics or accounts without making it a very visible

@@ -2,7 +2,7 @@
 title: alto.ui.icons
 parent: api
 package: alto.ui
-order: 19
+order: 21
 permalink: /api/alto.ui.icons/
 ---
 {% raw %}

@@ -184,6 +184,10 @@ in the database. Changing the theme builds a fresh `MainWindow` (`rebuild()`) so
 | Theme, notation font, keyboard style, instrument, exercise settings, sidebar width and state | `QSettings("alto", "alto")` |
 | Fonts, instrument recordings, icons | `alto/assets/`, shipped with the package |
 
+Both stores go into a backup (Export backup… and Import backup… in the menu): one `.altobackup` zip holding the database, the
+preferences and a checksummed manifest, written by `alto/learning/backup.py`. Importing replaces everything, so a clean install
+comes up exactly as the backup was made.
+
 ## Tests
 
 `pytest` runs the tests in `tests/` and the `>>>` examples in every docstring in `alto/`, so the examples cannot go out of date.

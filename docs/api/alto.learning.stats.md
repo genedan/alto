@@ -2,7 +2,7 @@
 title: alto.learning.stats
 parent: api
 package: alto.learning
-order: 9
+order: 10
 permalink: /api/alto.learning.stats/
 ---
 {% raw %}
@@ -238,6 +238,36 @@ Return the average number of answers it took per question.
 ```pycon
 >>> Stats(4, attempts=5).attempts_per_question
 1.25
+```
+
+## period_end
+
+```python
+def period_end(
+    start: datetime,
+    *,
+    granularity: str,
+) -> datetime
+```
+
+Return the moment a chart period ends, which is when the next one begins.
+
+**Parameters**
+
+- `start` (*datetime*): The start of the period, as `Bucket.start` gives it.
+- `granularity` (*str*): "hour", "day", "week" or "month", as `Stats.granularity` says. Keyword-only.
+
+**Returns**
+
+- *datetime*: The start of the following period.
+
+**Examples**
+
+```pycon
+>>> period_end(datetime(2026, 1, 5), granularity="week")
+datetime.datetime(2026, 1, 12, 0, 0)
+>>> period_end(datetime(2026, 12, 1), granularity="month")
+datetime.datetime(2027, 1, 1, 0, 0)
 ```
 
 ## describe

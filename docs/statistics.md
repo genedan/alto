@@ -30,6 +30,21 @@ profile's own answers. Use **← Back** or <kbd>Esc</kbd> to return to the page 
   timeframe.
 - **Questions that need practice:** the questions with the highest strain, how often you missed them, and how many times you have answered them.
 
+### Pointing and clicking
+
+Every chart responds to the pointer. **Hover** a bar, a point, an exercise row or a calendar day and it brightens while the
+rest of the chart fades back, with its numbers in a tooltip. **Click** one and the answers behind it are listed in a panel under the charts:
+
+- a bar or a point of the three charts over time lists the answers given in that period (a day, a week, an hour, depending on the
+  timeframe);
+- a row of the by-exercise chart lists the answers to that exercise within the timeframe;
+- a square of the calendar lists the answers given on that day.
+
+The clicked element stays bright and the rest stay faded while the panel is open. Click it again, or press **Close**, to put the panel away; it
+also closes when you change the exercise or the timeframe, because its numbers would no longer match. Periods and days with no
+answers cannot be clicked. The list has the same columns as the database browser below, sorts when you click a heading, and
+**double-clicking** a row previews the question. It shows the newest 500 answers, and says when there are more.
+
 {% include shot.html src="stats-heatmap.png" alt="A calendar heatmap of the last twelve months, a square per day in shades of green, above the list of questions that need practice" caption="The Reviews calendar: a year of practice at a glance. Gaps are days off, and the darkest squares are your busiest days." %}
 
 A question counts as **right** only if your first answer was right. That is the same rule the

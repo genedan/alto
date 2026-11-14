@@ -14,10 +14,15 @@ True
 from __future__ import annotations
 
 import time
-from datetime import datetime
+from datetime import (
+    date,
+    datetime,
+    timedelta,
+)
 
 from PySide6.QtCore import (
     Qt,
+    QTimer,
     Signal,
 )
 from PySide6.QtGui import (
@@ -52,8 +57,10 @@ from alto.ui.charts import (
     LineChart,
     StackedBarChart,
 )
+from alto.ui.database_page import AnswerList
 
 DAY = 86400.0
+DETAIL_LIMIT = 500  # the most answers the drilldown lists; the note above it says when there are more
 TIMEFRAMES = (
     ("Today", "today"),
     ("Last 7 days", 7),
@@ -132,6 +139,46 @@ def format_duration(seconds: float) -> str:
     if minutes < 1:
         return f"{round(seconds)} s"
     return f"{minutes} min" if minutes < 60 else f"{minutes // 60} h {minutes % 60:02d} min"
+
+
+def period_title(
+    start: datetime,
+    *,
+    granularity: str,
+) -> str:
+    """
+    Name a chart period in words, for the heading of its list of answers.
+
+    Parameters
+    ----------
+    start : datetime
+        The start of the period.
+    granularity : str
+        "hour", "day", "week" or "month", as `Stats.granularity` says. Keyword-only.
+
+    Returns
+    -------
+    str
+        For example "Mon 5 Jan 2026", "Week of Mon 5 Jan 2026" or "January 2026".
+
+    Examples
+    --------
+    >>> period_title(datetime(2026, 1, 5, 14), granularity="hour")
+    'Mon 5 Jan 2026, 14:00'
+    >>> period_title(datetime(2026, 1, 5), granularity="day")
+    'Mon 5 Jan 2026'
+    >>> period_title(datetime(2026, 1, 5), granularity="week")
+    'Week of Mon 5 Jan 2026'
+    >>> period_title(datetime(2026, 1, 1), granularity="month")
+    'January 2026'
+    """
+    day = f"{start.strftime('%a')} {start.day} {start.strftime('%b')} {start.year}"
+    return {
+        "hour": f"{day}, {start.strftime('%H')}:00",
+        "day": day,
+        "week": f"Week of {day}",
+        "month": start.strftime("%B %Y"),
+    }[granularity]
 
 
 class Tile(QFrame):
@@ -223,6 +270,10 @@ class StatsPage(QWidget):
         The timeframe filter.
     tiles : dict of str to Tile
         The headline numbers, by name.
+    detail : QFrame
+        The panel under the charts that lists the answers behind a clicked bar, point, row or day. Hidden until one is clicked.
+    answers : AnswerList
+        The table in the detail panel.
 
     Examples
     --------
@@ -342,6 +393,29 @@ class StatsPage(QWidget):
         self.heatmap.setFixedHeight(190)
         lay.addWidget(self.heatmap)
 
+        # Clicking a bar, a point, a row or a day lists the answers behind it here.
+        self.detail = QFrame()
+        self.detail.setObjectName("detailPane")
+        detail_lay = QVBoxLayout(self.detail)
+        head = QHBoxLayout()
+        self.detail_title = QLabel()
+        head.addWidget(self.detail_title, 1)
+        self.detail_close = QPushButton("Close")
+        self.detail_close.setToolTip("Close the list of answers")
+        self.detail_close.clicked.connect(self._close_detail)
+        head.addWidget(self.detail_close)
+        detail_lay.addLayout(head)
+        self.detail_note = QLabel()
+        self.detail_note.setStyleSheet("color: gray;")
+        self.detail_note.setWordWrap(True)
+        detail_lay.addWidget(self.detail_note)
+        self.answers = AnswerList(names=self._names())
+        self.answers.setMinimumHeight(240)
+        self.answers.setMaximumHeight(380)
+        detail_lay.addWidget(self.answers)
+        self.detail.hide()
+        lay.addWidget(self.detail)
+
         lay.addWidget(QLabel("<b>Questions that need practice</b>"))
         self.table = QTableWidget(0, 4)
         self.table.setHorizontalHeaderLabels(
@@ -363,12 +437,21 @@ class StatsPage(QWidget):
         head.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
         lay.addWidget(self.table)
 
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QScrollArea.Shape.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setWidget(body)
-        outer.addWidget(scroll, 1)
+        self.scroller = QScrollArea()
+        self.scroller.setWidgetResizable(True)
+        self.scroller.setFrameShape(QScrollArea.Shape.NoFrame)
+        self.scroller.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroller.setWidget(body)
+        outer.addWidget(self.scroller, 1)
+        self._reveal = QTimer(self)  # owned by the page, so it cannot fire after the page has gone
+        self._reveal.setSingleShot(True)
+        self._reveal.timeout.connect(lambda: self.scroller.ensureWidgetVisible(self.detail))
+        self._stats: stats.Stats | None = None  # what the charts show now, so a click can be turned into a period
+        self._since: float | None = None
+        for chart in (self.volume, self.accuracy, self.speed):
+            chart.clicked.connect(self._drill_period)
+        self.by_exercise.clicked.connect(self._drill_exercise)
+        self.heatmap.clicked.connect(self._drill_day)
 
         for signal in (self.exercise.currentIndexChanged, self.timeframe.currentIndexChanged):
             signal.connect(lambda *_: self.refresh())
@@ -409,13 +492,16 @@ class StatsPage(QWidget):
         """
         now = time.time()
         profiles = [self.learner.profile.id]  # only the active profile's answers
+        since = since_for(self.timeframe.currentData(), now=now)
         s = stats.collect(
             self.learner.db,
             profile_ids=profiles,
             exercise=self.exercise.currentData(),
-            since=since_for(self.timeframe.currentData(), now=now),
+            since=since,
             now=now,
         )
+        self._stats, self._since = s, since
+        self._close_detail()  # the numbers have changed, so a list of answers from the old ones would no longer match
         names = self._names()
 
         who = self.learner.profile.name
@@ -483,3 +569,219 @@ class StatsPage(QWidget):
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.table.setItem(row, col, item)
         self.table.setFixedHeight(self.table.horizontalHeader().height() + 30 * max(len(s.hardest), 1) + 6)
+
+    def _clear_selection(self) -> None:
+        """
+        Remove the highlight that marks the clicked element in every chart.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> page = StatsPage(Learner(db, profile=db.add_profile("Ada")))
+        >>> page.volume.set_selected(2)
+        >>> page._clear_selection()
+        >>> page.volume.selected is None
+        True
+        """
+        for chart in (self.volume, self.accuracy, self.speed, self.by_exercise, self.heatmap):
+            chart.set_selected(None)
+
+    def _close_detail(self) -> None:
+        """
+        Hide the list of answers and the highlight of the element it was opened from.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> page = StatsPage(Learner(db, profile=db.add_profile("Ada")))
+        >>> page._close_detail()
+        >>> page.detail.isHidden()
+        True
+        """
+        self.detail.hide()
+        self._clear_selection()
+
+    def _open_detail(
+        self,
+        title: str,
+        *,
+        exercise: str | None,
+        since: float | None,
+        until: float | None,
+    ) -> None:
+        """
+        List the answers within a scope under the charts, and scroll to them.
+
+        Parameters
+        ----------
+        title : str
+            The heading of the list.
+        exercise : str or None
+            The exercise to list (a class name), or None for all of them. Keyword-only.
+        since : float or None
+            The earliest answer to list (a timestamp), or None for no limit. Keyword-only.
+        until : float or None
+            The time before which answers are listed, or None for no limit. Keyword-only.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> store = Database()
+        >>> ada = store.add_profile("Ada")
+        >>> store.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+        ...                   duration_ms=2000, answered_at=1000.0)
+        >>> page = StatsPage(Learner(store, profile=ada))
+        >>> page._open_detail("A day", exercise=None, since=0.0, until=2000.0)
+        >>> page.detail.isHidden(), page.answers.proxy.rowCount()
+        (False, 1)
+        >>> page.detail_note.text()
+        '1 answer, to 1 question, 1 right first time.'
+        """
+        db, pid = self.learner.db, self.learner.profile.id
+        rows = db.attempt_rows(
+            pid,
+            limit=DETAIL_LIMIT,
+            exercise=exercise,
+            since=since,
+            until=until,
+        )
+        total = db.count_attempts(
+            pid,
+            exercise=exercise,
+            since=since,
+            until=until,
+        )
+        plural = "s" if total != 1 else ""
+        if total > len(rows):
+            note = f"{total:,} answers. Showing the newest {len(rows):,}."
+        else:
+            firsts = [r for r in rows if r["attempt_no"] == 1]
+            right = sum(1 for r in firsts if r["correct"])
+            asked = f"{len(firsts)} question{'s' if len(firsts) != 1 else ''}"
+            note = f"{total:,} answer{plural}, to {asked}, {right} right first time."
+        self.detail_title.setText(f"<b>{title}</b>")
+        self.detail_note.setText(note)
+        self.answers.show_answers(rows)
+        self.detail.show()
+        self._reveal.start(0)  # scroll to it once the layout has made room for it
+
+    def _drill_period(self, index: object) -> None:
+        """
+        List the answers given in the period of a clicked bar or point, or close the list if that period is already open.
+
+        Parameters
+        ----------
+        index : object
+            The index of the period, as the chart that was clicked emits it.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> ada = db.add_profile("Ada")
+        >>> db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+        ...                duration_ms=2000, answered_at=time.time())
+        >>> page = StatsPage(Learner(db, profile=ada))
+        >>> page._drill_period(len(page.volume.labels) - 1)  # the last period is today
+        >>> page.answers.proxy.rowCount(), page.volume.selected == page.accuracy.selected
+        (1, True)
+        >>> page._drill_period(len(page.volume.labels) - 1)  # clicking it again closes the list
+        >>> page.detail.isHidden()
+        True
+        """
+        s = self._stats
+        if s is None or not isinstance(index, int) or not 0 <= index < len(s.buckets):
+            return
+        if self.volume.selected == index:
+            self._close_detail()
+            return
+        bucket = s.buckets[index]
+        begin = bucket.start.timestamp()
+        if self._since is not None:
+            begin = max(begin, self._since)  # the first period may begin before the timeframe does
+        self._clear_selection()
+        self._open_detail(
+            period_title(bucket.start, granularity=s.granularity),
+            exercise=self.exercise.currentData(),
+            since=begin,
+            until=stats.period_end(bucket.start, granularity=s.granularity).timestamp(),
+        )
+        for chart in (self.volume, self.accuracy, self.speed):
+            chart.set_selected(index)
+
+    def _drill_exercise(self, index: object) -> None:
+        """
+        List the answers to a clicked exercise within the timeframe, or close the list if it is already open.
+
+        Parameters
+        ----------
+        index : object
+            The index of the row, as the chart that was clicked emits it.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> ada = db.add_profile("Ada")
+        >>> db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+        ...                duration_ms=2000, answered_at=time.time())
+        >>> page = StatsPage(Learner(db, profile=ada))
+        >>> page._drill_exercise(0)
+        >>> page.detail_title.text()
+        '<b>Answers to Note Identification</b>'
+        """
+        s = self._stats
+        if s is None or not isinstance(index, int) or not 0 <= index < len(s.by_exercise):
+            return
+        if self.by_exercise.selected == index:
+            self._close_detail()
+            return
+        name = s.by_exercise[index].exercise
+        self._clear_selection()
+        self._open_detail(
+            f"Answers to {self._names().get(name, name)}",
+            exercise=name,
+            since=self._since,
+            until=None,
+        )
+        self.by_exercise.set_selected(index)
+
+    def _drill_day(self, day: object) -> None:
+        """
+        List the answers given on a clicked day of the calendar, or close the list if that day is already open.
+
+        The calendar always looks back about a year, so this ignores the timeframe and follows only the exercise filter.
+
+        Parameters
+        ----------
+        day : object
+            The day, as the calendar emits it.
+
+        Examples
+        --------
+        >>> from alto.learning import Database
+        >>> db = Database()
+        >>> ada = db.add_profile("Ada")
+        >>> db.add_attempt(ada.id, exercise="NoteNames", item_key="k", attempt_no=1, answer="C", correct=True,
+        ...                duration_ms=2000, answered_at=time.time())
+        >>> page = StatsPage(Learner(db, profile=ada))
+        >>> page._drill_day(date.today())
+        >>> page.answers.proxy.rowCount()
+        1
+        """
+        if not isinstance(day, date):
+            return
+        if self.heatmap.selected == day:
+            self._close_detail()
+            return
+        midnight = datetime(day.year, day.month, day.day)
+        self._clear_selection()
+        self._open_detail(
+            f"Answers on {period_title(midnight, granularity='day')}",
+            exercise=self.exercise.currentData(),
+            since=midnight.timestamp(),
+            until=(midnight + timedelta(days=1)).timestamp(),
+        )
+        self.heatmap.set_selected(day)

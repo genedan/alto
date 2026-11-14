@@ -2,7 +2,7 @@
 title: alto.ui.profile_dialog
 parent: api
 package: alto.ui
-order: 27
+order: 29
 permalink: /api/alto.ui.profile_dialog/
 ---
 {% raw %}
