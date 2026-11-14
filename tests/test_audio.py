@@ -59,15 +59,17 @@ def test_wav_roundtrip() -> None:
         assert w.getframerate() == SAMPLE_RATE and w.getnchannels() == 1
 
 
-def test_bundled_samples_cover_staff_range() -> None:
+def test_every_bundled_piano_file_is_a_usable_recording() -> None:
     """
-    Check that bundled samples cover staff range.
+    Check that every bundled piano file is a mono recording at the engine's sample rate, long enough and not silent.
     """
-    for midi in range(36, 97):
-        with wave.open(str(ASSET_DIR / f"{midi}.wav")) as w:
-            assert w.getnchannels() == 1 and w.getframerate() == SAMPLE_RATE
+    files = list(ASSET_DIR.glob("*.wav"))
+    assert len(files) == 30  # one every minor third, A0 to C8
+    for path in files:
+        with wave.open(str(path)) as w:
+            assert w.getnchannels() == 1 and w.getframerate() == SAMPLE_RATE, path.name
             frames = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2")
-        assert frames.size > SAMPLE_RATE and np.abs(frames).max() > 1000, midi
+        assert frames.size > SAMPLE_RATE and np.abs(frames).max() > 1000, path.name
 
 
 def test_every_instrument_has_recordings_and_covers_the_notes() -> None:
@@ -102,6 +104,16 @@ def test_every_instrument_has_recordings_and_covers_the_notes() -> None:
             90,
         ):
             assert sounds._note_file(inst, midi=midi).exists(), (inst.key, midi)
+
+
+def test_the_piano_is_recorded_across_the_whole_keyboard() -> None:
+    """
+    Check that every key from A0 to C8 has a recording or lies within a semitone of one, so none is synthesized.
+    """
+    have = Sounds().recordings(INSTRUMENT_BY_KEY["piano"])
+    assert min(have) == 21 and max(have) == 108
+    for midi in range(21, 109):
+        assert min(abs(m - midi) for m in have) <= 1, midi
 
 
 def test_pitch_shift_moves_the_frequency() -> None:
