@@ -45,7 +45,10 @@ from PySide6.QtWidgets import (
 from alto.exercises import REGISTRY
 from alto.exercises.base import Exercise
 from alto.learning import Learner
-from alto.ui import icons
+from alto.ui import (
+    backup_flow,
+    icons,
+)
 from alto.ui.app_settings import AppSettingsDialog
 from alto.ui.colors import blend
 from alto.ui.database_page import DatabasePage
@@ -74,6 +77,10 @@ from alto.ui.store import (
     int_value,
     store,
     text_value,
+)
+from alto.ui.theme import (
+    apply_theme,
+    saved_theme,
 )
 
 
@@ -204,10 +211,17 @@ class MainWindow(QMainWindow):
         database_action.triggered.connect(self.open_database)
         self.profile_action = menu.addAction(svg_icon(icons.PROFILE, color=glyph, size=18), "")
         self.profile_action.triggered.connect(self.switch_profile)
-        self._show_profile()
         settings_action = menu.addAction(svg_icon(icons.GEAR, color=glyph, size=18), "Settings…")
         settings_action.setShortcut(QKeySequence("Ctrl+Alt+S"))
         settings_action.triggered.connect(self.open_settings)
+        menu.addSeparator()
+        self.export_action = menu.addAction(svg_icon(icons.EXPORT, color=glyph, size=18), "Export backup…")
+        self.export_action.setToolTip("Save everything Alto keeps (profiles, history and settings) to one file")
+        self.export_action.triggered.connect(self.export_backup)
+        self.import_action = menu.addAction(svg_icon(icons.IMPORT, color=glyph, size=18), "Import backup…")
+        self.import_action.setToolTip("Replace everything with a backup made earlier")
+        self.import_action.triggered.connect(self.import_backup)
+        self._show_profile()  # shows or hides the three actions that need a profile
         menu.addSeparator()
         quit_action = menu.addAction(svg_icon(icons.QUIT, color=glyph, size=18), "Quit")
         quit_action.setShortcut(QKeySequence.StandardKey.Quit)
@@ -518,7 +532,8 @@ class MainWindow(QMainWindow):
         >>> window.profile_action.text()
         'Profile: Ada…'
         """
-        self.profile_action.setVisible(self.learner is not None)
+        for action in (self.profile_action, self.export_action, self.import_action):
+            action.setVisible(self.learner is not None)  # there is nothing to back up or to restore into without a profile
         if self.learner:
             self.profile_action.setText(f"Profile: {self.learner.profile.name}…")
 
@@ -637,6 +652,44 @@ class MainWindow(QMainWindow):
             remember_profile(chosen)
             self._show_profile()
             self.show_home()
+
+    def export_backup(self) -> None:
+        """
+        Save a backup of everything: ask where, then write profiles, history and settings to one file.
+
+        Examples
+        --------
+        >>> MainWindow().export_backup()  # does nothing without a profile
+        """
+        if self.learner:
+            backup_flow.export_backup(self, db=self.learner.db)
+
+    def import_backup(self) -> None:
+        """
+        Replace everything with a backup: ask for the file, check it, ask again, and reload the whole window from it.
+
+        Examples
+        --------
+        >>> MainWindow().import_backup()  # does nothing without a profile
+        """
+        if self.learner and backup_flow.import_backup(self, db=self.learner.db):
+            self._restored()
+
+    def _restored(self) -> None:
+        """
+        Pick up an imported backup: the profile that was in use, the theme and every setting, then open a fresh window.
+
+        Examples
+        --------
+        >>> MainWindow()._restored()  # doctest: +SKIP
+        """
+        if not self.learner:
+            return
+        db = self.learner.db
+        profiles = db.profiles()
+        self.learner.profile = db.profile(int_value(store(), key="profile/last", default=-1)) or profiles[0]
+        apply_theme(saved_theme())
+        self.rebuild()  # a new window loads every setting, and draws every icon and colour in the theme again
 
     def show_home(self) -> None:
         """

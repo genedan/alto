@@ -2,7 +2,7 @@
 title: alto.ui.store
 parent: api
 package: alto.ui
-order: 33
+order: 35
 permalink: /api/alto.ui.store/
 ---
 {% raw %}
@@ -122,5 +122,52 @@ Read a saved setting as text.
 >>> text_value(settings_, key="demo/missing", default="piano")
 'piano'
 >>> settings_.remove("demo")
+```
+
+## export_settings
+
+```python
+def export_settings() -> dict[str, object]
+```
+
+Return every saved preference, by key, for a backup.
+
+**Returns**
+
+- *dict of str to object*: Each key Alto has saved and its value. Qt byte arrays come back as `bytes` and lists as lists.
+
+**Examples**
+
+```pycon
+>>> settings_ = store()
+>>> settings_.setValue("demo/name", "Ada")
+>>> export_settings()["demo/name"]
+'Ada'
+>>> settings_.remove("demo")
+```
+
+## import_settings
+
+```python
+def import_settings(values: Mapping[str, object]) -> None
+```
+
+Replace every saved preference with the ones from a backup, so the preferences are exactly as they were.
+
+Preferences saved now that the backup does not have are removed. The marker that stops old "mtheory" preferences being
+brought across again is kept, so an old installation's leftovers cannot leak back in.
+
+**Parameters**
+
+- `values` (*mapping of str to object*): The preferences, by key, as `export_settings` returned them.
+
+**Examples**
+
+```pycon
+>>> import_settings({"demo/name": "Ada", "demo/count": 3})
+>>> store().value("demo/name"), int_value(store(), key="demo/count", default=0)
+('Ada', 3)
+>>> store().remove("demo")
+>>> store().remove("")
 ```
 {% endraw %}

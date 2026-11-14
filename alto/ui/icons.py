@@ -266,6 +266,10 @@ GEAR = (
 )
 # Quit: a power symbol, a broken ring with a line through the gap.
 QUIT = f'<path d="M12 3.5v8M7.2 6.6a7.2 7.2 0 1 0 9.6 0" {_MENU}/>'
+# Export and import: a tray with an arrow going out of it, or into it.
+_TRAY = f'<path d="M4.5 15v4.5h15V15" {_MENU}/>'
+EXPORT = _TRAY + f'<path d="M12 15V4.2M7.8 8.2L12 4l4.2 4.2" {_MENU}/>'
+IMPORT = _TRAY + f'<path d="M12 4v10.8M7.8 10.8L12 15l4.2-4.2" {_MENU}/>'
 # Profile: a head and shoulders.
 PROFILE = f'<circle cx="12" cy="8.2" r="3.6" {_MENU}/><path d="M4.6 20c.7-4 3.7-6 7.4-6s6.7 2 7.4 6" {_MENU}/>'
 # Statistics: a line graph, a rising line with its points over a pair of axes.

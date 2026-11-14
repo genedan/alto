@@ -62,6 +62,56 @@ CREATE TABLE items (
 """
 
 
+def check_snapshot(data: bytes) -> tuple[int, int, int]:
+    """
+    Check that bytes are an intact Alto database that this version can read, and say what is in it.
+
+    Parameters
+    ----------
+    data : bytes
+        A snapshot, as `Database.snapshot` returns it.
+
+    Returns
+    -------
+    tuple of (int, int, int)
+        The schema version, the number of profiles and the number of answers.
+
+    Raises
+    ------
+    ValueError
+        If the data is not a SQLite database, is damaged, is not an Alto database, or has a newer schema than this version knows.
+
+    Examples
+    --------
+    >>> check_snapshot(Database().snapshot())
+    (1, 0, 0)
+    >>> check_snapshot(b"not a database")
+    Traceback (most recent call last):
+        ...
+    ValueError: This is not an Alto database.
+    """
+    copy = sqlite3.connect(":memory:")
+    try:
+        try:
+            copy.deserialize(data)
+            version = copy.execute("PRAGMA user_version").fetchone()[0]
+            intact = copy.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
+            tables = {r[0] for r in copy.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
+        except sqlite3.DatabaseError:
+            raise ValueError("This is not an Alto database.") from None
+        if not intact:
+            raise ValueError("The database in this file is damaged.")
+        if not {"profiles", "attempts", "items"} <= tables or version < 1:
+            raise ValueError("This is not an Alto database.")
+        if version > SCHEMA_VERSION:
+            raise ValueError("This was made by a newer version of Alto. Update Alto to read it.")
+        profiles = copy.execute("SELECT COUNT(*) FROM profiles").fetchone()[0]
+        attempts = copy.execute("SELECT COUNT(*) FROM attempts").fetchone()[0]
+        return version, profiles, attempts
+    finally:
+        copy.close()
+
+
 @dataclass(frozen=True)
 class Profile:
     """
@@ -164,9 +214,10 @@ class Database:
         >>> db.conn.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION
         True
         """
-        if str(path) != ":memory:":
+        self.path = str(path)
+        if self.path != ":memory:":
             Path(path).parent.mkdir(parents=True, exist_ok=True)
-        self.conn = sqlite3.connect(str(path))
+        self.conn = sqlite3.connect(self.path)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA foreign_keys = ON")
         self._migrate()
@@ -198,6 +249,61 @@ class Database:
         >>> db.close()
         """
         self.conn.close()
+
+    def snapshot(self) -> bytes:
+        """
+        Return the whole database as bytes: every profile, answer and question record, exactly as they are now.
+
+        Returns
+        -------
+        bytes
+            A complete SQLite database, which `restore` can load into another database.
+
+        Examples
+        --------
+        >>> db = Database()
+        >>> ada = db.add_profile("Ada")
+        >>> check_snapshot(db.snapshot())
+        (1, 1, 0)
+        """
+        self.conn.commit()
+        return self.conn.serialize()
+
+    def restore(self, data: bytes) -> None:
+        """
+        Replace everything in the database with a snapshot, so it is exactly as it was when the snapshot was taken.
+
+        Profiles, answers and question records that are here now are gone afterwards, and the ones in the snapshot take their
+        place with the same ids. A snapshot made by an older version of Alto is brought up to date.
+
+        Parameters
+        ----------
+        data : bytes
+            A snapshot, as `snapshot` returns it.
+
+        Raises
+        ------
+        ValueError
+            If the data is not an intact Alto database, or was made by a newer version of Alto. The database is not changed.
+
+        Examples
+        --------
+        >>> source = Database()
+        >>> ada = source.add_profile("Ada")
+        >>> target = Database()
+        >>> _ = target.add_profile("Someone else")
+        >>> target.restore(source.snapshot())
+        >>> [p.name for p in target.profiles()]
+        ['Ada']
+        """
+        check_snapshot(data)  # nothing is touched unless the whole snapshot is sound
+        copy = sqlite3.connect(":memory:")
+        try:
+            copy.deserialize(data)
+            copy.backup(self.conn)  # SQLite's own online copy: the open connection ends up holding the snapshot
+        finally:
+            copy.close()
+        self._migrate()
 
     # -- profiles --------------------------------------------------------------------------------------------
 

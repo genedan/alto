@@ -2,7 +2,7 @@
 title: alto.ui.main_window
 parent: api
 package: alto.ui
-order: 23
+order: 25
 permalink: /api/alto.ui.main_window/
 ---
 {% raw %}
@@ -232,6 +232,34 @@ Their history and questions are kept apart; the next question comes from theirs.
 ```pycon
 >>> window = MainWindow()
 >>> window.switch_profile()  # without a profile there is nothing to switch
+```
+
+### MainWindow.export_backup
+
+```python
+def export_backup() -> None
+```
+
+Save a backup of everything: ask where, then write profiles, history and settings to one file.
+
+**Examples**
+
+```pycon
+>>> MainWindow().export_backup()  # does nothing without a profile
+```
+
+### MainWindow.import_backup
+
+```python
+def import_backup() -> None
+```
+
+Replace everything with a backup: ask for the file, check it, ask again, and reload the whole window from it.
+
+**Examples**
+
+```pycon
+>>> MainWindow().import_backup()  # does nothing without a profile
 ```
 
 ### MainWindow.show_home

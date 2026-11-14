@@ -2,7 +2,7 @@
 title: alto.learning.database
 parent: api
 package: alto.learning
-order: 6
+order: 7
 permalink: /api/alto.learning.database/
 ---
 {% raw %}
@@ -17,6 +17,37 @@ The SQLite store: profiles, every answer given, and what is known about each que
 ...                duration_ms=2000, answered_at=100.0)
 >>> db.count_attempts(ada.id)
 1
+```
+
+## check_snapshot
+
+```python
+def check_snapshot(data: bytes) -> tuple[int, int, int]
+```
+
+Check that bytes are an intact Alto database that this version can read, and say what is in it.
+
+**Parameters**
+
+- `data` (*bytes*): A snapshot, as `Database.snapshot` returns it.
+
+**Returns**
+
+- *tuple of (int, int, int)*: The schema version, the number of profiles and the number of answers.
+
+**Raises**
+
+- *ValueError*: If the data is not a SQLite database, is damaged, is not an Alto database, or has a newer schema than this version knows.
+
+**Examples**
+
+```pycon
+>>> check_snapshot(Database().snapshot())
+(1, 0, 0)
+>>> check_snapshot(b"not a database")
+Traceback (most recent call last):
+    ...
+ValueError: This is not an Alto database.
 ```
 
 ## Profile
@@ -134,6 +165,58 @@ Close the connection.
 ```pycon
 >>> db = Database()
 >>> db.close()
+```
+
+### Database.snapshot
+
+```python
+def snapshot() -> bytes
+```
+
+Return the whole database as bytes: every profile, answer and question record, exactly as they are now.
+
+**Returns**
+
+- *bytes*: A complete SQLite database, which `restore` can load into another database.
+
+**Examples**
+
+```pycon
+>>> db = Database()
+>>> ada = db.add_profile("Ada")
+>>> check_snapshot(db.snapshot())
+(1, 1, 0)
+```
+
+### Database.restore
+
+```python
+def restore(data: bytes) -> None
+```
+
+Replace everything in the database with a snapshot, so it is exactly as it was when the snapshot was taken.
+
+Profiles, answers and question records that are here now are gone afterwards, and the ones in the snapshot take their
+place with the same ids. A snapshot made by an older version of Alto is brought up to date.
+
+**Parameters**
+
+- `data` (*bytes*): A snapshot, as `snapshot` returns it.
+
+**Raises**
+
+- *ValueError*: If the data is not an intact Alto database, or was made by a newer version of Alto. The database is not changed.
+
+**Examples**
+
+```pycon
+>>> source = Database()
+>>> ada = source.add_profile("Ada")
+>>> target = Database()
+>>> _ = target.add_profile("Someone else")
+>>> target.restore(source.snapshot())
+>>> [p.name for p in target.profiles()]
+['Ada']
 ```
 
 ### Database.profiles

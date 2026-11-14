@@ -2,7 +2,7 @@
 title: alto.ui.charts
 parent: api
 package: alto.ui
-order: 13
+order: 15
 permalink: /api/alto.ui.charts/
 ---
 {% raw %}
