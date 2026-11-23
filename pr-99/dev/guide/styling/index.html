@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Styling beyond QtWidgets · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-99/latest/guide/styling/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Styling beyond QtWidgets · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-99/latest/guide/styling/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-99/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-99/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-99/dev/assets/css/site.css?v=1795453315">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-99/dev/">
+      <img src="/alto/pr-99/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-99/dev/" aria-label="Documentation preview for PR #99">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #99
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-99/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-99/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-99/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-99/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/styling/" aria-current="page">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-99/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-99/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-99/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Styling beyond QtWidgets</h1>
+          <p>Out of the box, Qt widgets look like whatever platform they run on: gray rectangles on Windows, rounded and translucent on
+macOS. Alto wants one consistent look with rounded corners, soft highlights and a light and a dark theme, and some pieces
+(the staff, the keyboard, the switches, the charts) that no standard widget provides. This chapter explains the layers Qt gives
+you for appearance, which one Alto uses for what, and the color and design ideas behind the choices.</p>
+
+<h2 id="four-layers-of-appearance">Four layers of appearance</h2>
+
+<p>From the most automatic to the most hands-on:</p>
+
+<ol>
+  <li><strong>The style (<code class="language-plaintext highlighter-rouge">QStyle</code>).</strong> The object that knows how to draw every standard widget: a button, a scroll bar, a check box. On
+each platform Qt picks the native one. <em>Fusion</em> is a built-in cross-platform style that looks the same everywhere.</li>
+  <li><strong>The palette (<code class="language-plaintext highlighter-rouge">QPalette</code>).</strong> A table of named colors (<em>roles</em>) that the style draws with: <code class="language-plaintext highlighter-rouge">Window</code> (the background),
+<code class="language-plaintext highlighter-rouge">Base</code> (the background of lists and text boxes), <code class="language-plaintext highlighter-rouge">Text</code>, <code class="language-plaintext highlighter-rouge">Highlight</code> (the selection color), <code class="language-plaintext highlighter-rouge">Mid</code>, <code class="language-plaintext highlighter-rouge">Midlight</code>, <code class="language-plaintext highlighter-rouge">Dark</code>, and
+so on. Each role has three states: active, inactive and disabled.</li>
+  <li><strong>Style sheets (QSS).</strong> A subset of CSS that overrides how standard widgets are drawn: borders, radii, backgrounds, padding.</li>
+  <li><strong>Custom painting.</strong> Overriding <code class="language-plaintext highlighter-rouge">paintEvent</code> and drawing the widget yourself with <code class="language-plaintext highlighter-rouge">QPainter</code>.</li>
+</ol>
+
+<p>Alto uses all four, each where it fits:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Need</th>
+      <th>Layer</th>
+      <th>Where</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Light, dark or follow-the-system</td>
+      <td>Palette (through the color scheme)</td>
+      <td><code class="language-plaintext highlighter-rouge">alto/ui/theme.py</code></td>
+    </tr>
+    <tr>
+      <td>Rounded buttons, check boxes, lists, menus, scroll bars</td>
+      <td>Style sheet</td>
+      <td><code class="language-plaintext highlighter-rouge">alto/ui/style.py</code></td>
+    </tr>
+    <tr>
+      <td>Switches, theme cards, charts, the staff, the keyboard</td>
+      <td>Custom painting</td>
+      <td><code class="language-plaintext highlighter-rouge">settings_menu.py</code>, <code class="language-plaintext highlighter-rouge">app_settings.py</code>, <code class="language-plaintext highlighter-rouge">charts.py</code>, <code class="language-plaintext highlighter-rouge">staff.py</code>, <code class="language-plaintext highlighter-rouge">keyboard.py</code></td>
+    </tr>
+    <tr>
+      <td>Monochrome icons that match the text color</td>
+      <td>SVG, tinted and rendered</td>
+      <td><code class="language-plaintext highlighter-rouge">alto/ui/icons.py</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="themes-the-color-scheme-and-the-palette">Themes: the color scheme and the palette</h2>
+
+<p>Since Qt 6.8 you can tell Qt which color scheme to use: <code class="language-plaintext highlighter-rouge">QGuiApplication.styleHints().setColorScheme(Qt.ColorScheme.Dark)</code>.
+Qt then switches the palette. <code class="language-plaintext highlighter-rouge">Qt.ColorScheme.Unknown</code> means “follow the operating system”. <code class="language-plaintext highlighter-rouge">apply_theme</code> does exactly this,
+then builds the style sheet from the new palette:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">apply_theme</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">QGuiApplication</span><span class="p">.</span><span class="n">styleHints</span><span class="p">().</span><span class="n">setColorScheme</span><span class="p">(</span><span class="n">_SCHEMES</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Qt</span><span class="p">.</span><span class="n">ColorScheme</span><span class="p">.</span><span class="n">Unknown</span><span class="p">))</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">.</span><span class="n">instance</span><span class="p">()</span>
+    <span class="n">app</span><span class="p">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">app_style</span><span class="p">(</span><span class="n">app</span><span class="p">.</span><span class="n">palette</span><span class="p">()))</span>
+</code></pre></div></div>
+
+<p>The chosen theme is saved (<code class="language-plaintext highlighter-rouge">ui/theme</code>) and applied again at start-up, before any window exists.</p>
+
+<p>The rule that makes theming work: <strong>take colors from the palette, never from a constant.</strong> A widget that paints with
+<code class="language-plaintext highlighter-rouge">palette.color(QPalette.ColorRole.Text)</code> is correct in both themes; one that paints with <code class="language-plaintext highlighter-rouge">QColor("black")</code> is correct in one.
+The staff is deliberately a white “paper” in both themes, because music reads best black on white; that is a design decision,
+not an oversight.</p>
+
+<h2 id="style-sheets-in-practice">Style sheets, in practice</h2>
+
+<p>Alto’s standard push buttons have a one-pixel border and share the ten-pixel corner radius used by its fields.
+In dark mode, exercise tile outlines are near black (<code class="language-plaintext highlighter-rouge">#181818</code>) and other standard button outlines are graphite gray (<code class="language-plaintext highlighter-rouge">#505050</code>).
+Hover tints the surface. Keyboard focus adds a second pixel to the outline and reduces the padding so the label stays in place.
+Pressed and checked buttons use the theme’s accent color.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">QPushButton</span> <span class="p">{</span>
+    <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="err">&lt;</span><span class="n">edge</span> <span class="n">color</span><span class="err">&gt;</span><span class="p">;</span>
+    <span class="nl">border-radius</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
+    <span class="nl">padding</span><span class="p">:</span> <span class="m">6px</span> <span class="m">12px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">QPushButton</span><span class="nd">:focus</span> <span class="p">{</span> <span class="nl">border</span><span class="p">:</span> <span class="m">2px</span> <span class="nb">solid</span> <span class="n">palette</span><span class="p">(</span><span class="n">highlight</span><span class="p">);</span> <span class="nl">padding</span><span class="p">:</span> <span class="m">5px</span> <span class="m">11px</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>Selectors.</strong> <code class="language-plaintext highlighter-rouge">QPushButton</code> matches the class and its subclasses; <code class="language-plaintext highlighter-rouge">QListWidget#nav</code> matches the one with
+<code class="language-plaintext highlighter-rouge">setObjectName("nav")</code>; <code class="language-plaintext highlighter-rouge">QToolButton[arrowButton="true"]</code> matches a widget with that <em>dynamic property</em>
+(<code class="language-plaintext highlighter-rouge">widget.setProperty("arrowButton", True)</code>). If you set a property after the widget is shown, call
+<code class="language-plaintext highlighter-rouge">widget.style().unpolish(widget)</code> and <code class="language-plaintext highlighter-rouge">.polish(widget)</code> so the sheet is applied again.</li>
+  <li><strong>Pseudo-states</strong> (<code class="language-plaintext highlighter-rouge">:hover</code>, <code class="language-plaintext highlighter-rouge">:pressed</code>, <code class="language-plaintext highlighter-rouge">:checked</code>, <code class="language-plaintext highlighter-rouge">:disabled</code>) and <strong>sub-controls</strong> (<code class="language-plaintext highlighter-rouge">::indicator</code>, <code class="language-plaintext highlighter-rouge">::item</code>, <code class="language-plaintext highlighter-rouge">::handle</code>)
+name the parts of a widget you can style separately.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">palette(highlight)</code></strong> reads a palette role, so a sheet can follow the theme without Python.</li>
+  <li><strong>The box model</strong> is the same as CSS: content, padding, border, margin.</li>
+  <li><strong>A widget that gets a style sheet is drawn by a different code path.</strong> Once you style a part of a widget, Qt stops using the
+platform style for it and you must style the rest, or it looks half done. Styling <code class="language-plaintext highlighter-rouge">QCheckBox::indicator</code> means styling its
+checked, hover and disabled states too, as <code class="language-plaintext highlighter-rouge">style.py</code> does.</li>
+  <li><strong>What QSS cannot do.</strong> It cannot animate (a <code class="language-plaintext highlighter-rouge">:hover</code> change is instant), cannot draw arbitrary shapes, and gradients are
+limited to <code class="language-plaintext highlighter-rouge">qlineargradient</code> and <code class="language-plaintext highlighter-rouge">qradialgradient</code>. For those, paint it yourself.</li>
+</ul>
+
+<p>Alto’s sheet is one Python string template in <code class="language-plaintext highlighter-rouge">alto/ui/style.py</code>, filled with <code class="language-plaintext highlighter-rouge">str.format</code> using colors computed from the
+current palette:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">return</span> <span class="n">_TEMPLATE</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">RADIUS</span><span class="o">=</span><span class="n">RADIUS</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="n">dark</span><span class="p">,</span> <span class="n">accent</span><span class="o">=</span><span class="n">accent_c</span><span class="p">.</span><span class="n">name</span><span class="p">(),</span> <span class="n">nav_hover</span><span class="o">=</span><span class="n">blend_name</span><span class="p">(</span><span class="n">window_c</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">text_c</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">0.07</span><span class="p">),</span> <span class="p">...)</span>
+</code></pre></div></div>
+
+<p>Because <code class="language-plaintext highlighter-rouge">.format</code> treats <code class="language-plaintext highlighter-rouge">{</code> and <code class="language-plaintext highlighter-rouge">}</code> as fields, every brace that is really CSS is doubled in the template. If you add a rule
+and get a <code class="language-plaintext highlighter-rouge">KeyError</code> or <code class="language-plaintext highlighter-rouge">IndexError</code>, you forgot to double a brace. The sheet is rebuilt on every theme change, since the
+colors come from the palette.</p>
+
+<h3 id="numeric-fields">Numeric fields</h3>
+
+<p>Use a standard <code class="language-plaintext highlighter-rouge">QSpinBox</code> for an editable integer, as in <strong>Settings → Practice</strong> and the exercise’s <strong>Daily Limits</strong> submenu. The application stylesheet centers the value and gives the field the same rounded corners, heavier lower edge, and accent focus outline as Alto’s other fields. The two chevrons share a narrow column on the right. Qt handles stepping, typed input, and range limits.</p>
+
+<p>Place the label above the field, associate it with the field using <code class="language-plaintext highlighter-rouge">label.setBuddy(field)</code>, and give the field the same accessible name. Keep the control at its natural width. Check the widest allowed value, both step buttons, keyboard focus, and disabled text with the application stylesheet in light and dark themes.</p>
+
+<h2 id="painting-your-own-widgets">Painting your own widgets</h2>
+
+<p>When no sheet can do it, draw it. The <code class="language-plaintext highlighter-rouge">Switch</code> in <code class="language-plaintext highlighter-rouge">settings_menu.py</code> is a good small example: about thirty lines of
+<code class="language-plaintext highlighter-rouge">paintEvent</code> give a pill-shaped track whose color is a blend between the “off” and “on” palette colors, and a white knob
+that slides.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">track</span> <span class="o">=</span> <span class="n">blend</span><span class="p">(</span><span class="n">off</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">on</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_pos</span><span class="p">)</span>  <span class="c1"># _pos goes 0 -&gt; 1 while the knob slides
+</span><span class="n">p</span><span class="p">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">rect</span><span class="p">(),</span> <span class="bp">self</span><span class="p">.</span><span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">margin</span> <span class="o">+</span> <span class="n">r</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">_pos</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">W</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">margin</span> <span class="o">+</span> <span class="n">r</span><span class="p">))</span>
+<span class="n">p</span><span class="p">.</span><span class="n">drawEllipse</span><span class="p">(</span><span class="n">QPointF</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Patterns to copy:</p>
+
+<ul>
+  <li><strong>State in numbers, drawing from numbers.</strong> The widget holds <code class="language-plaintext highlighter-rouge">_pos</code>, a float. Animation changes the number and calls
+<code class="language-plaintext highlighter-rouge">update()</code>. Painting reads the number. There is no separate “off look” and “on look”.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">blend(a, b=, t=)</code></strong> in <code class="language-plaintext highlighter-rouge">alto/ui/colors.py</code> mixes two colors linearly. It is the workhorse: hover tints, disabled states,
+the fade on a right or wrong answer.</li>
+  <li><strong>Read the palette inside <code class="language-plaintext highlighter-rouge">paintEvent</code>,</strong> not in <code class="language-plaintext highlighter-rouge">__init__</code>, so a theme change shows up on the next repaint.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">sizeHint()</code></strong> must be right, or layouts will squash the widget.</li>
+  <li><strong>Keep drawing code free of side effects.</strong> <code class="language-plaintext highlighter-rouge">paintEvent</code> can be called at any time and as often as Qt likes.</li>
+</ul>
+
+<h2 id="color-the-ideas-worth-knowing">Color: the ideas worth knowing</h2>
+
+<ul>
+  <li><strong>sRGB and gamma.</strong> Screen colors are stored in sRGB, which is not linear in light. Mixing two sRGB colors with plain
+arithmetic, as <code class="language-plaintext highlighter-rouge">blend</code> does, gives a result a little darker in the middle than a physically correct mix. For UI tints that is
+fine and common. For anything that must be perceptually even (a heat map), use a designed palette. See Poynton in the reading
+list.</li>
+  <li><strong>Contrast.</strong> Text must be readable against its background. The WCAG guidelines define a contrast ratio from the relative
+luminance of two colors and ask for at least 4.5:1 for body text. When you add a color, check it in both themes.</li>
+  <li><strong>Do not rely on color alone.</strong> About one man in twelve cannot distinguish red from green. Alto marks right and wrong answers
+with green and red flashes, and shows the explanation as text as well. If you add a chart
+that needs red against green to be read, add a second cue (position, a label, a pattern) or pick a color-blind-safe pair
+such as blue and orange.</li>
+  <li><strong>Sequential palettes.</strong> The review heatmap uses one hue in steps of lightness, which reads as “more”. That is the right choice
+for ordered data. Cynthia Brewer’s ColorBrewer scheme names (sequential, diverging, qualitative) are the vocabulary.</li>
+  <li><strong>Alpha.</strong> A color with transparency (<code class="language-plaintext highlighter-rouge">setAlpha(110)</code>) is the cheapest way to dim something, as <code class="language-plaintext highlighter-rouge">Switch</code> does when disabled.</li>
+</ul>
+
+<h2 id="icons">Icons</h2>
+
+<p><code class="language-plaintext highlighter-rouge">alto/ui/icons.py</code> holds icons as snippets of SVG with the word <code class="language-plaintext highlighter-rouge">COLOR</code> where the fill goes. <code class="language-plaintext highlighter-rouge">svg_icon(inner, color=...)</code>
+replaces it, renders the SVG with <code class="language-plaintext highlighter-rouge">QSvgRenderer</code> into a pixmap twice the size, sets the <strong>device pixel ratio</strong> to 2 so it is
+sharp on a high-resolution screen, and returns a <code class="language-plaintext highlighter-rouge">QIcon</code>. Pass the text color from the palette and the icon matches the theme.</p>
+
+<p>Because the color is baked into the pixmap when the icon is made, an icon does not change by itself when the theme changes.
+That is why changing the theme builds a fresh <code class="language-plaintext highlighter-rouge">MainWindow</code> (<code class="language-plaintext highlighter-rouge">rebuild()</code>): it is simpler than finding and refreshing every
+icon, and a theme change is rare.</p>
+
+<h2 id="fonts">Fonts</h2>
+
+<p>A <code class="language-plaintext highlighter-rouge">QFont</code> names a family and a size. Prefer <strong>pixel size</strong> (<code class="language-plaintext highlighter-rouge">setPixelSize</code>) for drawing that must line up with other geometry,
+as the staff does, and point size for ordinary text. Fonts that ship with the program are loaded with
+<code class="language-plaintext highlighter-rouge">QFontDatabase.addApplicationFont(path)</code>, which returns an id you can turn into the family name; this is how the music fonts in
+<code class="language-plaintext highlighter-rouge">alto/assets/fonts</code> are used (see <a href="/alto/pr-99/dev/guide/notation/">Rendering music notation</a>). Always give a fallback:
+if a font is missing on the machine, Qt substitutes one silently.</p>
+
+<h2 id="visual-design-vocabulary">Visual design vocabulary</h2>
+
+<p>A few terms, so you can search for the right thing:</p>
+
+<ul>
+  <li><strong>Elevation</strong> is the impression that a surface sits above another; Alto fakes it with the heavier lower border on buttons.
+<code class="language-plaintext highlighter-rouge">QGraphicsDropShadowEffect</code> makes real shadows but costs performance on every repaint.</li>
+  <li><strong>Affordance</strong> is what a control’s appearance says about what you can do with it. A raised button invites pressing.</li>
+  <li><strong>Design tokens</strong> are named values (a radius, a spacing, an accent color) used everywhere instead of literals. <code class="language-plaintext highlighter-rouge">RADIUS</code> in
+<code class="language-plaintext highlighter-rouge">style.py</code> is one; changing it changes every corner.</li>
+  <li><strong>Skeuomorphism and flat design</strong> are the two ends of a style spectrum. Alto sits in the middle: flat, with small cues.</li>
+  <li><strong>A spacing scale</strong> (multiples of 4 or 8 pixels) keeps layouts feeling regular.</li>
+</ul>
+
+<h2 id="the-docs-site">The docs site</h2>
+
+<p>The website in <code class="language-plaintext highlighter-rouge">docs/</code> has its own theme in <code class="language-plaintext highlighter-rouge">docs/assets/css/site.css</code>, written with CSS <strong>custom properties</strong> (variables such
+as <code class="language-plaintext highlighter-rouge">--fg</code> and <code class="language-plaintext highlighter-rouge">--accent</code>) that are redefined for dark mode, both from the operating system (<code class="language-plaintext highlighter-rouge">prefers-color-scheme</code>) and from a
+toggle that sets <code class="language-plaintext highlighter-rouge">data-theme</code> on the page. The screenshots come in a light and a dark pair for the same reason. See
+<a href="/alto/pr-99/dev/development/">For developers</a>.</p>
+
+<h2 id="a-checklist-for-a-new-themed-widget">A checklist for a new themed widget</h2>
+
+<ol>
+  <li>Take every color from the palette or from <code class="language-plaintext highlighter-rouge">blend</code> of palette colors.</li>
+  <li>Paint in <code class="language-plaintext highlighter-rouge">paintEvent</code>; change state, then call <code class="language-plaintext highlighter-rouge">update()</code>.</li>
+  <li>Set a correct <code class="language-plaintext highlighter-rouge">sizeHint</code>.</li>
+  <li>Look at it in both themes, with the screenshot script or by running the app and switching.</li>
+  <li>Add a test that grabs it (<code class="language-plaintext highlighter-rouge">widget.grab()</code>) and checks it is not blank, as <code class="language-plaintext highlighter-rouge">tests/test_rendering.py</code> does.</li>
+</ol>
+
+<h2 id="further-reading">Further reading</h2>
+
+<ul>
+  <li>The Qt documentation: “Qt Style Sheets” (including the Reference and the Examples, which show every widget), “QPalette”,
+“QStyle”, and “Styles and Style Aware Widgets”, at doc.qt.io.</li>
+  <li><em>Web Content Accessibility Guidelines (WCAG) 2.1</em>, World Wide Web Consortium Recommendation, w3.org/TR/WCAG21: the
+“Contrast (Minimum)” criterion, 1.4.3, and “Use of Color”, 1.4.1.</li>
+  <li>Charles Poynton, <em>Digital Video and HD: Algorithms and Interfaces</em>, 2nd ed. (Morgan Kaufmann, 2012): gamma, luminance and
+color spaces from the source.</li>
+  <li>Cynthia A. Brewer, <em>Designing Better Maps: A Guide for GIS Users</em> (Esri Press, 2005): the thinking behind ColorBrewer.</li>
+  <li>Edward R. Tufte, <em>The Visual Display of Quantitative Information</em>, 2nd ed. (Graphics Press, 2001): charts, ink and clutter.</li>
+  <li>Donald A. Norman, <em>The Design of Everyday Things</em>, revised ed. (Basic Books, 2013): affordances and feedback.</li>
+  <li>Ellen Lupton, <em>Thinking with Type</em>, 2nd ed. (Princeton Architectural Press, 2010): type for people who are not designers.</li>
+  <li>Steve Krug, <em>Don’t Make Me Think, Revisited</em> (New Riders, 2014): usability in short chapters.</li>
+  <li>Apple, <em>Human Interface Guidelines</em>, and Google, <em>Material Design</em> guidelines: two worked-out design systems to learn from.</li>
+</ul>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-99/dev/guide/qt/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Qt and PySide6</span></a>
+            <a class="next" href="/alto/pr-99/dev/guide/notation/" rel="next"><span class="np-label">Next</span><span class="np-title">Rendering music notation<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-99/dev/assets/js/nav.js?v=1795453315" defer></script>
+  <script src="/alto/pr-99/dev/assets/js/toc.js?v=1795453315" defer></script>
+  
+</body>
+</html>
