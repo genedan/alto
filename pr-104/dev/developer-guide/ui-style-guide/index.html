@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UI style guide · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-104/latest/developer-guide/ui-style-guide/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="UI style guide · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-104/latest/developer-guide/ui-style-guide/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-104/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-104/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-104/dev/assets/css/site.css?v=1795468296">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-104/dev/">
+      <img src="/alto/pr-104/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-104/dev/" aria-label="Documentation preview for PR #104">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #104
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-104/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-104/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-104/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/developer-guide/ui-style-guide/" aria-current="page">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-104/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-104/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-104/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-104/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>UI style guide</h1>
+          <p>Alto <strong>0.0.2</strong> is the visual reference for future releases. Keep the documented appearance until the project owner requests a change. Select either image in a pair to inspect the original PNG at full size. Both images stay visible in either website theme.</p>
+
+<h2 id="component-map">Component map</h2>
+
+<div class="reference-map" data-image-root="/alto/pr-104/dev/assets/ui-reference/v0.0.2/">
+  <p>Choose a screen, then select a numbered marker or its name below the image. Switch between Light and Dark to follow the same component.</p>
+  <div class="reference-map-controls" hidden="">
+    <label>Screen <select><option value="home">Exercise catalog</option><option value="note-identification">Exercise workspace</option><option value="lesson-workspace">Lesson reader</option><option value="database">Database</option><option value="stats">Statistics</option></select></label>
+    <fieldset><legend>Screenshot theme</legend>
+      <label><input type="radio" name="reference-mode" value="light" checked="" /> Light</label>
+      <label><input type="radio" name="reference-mode" value="dark" /> Dark</label>
+    </fieldset>
+  </div>
+  <div class="reference-map-picture">
+    <img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/home.png" width="1100" height="720" alt="Exercise catalog in Default Light" />
+    <div class="reference-map-markers"></div>
+  </div>
+  <div class="reference-map-detail" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div class="reference-map-key" role="group" aria-label="Components on this screen"></div>
+  <noscript>The component color table and full-size screenshots follow below.</noscript>
+  <script type="application/json">[{"name":"Window, toolbar, and space between tiles","screen":"home","light":"#efefef","dark":"#2a2a2a","points":[[85,400],[85,400]],"detail":"The empty space to the left of the exercise tiles shows the window color. The toolbar uses the same background."},{"name":"Tile, field, and standard button face","screen":"home","light":"#ffffff","dark":"#2a2a2a","points":[[424,364],[424,364]],"detail":"Look inside the Interval Identification tile, beside its symbol. Standard buttons and form fields use this face color too."},{"name":"Main text and inactive navigation icons","screen":"home","light":"#000000","dark":"#ffffff","points":[[549,30],[548,27]],"detail":"The letters in the window title use the foreground color. Inactive navigation icons use it too."},{"name":"Exercise tile outline","screen":"home","light":"#b0b0b0","dark":"#181818","points":[[883,109],[883,106]],"detail":"The thin top edge of the Clef Basics tile separates its face from the window."},{"name":"Lesson tile and standard button outline","screen":"note-identification","light":"#b0b0b0","dark":"#505050","points":[[615,491],[615,488]],"detail":"Follow the top edge of the E answer button. Lesson tiles use the same outline as these buttons."},{"name":"Toolbar search field","screen":"home","light":"#e5e5e5","dark":"#333333","points":[[175,74],[175,74]],"detail":"The area behind the search hint is slightly darker than the Light window and slightly lighter than the Dark window."},{"name":"Toolbar search outline and divider","screen":"home","light":"#bababa","dark":"#595959","points":[[297,55],[297,52]],"detail":"The thin top edge encloses the search field. Focusing the field changes this edge to the accent color."},{"name":"Accent for selections and focused fields","screen":"database","light":"#308cc6","dark":"#006fe2","points":[[35,118],[35,118]],"detail":"The filled Answers button shows which database table is open. Its blue fill is the selection accent."},{"name":"Selected navigation row background","screen":"note-identification","light":"#c9dbe7","dark":"#22384f","points":[[256,153],[255,152]],"detail":"The tint behind Note Identification marks the current exercise in the sidebar."},{"name":"Panel outline and scrollbar thumb","screen":"note-identification","light":"#b8b8b8","dark":"#2f2f2f","points":[[333,422],[333,422]],"detail":"The vertical thumb at the right edge of the exercise list shows how far the list can scroll. Panel borders use the same color."},{"name":"Alternate database row","screen":"database","light":"#f7f7f7","dark":"#272727","points":[[646,232],[646,232]],"detail":"Compare the background of this row with the rows directly above and below it. Every other database row uses this shade."},{"name":"Lesson knowledge check background","screen":"lesson-workspace","light":"#e6f1f8","dark":"#253240","points":[[761,420],[760,440]],"detail":"The area behind the knowledge-check question and its two answers has a faint accent tint."},{"name":"Staff paper","screen":"note-identification","light":"#ffffff","dark":"#ffffff","points":[[636,202],[636,202]],"detail":"The open area above the staff stays white in both modes."},{"name":"Standard notation ink","screen":"note-identification","light":"#000000","dark":"#000000","points":[[769,256],[764,262]],"detail":"The black notehead and staff lines use notation ink in both modes."},{"name":"Correct answer and correct-attempt bar","screen":"stats","light":"#2e7d32","dark":"#2e7d32","points":[[388,460],[388,456]],"detail":"Green in the weekly question chart counts correct attempts. Correct-answer feedback uses the same green."},{"name":"Incorrect answer and incorrect-attempt bar","screen":"stats","light":"#c62828","dark":"#c62828","points":[[205,429],[205,417]],"detail":"The red cap on a weekly bar counts incorrect attempts. Incorrect-answer feedback uses the same red."}]</script>
+</div>
+<script defer="" src="/alto/pr-104/dev/assets/js/reference-map.js"></script>
+
+<h2 id="component-colors">Component colors</h2>
+
+<p>Both columns use <strong>Settings → Appearance → Theme → Default</strong>. The Light column uses the release’s light palette. The Dark column shows the release running on Ubuntu GNOME with Qt 6.12.0 on Wayland. Default takes colors from Qt, so desktop settings and the platform can affect exact values. For a cross-platform comparison, check which surfaces share a color, where outlines are visible, and which controls take the accent.</p>
+
+<table>
+  <thead><tr><th scope="col">Component</th><th scope="col">Light</th><th scope="col">Dark</th></tr></thead>
+  <tbody>
+    <tr><td><a href="#component-map" data-map-row="0">Window, toolbar, and space between tiles</a></td><td><span class="reference-swatch" style="background-color: #efefef" aria-hidden="true"></span><code>#efefef</code></td><td><span class="reference-swatch" style="background-color: #2a2a2a" aria-hidden="true"></span><code>#2a2a2a</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="1">Tile, field, and standard button face</a></td><td><span class="reference-swatch" style="background-color: #ffffff" aria-hidden="true"></span><code>#ffffff</code></td><td><span class="reference-swatch" style="background-color: #2a2a2a" aria-hidden="true"></span><code>#2a2a2a</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="2">Main text and inactive navigation icons</a></td><td><span class="reference-swatch" style="background-color: #000000" aria-hidden="true"></span><code>#000000</code></td><td><span class="reference-swatch" style="background-color: #ffffff" aria-hidden="true"></span><code>#ffffff</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="3">Exercise tile outline</a></td><td><span class="reference-swatch" style="background-color: #b0b0b0" aria-hidden="true"></span><code>#b0b0b0</code></td><td><span class="reference-swatch" style="background-color: #181818" aria-hidden="true"></span><code>#181818</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="4">Lesson tile and standard button outline</a></td><td><span class="reference-swatch" style="background-color: #b0b0b0" aria-hidden="true"></span><code>#b0b0b0</code></td><td><span class="reference-swatch" style="background-color: #505050" aria-hidden="true"></span><code>#505050</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="5">Toolbar search field</a></td><td><span class="reference-swatch" style="background-color: #e5e5e5" aria-hidden="true"></span><code>#e5e5e5</code></td><td><span class="reference-swatch" style="background-color: #333333" aria-hidden="true"></span><code>#333333</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="6">Toolbar search outline and divider</a></td><td><span class="reference-swatch" style="background-color: #bababa" aria-hidden="true"></span><code>#bababa</code></td><td><span class="reference-swatch" style="background-color: #595959" aria-hidden="true"></span><code>#595959</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="7">Accent for selections and focused fields</a></td><td><span class="reference-swatch" style="background-color: #308cc6" aria-hidden="true"></span><code>#308cc6</code></td><td><span class="reference-swatch" style="background-color: #006fe2" aria-hidden="true"></span><code>#006fe2</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="8">Selected navigation row background</a></td><td><span class="reference-swatch" style="background-color: #c9dbe7" aria-hidden="true"></span><code>#c9dbe7</code></td><td><span class="reference-swatch" style="background-color: #22384f" aria-hidden="true"></span><code>#22384f</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="9">Panel outline and scrollbar thumb</a></td><td><span class="reference-swatch" style="background-color: #b8b8b8" aria-hidden="true"></span><code>#b8b8b8</code></td><td><span class="reference-swatch" style="background-color: #2f2f2f" aria-hidden="true"></span><code>#2f2f2f</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="10">Alternate database row</a></td><td><span class="reference-swatch" style="background-color: #f7f7f7" aria-hidden="true"></span><code>#f7f7f7</code></td><td><span class="reference-swatch" style="background-color: #272727" aria-hidden="true"></span><code>#272727</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="11">Lesson knowledge check background</a></td><td><span class="reference-swatch" style="background-color: #e6f1f8" aria-hidden="true"></span><code>#e6f1f8</code></td><td><span class="reference-swatch" style="background-color: #253240" aria-hidden="true"></span><code>#253240</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="12">Staff paper</a></td><td><span class="reference-swatch" style="background-color: #ffffff" aria-hidden="true"></span><code>#ffffff</code></td><td><span class="reference-swatch" style="background-color: #ffffff" aria-hidden="true"></span><code>#ffffff</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="13">Standard notation ink</a></td><td><span class="reference-swatch" style="background-color: #000000" aria-hidden="true"></span><code>#000000</code></td><td><span class="reference-swatch" style="background-color: #000000" aria-hidden="true"></span><code>#000000</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="14">Correct answer and correct-attempt bar</a></td><td><span class="reference-swatch" style="background-color: #2e7d32" aria-hidden="true"></span><code>#2e7d32</code></td><td><span class="reference-swatch" style="background-color: #2e7d32" aria-hidden="true"></span><code>#2e7d32</code></td></tr>
+  
+    <tr><td><a href="#component-map" data-map-row="15">Incorrect answer and incorrect-attempt bar</a></td><td><span class="reference-swatch" style="background-color: #c62828" aria-hidden="true"></span><code>#c62828</code></td><td><span class="reference-swatch" style="background-color: #c62828" aria-hidden="true"></span><code>#c62828</code></td></tr>
+  </tbody>
+</table>
+
+<h3 id="control-states">Control states</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Control</th>
+      <th>Appearance and interaction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Standard push button</td>
+      <td>The resting face uses the tile color and a one-pixel outline. Hover blends 25% accent into the face. Keyboard focus thickens the outline to two pixels. Hover and focus use the accent outline in Light and a lighter graphite outline in Dark. Pressed or checked buttons fill with the accent. Disabled buttons blend into the window and their labels lose contrast.</td>
+    </tr>
+    <tr>
+      <td>Toolbar and navigation</td>
+      <td>Inactive toolbar symbols use the window text color. The active view uses an accent-colored symbol. A selected exercise, category, or settings row puts accent text on a soft background made from 80% window color and 20% accent. The toolbar search outline switches to the accent when its text field has focus.</td>
+    </tr>
+    <tr>
+      <td>Text field, dropdown, and number field</td>
+      <td>Shared form fields have a base-colored face, rounded corners, and a heavier lower edge. Focus accents the border. The dropdown’s open outer popup is rounded, with a panel-colored list and an accent highlight on the selected item. A number field centers its value beside two stacked arrows.</td>
+    </tr>
+    <tr>
+      <td>Checkbox and radio button</td>
+      <td>An empty indicator uses the panel color and a visible outline. Hover accents the outline. A checked box shows a white tick on accent, and a selected radio shows a white dot inside an accent ring. Disabled indicators use a muted outline or a faded accent.</td>
+    </tr>
+    <tr>
+      <td>Menu and tab</td>
+      <td>The application menu blends 7% text color into the window color. Its highlighted row uses a solid accent with contrasting text. In a settings tab strip, the active tab uses accent text and a thin accent underline.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="profiles">Profiles</h2>
+
+<p>In <strong>Welcome to Alto</strong>, the name field and Create profile button sit on the window gray. In the Light capture, the focused field has a colored edge. In the returning-profile chooser, the list has its own panel surface, and the selected name has a tinted background. Check the empty list area as well as the selected row.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-create.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-create.png" loading="lazy" alt="Light mode. Welcome dialog with a focused name field and Create profile button." /></a>
+      <figcaption>Profile creation · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-create-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-create-dark.png" loading="lazy" alt="Dark mode. Welcome dialog with a focused name field and Create profile button." /></a>
+      <figcaption>Profile creation · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-picker.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-picker.png" loading="lazy" alt="Light mode. Ada selected in the profile list above the new-profile field." /></a>
+      <figcaption>Profile chooser · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-picker-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/profile-picker-dark.png" loading="lazy" alt="Dark mode. Ada selected in the profile list above the new-profile field." /></a>
+      <figcaption>Profile chooser · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="exercise-and-lesson-catalogs">Exercise and lesson catalogs</h2>
+
+<p>Compare the gap between cards, the center of a card, and the search field above the grid. In Light these are three distinct grays from white to pale gray. In the Dark capture, the tile face and the window share the same charcoal. The outline separates each tile from the space around it. Exercise cards have a near-black outline. Lesson cards have a lighter graphite outline. Both catalogs use the text color for the central musical icon and gray for the category and description.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/home.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/home.png" loading="lazy" alt="Light mode. Search bar above a grid of exercise tiles with musical icons." /></a>
+      <figcaption>Exercise catalog · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/home-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/home-dark.png" loading="lazy" alt="Dark mode. Search bar above a grid of exercise tiles with musical icons." /></a>
+      <figcaption>Exercise catalog · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-tiles.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-tiles.png" loading="lazy" alt="Light mode. Two rows of lesson tiles below the active Lessons toolbar icon." /></a>
+      <figcaption>Lesson catalog · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-tiles-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-tiles-dark.png" loading="lazy" alt="Dark mode. Two rows of lesson tiles below the active Lessons toolbar icon." /></a>
+      <figcaption>Lesson catalog · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<p>The open filter pane shows all three checkbox states. Fully checked groups carry a tick, partially checked groups carry a dash, and empty boxes retain their outline. The filter icon uses the accent while a filter is active.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/filtered-practice.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/filtered-practice.png" loading="lazy" alt="Light mode. Two exercise tiles beside the open category tree with checked and unchecked items." /></a>
+      <figcaption>Catalog filters · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/filtered-practice-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/filtered-practice-dark.png" loading="lazy" alt="Dark mode. Two exercise tiles beside the open category tree with checked and unchecked items." /></a>
+      <figcaption>Catalog filters · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="exercise-workspace-and-feedback">Exercise workspace and feedback</h2>
+
+<p>In Note Identification, the selected exercise has a softly tinted row in the left sidebar. The staff uses black notation on white paper in both modes. The letter buttons below it use the theme’s button face, so in dark mode the boundary between the paper and the answer controls is particularly clear.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/note-identification.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/note-identification.png" loading="lazy" alt="Light mode. A single note on white staff paper above the letter-name buttons." /></a>
+      <figcaption>Staff exercise · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/note-identification-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/note-identification-dark.png" loading="lazy" alt="Dark mode. A single note on white staff paper above the letter-name buttons." /></a>
+      <figcaption>Staff exercise · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<p>The <strong>Classic</strong> keyboard has off-white natural keys (<code class="language-plaintext highlighter-rouge">#fbfbfc</code>), near-black accidentals (<code class="language-plaintext highlighter-rouge">#1c1c20</code>), and a dark case (<code class="language-plaintext highlighter-rouge">#2b2b30</code>) in both modes. The key named in the question is highlighted with the accent. The Circle of Fifths provides a second comparison for an exercise with its own colored drawing. Check its labeled segments separately from the themed answer buttons underneath.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/keyboard.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/keyboard.png" loading="lazy" alt="Light mode. One piano key highlighted above two rows of answer buttons." /></a>
+      <figcaption>Keyboard exercise · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/keyboard-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/keyboard-dark.png" loading="lazy" alt="Dark mode. One piano key highlighted above two rows of answer buttons." /></a>
+      <figcaption>Keyboard exercise · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/circle-of-fifths.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/circle-of-fifths.png" loading="lazy" alt="Light mode. Colored sectors of the circle above a grid of answer choices." /></a>
+      <figcaption>Circle of Fifths · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/circle-of-fifths-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/circle-of-fifths-dark.png" loading="lazy" alt="Dark mode. Colored sectors of the circle above a grid of answer choices." /></a>
+      <figcaption>Circle of Fifths · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<p>After a correct answer, the written note turns green (<code class="language-plaintext highlighter-rouge">#2e7d32</code>) in either theme. In the self-grading view the letter buttons fade, and the grade buttons below them remain available. For exercises that animate correct pitches, the green highlight follows the sounding notes and clears at the end of playback.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/self-grading.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/self-grading.png" loading="lazy" alt="Light mode. Green note, disabled letter choices, and Hard, Good, and Easy review buttons." /></a>
+      <figcaption>Correct answer and review grades · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/self-grading-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/self-grading-dark.png" loading="lazy" alt="Dark mode. Green note, disabled letter choices, and Hard, Good, and Easy review buttons." /></a>
+      <figcaption>Correct answer and review grades · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="lesson-reader-and-glossary">Lesson reader and glossary</h2>
+
+<p>In the lesson reader, the selected outline row uses the navigation tint. The knowledge check has a lighter accent wash and a narrow solid accent rule at its left edge. In the glossary, the term list, definition, and related-activity area use the window color inside thin panel borders. The harmonic minor example shows the white notation paper, and the practice tiles below it reuse the exercise card styling.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-workspace.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-workspace.png" loading="lazy" alt="Light mode. Lesson outline beside High and low pitches, its sound example, and a tinted knowledge check." /></a>
+      <figcaption>Lesson reader · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-workspace-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/lesson-workspace-dark.png" loading="lazy" alt="Dark mode. Lesson outline beside High and low pitches, its sound example, and a tinted knowledge check." /></a>
+      <figcaption>Lesson reader · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/glossary.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/glossary.png" loading="lazy" alt="Light mode. Harmonic minor scale selected with a definition, staff example, and related practice tiles." /></a>
+      <figcaption>Glossary · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/glossary-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/glossary-dark.png" loading="lazy" alt="Dark mode. Harmonic minor scale selected with a definition, staff example, and related practice tiles." /></a>
+      <figcaption>Glossary · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="statistics">Statistics</h2>
+
+<p>The six totals sit on panel-colored tiles. In the volume chart, correct attempts are green (<code class="language-plaintext highlighter-rouge">#2e7d32</code>) and incorrect attempts are red (<code class="language-plaintext highlighter-rouge">#c62828</code>). The accuracy line and speed bars use the accent. The calendar uses a neutral square for a day with no reviews and increasingly strong green for busier days. These data colors have the same meanings in both modes.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats.png" loading="lazy" alt="Light mode. Summary tiles, stacked correct and incorrect attempts, daily accuracy, and speed bars." /></a>
+      <figcaption>Statistics overview · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats-dark.png" loading="lazy" alt="Dark mode. Summary tiles, stacked correct and incorrect attempts, daily accuracy, and speed bars." /></a>
+      <figcaption>Statistics overview · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats-heatmap.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats-heatmap.png" loading="lazy" alt="Light mode. Calendar of green review counts above the table of questions needing practice." /></a>
+      <figcaption>Review calendar · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats-heatmap-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/stats-heatmap-dark.png" loading="lazy" alt="Dark mode. Calendar of green review counts above the table of questions needing practice." /></a>
+      <figcaption>Review calendar · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="database-and-question-preview">Database and question preview</h2>
+
+<p>The selected table button uses solid accent. Compare adjacent rows in the body of the table. Light alternates white and <code class="language-plaintext highlighter-rouge">#f7f7f7</code>, and Dark alternates <code class="language-plaintext highlighter-rouge">#2a2a2a</code> and <code class="language-plaintext highlighter-rouge">#272727</code>. Column headings remain distinct above both. Opening a saved answer brings up a separate dialog with white notation paper, ordinary window-colored space for the answer details, and buttons along the bottom.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database.png" loading="lazy" alt="Light mode. Recorded attempts with alternating row colors under the selected Answers button." /></a>
+      <figcaption>Database · Answers · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database-dark.png" loading="lazy" alt="Dark mode. Recorded attempts with alternating row colors under the selected Answers button." /></a>
+      <figcaption>Database · Answers · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database-questions.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database-questions.png" loading="lazy" alt="Light mode. Question summaries with counts and scheduling details under the selected Questions button." /></a>
+      <figcaption>Database · Questions · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database-questions-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/database-questions-dark.png" loading="lazy" alt="Dark mode. Question summaries with counts and scheduling details under the selected Questions button." /></a>
+      <figcaption>Database · Questions · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/question-preview.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/question-preview.png" loading="lazy" alt="Light mode. Chord on a staff above the saved answer, timing, and playback controls." /></a>
+      <figcaption>Saved question · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/question-preview-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/question-preview-dark.png" loading="lazy" alt="Dark mode. Chord on a staff above the saved answer, timing, and playback controls." /></a>
+      <figcaption>Saved question · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="application-settings">Application settings</h2>
+
+<p>In <strong>Appearance → Theme</strong>, compare the selected category, selected family, and selected thumbnail. The two lists use a soft navigation tint. The active theme preview has a strong accent outline. Each miniature depicts its own palette, including the split light/dark preview for System. In <strong>Notation style</strong>, the selected card has a solid accent surround while the sheet inside the card stays white.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-theme.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-theme.png" loading="lazy" alt="Light mode. Theme families beside Light, Dark, and split System previews, with an outline around the current choice." /></a>
+      <figcaption>Theme chooser · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-theme-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-theme-dark.png" loading="lazy" alt="Dark mode. Theme families beside Light, Dark, and split System previews, with an outline around the current choice." /></a>
+      <figcaption>Theme chooser · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings.png" loading="lazy" alt="Light mode. A selected notation card among white-paper previews of music fonts." /></a>
+      <figcaption>Notation style · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-dark.png" loading="lazy" alt="Dark mode. A selected notation card among white-paper previews of music fonts." /></a>
+      <figcaption>Notation style · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<p><strong>Sound</strong> shows a selected instrument row alongside its detail panel. <strong>Practice</strong> shows checkboxes, editable limits, and a box around the selected profile’s options. The response-time dialog uses the accent for the filled length of each bar and a neutral track for the remaining width. <strong>Updates</strong> shows how enabled and disabled choices read against an open area of window color.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-sound.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-sound.png" loading="lazy" alt="Light mode. Instrument list with Viola selected beside its description and test controls." /></a>
+      <figcaption>Sound · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-sound-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-sound-dark.png" loading="lazy" alt="Dark mode. Instrument list with Viola selected beside its description and test controls." /></a>
+      <figcaption>Sound · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/practice-settings.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/practice-settings.png" loading="lazy" alt="Light mode. Scheduling options, checkboxes, and daily limits for the selected exercise." /></a>
+      <figcaption>Practice settings · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/practice-settings-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/practice-settings-dark.png" loading="lazy" alt="Dark mode. Scheduling options, checkboxes, and daily limits for the selected exercise." /></a>
+      <figcaption>Practice settings · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/response-times.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/response-times.png" loading="lazy" alt="Light mode. Two percentile settings and a horizontal distribution of answer times." /></a>
+      <figcaption>Response-time grading · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/response-times-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/response-times-dark.png" loading="lazy" alt="Dark mode. Two percentile settings and a horizontal distribution of answer times." /></a>
+      <figcaption>Response-time grading · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-updates.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-updates.png" loading="lazy" alt="Light mode. Update preferences and dependent controls beside the selected Updates category." /></a>
+      <figcaption>Updates · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-updates-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/settings-updates-dark.png" loading="lazy" alt="Dark mode. Update preferences and dependent controls beside the selected Updates category." /></a>
+      <figcaption>Updates · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="anki-export">Anki export</h2>
+
+<p>The exporter reuses the accent for selected checkboxes and the active export action. Compare those controls against the neutral pane containing the sample question. The export summary places the filename and deck tree on panel-colored surfaces, with a filled primary action and a neutral Cancel button.</p>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-exporter.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-exporter.png" loading="lazy" alt="Light mode. Exercise selection tree beside a preview of a question to export." /></a>
+      <figcaption>Anki exporter · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-exporter-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-exporter-dark.png" loading="lazy" alt="Dark mode. Exercise selection tree beside a preview of a question to export." /></a>
+      <figcaption>Anki exporter · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<div class="reference-pair">
+  
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-export-summary.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-export-summary.png" loading="lazy" alt="Light mode. Filename field, deck tree, card count, and final Export button." /></a>
+      <figcaption>Export summary · Light</figcaption>
+    </figure>
+  
+    
+    
+    <figure class="shot">
+      <a href="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-export-summary-dark.png"><img src="/alto/pr-104/dev/assets/ui-reference/v0.0.2/anki-export-summary-dark.png" loading="lazy" alt="Dark mode. Filename field, deck tree, card count, and final Export button." /></a>
+      <figcaption>Export summary · Dark</figcaption>
+    </figure>
+  
+</div>
+
+<h2 id="release-comparison">Release comparison</h2>
+
+<ol>
+  <li>Open the same screen at the same window size, theme, and display scale. Select a reference image to view it at its original dimensions. Compare solid pixels inside a surface or along a straight border. Rounded corners and glyph edges contain intermediate colors.</li>
+  <li>For a quick check, use the <strong>1100 × 720 exercise catalog</strong>. Measured from the top-left of either PNG, pixel <code class="language-plaintext highlighter-rouge">(10, 10)</code> is the window and <code class="language-plaintext highlighter-rouge">(85, 65)</code> is the search fill. Sample the top tile outline and the face just below it at <code class="language-plaintext highlighter-rouge">(200, 109)</code> and <code class="language-plaintext highlighter-rouge">(200, 110)</code> in Light, or <code class="language-plaintext highlighter-rouge">(200, 106)</code> and <code class="language-plaintext highlighter-rouge">(200, 107)</code> in Dark. Match these to the component table.</li>
+  <li>With Alto set to <strong>System</strong>, switch the desktop from light to dark and back while a lesson tile and the search field are visible. Check the tile face, border, musical glyph, toolbar icons, and search outline after each switch. Repeat with search focused and text entered. Its accent outline, text, and focus should survive the switch.</li>
+  <li>Keep release-candidate captures in a separate directory. On a GNOME Wayland session, run <code class="language-plaintext highlighter-rouge">QT_QPA_PLATFORM=wayland .venv/bin/python scripts/screenshots.py --require-native-theme --only home lesson-tiles stats --out /tmp/alto-candidate</code>. This option stops the capture if Qt cannot supply the requested mode. The reference PNGs live in <code class="language-plaintext highlighter-rouge">docs/assets/ui-reference/v0.0.2/</code>, outside the regular screenshot refresh. For an explicitly requested visual change, record the affected component and release, and keep the earlier reference available.</li>
+</ol>
+
+<p>The Light images come from the 0.0.2 release documentation, with the Theme chooser captured separately from the tag. All Dark images were captured from the same tagged source using a temporary profile, the native desktop palette, and one image pixel per logical pixel. The Theme chooser shows <strong>Default → Dark</strong> selected. For the palette and widget implementation, see <a href="/alto/pr-104/dev/guide/styling/">Styling beyond QtWidgets</a>.</p>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-104/dev/developer-guide/database/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Database</span></a>
+            <a class="next" href="/alto/pr-104/dev/guide/" rel="next"><span class="np-label">Next</span><span class="np-title">Resources<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-104/dev/assets/js/nav.js?v=1795468296" defer></script>
+  <script src="/alto/pr-104/dev/assets/js/toc.js?v=1795468296" defer></script>
+  
+</body>
+</html>
