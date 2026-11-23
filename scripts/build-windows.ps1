@@ -72,6 +72,8 @@ finally {
     Remove-Item Env:ALTO_ICON -ErrorAction SilentlyContinue
 }
 $Frozen = Join-Path $Work "dist\alto"
+$DependencyLicenses = Join-Path $Root "packaging\dependency_licenses.py"
+Run $Py @($DependencyLicenses, "copy", $Frozen)
 Run $Py @((Join-Path $Root "packaging\qt_sources.py"), $Frozen, (Join-Path $Root "dist\qt-sources"))
 
 # A program with no console prints nothing, so `--version` can only show that the imports worked, by ending with 0. The package's
@@ -116,6 +118,7 @@ RunAndWait $Setup ($Quiet + @("/CURRENTUSER", "/DIR=$Target", "/LOG=$(Join-Path 
 if (-not (Test-Path (Join-Path $Target "alto.exe"))) { throw "The installer did not install alto.exe in $Target" }
 Run (Join-Path $Target "alto.exe") @("--version")
 CheckStaysOpen (Join-Path $Target "alto.exe")
+Run $Py @($DependencyLicenses, "verify", $Target)
 foreach ($Notice in @("THIRD_PARTY_NOTICES.md", "licenses/Qt/README.txt", "licenses/Qt/upstream-notices.zip", "licenses/Qt/LGPL-3.0-only.txt", "licenses/Qt/GPL-3.0-only.txt")) {
     if (-not (Test-Path (Join-Path $Target $Notice))) { throw "The installer is missing $Notice" }
 }

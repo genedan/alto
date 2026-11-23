@@ -30,6 +30,7 @@ tar -C "$ROOT" --exclude=.git --exclude=.venv --exclude=.package-build --exclude
 (cd "$WORK" && "$WORK/venv/bin/pyinstaller" --noconfirm --clean --log-level WARN --distpath "$WORK/dist" --workpath "$WORK/work" "$ROOT/packaging/alto.spec")
 FROZEN="$WORK/dist/alto"
 "$WORK/venv/bin/python" "$ROOT/packaging/qt_sources.py" "$FROZEN" "$ROOT/dist/qt-sources"
+"$WORK/venv/bin/python" "$ROOT/packaging/dependency_licenses.py" copy "$FROZEN"
 cp "$ROOT/THIRD_PARTY_NOTICES.md" "$FROZEN/"
 
 # The frozen program must say what version it is, and must open its window. Nothing is drawn on a screen, and it uses its own folder
@@ -69,6 +70,9 @@ cp -R "$FROZEN" "$PACKAGE/alto"
 cp "$ROOT/packaging/linux/install.sh" "$ROOT/packaging/linux/README.txt" "$PACKAGE/"
 cp "$ROOT/LICENSE" "$ROOT/THIRD_PARTY_NOTICES.md" "$PACKAGE/"
 cp "$ROOT/alto/assets/icon-256.png" "$ROOT/alto/assets/icon.png" "$PACKAGE/icons/"
+# Install into a disposable prefix and compare the license files with the build wheels.
+ALTO_PREFIX="$WORK/install-check" XDG_DATA_HOME="$WORK/install-check/share" sh "$PACKAGE/install.sh" install
+"$WORK/venv/bin/python" "$ROOT/packaging/dependency_licenses.py" verify "$WORK/install-check/opt/alto"
 tar -C "$WORK" -czf "$ROOT/dist/$NAME.tar.gz" "$NAME"
 (cd "$ROOT/dist" && sha256sum "$NAME.tar.gz" >"$NAME.tar.gz.sha256")
 echo "Wrote dist/$NAME.tar.gz ($(du -h "$ROOT/dist/$NAME.tar.gz" | cut -f1)) and its .sha256"

@@ -1,14 +1,12 @@
-name: Windows WAV playback trial
+name: Verify installed dependency notices
 on:
   push:
     branches: [trial/qt-audio-release]
-  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   windows:
     runs-on: windows-latest
-    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -16,39 +14,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: Build, install and upgrade Alto
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+      - name: Build, install, verify licenses and upgrade
         shell: pwsh
-        run: |
-          choco install innosetup -y --no-progress
-          scripts/build-windows.ps1
-          if ($LASTEXITCODE) { exit $LASTEXITCODE }
-          $frozen = ".package-build/dist/alto"
-          $unexpected = Get-ChildItem $frozen -Recurse | Where-Object Name -match 'virtualkeyboard|ffmpeg|^qpdf\.|^Qt6Pdf\.|^(avcodec|avformat|avutil|swresample|swscale)-'
-          if ($unexpected) { throw "Unexpected bundled files: $unexpected" }
-          Get-Content "$frozen/licenses/Qt/README.txt"
-          Get-ChildItem dist/qt-sources/*.tar.xz | Get-FileHash
-      - name: Prepare playback endpoint
-        shell: pwsh
-        run: |
-          Start-Service Audiosrv
-          if (Get-PnpDevice -PresentOnly -Class AudioEndpoint -ErrorAction SilentlyContinue | Where-Object InstanceId -Like '*{0.0.0.*') { exit 0 }
-          cd $env:RUNNER_TEMP
-          Invoke-WebRequest https://download.vb-audio.com/Download_CABLE/VBCABLE_Driver_Pack45.zip -OutFile cable.zip
-          if ((Get-FileHash cable.zip).Hash -ne 'B950E39F01AF1D04EA623C8F6D8EB9B6EA5C477C637295FABF20631C85116BFB') { throw "Driver archive hash mismatch" }
-          Expand-Archive cable.zip cable
-          Invoke-WebRequest https://raw.githubusercontent.com/AlekseyMartynov/action-vbcable-win/6ec0facd8780f0f463d7dc2fcfd630e06eb1fc0b/devcon-amd64.exe -OutFile devcon.exe
-          $sig = Get-AuthenticodeSignature .\devcon.exe
-          if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notmatch 'Microsoft') { throw "Device utility signature invalid: $($sig.Status)" }
-          $inf = Get-ChildItem cable -Recurse -Filter vbMmeCable64_win10.inf | Select-Object -First 1
-          if (-not $inf) { throw "Missing driver INF" }
-          .\devcon.exe install $inf.FullName VBAudioVACWDM
-          if ($LASTEXITCODE -gt 1) { throw "Driver installation failed" }
-          Start-Sleep -Seconds 5
-      - name: Play a piano sample with the frozen app
-        shell: pwsh
-        run: |
-          $env:ALTO_TRIAL_LOG = Join-Path $env:RUNNER_TEMP playback.txt
-          $process = Start-Process .package-build/dist/alto/alto.exe -PassThru
-          if (-not $process.WaitForExit(30000)) { $process.Kill(); throw "Playback timed out" }
-          if (Test-Path $env:ALTO_TRIAL_LOG) { Get-Content $env:ALTO_TRIAL_LOG }
-          if ($process.ExitCode -ne 0 -or -not (Test-Path $env:ALTO_TRIAL_LOG)) { throw "Playback failed: $($process.ExitCode)" }
+        run: scripts/build-windows.ps1

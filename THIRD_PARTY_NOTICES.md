@@ -80,6 +80,10 @@ Alto’s SM-2 review scheduler is based on the spaced repetition algorithm Piotr
 - The desktop installers use Qt, PySide6, and Shiboken under LGPL-3.0. The installed `licenses/Qt/` directory
   contains the license texts, upstream credits, source archive names and checksums, and instructions for replacing
   the libraries. The matching source archives accompany the installers on the [Alto releases page](https://github.com/altosaurus/alto/releases).
+- Alto uses genanki to export Anki decks. Copyright © 2017 Kerrick Staley. The MIT license is installed at
+  `licenses/genanki/LICENSE.txt`.
+- Alto uses PyNaCl to verify update signatures. Its Apache License 2.0 is installed at `licenses/PyNaCl/LICENSE`.
+  PyNaCl bundles Frank Denis’s libsodium library. Its ISC license is installed at `licenses/libsodium/LICENSE.libsodium.txt`.
 - NumPy uses the BSD-3-Clause license. pytest (MIT) is used for tests only.
 
 ## Iconoir icons (`alto/ui/icons.py`)
