@@ -29,6 +29,8 @@ tar -C "$ROOT" --exclude=.git --exclude=.venv --exclude=.package-build --exclude
 "$WORK/venv/bin/pip" install --quiet "$WORK/source[package]"
 (cd "$WORK" && "$WORK/venv/bin/pyinstaller" --noconfirm --clean --log-level WARN --distpath "$WORK/dist" --workpath "$WORK/work" "$ROOT/packaging/alto.spec")
 FROZEN="$WORK/dist/alto"
+"$WORK/venv/bin/python" "$ROOT/packaging/qt_sources.py" "$FROZEN" "$ROOT/dist/qt-sources"
+cp "$ROOT/THIRD_PARTY_NOTICES.md" "$FROZEN/"
 
 # The frozen program must say what version it is, and must open its window. Nothing is drawn on a screen, and it uses its own folder
 # for its data, so a real profile is never touched.

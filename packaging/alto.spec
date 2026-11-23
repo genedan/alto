@@ -29,6 +29,8 @@ def unused_qt_component(destination):
     return (
         "virtualkeyboard" in destination.lower()
         or "ffmpeg" in name
+        or name in {"libqpdf.so", "qpdf.dll"}
+        or name.startswith(("libqt6pdf.", "qt6pdf."))
         or re.fullmatch(r"(?:lib)?(?:avcodec|avformat|avutil|swresample|swscale)(?:-\d+\.dll|\.so(?:\.\d+)*)", name)
     )
 
@@ -57,4 +59,4 @@ coll = COLLECT(
 # Check the finished bundle, including native libraries and symlinks created during collection.
 for path in Path(coll.name).rglob("*"):
     if unused_qt_component(str(path.relative_to(coll.name))):
-        raise SystemExit(f"Unexpected optional multimedia or keyboard component in the desktop package: {path}")
+        raise SystemExit(f"Unexpected optional Qt component in the desktop package: {path}")

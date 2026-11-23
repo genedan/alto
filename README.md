@@ -28,7 +28,7 @@
       <a href="https://numpy.org/"><img src="https://img.shields.io/badge/NumPy-013243?logo=numpy&amp;logoColor=white" alt="NumPy"></a>
       <a href="https://pypi.org/project/fsrs/"><img src="docs/assets/img/fsrs-badge.svg" alt="FSRS 6"></a>
       <a href="https://sqlite.org/"><img src="https://img.shields.io/badge/SQLite-003B57?logo=sqlite&amp;logoColor=white" alt="SQLite"></a>
-      <a href="docs/data.md#anki-decks"><img src="docs/assets/img/anki-compatible.svg" alt="Anki compatible"></a>
+      <a href="https://apps.ankiweb.net/"><img src="docs/assets/img/anki-compatible.svg" alt="Anki compatible"></a>
     </td>
   </tr>
 </table>

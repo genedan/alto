@@ -48,6 +48,20 @@ SetupIconFile={#IconFile}
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop shortcut"; Flags: unchecked
 
+[InstallDelete]
+; Version 0.0.2 bundled these optional Qt components. In-place updates leave obsolete files behind.
+Type: files; Name: "{app}\_internal\PySide6\plugins\platforminputcontexts\qtvirtualkeyboardplugin.dll"
+Type: files; Name: "{app}\_internal\PySide6\Qt6VirtualKeyboard.dll"
+Type: files; Name: "{app}\_internal\PySide6\plugins\multimedia\ffmpegmediaplugin.dll"
+Type: files; Name: "{app}\_internal\PySide6\avcodec-63.dll"
+Type: files; Name: "{app}\_internal\PySide6\avformat-63.dll"
+Type: files; Name: "{app}\_internal\PySide6\avutil-61.dll"
+Type: files; Name: "{app}\_internal\PySide6\swresample-7.dll"
+Type: files; Name: "{app}\_internal\PySide6\swscale-10.dll"
+
+Type: files; Name: "{app}\_internal\PySide6\plugins\imageformats\qpdf.dll"
+Type: files; Name: "{app}\_internal\PySide6\Qt6Pdf.dll"
+
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion

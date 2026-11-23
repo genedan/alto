@@ -16,14 +16,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: Freeze Alto
+      - name: Build, install and upgrade Alto
         shell: pwsh
         run: |
-          python -m pip install --quiet ".[package]"
-          python -m PyInstaller --noconfirm --log-level WARN packaging/alto.spec
+          choco install innosetup -y --no-progress
+          scripts/build-windows.ps1
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
-          $unexpected = Get-ChildItem dist/alto -Recurse | Where-Object Name -match 'ffmpeg|^(avcodec|avformat|avutil|swresample|swscale)-'
-          if ($unexpected) { throw "Found FFmpeg files in bundle: $unexpected" }
+          $frozen = ".package-build/dist/alto"
+          $unexpected = Get-ChildItem $frozen -Recurse | Where-Object Name -match 'virtualkeyboard|ffmpeg|^qpdf\.|^Qt6Pdf\.|^(avcodec|avformat|avutil|swresample|swscale)-'
+          if ($unexpected) { throw "Unexpected bundled files: $unexpected" }
+          Get-Content "$frozen/licenses/Qt/README.txt"
+          Get-ChildItem dist/qt-sources/*.tar.xz | Get-FileHash
       - name: Prepare playback endpoint
         shell: pwsh
         run: |
@@ -45,7 +48,7 @@ jobs:
         shell: pwsh
         run: |
           $env:ALTO_TRIAL_LOG = Join-Path $env:RUNNER_TEMP playback.txt
-          $process = Start-Process dist/alto/alto.exe -PassThru
+          $process = Start-Process .package-build/dist/alto/alto.exe -PassThru
           if (-not $process.WaitForExit(30000)) { $process.Kill(); throw "Playback timed out" }
           if (Test-Path $env:ALTO_TRIAL_LOG) { Get-Content $env:ALTO_TRIAL_LOG }
           if ($process.ExitCode -ne 0 -or -not (Test-Path $env:ALTO_TRIAL_LOG)) { throw "Playback failed: $($process.ExitCode)" }

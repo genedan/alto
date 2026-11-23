@@ -700,12 +700,10 @@ TOOLS = (
     f'<path d="M20.5 3.8 17 7.3l-2.4-2.4 3.5-3.5a6 6 0 0 0-7.3 7.8l-8 8a2.5 2.5 0 0 0 3.5 3.5l8-8a6 6 0 0 0 6.2-8.9Z" {_MENU}/>'
 )
 CODE = f'<path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 4l-4 16" {_MENU}/>'
-# Single outlined star from the Anki logo, scaled to the menu icon grid.
-ANKI = (
-    '<path d="M7.5 7.9 7.6 4.6C7.7 1.4 9.1 0.7 11.1 2.6L14.4 5.5 18.4 4.2'
-    "C21.8 3.2 22.6 4.7 21 7.8L19.2 10.9 21.6 14.3C23.6 17.3 22.5 18.7 19.4 18.3"
-    "L15.3 17.8 12.7 21.1C10.5 24 8.9 23.1 8.5 20L8 16.1 4.1 15"
-    f'C0.7 14 0.8 12 3.5 10.6L7.5 8.5Z" {_MENU}/>'
+# Two flashcards, with the back card visible above the front one.
+FLASHCARDS = (
+    f'<rect x="3" y="8" width="16" height="12" rx="2" {_MENU}/>'
+    f'<path d="M6 5.5A2 2 0 0 1 8 4h11a2 2 0 0 1 2 2v9" {_MENU}/>'
 )
 # Iconoir GitHub icon; MIT license and attribution in THIRD_PARTY_NOTICES.md.
 GITHUB = (

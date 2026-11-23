@@ -1032,7 +1032,7 @@ def test_the_menu_has_no_home_entry_and_ends_with_restart_above_quit(window: Mai
     assert entries[-3].isSeparator()  # separate Restart and Quit from Help
 
 
-def test_anki_menu_icon_is_an_outline_in_both_themes(window: MainWindow, request: pytest.FixtureRequest) -> None:
+def test_exporter_flashcards_are_outlined_in_both_themes(window: MainWindow, request: pytest.FixtureRequest) -> None:
     """
     Check the icon at menu size after switching between light and dark palettes.
 

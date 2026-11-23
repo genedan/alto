@@ -72,6 +72,7 @@ finally {
     Remove-Item Env:ALTO_ICON -ErrorAction SilentlyContinue
 }
 $Frozen = Join-Path $Work "dist\alto"
+Run $Py @((Join-Path $Root "packaging\qt_sources.py"), $Frozen, (Join-Path $Root "dist\qt-sources"))
 
 # A program with no console prints nothing, so `--version` can only show that the imports worked, by ending with 0. The package's
 # metadata, which is where the version comes from, must be in the folder.
@@ -149,9 +150,21 @@ try {
     $Step = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-EncodedCommand", $Encoded) -PassThru
     Start-Sleep -Seconds 2
     if ($Step.HasExited) { throw "The update step ended before Alto had quit" }
+    # Seed the two obsolete files from 0.0.2 after startup so the upgrade exercises its cleanup.
+    $LegacyKeyboardFiles = @(
+        (Join-Path $Target "_internal\PySide6\Qt6VirtualKeyboard.dll"),
+        (Join-Path $Target "_internal\PySide6\plugins\platforminputcontexts\qtvirtualkeyboardplugin.dll")
+    )
+    foreach ($File in $LegacyKeyboardFiles) {
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $File) | Out-Null
+        New-Item -ItemType File -Path $File -ErrorAction Stop | Out-Null
+    }
     $Old.Kill()
     $Old.WaitForExit(30000) | Out-Null
     if (-not $Step.WaitForExit(240000)) { throw "The update step did not finish" }
+    foreach ($File in $LegacyKeyboardFiles) {
+        if (Test-Path $File) { throw "Update left an obsolete Qt Virtual Keyboard component: $File" }
+    }
     $Open = $false
     for ($i = 0; $i -lt 60 -and -not $Open; $i++) {
         Start-Sleep -Milliseconds 500

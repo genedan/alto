@@ -615,7 +615,7 @@ class MainWindow(QMainWindow):
         icons.set_palette_icon(
             exporter_action,
             lambda palette: svg_icon(
-                icons.ANKI,
+                icons.FLASHCARDS,
                 color=QColor("white" if palette.window().color().lightness() < 128 else "black"),
                 size=18,
             ),

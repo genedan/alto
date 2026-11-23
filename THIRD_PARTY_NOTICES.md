@@ -60,22 +60,27 @@ converted to mono, trimmed and faded for use here. The viola is the 2012 recordi
 The clef in each icon is an outline from the Noto Music font (Google, SIL Open Font License 1.1), set on a rounded
 square: the alto clef in `icon.svg` and the treble clef in `icon-treble.svg`.
 
-## Anki logo
+## Anki logo in the README
 
-Alto’s exporter uses a monochrome outline adapted from Anki Software, LLC’s single-star logo. The artwork is distributed under the GNU Affero General
-Public License v3.0, included in `alto/assets/licenses/Anki-AGPL-3.0.txt`.
-[Anki](https://apps.ankiweb.net/) · [Original star artwork](https://github.com/ankitects/anki/blob/a78c31d2954f4e6d620e74e992ed994b0febe9d4/docs-site/media/anki-logo.svg) · [Anki logo credits](https://github.com/ankitects/anki/blob/main/LICENSE)
-
-Alto’s README badge uses Anki Software, LLC’s desktop launcher icon, resized from the [original Anki artwork](https://github.com/ankitects/anki/blob/a78c31d2954f4e6d620e74e992ed994b0febe9d4/qt/installer/app/resources/anki.png).
+Alto is developed independently of Anki. Its README uses Anki Software, LLC’s desktop launcher icon to indicate compatibility with Anki.
+The badge scales the icon proportionally. [Anki](https://apps.ankiweb.net/) · [Original artwork](https://github.com/ankitects/anki/blob/a78c31d2954f4e6d620e74e992ed994b0febe9d4/qt/installer/app/resources/anki.png) · [Logo use terms](https://github.com/ankitects/anki/blob/main/LICENSE)
 
 ## Fonts used from the system, not bundled
 
 - Noto Music (Google, SIL OFL 1.1) draws the "Noto Music" notation style, and DejaVu Sans (Bitstream Vera license with
   DejaVu changes, free to redistribute) draws a few sharp and flat signs. Alto asks the operating system for them by name.
 
+## SuperMemo SM-2
+
+Alto’s SM-2 review scheduler is based on the spaced repetition algorithm Piotr Woźniak developed for SuperMemo in 1987.
+[Original SM-2 specification](https://super-memory.com/english/ol/sm2.htm)
+
 ## Software dependencies
 
-- PySide6 / Qt for Python (LGPL-3.0 or GPL-3.0 or commercial), numpy (BSD-3-Clause). pytest (MIT) is used for tests only.
+- The desktop installers use Qt, PySide6, and Shiboken under LGPL-3.0. The installed `licenses/Qt/` directory
+  contains the license texts, upstream credits, source archive names and checksums, and instructions for replacing
+  the libraries. The matching source archives accompany the installers on the [Alto releases page](https://github.com/altosaurus/alto/releases).
+- NumPy uses the BSD-3-Clause license. pytest (MIT) is used for tests only.
 
 ## Iconoir icons (`alto/ui/icons.py`)
 
