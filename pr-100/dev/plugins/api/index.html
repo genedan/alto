@@ -1,0 +1,1286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plugin API · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-100/latest/plugins/api/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Plugin API · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-100/latest/plugins/api/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-100/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-100/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-100/dev/assets/css/site.css?v=1795453094">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-100/dev/">
+      <img src="/alto/pr-100/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-100/dev/" aria-label="Documentation preview for PR #100">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #100
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-100/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/plugins/api/" aria-current="page">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-100/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-100/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-100/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-100/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-100/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-100/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Plugin API</h1>
+          <p>Alto’s plugin API is the contract between an instrument pack and the app. The author describes the instrument, its media, and its exercises in a UTF-8 JSON file named <code class="language-plaintext highlighter-rouge">pack.json</code>. Alto reads that file to draw the instrument, generate questions, check answers, and play feedback. You can build a pack with a text editor and your media files.</p>
+
+<h2 id="minimum-working-pack">Minimum working pack</h2>
+
+<p>Start with a folder containing <code class="language-plaintext highlighter-rouge">pack.json</code> and a picture named <code class="language-plaintext highlighter-rouge">instrument.png</code>. The example below assumes the picture shows a keyboard with a key at pixel <code class="language-plaintext highlighter-rouge">[100, 80]</code>. Choose a point on a key in your own picture, measured from its top-left corner.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"format"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyboard-parts"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Keyboard Parts"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"instruments"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyboard"</span><span class="p">,</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Keyboard"</span><span class="p">,</span><span class="w"> </span><span class="nl">"image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"instrument.png"</span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"exercises"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"name-the-part"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Parts of a Keyboard"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-choice"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"instrument"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyboard"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"questions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"prompt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Which part is marked?"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"point"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">],</span><span class="w">
+          </span><span class="nl">"choices"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Key"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Case"</span><span class="p">],</span><span class="w">
+          </span><span class="nl">"answer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Key"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="what-alto-checks">What Alto checks</h2>
+
+<ul>
+  <li><strong>Manifest.</strong> Use the integer <code class="language-plaintext highlighter-rouge">2</code> for <code class="language-plaintext highlighter-rouge">format</code>, a nonblank pack <code class="language-plaintext highlighter-rouge">name</code>, and a pack <code class="language-plaintext highlighter-rouge">id</code> unique among installed packs. Include at least one instrument and one exercise. A pack ID such as <code class="language-plaintext highlighter-rouge">keyboard-parts</code> uses lowercase letters and digits, with single hyphens between words.</li>
+  <li><strong>Instruments and media.</strong> Each instrument needs its own ID, a name, and a readable PNG, WebP, or JPEG. Write paths relative to <code class="language-plaintext highlighter-rouge">pack.json</code> and include every file you reference. Recordings are optional. When you supply them, map each pitch to a mono 16-bit PCM WAV file.</li>
+  <li><strong>Exercises.</strong> Give each exercise a unique ID, a plain-text title, and the ID of an instrument in the same pack. For <code class="language-plaintext highlighter-rouge">image-choice</code>, each question needs a prompt, a point inside the picture, at least two distinct choices, and an answer that matches one choice exactly. For <code class="language-plaintext highlighter-rouge">fingerboard-notes</code>, calibrate at least two strings on the instrument and list the pitches to practice on each selected string. For <code class="language-plaintext highlighter-rouge">keyboard-intervals</code>, declare at least one keyboard on the instrument.</li>
+  <li><strong>Optional content.</strong> Alto also validates any lessons, glossary entries, and links you include. Use IDs from the same pack when linking these activities. An invalid entry prevents the whole pack from loading.</li>
+</ul>
+
+<p>To try the example, zip <code class="language-plaintext highlighter-rouge">pack.json</code> and <code class="language-plaintext highlighter-rouge">instrument.png</code> together so both appear at the root of the ZIP. Install it through <strong>Menu → Tools → Plugins… → Install plugin from file…</strong> and restart Alto. Open <strong>Instruments → Parts of a Keyboard</strong> and choose <strong>Key</strong>. Loading a pack locally requires no listing in the registered plugins table.</p>
+
+<h2 id="plugin-registration">Plugin registration</h2>
+
+<p>To request a listing in the <a href="/alto/pr-100/dev/plugins/#registered-plugins">registered plugins table</a>, open an issue in Alto’s GitHub repository. In the issue, describe what your plugin does and include a link to its repository. <a href="https://github.com/altosaurus/alto/issues/new?template=plugin-registration.yml">Open a registration issue</a>.</p>
+
+<p>Choose a plugin name and a Pack ID that are available in Alto’s registry. Names are compared without regard to capitalization or extra spaces, so “Viola Studio” and “viola  studio” clash. Use the exact top-level <code class="language-plaintext highlighter-rouge">id</code> from <code class="language-plaintext highlighter-rouge">pack.json</code> as the Pack ID. It can contain lowercase letters and digits, with single hyphens between words. If either field belongs to another plugin, choose a different value before registration. If you change the Pack ID, update the manifest in your release ZIP as well.</p>
+
+<h3 id="registry-updates-between-releases">Registry updates between releases</h3>
+
+<ol>
+  <li>Submit the registration form and check the <strong>Rights and licenses</strong> statement. The issue number is the proposed install code. For example, issue <strong>#1001</strong> corresponds to code <strong>1001</strong>.</li>
+  <li>A maintainer reviews the submission and applies the <code class="language-plaintext highlighter-rouge">plugin-approved</code> label. The <strong>Register plugin</strong> workflow checks the approved form and verifies the name, Pack ID, and code against current and historical registrations. It prepares a branch with the entry for <code class="language-plaintext highlighter-rouge">docs/site-root/plugins.json</code>.</li>
+  <li>In <strong>Actions → Register plugin</strong>, open the run for the issue. Select <strong>Open registration pull request</strong> in the run summary, review the change, and select <strong>Create pull request</strong>. If the author corrects the form, remove and reapply the label after reviewing the edits. The workflow refreshes the same branch and any open pull request.</li>
+  <li>A maintainer merges the reviewed change. After the docs deployment, the code appears in the registry and works in Alto. The same code and Pack ID carry forward across plugin releases.</li>
+</ol>
+
+<p>For repository setup, create the <code class="language-plaintext highlighter-rouge">plugin-approved</code> label. The workflow uses <strong>Contents: write</strong> to publish its registration branch. A maintainer opens the pull request with their own GitHub account.</p>
+
+<p>Earlier names and Pack IDs stay reserved to their original registration after a rename or removal. To check a proposed registry change locally, run <code class="language-plaintext highlighter-rouge">python3 scripts/check_plugin_registry.py --base main</code> from the repository root. A registry entry for issue <strong>#1001</strong> could look like this.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example-strings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1001"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Example Strings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Practice naming notes on open strings."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"repository"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/example/strings"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://raw.githubusercontent.com/example/strings/main/alto-plugin.json"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The docs workflow publishes the registry at <code class="language-plaintext highlighter-rouge">/alto/plugins.json</code>. Each version of the Plugins page that supports the registry reads it when opened. After deployment, refresh the page to see a new registration. Each name opens a details page inside Alto’s docs.</p>
+
+<h3 id="release-zips-for-installation-and-updates">Release ZIPs for installation and updates</h3>
+
+<p>Attach the installable pack ZIP to the repository’s latest published GitHub release. Put <code class="language-plaintext highlighter-rouge">pack.json</code> at the root of the ZIP and set its <code class="language-plaintext highlighter-rouge">id</code> to the registered pack ID. If the release has several ZIP assets, name the pack asset <code class="language-plaintext highlighter-rouge">&lt;pack-id&gt;.zip</code> so Alto can select it. <a href="https://docs.github.com/en/rest/releases/releases#get-the-latest-release">GitHub releases</a>.</p>
+
+<p>In <strong>Menu → Tools → Plugins…</strong>, enter the code under <strong>Install plugin by code…</strong>. To update, select the installed ZIP and choose <strong>Update selected plugin</strong>. Alto looks up the registration, checks the latest release, and validates the new pack before replacing the installed ZIP. Existing ZIP installs with the registered pack ID can update the same way. Editable folders stay under the author’s control. A successful install or update offers a restart.</p>
+
+<h3 id="plugin-details-and-releases">Plugin details and releases</h3>
+
+<p>Alto’s plugin details page displays the README from the default branch of your registered GitHub repository. It also shows your registration code and a link to the repository. Update the README in your repository to revise what readers see in Alto’s docs.</p>
+
+<p>To keep the details page current, publish a JSON file in your plugin repository and include its raw HTTPS URL in your registration issue. Use a URL that follows your release branch so the same address serves each update. The file must be publicly readable by a browser on the Alto docs site. A raw GitHub file URL works for a public repository. If you host the file yourself, allow cross-origin reads from the docs site.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"about"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Identify the four open strings by ear, then practice finding them on the fingerboard."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.2.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"compatible_alto"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.4.x"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"documentation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.org/strings/guide/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"download"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.org/strings/releases/1.2.0/strings.zip"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>All five fields are optional. Use plain text for the description and versions, and absolute HTTPS URLs for the links. When you release a new plugin version, update this file along with the ZIP. Alto’s details page requests the file each time a reader opens it, so your release information can change between Alto releases. The registered description and repository link remain available if the file is missing or temporarily unavailable.</p>
+
+<h2 id="manifest-reference">Manifest reference</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">format</code></td>
+      <td>The integer <code class="language-plaintext highlighter-rouge">2</code> selects this version of the pack API.</td>
+    </tr>
+    <tr>
+      <td>Pack <code class="language-plaintext highlighter-rouge">name</code></td>
+      <td>Required. Enter a nonblank text string at the top level, such as <code class="language-plaintext highlighter-rouge">"name": "Viola Instrument Pack"</code>. Alto shows it during installation and removal.</td>
+    </tr>
+    <tr>
+      <td>Pack <code class="language-plaintext highlighter-rouge">id</code></td>
+      <td>Unique among installed packs. Use lowercase letters, digits, and single hyphens between words. The same spelling rules apply to instrument and exercise IDs.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">instruments</code></td>
+      <td>A nonempty list. Each instrument requires <code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">name</code>, and <code class="language-plaintext highlighter-rouge">image</code>. Instrument IDs are unique within the pack.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">strings</code></td>
+      <td>Required for <code class="language-plaintext highlighter-rouge">fingerboard-notes</code>. Two or more distinct open pitches in ascending order. Each entry requires <code class="language-plaintext highlighter-rouge">open</code>, <code class="language-plaintext highlighter-rouge">nut</code>, and <code class="language-plaintext highlighter-rouge">bridge</code>. Coordinates must lie inside the source image.</td>
+    </tr>
+    <tr>
+      <td>Pitch spelling</td>
+      <td>Uppercase A through G, optional <code class="language-plaintext highlighter-rouge">#</code> or <code class="language-plaintext highlighter-rouge">b</code>, then an octave from 0 through 8. Examples include <code class="language-plaintext highlighter-rouge">C4</code> (middle C), <code class="language-plaintext highlighter-rouge">F#4</code>, and <code class="language-plaintext highlighter-rouge">Bb3</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">correct_answer_animation</code></td>
+      <td>Optional per instrument. Set <code class="language-plaintext highlighter-rouge">file</code> to a pack-relative animated GIF and <code class="language-plaintext highlighter-rouge">anchor</code> to <code class="language-plaintext highlighter-rouge">image</code> or <code class="language-plaintext highlighter-rouge">string</code>. A string anchor requires calibrated strings.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">views</code></td>
+      <td>Optional per instrument. An object from a view name to a pack-relative picture, such as <code class="language-plaintext highlighter-rouge">{"back": "images/viola-back.webp"}</code>, for up to four extra pictures of the instrument. Each is a PNG, WebP, or JPEG of at most 16 megapixels, and it can have its own size. A picture question or lesson picture names one with <code class="language-plaintext highlighter-rouge">view</code>, and its <code class="language-plaintext highlighter-rouge">point</code> and <code class="language-plaintext highlighter-rouge">focus</code> are then in that picture’s pixels. Strings, the ruler, and the correct-answer animation always use the main <code class="language-plaintext highlighter-rouge">image</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">positions</code></td>
+      <td>Optional per instrument with strings. A list of up to 12 objects, each with a plain-text <code class="language-plaintext highlighter-rouge">name</code> of at most 12 characters and a whole number of <code class="language-plaintext highlighter-rouge">half_steps</code> above the open string, from 1 to 36, in ascending order. Alto labels the ruler above the neck with them. The ruler always shows a tick for each half step up to the octave. Without <code class="language-plaintext highlighter-rouge">positions</code> it shows only those ticks. The viola example lists <code class="language-plaintext highlighter-rouge">1st</code> at 2, <code class="language-plaintext highlighter-rouge">2nd</code> at 3, <code class="language-plaintext highlighter-rouge">3rd</code> at 5, <code class="language-plaintext highlighter-rouge">4th</code> at 7, <code class="language-plaintext highlighter-rouge">5th</code> at 8, <code class="language-plaintext highlighter-rouge">6th</code> at 10, and <code class="language-plaintext highlighter-rouge">7th</code> at 12. Choose positions that match your instrument.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">keyboards</code></td>
+      <td>Optional per instrument. A list of up to four keyboards that Alto draws itself, for exercises that highlight keys. Each needs a plain-text <code class="language-plaintext highlighter-rouge">name</code> (at most 40 characters, unique on the instrument) and <code class="language-plaintext highlighter-rouge">lowest</code> and <code class="language-plaintext highlighter-rouge">highest</code>, the natural keys at either end, such as <code class="language-plaintext highlighter-rouge">E1</code> and <code class="language-plaintext highlighter-rouge">F6</code>. Alto stacks the keyboards in the order you list them, top to bottom, so list an upper manual before a lower one.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">keyboard_style</code></td>
+      <td>Optional per instrument with keyboards. How the drawn keys look. Any of <code class="language-plaintext highlighter-rouge">white</code> and <code class="language-plaintext highlighter-rouge">black</code>, each a list of two <code class="language-plaintext highlighter-rouge">#rrggbb</code> colors for the top and the bottom of a natural or a sharp key; <code class="language-plaintext highlighter-rouge">white_edge</code>, <code class="language-plaintext highlighter-rouge">black_edge</code>, <code class="language-plaintext highlighter-rouge">case</code> and <code class="language-plaintext highlighter-rouge">cap</code> (the cap over each sharp key), each one <code class="language-plaintext highlighter-rouge">#rrggbb</code> color; and the numbers <code class="language-plaintext highlighter-rouge">narrow</code> (how wide sharp keys are compared with a piano’s, 0.5 to 1.5), <code class="language-plaintext highlighter-rouge">gap</code> (pixels between natural keys, 0 to 4), <code class="language-plaintext highlighter-rouge">round</code> (how much the keys’ lower corners are rounded, 0 to 10) and <code class="language-plaintext highlighter-rouge">length</code> (how long a natural key is, in key widths, 2 to 6.5). Fields you leave out use Alto’s classic keyboard. Without <code class="language-plaintext highlighter-rouge">keyboard_style</code>, the keys are drawn in the learner’s own keyboard style. The harpsichord example draws ebony naturals and bone-capped sharps.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lessons</code></td>
+      <td>Optional list of up to six lessons for Alto’s Lessons page. See <a href="#lessons">Lessons</a> for the fields. Each lesson’s <code class="language-plaintext highlighter-rouge">exercise</code> must be an <code class="language-plaintext highlighter-rouge">id</code> in this pack’s <code class="language-plaintext highlighter-rouge">exercises</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">kind</code></td>
+      <td>Optional per instrument. Plain text of at most 30 characters that says what sort of instrument it is, such as <code class="language-plaintext highlighter-rouge">harpsichord</code> or <code class="language-plaintext highlighter-rouge">viola</code>. Alto uses it to group sounds of the same kind when a learner chooses the sound for an exercise. Without it, the instrument is grouped with no others.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">sustained</code></td>
+      <td>Optional per instrument, <code class="language-plaintext highlighter-rouge">true</code> or <code class="language-plaintext highlighter-rouge">false</code> (default <code class="language-plaintext highlighter-rouge">false</code>). Set it to <code class="language-plaintext highlighter-rouge">true</code> for bowed or blown sounds, so each note ends as the next begins. Leave it off for struck or plucked sounds, which ring on.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">samples</code> and <code class="language-plaintext highlighter-rouge">gain</code></td>
+      <td>Optional per instrument. Exact recorded pitches play directly. Other notes use the nearest recording. Omitting samples uses the learner’s selected Alto sound. Gain sets the instrument’s playback level, greater than 0 and at most 1 (default 1).</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">sound_info</code></td>
+      <td>Optional per instrument, for the summary under <strong>Menu → Settings → Sound</strong>. Use plain text, at most 800 characters each, in any of <code class="language-plaintext highlighter-rouge">summary</code>, <code class="language-plaintext highlighter-rouge">source</code>, <code class="language-plaintext highlighter-rouge">source_url</code> (an <code class="language-plaintext highlighter-rouge">https</code> link), <code class="language-plaintext highlighter-rouge">performer</code>, <code class="language-plaintext highlighter-rouge">recorded</code>, <code class="language-plaintext highlighter-rouge">includes</code>, <code class="language-plaintext highlighter-rouge">terms</code>, and <code class="language-plaintext highlighter-rouge">note</code>. Say “not stated” when you do not know the performer. Alto adds the pack name, the note range, and the size itself. The viola example credits TinySOL, its recording location and years, its CC BY 4.0 terms, and how the takes were prepared.</td>
+    </tr>
+    <tr>
+      <td>Exercise <code class="language-plaintext highlighter-rouge">description</code> and <code class="language-plaintext highlighter-rouge">prompt</code></td>
+      <td>Optional. <code class="language-plaintext highlighter-rouge">description</code> is one to a few sentences of plain text, at most 400 characters, shown with the exercise. <code class="language-plaintext highlighter-rouge">prompt</code> is the question on each card of a <code class="language-plaintext highlighter-rouge">fingerboard-notes</code> exercise, at most 120 characters. Without them Alto uses short neutral wording that names the strings. Image-choice questions always carry their own <code class="language-plaintext highlighter-rouge">prompt</code>.</td>
+    </tr>
+    <tr>
+      <td>Picture question <code class="language-plaintext highlighter-rouge">view</code>, <code class="language-plaintext highlighter-rouge">marker_size</code>, and <code class="language-plaintext highlighter-rouge">focus</code></td>
+      <td>Optional on each <code class="language-plaintext highlighter-rouge">image-choice</code> question. <code class="language-plaintext highlighter-rouge">view</code> names one of the instrument’s <code class="language-plaintext highlighter-rouge">views</code>; leave it out for the main picture. <code class="language-plaintext highlighter-rouge">marker_size</code> is the dot’s diameter in picture pixels, from 6 to 200; leave it out for a large part. <code class="language-plaintext highlighter-rouge">focus</code> is <code class="language-plaintext highlighter-rouge">[left, top, width, height]</code> in picture pixels, at least 40 wide and tall and inside the picture, and it must contain the marked <code class="language-plaintext highlighter-rouge">point</code>. Alto shows only that region, so a small part such as a nut or a string is easy to see. Without <code class="language-plaintext highlighter-rouge">focus</code> the whole picture is shown.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">exercises</code></td>
+      <td>A nonempty list. Each exercise requires a unique <code class="language-plaintext highlighter-rouge">id</code>, a plain-text <code class="language-plaintext highlighter-rouge">title</code>, a <code class="language-plaintext highlighter-rouge">type</code>, and an <code class="language-plaintext highlighter-rouge">instrument</code> ID from the same pack. Use <code class="language-plaintext highlighter-rouge">notes</code> for <code class="language-plaintext highlighter-rouge">fingerboard-notes</code>, <code class="language-plaintext highlighter-rouge">questions</code> for <code class="language-plaintext highlighter-rouge">image-choice</code>, and the fields described under <a href="#keyboard-intervals">Keyboard intervals</a> for <code class="language-plaintext highlighter-rouge">keyboard-intervals</code>.</td>
+    </tr>
+    <tr>
+      <td>Exercise <code class="language-plaintext highlighter-rouge">icon</code> and <code class="language-plaintext highlighter-rouge">lessons</code></td>
+      <td>Optional. <code class="language-plaintext highlighter-rouge">icon</code> is an SVG file for the exercise’s tile. <code class="language-plaintext highlighter-rouge">lessons</code> lists up to five lesson <code class="language-plaintext highlighter-rouge">id</code>s that teach it. See <a href="#linking-lessons-and-exercises">Linking lessons and exercises</a>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">glossary</code></td>
+      <td>Optional list of up to 40 glossary entries. See <a href="#glossary-entries">Glossary entries</a>.</td>
+    </tr>
+    <tr>
+      <td>Exercise <code class="language-plaintext highlighter-rouge">settings</code></td>
+      <td>Optional on <code class="language-plaintext highlighter-rouge">fingerboard-notes</code>. An object with any of <code class="language-plaintext highlighter-rouge">sound</code> (a label of at most 30 characters), <code class="language-plaintext highlighter-rouge">range</code> (one clef name), <code class="language-plaintext highlighter-rouge">accidentals</code> and <code class="language-plaintext highlighter-rouge">octave</code> (each <code class="language-plaintext highlighter-rouge">true</code>). See <a href="#settings-for-a-note-exercise">Settings for a note exercise</a>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">notes</code></td>
+      <td>Each key is an open pitch from the selected instrument. Its list contains the notes to practice on that string, from open through one octave above it. The same pitch on two strings makes two distinct cards.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">questions</code></td>
+      <td>One or more questions. Each has a plain-text <code class="language-plaintext highlighter-rouge">prompt</code>, a <code class="language-plaintext highlighter-rouge">point</code> in original image pixels from the top left, at least two distinct plain-text <code class="language-plaintext highlighter-rouge">choices</code>, and an <code class="language-plaintext highlighter-rouge">answer</code> exactly matching a choice. Optional <code class="language-plaintext highlighter-rouge">note</code> sets the pitch for correct-answer playback.</td>
+    </tr>
+    <tr>
+      <td>Asset paths</td>
+      <td>Relative to <code class="language-plaintext highlighter-rouge">pack.json</code>, using forward slashes. Keep all files inside the pack. Each referenced file can be up to 64 MiB, with 256 MiB total. Images can be up to 16 megapixels.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>You can change the pack’s display name. Keep the pack, instrument, and exercise IDs when updating existing content. Alto uses them to resolve assets and associate practice history with the same exercise. A new title or file location can use the same IDs.</p>
+
+<h2 id="settings-for-a-note-exercise">Settings for a note exercise</h2>
+
+<p>A <code class="language-plaintext highlighter-rouge">fingerboard-notes</code> exercise can offer its learners settings. Alto draws them in the same pane as its own exercises’ settings, remembers each learner’s choices, and applies them to the questions. You choose which of four controls appear by listing them under <code class="language-plaintext highlighter-rouge">settings</code> in the exercise:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"sound"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Viola sound"</span><span class="p">,</span><span class="w"> </span><span class="nl">"range"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alto"</span><span class="p">,</span><span class="w"> </span><span class="nl">"accidentals"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nl">"octave"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">sound</code></strong> adds a row with the label you give (at most 30 characters) that opens a list of instruments. The exercise plays your instrument’s recordings until the learner picks another. The list shows the instruments that came with your plugin first, then other installed instruments of the same <code class="language-plaintext highlighter-rouge">kind</code> (other harpsichords for a harpsichord), then every other installed instrument, each group under its own heading.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">range</code></strong> adds a Range row for one clef, such as <code class="language-plaintext highlighter-rouge">"alto"</code>, where the learner moves the lowest and highest note asked. The selector never goes beyond the notes you list under <code class="language-plaintext highlighter-rouge">notes</code>, and Reset restores all of them.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">accidentals</code></strong> adds an Accidentals switch. On, Alto also asks each note between the ones you list on a string, written as a sharp and accepted as its flat, and offers sharps and flats as answers.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">octave</code></strong> adds an Octave switch. On, the answer includes the written octave, as in <strong>D4</strong>, and Alto asks for the octave after the note name.</li>
+</ul>
+
+<p>List only the controls your exercise needs. Without <code class="language-plaintext highlighter-rouge">settings</code>, an exercise has none, and a picture exercise cannot have any. Alto keeps the learner’s practice history for the defaults: switches that start off, your own sound, and every listed note.</p>
+
+<h2 id="lessons">Lessons</h2>
+
+<p>A pack can add lessons to Alto’s <strong>Lessons</strong> page. A plugin lesson works like Alto’s own: a short list of steps, each with a heading, a few paragraphs, and optionally a picture of your instrument, notes to hear, and a <strong>Knowledge check</strong>. Your lessons are listed after Alto’s, under the category you name, and the last step offers practice in one of your exercises. The viola example adds <strong>Parts of the Viola</strong> and <strong>Finding Notes on the Viola</strong>.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"lessons"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"finding-notes"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Finding Notes on the Viola"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"about"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Learn where the notes fall on each string."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"summary"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Name the note at any spot on the strings."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"category"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Viola"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"exercise"</span><span class="p">:</span><span class="w"> </span><span class="s2">"first-position"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"steps"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The open strings"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"picture"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"instrument"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bowed-viola"</span><span class="p">,</span><span class="w"> </span><span class="nl">"string"</span><span class="p">:</span><span class="w"> </span><span class="s2">"D4"</span><span class="p">,</span><span class="w"> </span><span class="nl">"note"</span><span class="p">:</span><span class="w"> </span><span class="s2">"D4"</span><span class="p">},</span><span class="w">
+        </span><span class="nl">"hear"</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">"C3"</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">"G3"</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">"D4"</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">"A4"</span><span class="p">]],</span><span class="w">
+        </span><span class="nl">"hear_label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hear the four open strings"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hear_instrument"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bowed-viola"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"A string played without pressing it down is an **open string**."</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"task"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"prompt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Which open string sounds the highest?"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"choices"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"C string"</span><span class="p">,</span><span class="w"> </span><span class="s2">"G string"</span><span class="p">,</span><span class="w"> </span><span class="s2">"D string"</span><span class="p">,</span><span class="w"> </span><span class="s2">"A string"</span><span class="p">],</span><span class="w">
+          </span><span class="nl">"answer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A string"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"hint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Listen again."</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"explanation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The A string is the highest."</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lesson <code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">title</code>, <code class="language-plaintext highlighter-rouge">about</code>, <code class="language-plaintext highlighter-rouge">summary</code>, <code class="language-plaintext highlighter-rouge">category</code></td>
+      <td>Required except <code class="language-plaintext highlighter-rouge">category</code>. The title is at most 80 characters, <code class="language-plaintext highlighter-rouge">about</code> at most 300, <code class="language-plaintext highlighter-rouge">summary</code> at most 120, and <code class="language-plaintext highlighter-rouge">category</code> at most 40. A lesson with no <code class="language-plaintext highlighter-rouge">category</code> is listed under the pack’s name. A pack can have up to six lessons.</td>
+    </tr>
+    <tr>
+      <td>Lesson <code class="language-plaintext highlighter-rouge">exercise</code> and <code class="language-plaintext highlighter-rouge">related_exercises</code></td>
+      <td><code class="language-plaintext highlighter-rouge">exercise</code> is the <code class="language-plaintext highlighter-rouge">id</code> of one of this pack’s exercises, which the last step offers for practice. <code class="language-plaintext highlighter-rouge">related_exercises</code> optionally lists up to five other exercises from the pack.</td>
+    </tr>
+    <tr>
+      <td>Lesson <code class="language-plaintext highlighter-rouge">steps</code></td>
+      <td>From 1 to 14 steps. Alto adds the practice buttons to the last one.</td>
+    </tr>
+    <tr>
+      <td>Step <code class="language-plaintext highlighter-rouge">title</code> and <code class="language-plaintext highlighter-rouge">text</code></td>
+      <td>The heading, and 1 to 8 paragraphs of plain text of at most 700 characters. Wrap a term you are defining in double asterisks, such as <code class="language-plaintext highlighter-rouge">**nut**</code>, to show it in bold. Markup is not allowed.</td>
+    </tr>
+    <tr>
+      <td>Step <code class="language-plaintext highlighter-rouge">picture</code></td>
+      <td>Optional. Give <code class="language-plaintext highlighter-rouge">instrument</code>, <code class="language-plaintext highlighter-rouge">string</code>, and <code class="language-plaintext highlighter-rouge">note</code> to show a note on a string, with Alto’s ruler and dot. Or give <code class="language-plaintext highlighter-rouge">instrument</code> and <code class="language-plaintext highlighter-rouge">point</code>, with the optional <code class="language-plaintext highlighter-rouge">view</code>, <code class="language-plaintext highlighter-rouge">marker_size</code>, <code class="language-plaintext highlighter-rouge">focus</code>, and <code class="language-plaintext highlighter-rouge">marker</code>, to mark a place on the picture as an exercise question does. Set <code class="language-plaintext highlighter-rouge">marker</code> to <code class="language-plaintext highlighter-rouge">false</code> to show the picture with no dot.</td>
+    </tr>
+    <tr>
+      <td>Step <code class="language-plaintext highlighter-rouge">hear</code>, <code class="language-plaintext highlighter-rouge">hear_label</code>, <code class="language-plaintext highlighter-rouge">hear_instrument</code></td>
+      <td>Optional. <code class="language-plaintext highlighter-rouge">hear</code> is up to 12 chords, each a list of one to four note names, played by the <strong>Hear</strong> button. <code class="language-plaintext highlighter-rouge">hear_instrument</code> is the <code class="language-plaintext highlighter-rouge">id</code> of one of this pack’s instruments that has samples. Without it, Alto plays the learner’s own choice of sound.</td>
+    </tr>
+    <tr>
+      <td>Step <code class="language-plaintext highlighter-rouge">task</code></td>
+      <td>Optional knowledge check, with a <code class="language-plaintext highlighter-rouge">prompt</code>, a <code class="language-plaintext highlighter-rouge">hint</code> for a wrong answer, an <code class="language-plaintext highlighter-rouge">explanation</code>, and either two to six <code class="language-plaintext highlighter-rouge">choices</code> with the <code class="language-plaintext highlighter-rouge">answer</code> that matches one exactly, or <code class="language-plaintext highlighter-rouge">targets</code> to click on the step’s picture (see below). A wrong answer gets the hint, a second wrong answer gets the answer, and nothing is scored.</td>
+    </tr>
+    <tr>
+      <td>Lesson <code class="language-plaintext highlighter-rouge">icon</code></td>
+      <td>Optional. An SVG file for the lesson’s tile (see <a href="#icons-for-tiles">Icons</a>). Without it, the tile uses its primary exercise’s icon.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Write lessons by the same rules as Alto’s own: teach one musical idea, aim for twenty minutes or less, define each new term in plain language where it first appears, and order your lessons from beginner to advanced. See <a href="/alto/pr-100/dev/development/#designing-lessons-and-exercises">Designing lessons and exercises</a>.</p>
+
+<h3 id="click-the-picture">Click the picture</h3>
+
+<p>A knowledge check can ask the learner to click a place on the step’s picture instead of choosing a button. Give the task <code class="language-plaintext highlighter-rouge">targets</code> in place of <code class="language-plaintext highlighter-rouge">choices</code> and <code class="language-plaintext highlighter-rouge">answer</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"task"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="nl">"prompt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Click one of the pegs."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"targets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"point"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">192</span><span class="p">,</span><span class="w"> </span><span class="mi">282</span><span class="p">],</span><span class="w"> </span><span class="nl">"radius"</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"point"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">287</span><span class="p">,</span><span class="w"> </span><span class="mi">274</span><span class="p">],</span><span class="w"> </span><span class="nl">"radius"</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"hint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The pegs are the dark knobs on either side of the pegbox."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"explanation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"That is a peg."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Each target is a circle: its <code class="language-plaintext highlighter-rouge">point</code> and its <code class="language-plaintext highlighter-rouge">radius</code> are in the picture’s own pixels, in the <code class="language-plaintext highlighter-rouge">view</code> the step shows. A click inside any target is right. List up to four. The step’s picture must set <code class="language-plaintext highlighter-rouge">marker</code> to <code class="language-plaintext highlighter-rouge">false</code>, so the dot does not give the answer away. After a right answer, or the second wrong one, Alto marks the target.</p>
+
+<h3 id="linking-lessons-and-exercises">Linking lessons and exercises</h3>
+
+<p>A lesson names its exercises with <code class="language-plaintext highlighter-rouge">exercise</code> and <code class="language-plaintext highlighter-rouge">related_exercises</code>. An exercise can name its lessons from the other end with <code class="language-plaintext highlighter-rouge">lessons</code>, a list of up to five lesson <code class="language-plaintext highlighter-rouge">id</code>s:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"first-position"</span><span class="p">,</span><span class="w"> </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fingerboard-notes"</span><span class="p">,</span><span class="w"> </span><span class="nl">"lessons"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"finding-notes"</span><span class="p">,</span><span class="w"> </span><span class="s2">"parts-of-the-viola"</span><span class="p">]}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Alto shows both: the lesson’s last step offers each linked exercise as practice, and the exercise gets a <strong>Reference</strong> pane (the book button beside Help) with a button for each linked lesson, as Alto’s own exercises do. An exercise with no linked lesson has no Reference pane.</p>
+
+<h3 id="icons-for-tiles">Icons for tiles</h3>
+
+<p>Give an exercise or a lesson an <code class="language-plaintext highlighter-rouge">icon</code>: the path to an SVG file in the pack. Alto redraws it in the theme’s ink, as it does its own icons, so draw it as a single shape.</p>
+
+<ul>
+  <li>The root must be <code class="language-plaintext highlighter-rouge">&lt;svg viewBox="0 0 24 24"&gt;</code>, and the file at most 100 KB.</li>
+  <li>Use only <code class="language-plaintext highlighter-rouge">g</code>, <code class="language-plaintext highlighter-rouge">path</code>, <code class="language-plaintext highlighter-rouge">circle</code>, <code class="language-plaintext highlighter-rouge">ellipse</code>, <code class="language-plaintext highlighter-rouge">rect</code>, <code class="language-plaintext highlighter-rouge">line</code>, <code class="language-plaintext highlighter-rouge">polyline</code>, and <code class="language-plaintext highlighter-rouge">polygon</code>, with geometry and paint attributes. Scripts, styles, images, links, and entity declarations are refused.</li>
+  <li>Every color is replaced by the theme’s ink. Use <code class="language-plaintext highlighter-rouge">fill="none"</code> for a part that is not filled.</li>
+</ul>
+
+<p>A lesson with no <code class="language-plaintext highlighter-rouge">icon</code> uses its primary exercise’s. The viola’s icon is the outline of its own photograph, with its f-holes, fingerboard, and tailpiece cut out.</p>
+
+<h2 id="glossary-entries">Glossary entries</h2>
+
+<p>A pack can add terms to Alto’s <strong>Glossary</strong>. Entries are listed alphabetically with Alto’s own, and each links to the lessons and exercises that go with it, shown as tiles under the entry. List them under <code class="language-plaintext highlighter-rouge">glossary</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"glossary"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"term"</span><span class="p">:</span><span class="w"> </span><span class="s2">"scroll"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"definition"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The **scroll** is the curled, carved end of the viola."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"guide"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Look at the far left of the picture."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"picture"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"instrument"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bowed-viola"</span><span class="p">,</span><span class="w"> </span><span class="nl">"point"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">385</span><span class="p">],</span><span class="w"> </span><span class="nl">"marker_size"</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span><span class="w"> </span><span class="nl">"focus"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">220</span><span class="p">,</span><span class="w"> </span><span class="mi">480</span><span class="p">,</span><span class="w"> </span><span class="mi">330</span><span class="p">]},</span><span class="w">
+    </span><span class="nl">"caption"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The scroll"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"exercises"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"viola-parts"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"lessons"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"parts-of-the-viola"</span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">term</code> and <code class="language-plaintext highlighter-rouge">definition</code></td>
+      <td>Required. The term is at most 40 characters, listed as you write it. The definition is at most 500 characters of plain text, with <code class="language-plaintext highlighter-rouge">**bold**</code> for the term itself.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">guide</code></td>
+      <td>Optional, at most 500 characters: how to recognize or use the term.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">picture</code> and <code class="language-plaintext highlighter-rouge">caption</code></td>
+      <td>Optional. <code class="language-plaintext highlighter-rouge">picture</code> takes the same fields as a lesson picture, except a note on a string: <code class="language-plaintext highlighter-rouge">instrument</code>, <code class="language-plaintext highlighter-rouge">point</code>, <code class="language-plaintext highlighter-rouge">view</code>, <code class="language-plaintext highlighter-rouge">marker_size</code>, <code class="language-plaintext highlighter-rouge">focus</code>, and <code class="language-plaintext highlighter-rouge">marker</code>. <code class="language-plaintext highlighter-rouge">caption</code> is at most 120 characters and goes under it. An entry without a picture shows text alone.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">exercises</code> and <code class="language-plaintext highlighter-rouge">lessons</code></td>
+      <td>Optional. Up to five <code class="language-plaintext highlighter-rouge">id</code>s each from this pack. The exercise tiles and the lesson tiles open that activity directly.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A pack can have up to 40 entries. If two plugins supply the same term, Alto skips the second pack at startup and reports the conflict. A term that Alto already has is listed twice, the plugin’s with the plugin’s name after it.</p>
+
+<h2 id="keyboard-intervals">Keyboard intervals</h2>
+
+<p>A <code class="language-plaintext highlighter-rouge">keyboard-intervals</code> exercise highlights two keys on the instrument’s drawn keyboards and asks for the interval between them. The instrument must declare <code class="language-plaintext highlighter-rouge">keyboards</code>, and it can give them a <code class="language-plaintext highlighter-rouge">keyboard_style</code>. Alto draws the keyboards instead of the instrument’s picture, so no photograph or measurement is needed. It plays the lower and the higher note together, as a chord, on the plugin’s sound when the answer is right.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"intervals-on-two-manuals"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Harpsichord Interval Identification"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyboard-intervals"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"instrument"</span><span class="p">:</span><span class="w"> </span><span class="s2">"flemish-harpsichord"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"keyboards"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Lower manual"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Upper manual"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"lowest"</span><span class="p">:</span><span class="w"> </span><span class="s2">"E1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"highest"</span><span class="p">:</span><span class="w"> </span><span class="s2">"F6"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"default_range"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"C3"</span><span class="p">,</span><span class="w"> </span><span class="s2">"C5"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"intervals"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"m2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"M2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m3"</span><span class="p">,</span><span class="w"> </span><span class="s2">"M3"</span><span class="p">,</span><span class="w"> </span><span class="s2">"P4"</span><span class="p">,</span><span class="w"> </span><span class="s2">"A4 / d5"</span><span class="p">,</span><span class="w"> </span><span class="s2">"P5"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m6"</span><span class="p">,</span><span class="w"> </span><span class="s2">"M6"</span><span class="p">,</span><span class="w"> </span><span class="s2">"m7"</span><span class="p">,</span><span class="w"> </span><span class="s2">"M7"</span><span class="p">,</span><span class="w"> </span><span class="s2">"P8"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"placements"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"same"</span><span class="p">,</span><span class="w"> </span><span class="s2">"across"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nl">"sound"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Harpsichord sound"</span><span class="p">,</span><span class="w"> </span><span class="nl">"range"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nl">"intervals"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nl">"manuals"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">keyboards</code></td>
+      <td>The names of the instrument’s keyboards to use. Without it, every keyboard is used.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">lowest</code> and <code class="language-plaintext highlighter-rouge">highest</code></td>
+      <td>The widest range of keys the exercise has questions for, such as <code class="language-plaintext highlighter-rouge">E1</code> and <code class="language-plaintext highlighter-rouge">F6</code>. Both must be keys on the keyboards in use. Alto draws each keyboard over the range being asked, so a shorter range gives larger keys.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">default_range</code></td>
+      <td>Optional. The lowest and highest key asked until the learner chooses another range, such as <code class="language-plaintext highlighter-rouge">["C3", "C5"]</code>. It must lie within <code class="language-plaintext highlighter-rouge">lowest</code> and <code class="language-plaintext highlighter-rouge">highest</code>. Without it, the whole range is asked.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">settings</code></td>
+      <td>Optional. What the learner can change: <code class="language-plaintext highlighter-rouge">sound</code> (the label of a row that opens the list of instruments to sound, as for other exercises), <code class="language-plaintext highlighter-rouge">range</code> (<code class="language-plaintext highlighter-rouge">true</code> adds a Range page with a draggable keyboard and a lowest and highest key) <code class="language-plaintext highlighter-rouge">intervals</code> (<code class="language-plaintext highlighter-rouge">true</code> adds a page of checkboxes for the intervals) and <code class="language-plaintext highlighter-rouge">manuals</code> (<code class="language-plaintext highlighter-rouge">true</code> adds a page of checkboxes for the keyboards, so a learner can have both highlighted keys on the upper manual, on the lower manual, or on either). Intervals too wide for the chosen range cannot be checked, and the answer buttons follow the checked intervals.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">intervals</code></td>
+      <td>The answers to offer, from <code class="language-plaintext highlighter-rouge">m2</code>, <code class="language-plaintext highlighter-rouge">M2</code>, <code class="language-plaintext highlighter-rouge">m3</code>, <code class="language-plaintext highlighter-rouge">M3</code>, <code class="language-plaintext highlighter-rouge">P4</code>, <code class="language-plaintext highlighter-rouge">A4 / d5</code>, <code class="language-plaintext highlighter-rouge">P5</code>, <code class="language-plaintext highlighter-rouge">m6</code>, <code class="language-plaintext highlighter-rouge">M6</code>, <code class="language-plaintext highlighter-rouge">m7</code>, <code class="language-plaintext highlighter-rouge">M7</code> and <code class="language-plaintext highlighter-rouge">P8</code>. Without it, all twelve are asked. Every listed interval is also an answer button.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">placements</code></td>
+      <td><code class="language-plaintext highlighter-rouge">"same"</code> puts both keys on one keyboard, and <code class="language-plaintext highlighter-rouge">"across"</code> puts one key on each of two keyboards. Without it, both are used. <code class="language-plaintext highlighter-rouge">"across"</code> needs two or more keyboards. Alto treats all the keyboards as playing the same pitches.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">prompt</code></td>
+      <td>Optional. A plain-text question of at most 120 characters that replaces the default.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Alto asks every combination of interval, lowest key, and placement once. A pack with two keyboards and a five-octave range therefore has thousands of cards, though Alto asks only those inside the chosen range and intervals, and remembers each card separately. Narrow <code class="language-plaintext highlighter-rouge">lowest</code>, <code class="language-plaintext highlighter-rouge">highest</code>, <code class="language-plaintext highlighter-rouge">intervals</code>, or <code class="language-plaintext highlighter-rouge">placements</code> for a smaller exercise.</p>
+
+<p>A lesson step or a glossary entry can highlight keys too. Give its <code class="language-plaintext highlighter-rouge">picture</code> the <code class="language-plaintext highlighter-rouge">instrument</code>, <code class="language-plaintext highlighter-rouge">keys</code>, and an optional <code class="language-plaintext highlighter-rouge">span</code>. <code class="language-plaintext highlighter-rouge">keys</code> is a list of one to four <code class="language-plaintext highlighter-rouge">[keyboard name, pitch]</code> pairs, such as <code class="language-plaintext highlighter-rouge">[["Lower manual", "C4"], ["Upper manual", "A4"]]</code>, and <code class="language-plaintext highlighter-rouge">span</code> is the lowest and highest key to draw, such as <code class="language-plaintext highlighter-rouge">["C3", "C5"]</code>. Without <code class="language-plaintext highlighter-rouge">span</code>, each keyboard is drawn over its whole range. Write a sharp key with a sharp, as in <code class="language-plaintext highlighter-rouge">C#4</code>.</p>
+
+<h2 id="correct-answer-animations">Correct-answer animations</h2>
+
+<p>An instrument can supply a transparent animated GIF. Draw the moving shape on a transparent background, export at least two frames, and include the GIF in the pack. Alto reads the frame timing from the GIF and draws the visible pixels in the correct-answer color. Export a looping GIF for motion that continues throughout a sustained note.</p>
+
+<p>The viola example uses <code class="language-plaintext highlighter-rouge">"correct_answer_animation": {"file": "animations/string.gif", "anchor": "string"}</code>. Its GIF shows a horizontal string with both ends fixed at the middle of the left and right edges. Alto rotates and scales it from the learner’s finger position to the bridge on the marked string. On an open string, the vibration starts at the nut. The same GIF works at every position and in the magnified view. <a href="/alto/pr-100/dev/assets/plugins/viola-correct-answer.gif">Preview a correct E4 answer</a> · <a href="/alto/pr-100/dev/assets/plugins/viola/animations/string.gif">Download the viola’s animation</a>.</p>
+
+<p>For an overlay aligned to the entire picture, use <code class="language-plaintext highlighter-rouge">"correct_answer_animation": {"file": "animations/keys.gif", "anchor": "image"}</code>. Give the GIF the same proportions as the instrument picture and draw the moving parts in their corresponding positions. The <code class="language-plaintext highlighter-rouge">image</code> anchor is the default. A string-anchored effect applies only to fingerboard questions.</p>
+
+<p><strong>Wait</strong> plays the animation and leaves the answered question on screen. <strong>After Animation</strong> advances after feedback. <strong>Immediately</strong> plays the answer audio and skips the overlay. Muting keeps the same timing. On a picture question without a note, an image overlay plays for the usual 600 ms of visual feedback.</p>
+
+<h2 id="distribution-and-troubleshooting">Distribution and troubleshooting</h2>
+
+<p>Select <code class="language-plaintext highlighter-rouge">pack.json</code> <strong>and its sibling asset folders</strong> and compress them into a ZIP. Opening the ZIP should show <code class="language-plaintext highlighter-rouge">pack.json</code> immediately. Include credits and permissions for the files you distribute. Test the resulting ZIP by moving your working folder outside the plugins folder, installing the ZIP, and restarting. A recipient needs only that ZIP and a build of Alto with instrument pack support.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Symptom</th>
+      <th>What to check</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Missing exercise tile</td>
+      <td>Install the ZIP with <strong>Tools → Plugins… → Install plugin from file…</strong> and restart Alto. For an editable pack, check that its folder contains <code class="language-plaintext highlighter-rouge">pack.json</code> and restart after edits.</td>
+    </tr>
+    <tr>
+      <td>Missing picture or recording</td>
+      <td>Match the relative path, extension, and capitalization to the actual file inside the ZIP. Verify the file opens and that recordings are mono 16-bit PCM.</td>
+    </tr>
+    <tr>
+      <td>Unknown instrument</td>
+      <td>The exercise’s <code class="language-plaintext highlighter-rouge">instrument</code> must exactly match an <code class="language-plaintext highlighter-rouge">id</code> in this pack’s <code class="language-plaintext highlighter-rouge">instruments</code> list.</td>
+    </tr>
+    <tr>
+      <td>Missing pack name</td>
+      <td>Add a top-level <code class="language-plaintext highlighter-rouge">name</code> next to the pack <code class="language-plaintext highlighter-rouge">id</code> in <code class="language-plaintext highlighter-rouge">pack.json</code>. Existing format 2 packs also need this field.</td>
+    </tr>
+    <tr>
+      <td>Duplicate ID</td>
+      <td>Move the previous ZIP or extracted copy out of the plugins folder before installing an update. Give an independent pack a new pack ID.</td>
+    </tr>
+    <tr>
+      <td>Dot on the wrong string</td>
+      <td>Pair each string’s own nut and bridge points. Recalibrate after cropping, rotating, or resizing the source picture.</td>
+    </tr>
+    <tr>
+      <td>Older JSON-only example</td>
+      <td>Start with the example ZIP from the latest release of the <a href="https://github.com/altosaurus/viola-plugin-tutorial/releases/latest">viola plugin tutorial</a> and copy your exercise titles and note lists into it. Add an <code class="language-plaintext highlighter-rouge">instrument</code> reference to every exercise.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="plugin-removal">Plugin removal</h2>
+
+<p>Choose <strong>Menu → Tools → Plugins…</strong>, select the installed ZIP or pack folder in the list, and press <strong>Uninstall plugin</strong>. Confirm the question, and Alto moves the selected item to the system trash and restarts. Selecting an editable pack folder moves the entire folder, including your edits.</p>
+
+<p>After Alto restarts, the pack’s exercises disappear from the exercise list. Alto keeps each profile’s practice history. To reinstall a downloaded ZIP, press <strong>Install plugin from file…</strong> in the Plugins dialog again. To recover an editable folder, restore it from the system trash and restart Alto.</p>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-100/dev/plugins/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Plugins</span></a>
+            <a class="next" href="/alto/pr-100/dev/plugins/viola/" rel="next"><span class="np-label">Next</span><span class="np-title">Viola plugin tutorial<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-100/dev/assets/js/nav.js?v=1795453094" defer></script>
+  <script src="/alto/pr-100/dev/assets/js/toc.js?v=1795453094" defer></script>
+  
+</body>
+</html>
