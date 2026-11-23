@@ -22,7 +22,7 @@
     try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
   </script>
   <link rel="icon" href="/alto/pr-98/dev/assets/img/icon.png">
-  <link rel="stylesheet" href="/alto/pr-98/dev/assets/css/site.css?v=1795435550">
+  <link rel="stylesheet" href="/alto/pr-98/dev/assets/css/site.css?v=1795435985">
   
 </head>
 <body>
@@ -43,7 +43,12 @@
       <span>Alto</span>
     </a>
     <div class="top-actions">
-      <div class="version" id="version-slot" data-version="dev" data-root="/alto/pr-98"><span class="version-name">dev</span></div>
+      
+      <a class="dd-btn pr-link" href="https://github.com/altosaurus/alto/pull/98" aria-label="View pull request 98 on GitHub">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        PR #98
+      </a>
+      
       <div class="dd" id="theme-dd">
         <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
         <div class="dd-menu" id="theme-menu" role="menu" hidden>
@@ -1286,8 +1291,8 @@ light wedges, paler).</p>
     if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
     show();
   </script>
-  <script src="/alto/pr-98/dev/assets/js/nav.js?v=1795435550" defer></script>
-  <script src="/alto/pr-98/dev/assets/js/toc.js?v=1795435550" defer></script>
-  <script src="/alto/pr-98/version-switcher.js" defer></script>
+  <script src="/alto/pr-98/dev/assets/js/nav.js?v=1795435985" defer></script>
+  <script src="/alto/pr-98/dev/assets/js/toc.js?v=1795435985" defer></script>
+  
 </body>
 </html>
