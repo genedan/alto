@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://genedan.github.io/alto/pr-102/sitemap.xml
