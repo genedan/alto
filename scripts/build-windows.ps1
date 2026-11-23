@@ -116,7 +116,9 @@ RunAndWait $Setup ($Quiet + @("/CURRENTUSER", "/DIR=$Target", "/LOG=$(Join-Path 
 if (-not (Test-Path (Join-Path $Target "alto.exe"))) { throw "The installer did not install alto.exe in $Target" }
 Run (Join-Path $Target "alto.exe") @("--version")
 CheckStaysOpen (Join-Path $Target "alto.exe")
-if (-not (Test-Path (Join-Path $Target "THIRD_PARTY_NOTICES.md"))) { throw "The notices were not installed" }
+foreach ($Notice in @("THIRD_PARTY_NOTICES.md", "licenses/Qt/README.txt", "licenses/Qt/upstream-notices.zip", "licenses/Qt/LGPL-3.0-only.txt", "licenses/Qt/GPL-3.0-only.txt")) {
+    if (-not (Test-Path (Join-Path $Target $Notice))) { throw "The installer is missing $Notice" }
+}
 
 New-Item -ItemType Directory -Force -Path $Data | Out-Null
 Set-Content -Path (Join-Path $Data "alto.db") -Value "precious"
@@ -150,20 +152,21 @@ try {
     $Step = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-EncodedCommand", $Encoded) -PassThru
     Start-Sleep -Seconds 2
     if ($Step.HasExited) { throw "The update step ended before Alto had quit" }
-    # Seed the two obsolete files from 0.0.2 after startup so the upgrade exercises its cleanup.
-    $LegacyKeyboardFiles = @(
-        (Join-Path $Target "_internal\PySide6\Qt6VirtualKeyboard.dll"),
-        (Join-Path $Target "_internal\PySide6\plugins\platforminputcontexts\qtvirtualkeyboardplugin.dll")
-    )
-    foreach ($File in $LegacyKeyboardFiles) {
+    # Seed the obsolete 0.0.2 DLLs after startup so the in-place upgrade exercises its cleanup.
+    $LegacyDlls = @(
+        "Qt6VirtualKeyboard.dll", "plugins/platforminputcontexts/qtvirtualkeyboardplugin.dll",
+        "Qt6Pdf.dll", "plugins/imageformats/qpdf.dll", "plugins/multimedia/ffmpegmediaplugin.dll",
+        "avcodec-63.dll", "avformat-63.dll", "avutil-61.dll", "swresample-7.dll", "swscale-10.dll"
+    ) | ForEach-Object { Join-Path $Target "_internal/PySide6/$_" }
+    foreach ($File in $LegacyDlls) {
         New-Item -ItemType Directory -Force -Path (Split-Path -Parent $File) | Out-Null
         New-Item -ItemType File -Path $File -ErrorAction Stop | Out-Null
     }
     $Old.Kill()
     $Old.WaitForExit(30000) | Out-Null
     if (-not $Step.WaitForExit(240000)) { throw "The update step did not finish" }
-    foreach ($File in $LegacyKeyboardFiles) {
-        if (Test-Path $File) { throw "Update left an obsolete Qt Virtual Keyboard component: $File" }
+    foreach ($File in $LegacyDlls) {
+        if (Test-Path $File) { throw "Update left an obsolete DLL: $File" }
     }
     $Open = $false
     for ($i = 0; $i -lt 60 -and -not $Open; $i++) {

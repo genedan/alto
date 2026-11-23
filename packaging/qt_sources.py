@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import lzma
 import re
 import shutil
 import subprocess
@@ -42,7 +43,8 @@ def _fetch_source(url: str, *, directory: Path) -> tuple[Path, str]:
 
 def _collect_notices(archive: Path, *, notices: ZipFile, destination: Path, bindings: bool) -> None:
     # Preserve upstream paths so each component retains its own credits.
-    with tarfile.open(archive, "r|xz", bufsize=1024 * 1024) as tar:
+    # Bound each decompressed read even when the source contains highly compressible assets.
+    with lzma.open(archive, "rb") as source_stream, tarfile.open(fileobj=source_stream, mode="r|") as tar:
         for entry in tar:
             path = PurePosixPath(entry.name)
             if not entry.isfile() or len(path.parts) < 3:
