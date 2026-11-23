@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=68",
+    "setuptools>=77.0.3",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -35,7 +35,8 @@ classifiers = [
     "Topic :: Multimedia :: Sound/Audio",
 ]
 readme = "README.md"
-license = {file = "LICENSE"}
+# LICENSE covers Alto’s code. Bundled assets have the terms in THIRD_PARTY_NOTICES.md.
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 requires-python = ">=3.11"
 dependencies = [
     # PySide6 6.12.0 drops a reference to None on every call that returns nothing, which aborts the program after enough
@@ -78,6 +79,7 @@ alto = "alto.__main__:main"
 alto = [
     "assets/excerpts/*/*",
     "assets/piano/*",
+    "assets/samples/SOURCE.txt",
     "assets/samples/*/*",
     "assets/ui/*",
     "assets/fonts/*",
