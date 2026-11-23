@@ -11,6 +11,8 @@
 #
 # ALTO_ICON, if set, names the icon of the program: a .ico on Windows. It is not set on Linux, where the menu entry names the icon.
 import os
+import re
+from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules, copy_metadata
 
@@ -20,6 +22,19 @@ a = Analysis(
     hiddenimports=["_cffi_backend", *collect_submodules("nacl")],
     excludes=["tkinter", "pytest"],
 )
+# Qt's hooks collect optional plugins and their native libraries. Alto draws its own keyboard
+# and plays local PCM WAVs with QSoundEffect, which uses the platform audio output.
+def unused_qt_component(destination):
+    name = Path(destination).name.lower()
+    return (
+        "virtualkeyboard" in destination.lower()
+        or "ffmpeg" in name
+        or re.fullmatch(r"(?:lib)?(?:avcodec|avformat|avutil|swresample|swscale)(?:-\d+\.dll|\.so(?:\.\d+)*)", name)
+    )
+
+
+a.binaries = [entry for entry in a.binaries if not unused_qt_component(entry[0])]
+a.datas = [entry for entry in a.datas if not unused_qt_component(entry[0])]
 pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
@@ -38,3 +53,8 @@ coll = COLLECT(
     upx=False,
     name="alto",
 )
+
+# Check the finished bundle, including native libraries and symlinks created during collection.
+for path in Path(coll.name).rglob("*"):
+    if unused_qt_component(str(path.relative_to(coll.name))):
+        raise SystemExit(f"Unexpected optional multimedia or keyboard component in the desktop package: {path}")
