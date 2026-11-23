@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python beyond the basics · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-103/latest/guide/python/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Python beyond the basics · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-103/latest/guide/python/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-103/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-103/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-103/dev/assets/css/site.css?v=1795466150">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-103/dev/">
+      <img src="/alto/pr-103/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-103/dev/" aria-label="Documentation preview for PR #103">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #103
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-103/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-103/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-103/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-103/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/python/" aria-current="page">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-103/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-103/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-103/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Python beyond the basics</h1>
+          <p>Alto uses ordinary Python, but it leans on a handful of features that a first course does not reach. This chapter names each
+one, shows where Alto uses it, and says what to read to learn it properly. If a line of code in Alto puzzles you, the cause
+is probably here.</p>
+
+<h2 id="dataclasses">Dataclasses</h2>
+
+<p>A <strong>dataclass</strong> is a class whose job is to hold fields. You list the fields with their types and Python writes <code class="language-plaintext highlighter-rouge">__init__</code>,
+<code class="language-plaintext highlighter-rouge">__repr__</code> and <code class="language-plaintext highlighter-rouge">__eq__</code> for you.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+
+<span class="o">@</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">Profile</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</code></pre></div></div>
+
+<p>Alto uses them for <code class="language-plaintext highlighter-rouge">Question</code>, <code class="language-plaintext highlighter-rouge">Note</code>, <code class="language-plaintext highlighter-rouge">Instrument</code>, <code class="language-plaintext highlighter-rouge">NotationStyle</code>, <code class="language-plaintext highlighter-rouge">KeyboardStyle</code>, the settings objects and the rows read
+from the database. Two options matter:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">frozen=True</code> makes instances immutable, so they can be dictionary keys and cannot be changed by accident. <code class="language-plaintext highlighter-rouge">Note</code> and
+<code class="language-plaintext highlighter-rouge">Profile</code> are frozen.</li>
+  <li><code class="language-plaintext highlighter-rouge">KW_ONLY</code> is a marker field. Every field after it must be given by name. <code class="language-plaintext highlighter-rouge">Question("prompt", choices=[...], answer="C")</code>
+works because <code class="language-plaintext highlighter-rouge">prompt</code> comes first and <code class="language-plaintext highlighter-rouge">choices</code> and the rest come after <code class="language-plaintext highlighter-rouge">_: KW_ONLY</code>. This is how the “only the first
+parameter is positional” rule is applied to data.</li>
+</ul>
+
+<p><em>Read:</em> the <code class="language-plaintext highlighter-rouge">dataclasses</code> module documentation; PEP 557 (the proposal that introduced them); Luciano Ramalho, <em>Fluent Python</em>,
+2nd ed. (O’Reilly, 2022), the chapter on data class builders.</p>
+
+<h2 id="type-hints">Type hints</h2>
+
+<p>A <strong>type hint</strong> says what a value should be: <code class="language-plaintext highlighter-rouge">def pick(self, exercise: Exercise, *, rng: random.Random) -&gt; Question</code>. Python
+ignores them at run time. <strong>Pyright</strong> reads them and reports contradictions before the program runs, and PyCharm uses them for
+completion. Alto annotates everything.</p>
+
+<p>Things you will meet:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">int | None</code> means “an int or nothing”. It replaced <code class="language-plaintext highlighter-rouge">Optional[int]</code> in Python 3.10. A value of this type must be checked
+before use (<code class="language-plaintext highlighter-rouge">if x is not None:</code>), and Pyright will insist.</li>
+  <li><code class="language-plaintext highlighter-rouge">list[str]</code>, <code class="language-plaintext highlighter-rouge">dict[str, int]</code>, <code class="language-plaintext highlighter-rouge">tuple[int, int]</code> are the built-in generic types (Python 3.9 and later).</li>
+  <li><code class="language-plaintext highlighter-rouge">from __future__ import annotations</code> is at the top of nearly every file. It makes annotations plain text that is never
+evaluated at import, so you can mention a class before it is defined and import a name only for typing.</li>
+  <li><code class="language-plaintext highlighter-rouge">if TYPE_CHECKING:</code> guards imports that exist only for annotations. The block is skipped when the program runs and read when
+Pyright runs. If you use such a name at run time (for example to call it), you get a <code class="language-plaintext highlighter-rouge">NameError</code>, so the import belongs above
+the guard. It is an easy trap, because Pyright is satisfied either way.</li>
+  <li><code class="language-plaintext highlighter-rouge">Callable[[int], str]</code> is a function taking an int and returning a str. <code class="language-plaintext highlighter-rouge">Callable[..., int]</code> is “any arguments”.</li>
+  <li><code class="language-plaintext highlighter-rouge"># pyright: ignore[reportAttributeAccessIssue]</code> silences one specific message on one line. Always add the reason.</li>
+</ul>
+
+<p><em>Read:</em> PEP 484 (type hints), PEP 604 (the <code class="language-plaintext highlighter-rouge">X | Y</code> syntax), the Python documentation’s <code class="language-plaintext highlighter-rouge">typing</code> module, and the Pyright
+documentation (microsoft.github.io/pyright), whose “type concepts” pages are a good short course in the ideas. Ramalho’s
+<em>Fluent Python</em> has two chapters on type hints.</p>
+
+<h2 id="keyword-only-arguments">Keyword-only arguments</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exercise</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">correct</span><span class="p">):</span> <span class="p">...</span>
+</code></pre></div></div>
+
+<p>Everything after the bare <code class="language-plaintext highlighter-rouge">*</code> must be given by name. Alto requires this for every parameter after the first, and Ruff checks
+it. When you write <code class="language-plaintext highlighter-rouge">Note(4, letter=0)</code> you can read the call without knowing the signature.</p>
+
+<h2 id="abstract-base-classes-and-decorators">Abstract base classes and decorators</h2>
+
+<p><code class="language-plaintext highlighter-rouge">Exercise</code> is an <strong>abstract base class</strong>: it declares <code class="language-plaintext highlighter-rouge">generate</code> as <code class="language-plaintext highlighter-rouge">@abstractmethod</code>, so you cannot create an <code class="language-plaintext highlighter-rouge">Exercise</code>
+without writing <code class="language-plaintext highlighter-rouge">generate</code>. <code class="language-plaintext highlighter-rouge">@register</code> is a <strong>class decorator</strong>: a function that receives the class you just defined,
+records it (in <code class="language-plaintext highlighter-rouge">REGISTRY</code>), and returns it. The <code class="language-plaintext highlighter-rouge">@</code> line is shorthand for <code class="language-plaintext highlighter-rouge">MyExercise = register(MyExercise)</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">register</span>
+<span class="k">class</span> <span class="nc">NoteNames</span><span class="p">(</span><span class="n">Exercise</span><span class="p">):</span> <span class="p">...</span>
+</code></pre></div></div>
+
+<p>Decorators are everywhere in Python: <code class="language-plaintext highlighter-rouge">@property</code> (a method read like an attribute), <code class="language-plaintext highlighter-rouge">@staticmethod</code>, <code class="language-plaintext highlighter-rouge">@cache</code>,
+<code class="language-plaintext highlighter-rouge">@pytest.fixture</code>. A decorator is a function that takes a function or class and returns a replacement.</p>
+
+<p><em>Read:</em> Ramalho’s <em>Fluent Python</em>, the chapters on decorators and closures, and on interfaces and abstract base classes.</p>
+
+<h2 id="closures">Closures</h2>
+
+<p>A <strong>closure</strong> is a function defined inside another function that remembers the outer function’s variables. Alto uses them
+constantly for Qt callbacks, because a callback has to remember something:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_flash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">button</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">end</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="n">target</span><span class="p">),</span> <span class="n">QColor</span><span class="p">(</span><span class="s">"black"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># remembers `button`, `start` and `end`
+</span>        <span class="n">button</span><span class="p">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_style</span><span class="p">(</span><span class="n">blend</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)))</span>
+
+    <span class="n">anim</span><span class="p">.</span><span class="n">valueChanged</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>When a lambda is created in a loop, beware <strong>late binding</strong>: <code class="language-plaintext highlighter-rouge">lambda: self.show(i)</code> looks <code class="language-plaintext highlighter-rouge">i</code> up when called, not when
+created, so every callback sees the last <code class="language-plaintext highlighter-rouge">i</code>. The fix, used throughout <code class="language-plaintext highlighter-rouge">alto/ui/</code>, is a default argument that captures the
+value now: <code class="language-plaintext highlighter-rouge">lambda _=False, k=key: self.show_table(k)</code>.</p>
+
+<h2 id="functoolscache"><code class="language-plaintext highlighter-rouge">functools.cache</code></h2>
+
+<p><code class="language-plaintext highlighter-rouge">@cache</code> memoizes a function: the first call with given arguments computes the result and later calls return the stored one.
+<code class="language-plaintext highlighter-rouge">alto/ui/engraving.py</code> uses it so each glyph outline is built once. Two consequences: arguments must be hashable (immutable),
+and Pyright cannot always see through the decorator, so type information is sometimes lost at the call site.</p>
+
+<h2 id="random-numbers-you-can-repeat">Random numbers you can repeat</h2>
+
+<p><code class="language-plaintext highlighter-rouge">random.Random(seed)</code> is a generator with its own state. Alto passes an <code class="language-plaintext highlighter-rouge">rng</code> argument into every exercise’s <code class="language-plaintext highlighter-rouge">generate</code>, rather
+than calling the module-level <code class="language-plaintext highlighter-rouge">random</code> functions, because a test can then pass <code class="language-plaintext highlighter-rouge">random.Random(1)</code> and get the same questions
+every time. This is called <strong>dependency injection</strong>: the dependency (the random source) is passed in, not reached for.
+<code class="language-plaintext highlighter-rouge">Learner.pick</code> takes an <code class="language-plaintext highlighter-rouge">rng</code> for the same reason. If you write code that makes random choices, take an <code class="language-plaintext highlighter-rouge">rng</code> argument.</p>
+
+<h2 id="dates-and-times">Dates and times</h2>
+
+<p>The database stores timestamps as seconds since 1970 (<code class="language-plaintext highlighter-rouge">time.time()</code>), which sort and subtract easily. Durations are measured
+with <code class="language-plaintext highlighter-rouge">time.monotonic()</code>, a clock that never jumps backwards when the system time changes. Use <code class="language-plaintext highlighter-rouge">monotonic</code> for “how long did
+that take” and <code class="language-plaintext highlighter-rouge">time</code> for “when did that happen”.</p>
+
+<h2 id="paths">Paths</h2>
+
+<p><code class="language-plaintext highlighter-rouge">pathlib.Path</code> represents file locations: <code class="language-plaintext highlighter-rouge">Path(__file__).parent / "assets" / "fonts"</code>. The <code class="language-plaintext highlighter-rouge">/</code> operator joins parts and works
+on every operating system. <code class="language-plaintext highlighter-rouge">__file__</code> is the path of the current source file, which is how the program finds its fonts and
+recordings wherever it is installed.</p>
+
+<h2 id="testing-tools-doctest-fixtures-monkeypatch">Testing tools: doctest, fixtures, monkeypatch</h2>
+
+<ul>
+  <li>A <strong>doctest</strong> is an example inside a docstring. Lines starting <code class="language-plaintext highlighter-rouge">&gt;&gt;&gt; </code> are run, and the line below must match the output.
+pytest runs them with <code class="language-plaintext highlighter-rouge">--doctest-modules</code>. Two flags are on: <code class="language-plaintext highlighter-rouge">NORMALIZE_WHITESPACE</code> (ignore differences in spacing) and
+<code class="language-plaintext highlighter-rouge">ELLIPSIS</code> (<code class="language-plaintext highlighter-rouge">...</code> matches any text).</li>
+  <li>A <strong>fixture</strong> is a function pytest runs to prepare something a test needs. A test asks for it by naming a parameter:
+<code class="language-plaintext highlighter-rouge">def test_x(app, tmp_path)</code>. <code class="language-plaintext highlighter-rouge">app</code> is Alto’s fixture that provides the <code class="language-plaintext highlighter-rouge">QApplication</code>; <code class="language-plaintext highlighter-rouge">tmp_path</code> is pytest’s own, a fresh
+empty folder.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">monkeypatch</code></strong> is a fixture that replaces something for one test and puts it back afterwards:
+<code class="language-plaintext highlighter-rouge">monkeypatch.setattr(sounds, "play_notes", lambda *a, **k: None)</code>. It is how tests keep the sound off and avoid real
+dialogs. The thing replaced is named by a string, which is why an IDE cannot always check it.</li>
+  <li>A <strong>fake</strong> is a small class a test writes to stand in for something real (a <code class="language-plaintext highlighter-rouge">QSoundEffect</code>, a settings store). Because Qt calls
+fakes positionally, they sometimes need <code class="language-plaintext highlighter-rouge"># noqa: PLR0917</code>.</li>
+</ul>
+
+<p><em>Read:</em> Okken’s <em>Python Testing with pytest</em>; the <code class="language-plaintext highlighter-rouge">doctest</code> and <code class="language-plaintext highlighter-rouge">unittest.mock</code> pages in the standard library documentation.</p>
+
+<h2 id="packaging-in-one-paragraph">Packaging in one paragraph</h2>
+
+<p><code class="language-plaintext highlighter-rouge">pyproject.toml</code> is the single description of the project (PEP 621): its name, version, dependencies, the command <code class="language-plaintext highlighter-rouge">alto</code>,
+which files ship with the package (the fonts and recordings), and the settings of every tool. <code class="language-plaintext highlighter-rouge">setuptools</code> builds it.
+<code class="language-plaintext highlighter-rouge">pip install -e .</code> reads it. When you add a dependency, add it there.</p>
+
+<h2 id="words-to-search-for">Words to search for</h2>
+
+<p>If you want to go further: <em>context managers</em> (<code class="language-plaintext highlighter-rouge">with</code> statements: used for database transactions and <code class="language-plaintext highlighter-rouge">QPainter</code> save/restore),
+<em>generators</em> and <code class="language-plaintext highlighter-rouge">yield</code> (used by fixtures), <em>comprehensions</em>, <em>the descriptor protocol</em> (how <code class="language-plaintext highlighter-rouge">@property</code> works), <em>the data model</em>
+and <em>dunder methods</em> (<code class="language-plaintext highlighter-rouge">__eq__</code>, <code class="language-plaintext highlighter-rouge">__lt__</code>: <code class="language-plaintext highlighter-rouge">Note</code> defines ordering), <em>structural subtyping</em> and <code class="language-plaintext highlighter-rouge">Protocol</code> (PEP 544).</p>
+
+<h2 id="further-reading">Further reading</h2>
+
+<ul>
+  <li>Luciano Ramalho, <em>Fluent Python</em>, 2nd ed. (O’Reilly, 2022): the best single book for the “beyond basics” material above.</li>
+  <li>Brett Slatkin, <em>Effective Python</em>, 2nd ed. (Addison-Wesley, 2019): short, practical items on closures, decorators and
+typing.</li>
+  <li>Python Software Foundation, <em>The Python Language Reference</em>, “Data model” chapter, and the <code class="language-plaintext highlighter-rouge">dataclasses</code>, <code class="language-plaintext highlighter-rouge">typing</code>,
+<code class="language-plaintext highlighter-rouge">functools</code>, <code class="language-plaintext highlighter-rouge">pathlib</code> and <code class="language-plaintext highlighter-rouge">doctest</code> library pages, at docs.python.org.</li>
+  <li>PEP 8, PEP 257, PEP 484, PEP 557, PEP 604, PEP 621, at peps.python.org.</li>
+  <li>The numpydoc docstring standard, numpydoc.readthedocs.io (the “format” page): the layout of Alto’s docstrings.</li>
+</ul>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-103/dev/guide/orientation/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Getting oriented</span></a>
+            <a class="next" href="/alto/pr-103/dev/guide/qt/" rel="next"><span class="np-label">Next</span><span class="np-title">Qt and PySide6<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-103/dev/assets/js/nav.js?v=1795466150" defer></script>
+  <script src="/alto/pr-103/dev/assets/js/toc.js?v=1795466150" defer></script>
+  
+</body>
+</html>
