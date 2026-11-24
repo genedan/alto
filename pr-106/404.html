@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Page not found · Alto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <style>
+    :root { --bg: #fbfbfa; --fg: #1d2326; --accent: #1f6fb5; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #1b1f21; --fg: #e6eaeb; --accent: #6fb1ea; color-scheme: dark; } }
+    body { background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 64px max(16px, env(safe-area-inset-left, 0px)); }
+    main { max-width: 36rem; margin: 0 auto; }
+    a { color: var(--accent); }
+  </style>
+  <script>
+    // The docs used to be one copy at the root of the site. An old address such as /alto/getting-started/ now lives under /latest/.
+    (function () {
+      var root = "/alto/pr-106";
+      var path = location.pathname;
+      if (path.indexOf(root + "/") !== 0) { return; }
+      var rest = path.slice(root.length + 1);
+      var first = rest.split("/")[0];
+      if (first === "" || first === "dev" || first === "latest" || /^v[0-9]/.test(first)) { return; }
+      location.replace(root + "/latest/" + rest + location.search + location.hash);
+    })();
+  </script>
+</head>
+<body>
+  <main>
+    <h1>Page not found</h1>
+    <p>There is no such page in these docs. It may have moved, or it may not exist in this version.</p>
+    <p><a href="/alto/pr-106/latest/">Go to the latest docs</a> or <a href="/alto/pr-106/dev/">the development docs</a>.</p>
+  </main>
+</body>
+</html>

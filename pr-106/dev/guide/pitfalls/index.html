@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pitfalls and debugging · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-106/latest/guide/pitfalls/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Pitfalls and debugging · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-106/latest/guide/pitfalls/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-106/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-106/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-106/dev/assets/css/site.css?v=1795479716">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-106/dev/">
+      <img src="/alto/pr-106/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-106/dev/" aria-label="Documentation preview for PR #106">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #106
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-106/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/pitfalls/" aria-current="page">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Pitfalls and debugging</h1>
+          <p>This is the chapter to open when something strange happens. Each entry below is a mistake that was actually made while building
+Alto, with the symptom you will see, the cause, and the fix. After them come the tools for finding a problem you do not recognize.</p>
+
+<h2 id="qt-objects-and-their-lifetimes">Qt objects and their lifetimes</h2>
+
+<p><strong>Symptom: a widget you created never appears, or a doctest that builds a widget in one line gives nothing.</strong>
+<code class="language-plaintext highlighter-rouge">QLabel("hi").show()</code> creates a widget with no parent and no Python variable. Python frees it immediately, and Qt deletes it.
+<em>Fix:</em> keep it in a variable (<code class="language-plaintext highlighter-rouge">label = QLabel("hi")</code>), or give it a parent.</p>
+
+<p><strong>Symptom: the program crashes (a segmentation fault, with no Python traceback) when painting onto an image.</strong>
+<code class="language-plaintext highlighter-rouge">QPainter(QImage(...))</code> paints on a temporary. Python frees the image while the painter still uses it. <em>Fix:</em> put the image in a
+variable and keep it alive until after <code class="language-plaintext highlighter-rouge">p.end()</code>.</p>
+
+<p><strong>Symptom: <code class="language-plaintext highlighter-rouge">RuntimeError: Internal C++ object (...) already deleted</code>.</strong>
+You kept a Python reference to a widget whose C++ side has been deleted, because its parent was deleted or <code class="language-plaintext highlighter-rouge">deleteLater()</code> ran.
+<em>Fix:</em> do not use a widget after you closed it; clear your reference when you delete it; check <code class="language-plaintext highlighter-rouge">shiboken6.isValid(obj)</code> if you
+must.</p>
+
+<p><strong>Symptom: an animation or timer you started simply stops.</strong>
+It was garbage collected. <em>Fix:</em> give it a parent (<code class="language-plaintext highlighter-rouge">QVariantAnimation(self)</code>), or store it (<code class="language-plaintext highlighter-rouge">self._anim = ...</code>). See
+<a href="/alto/pr-106/dev/guide/animation/">Animation</a>.</p>
+
+<p><strong>Symptom: a doctest prints <code class="language-plaintext highlighter-rouge">True</code> where you did not expect output.</strong>
+<code class="language-plaintext highlighter-rouge">QPainter.end()</code> returns <code class="language-plaintext highlighter-rouge">True</code>, and an interactive session prints return values. <em>Fix:</em> write the <code class="language-plaintext highlighter-rouge">True</code> in the expected output
+or assign the result (<code class="language-plaintext highlighter-rouge">_ = p.end()</code>).</p>
+
+<p><strong>Symptom: a widget’s size is wrong in a test, or a resize handler never runs.</strong>
+Qt does not send resize events to a widget that has not been shown. <em>Fix:</em> call <code class="language-plaintext highlighter-rouge">widget.show()</code>; on the offscreen platform nothing
+appears.</p>
+
+<h2 id="a-test-run-that-passes-but-exits-with-an-error">A test run that passes but exits with an error</h2>
+
+<p><strong>Symptom:</strong> every test reports “passed”, and then the process dies with a signal: exit status 139 (segmentation fault), 135 (bus
+error) or <code class="language-plaintext highlighter-rouge">-7</code>, and a message such as <code class="language-plaintext highlighter-rouge">pure virtual method called</code> or <code class="language-plaintext highlighter-rouge">terminate called without an active exception</code>. Because
+the exit status is non-zero, the pre-push hook fails.</p>
+
+<p><strong>Cause:</strong> the doctests create hundreds of widgets they never close. When Python exits it destroys the last objects in whatever
+order, and Qt’s destruction of widgets after the <code class="language-plaintext highlighter-rouge">QApplication</code> has gone aborts.</p>
+
+<p><strong>Fix:</strong> the root <code class="language-plaintext highlighter-rouge">conftest.py</code> has a <code class="language-plaintext highlighter-rouge">pytest_sessionfinish</code> hook that closes and deletes every widget and runs the garbage collector
+while Python and Qt are both still alive. If the symptom returns, a new kind of object is probably outliving the application;
+look at what the last test created. Run <code class="language-plaintext highlighter-rouge">python -X faulthandler -m pytest</code> to see where it dies.</p>
+
+<p>Always check the exit status, not just the summary line: <code class="language-plaintext highlighter-rouge">pytest -q; echo $?</code>.</p>
+
+<h2 id="sound-in-tests">Sound in tests</h2>
+
+<p><strong>Symptom: a test makes noise, or fails on a machine with no audio.</strong>
+It submitted a right answer, which plays a sound. <em>Fix:</em> the test fixtures turn <code class="language-plaintext highlighter-rouge">sounds.enabled</code> off for every test. A <em>doctest</em> that
+submits an answer must set <code class="language-plaintext highlighter-rouge">sounds.enabled = False</code> and restore it afterwards.</p>
+
+<h2 id="imports">Imports</h2>
+
+<p><strong>Symptom: <code class="language-plaintext highlighter-rouge">NameError</code> for a name that Pyright says is fine.</strong>
+The name is imported under <code class="language-plaintext highlighter-rouge">if TYPE_CHECKING:</code> but used at run time. Pyright sees the import and is satisfied; Python skips the
+block. <em>Fix:</em> import it normally, above the guard.</p>
+
+<p><strong>Symptom: <code class="language-plaintext highlighter-rouge">ImportError: cannot import name ... (most likely due to a circular import)</code>.</strong>
+Two modules import each other. <em>Fix:</em> do not move the import into a function (Ruff forbids it). Break the cycle: move the shared
+piece to a third module, or have one module register a callback with the other, as <code class="language-plaintext highlighter-rouge">notation.on_redraw</code> does for the staff.</p>
+
+<p><strong>Symptom: Ruff reports <code class="language-plaintext highlighter-rouge">E402</code> in a <code class="language-plaintext highlighter-rouge">conftest.py</code>.</strong>
+The settings folders must be redirected before anything from Alto is imported, so those imports come after code. Mark each with
+<code class="language-plaintext highlighter-rouge"># noqa: E402</code>, on the first line of the statement.</p>
+
+<h2 id="tools-that-disagree">Tools that disagree</h2>
+
+<p><strong>Pyright is satisfied and PyCharm warns about <code class="language-plaintext highlighter-rouge">str(settings.value(...))</code>, or the reverse.</strong> The two infer types differently.
+Alto has helpers (<code class="language-plaintext highlighter-rouge">text_value</code>, <code class="language-plaintext highlighter-rouge">int_value</code>) so that neither complains. Where one tool is simply wrong, silence it narrowly and
+say why: <code class="language-plaintext highlighter-rouge"># pyright: ignore[rule]</code>, <code class="language-plaintext highlighter-rouge"># noqa: CODE</code>, <code class="language-plaintext highlighter-rouge"># noinspection Name</code>.</p>
+
+<p><strong>Pyright loses a type through <code class="language-plaintext highlighter-rouge">@cache</code>.</strong> A cached function’s signature can be hidden from the checker. <em>Fix:</em> give the wrapper
+an explicit annotation, or add a <code class="language-plaintext highlighter-rouge">cast</code>.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">ruff check</code> and <code class="language-plaintext highlighter-rouge">ruff format</code> undo each other.</strong> Run them in order: <code class="language-plaintext highlighter-rouge">ruff format .</code> then <code class="language-plaintext highlighter-rouge">ruff check --fix .</code>. In the other order
+the trailing-comma rule (<code class="language-plaintext highlighter-rouge">COM812</code>) and the formatter fight.</p>
+
+<p><strong>Ruff says <code class="language-plaintext highlighter-rouge">PLR0917</code> on a call or a definition.</strong> Only the first parameter may be positional. Add <code class="language-plaintext highlighter-rouge">*,</code> after the first parameter and
+name the arguments at the call. In a fake that Qt calls positionally, add <code class="language-plaintext highlighter-rouge"># noqa: PLR0917</code> with the reason.</p>
+
+<h2 id="pyside6-and-qt">PySide6 and Qt</h2>
+
+<p><strong>Symptom: a program that ran fine for a while aborts with no traceback after a lot of painting, on Python 3.11.</strong>
+PySide6 6.12.0 has a reference-counting bug on that Python. <code class="language-plaintext highlighter-rouge">pyproject.toml</code> excludes it. If you change the PySide6 requirement,
+test a long session.</p>
+
+<p><strong>Symptom: a setting you saved as a number comes back as a string.</strong>
+<code class="language-plaintext highlighter-rouge">QSettings</code> gives back whatever it finds. Read with <code class="language-plaintext highlighter-rouge">int_value</code> or <code class="language-plaintext highlighter-rouge">text_value</code>; store booleans as <code class="language-plaintext highlighter-rouge">"true"</code> and <code class="language-plaintext highlighter-rouge">"false"</code>.</p>
+
+<p><strong>Symptom: <code class="language-plaintext highlighter-rouge">str.format</code> raises <code class="language-plaintext highlighter-rouge">KeyError</code> or <code class="language-plaintext highlighter-rouge">IndexError</code> when you edit the style sheet.</strong>
+<code class="language-plaintext highlighter-rouge">app_style</code> fills a template with <code class="language-plaintext highlighter-rouge">.format</code>, so every literal <code class="language-plaintext highlighter-rouge">{</code> and <code class="language-plaintext highlighter-rouge">}</code> of CSS is doubled in the template. A new rule needs doubled
+braces.</p>
+
+<p><strong>Symptom: a lambda connected in a loop always uses the last value.</strong>
+Late binding. <em>Fix:</em> capture the value as a default argument: <code class="language-plaintext highlighter-rouge">lambda _=False, k=key: self.show(k)</code>.</p>
+
+<p><strong>Symptom: the first note of a sequence is missing.</strong>
+<code class="language-plaintext highlighter-rouge">QSoundEffect</code> loads in the background, and a note played before it is ready is silent. <code class="language-plaintext highlighter-rouge">Sounds._play_sequence</code> waits (for up
+to a second) for loading. Anything new that plays a sound should do the same, or play something already loaded.</p>
+
+<p><strong>Symptom: the screenshots differ after regenerating.</strong>
+Fonts render slightly differently on each machine and each version of the platform libraries. Regenerate on the machine you normally
+use, look at the pictures, and commit only intended changes.</p>
+
+<h2 id="the-docs-site">The docs site</h2>
+
+<p><strong>Symptom: a page on the website is blank, or shows Liquid errors, after adding a code sample.</strong>
+Jekyll runs the Liquid template language over every page, and two opening curly braces in a row, or an opening brace followed by a percent sign, in a code block is taken
+as template code. <em>Fix:</em> wrap the page or the block in <code class="language-plaintext highlighter-rouge">raw</code> and <code class="language-plaintext highlighter-rouge">endraw</code> tags, as the generated API pages do, or avoid the braces.</p>
+
+<p><strong>Symptom: <code class="language-plaintext highlighter-rouge">tests/test_api_docs.py</code> fails.</strong> The generated API pages are out of date. Run <code class="language-plaintext highlighter-rouge">python scripts/api_docs.py</code> and commit the
+result.</p>
+
+<h2 id="finding-a-problem-you-do-not-recognize">Finding a problem you do not recognize</h2>
+
+<h3 id="reproduce-it-small">Reproduce it small</h3>
+
+<p>Almost every bug becomes obvious when reduced. Write a ten-line script that builds only the widget in question and draws it:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">"QT_QPA_PLATFORM"</span><span class="p">]</span> <span class="o">=</span> <span class="s">"offscreen"</span>
+<span class="kn">from</span> <span class="nn">PySide6.QtWidgets</span> <span class="kn">import</span> <span class="n">QApplication</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">([])</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">SomeWidget</span><span class="p">()</span>
+<span class="n">w</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="n">w</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">w</span><span class="p">.</span><span class="n">grab</span><span class="p">().</span><span class="n">save</span><span class="p">(</span><span class="s">"/tmp/w.png"</span><span class="p">)</span>  <span class="c1"># then look at the image
+</span></code></pre></div></div>
+
+<p>If the bug appears, you have a test: put the script’s assertions in <code class="language-plaintext highlighter-rouge">tests/</code>.</p>
+
+<h3 id="tools">Tools</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Need</th>
+      <th>Tool</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>A crash with no Python traceback</td>
+      <td><code class="language-plaintext highlighter-rouge">python -X faulthandler</code>, which prints the Python stack on a fatal signal. For C-level detail, run under <code class="language-plaintext highlighter-rouge">gdb</code>.</td>
+    </tr>
+    <tr>
+      <td>Which tests fail, fast</td>
+      <td><code class="language-plaintext highlighter-rouge">pytest -x -q</code> (stop at the first failure), <code class="language-plaintext highlighter-rouge">-k word</code> (only matching tests), <code class="language-plaintext highlighter-rouge">-s</code> (show prints), <code class="language-plaintext highlighter-rouge">--pdb</code> (debugger on failure).</td>
+    </tr>
+    <tr>
+      <td>What a widget looks like</td>
+      <td><code class="language-plaintext highlighter-rouge">widget.grab().save("/tmp/x.png")</code>, then open the file.</td>
+    </tr>
+    <tr>
+      <td>What Qt is doing at start-up</td>
+      <td><code class="language-plaintext highlighter-rouge">QT_DEBUG_PLUGINS=1 python -m alto</code> (platform plugin problems); <code class="language-plaintext highlighter-rouge">QT_LOGGING_RULES="*.debug=true"</code>.</td>
+    </tr>
+    <tr>
+      <td>Every widget alive</td>
+      <td><code class="language-plaintext highlighter-rouge">QApplication.allWidgets()</code>; for one widget’s children, <code class="language-plaintext highlighter-rouge">widget.findChildren(QPushButton)</code>.</td>
+    </tr>
+    <tr>
+      <td>Slow code</td>
+      <td><code class="language-plaintext highlighter-rouge">python -m cProfile -s cumtime script.py</code>; for paint speed, <code class="language-plaintext highlighter-rouge">QElapsedTimer</code> around the drawing.</td>
+    </tr>
+    <tr>
+      <td>Memory growth</td>
+      <td>the standard library’s <code class="language-plaintext highlighter-rouge">tracemalloc</code>.</td>
+    </tr>
+    <tr>
+      <td>A signal that never fires</td>
+      <td><code class="language-plaintext highlighter-rouge">QSignalSpy(widget.someSignal)</code>, then <code class="language-plaintext highlighter-rouge">spy.count()</code>.</td>
+    </tr>
+    <tr>
+      <td>Why a test passed alone and fails with the others</td>
+      <td>a shared singleton changed state. Check <code class="language-plaintext highlighter-rouge">tests/conftest.py</code> resets it.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A caution about debuggers: <code class="language-plaintext highlighter-rouge">pdb</code> and an IDE’s breakpoints work in a Qt program, but stopping in the middle of a handler freezes the
+event loop and the windows. That is expected. Do not stop inside a <code class="language-plaintext highlighter-rouge">paintEvent</code> while the window is repainting; use prints, or save
+an image and stop afterwards.</p>
+
+<h3 id="questions-to-ask">Questions to ask</h3>
+
+<ol>
+  <li>Is it the <em>data</em> (the wrong <code class="language-plaintext highlighter-rouge">Question</code>), the <em>drawing</em> (the right data drawn wrongly), the <em>flow</em> (the right thing drawn at the
+wrong time) or the <em>environment</em> (a font, a platform, a library version)? Print the <code class="language-plaintext highlighter-rouge">Question</code> first.</li>
+  <li>What changed? <code class="language-plaintext highlighter-rouge">git bisect</code> finds the commit that broke it, using your test as the judge.</li>
+  <li>Does it happen with default settings and a fresh profile? Start with <code class="language-plaintext highlighter-rouge">XDG_CONFIG_HOME</code> and <code class="language-plaintext highlighter-rouge">XDG_DATA_HOME</code> pointing at an empty
+folder (as the tests do) to rule out stale saved state.</li>
+</ol>
+
+<h2 id="words-to-search-for">Words to search for</h2>
+
+<p><em>Segmentation fault, core dump, faulthandler.</em> <em>Garbage collection, reference counting, object lifetime, ownership.</em> <em>Late binding,
+closure.</em> <em>Circular import.</em> <em>Flaky test, test isolation, global state.</em> <em>Bisecting.</em> <em>Race condition.</em> <em>Event loop starvation.</em></p>
+
+<h2 id="further-reading">Further reading</h2>
+
+<ul>
+  <li>Andreas Zeller, <em>Why Programs Fail: A Guide to Systematic Debugging</em>, 2nd ed. (Morgan Kaufmann, 2009): the scientific method
+applied to bugs, including bisecting and reducing a failure.</li>
+  <li>Andrew Hunt and David Thomas, <em>The Pragmatic Programmer</em>, 20th anniversary ed. (Addison-Wesley, 2019): the chapter on debugging.</li>
+  <li>Python Software Foundation, the <code class="language-plaintext highlighter-rouge">faulthandler</code>, <code class="language-plaintext highlighter-rouge">pdb</code>, <code class="language-plaintext highlighter-rouge">cProfile</code> and <code class="language-plaintext highlighter-rouge">tracemalloc</code> pages in <em>The Python Standard Library</em>,
+docs.python.org.</li>
+  <li>The Qt documentation, “Object Trees and Ownership”, “Debugging Techniques” and “Environment Variables Recognized by Qt”,
+doc.qt.io.</li>
+  <li>The Qt for Python documentation, “Shiboken” and the pages on object ownership, doc.qt.io/qtforpython-6.</li>
+  <li>Scott Chacon and Ben Straub, <em>Pro Git</em> (Apress, 2014; free at git-scm.com/book), the section on <code class="language-plaintext highlighter-rouge">git bisect</code>.</li>
+</ul>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-106/dev/guide/quality/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Testing, quality and release</span></a>
+            <a class="next" href="/alto/pr-106/dev/guide/reading/" rel="next"><span class="np-label">Next</span><span class="np-title">Glossary and further reading<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-106/dev/assets/js/nav.js?v=1795479716" defer></script>
+  <script src="/alto/pr-106/dev/assets/js/toc.js?v=1795479716" defer></script>
+  
+</body>
+</html>

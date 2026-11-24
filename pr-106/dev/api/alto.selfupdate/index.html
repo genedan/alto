@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>alto.selfupdate · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-106/latest/api/alto.selfupdate/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="alto.selfupdate · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-106/latest/api/alto.selfupdate/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-106/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-106/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-106/dev/assets/css/site.css?v=1795479716">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-106/dev/">
+      <img src="/alto/pr-106/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-106/dev/" aria-label="Documentation preview for PR #106">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #106
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-106/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg" open>
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.selfupdate/" aria-current="page">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>alto.selfupdate</h1>
+          
+<p>Replacing a packaged copy of Alto with a newer release: whether it can, getting the update, checking it, and handing over.</p>
+
+<p>A packaged copy is Alto frozen with PyInstaller, in a folder the user owns: <code class="language-plaintext highlighter-rouge">~/.local/opt/alto</code> on Linux, made by <code class="language-plaintext highlighter-rouge">install.sh</code>,
+and a folder under <code class="language-plaintext highlighter-rouge">%LOCALAPPDATA%\Programs</code> on Windows, made by the installer. Neither needs administrator rights, so Alto can
+fetch the new package, check it, and start the program that installs it. Nothing is installed unless the signature on the list of
+checksums verifies against a key that came with Alto, the list names the file, and the file’s hash is the one listed (see
+<code class="language-plaintext highlighter-rouge">alto.updates</code>). This module has no Qt, so the interface runs it on a worker thread and shows its progress.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">self_update_target</span><span class="p">(</span><span class="n">executable</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s">"/nowhere/alto"</span><span class="p">),</span> <span class="n">system</span><span class="o">=</span><span class="s">"linux"</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="updateerror">UpdateError</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UpdateError</span><span class="p">(</span><span class="nb">Exception</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Something went wrong in getting or checking an update. The message says what, in words for the person.</p>
+
+<h2 id="updatecanceled">UpdateCanceled</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UpdateCanceled</span><span class="p">(</span><span class="nb">Exception</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The person canceled the update before it was ready.</p>
+
+<h2 id="target">Target</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Target</span><span class="p">(</span>
+    <span class="n">system</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>A packaged copy that can replace itself, and where it is.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">system</code> (<em>str</em>): “linux” or “windows”.</li>
+  <li><code class="language-plaintext highlighter-rouge">folder</code> (<em>Path</em>): The folder the program is in.</li>
+  <li><code class="language-plaintext highlighter-rouge">prefix</code> (<em>Path or None</em>): On Linux, the folder that holds <code class="language-plaintext highlighter-rouge">opt/alto</code> and <code class="language-plaintext highlighter-rouge">bin/alto</code> (<code class="language-plaintext highlighter-rouge">~/.local</code> by default); None on Windows.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Target</span><span class="p">(</span><span class="s">"windows"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s">"C:/Alto"</span><span class="p">),</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">).</span><span class="n">system</span>
+<span class="go">'windows'
+</span></code></pre></div></div>
+
+<h2 id="prepared">Prepared</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Prepared</span><span class="p">(</span>
+    <span class="n">work</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">installer</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>An update that has been downloaded and checked, and is ready to be handed over.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">work</code> (<em>Path</em>): The temporary folder that holds it, which is removed after the update.</li>
+  <li><code class="language-plaintext highlighter-rouge">installer</code> (<em>Path or None</em>): On Windows, the installer to run.</li>
+  <li><code class="language-plaintext highlighter-rouge">root</code> (<em>Path or None</em>): On Linux, the unpacked download, with its <code class="language-plaintext highlighter-rouge">install.sh</code>.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Prepared</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s">"/tmp/x"</span><span class="p">),</span> <span class="n">installer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s">"/tmp/x/unpacked/alto-0.1.0"</span><span class="p">)).</span><span class="n">installer</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="self_update_target">self_update_target</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">self_update_target</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">executable</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">system</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Target</span> <span class="o">|</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Say whether the running copy can replace itself, and if so where it is.</p>
+
+<p>On Linux a copy can if it was put in <code class="language-plaintext highlighter-rouge">&lt;prefix&gt;/opt/alto</code> by <code class="language-plaintext highlighter-rouge">install.sh</code>, which links <code class="language-plaintext highlighter-rouge">&lt;prefix&gt;/bin/alto</code> to it; a folder that
+someone unpacked and ran from cannot. On Windows a copy can if the installer made it, which leaves <code class="language-plaintext highlighter-rouge">unins000.exe</code> beside it.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">executable</code> (<em>Path or None, default None</em>): The running program; the one that is running if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">system</code> (<em>str or None, default None</em>): “linux” or “windows”; this computer’s if None. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Target or None</em>: Where the copy is, or None if it cannot replace itself.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">self_update_target</span><span class="p">(</span><span class="n">executable</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s">"/usr/bin/python3"</span><span class="p">),</span> <span class="n">system</span><span class="o">=</span><span class="s">"linux"</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">self_update_target</span><span class="p">(</span><span class="n">executable</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s">"/nowhere/alto.exe"</span><span class="p">),</span> <span class="n">system</span><span class="o">=</span><span class="s">"windows"</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="download">download</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">download</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">destination</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">allowed</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">max_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">progress</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="bp">None</span><span class="p">],</span>
+    <span class="n">canceled</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
+    <span class="n">seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div></div>
+
+<p>Fetch a file, checking the address, the size and the connection, and give its SHA-256 hash.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">url</code> (<em>str</em>): The address. It must start with <code class="language-plaintext highlighter-rouge">allowed</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">destination</code> (<em>Path</em>): Where to write the file. Nothing is left there if the download fails or is canceled. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">allowed</code> (<em>str</em>): What the address must start with, which is where a release keeps its files. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">max_bytes</code> (<em>int</em>): The most to accept, by the size the server states and by what actually arrives. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">progress</code> (<em>Callable</em>): Called with the bytes received so far and the size the server states (0 if it does not say). Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">canceled</code> (<em>Callable</em>): Asked now and then; True stops the download. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">seconds</code> (<em>int, default 30</em>): How long to wait for the server at a time. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>str</em>: The SHA-256 hash of what was written, in hexadecimal.</li>
+</ul>
+
+<p><strong>Raises</strong></p>
+
+<ul>
+  <li><em>UpdateError</em>: If the address is not allowed, the file is too large, the connection is not secure, or the download fails.</li>
+  <li><em>UpdateCanceled</em>: If <code class="language-plaintext highlighter-rouge">canceled</code> said so.</li>
+</ul>
+
+<h2 id="extract_tarball">extract_tarball</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_tarball</span><span class="p">(</span>
+    <span class="n">archive</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">destination</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span>
+</code></pre></div></div>
+
+<p>Unpack the Linux download, refusing anything that would land outside the folder.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">archive</code> (<em>Path</em>): The <code class="language-plaintext highlighter-rouge">.tar.gz</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">destination</code> (<em>Path</em>): The folder to unpack it in. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Path</em>: The one folder the download unpacks to, which holds <code class="language-plaintext highlighter-rouge">install.sh</code> and the program.</li>
+</ul>
+
+<p><strong>Raises</strong></p>
+
+<ul>
+  <li><em>UpdateError</em>: If it cannot be unpacked safely, or is not what an update needs.</li>
+</ul>
+
+<h2 id="ignore_progress">ignore_progress</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">ignore_progress</span><span class="p">(</span>
+    <span class="n">done</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">total</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Take a note of progress and do nothing with it, for a download whose progress nobody watches.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">done</code> (<em>int</em>): The bytes received so far.</li>
+  <li><code class="language-plaintext highlighter-rouge">total</code> (<em>int</em>): The total the server states.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ignore_progress</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="prepare_update">prepare_update</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">prepare_update</span><span class="p">(</span>
+    <span class="n">release</span><span class="p">:</span> <span class="n">updates</span><span class="p">.</span><span class="n">Release</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
+    <span class="n">work</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">keys</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">...],</span>
+    <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">base</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">updates</span><span class="p">.</span><span class="n">DOWNLOAD_BASE</span><span class="p">,</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="bp">None</span><span class="p">],</span>
+    <span class="n">progress</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="bp">None</span><span class="p">],</span>
+    <span class="n">canceled</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Prepared</span>
+</code></pre></div></div>
+
+<p>Download a release for this copy and check it: its signed list of checksums, then the file against its listed hash.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">release</code> (<em>updates.Release</em>): The release to install.</li>
+  <li><code class="language-plaintext highlighter-rouge">target</code> (<em>Target</em>): The copy that will be replaced.</li>
+  <li><code class="language-plaintext highlighter-rouge">work</code> (<em>Path</em>): An empty folder to work in.</li>
+  <li><code class="language-plaintext highlighter-rouge">keys</code> (<em>tuple of str</em>): The public keys (base64) a signature may be made with. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">machine</code> (<em>str</em>): The processor, as <code class="language-plaintext highlighter-rouge">platform.machine()</code> says it. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">base</code> (<em>str, default updates.DOWNLOAD_BASE</em>): Where the release keeps its files. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">status</code> (<em>Callable</em>): Called with what is being done, in words for the person. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">progress</code> (<em>Callable</em>): Called with the bytes received so far and the total, while the file downloads. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">canceled</code> (<em>Callable</em>): Asked now and then; True stops. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Prepared</em>: The checked update, ready to be handed over.</li>
+</ul>
+
+<p><strong>Raises</strong></p>
+
+<ul>
+  <li><em>UpdateError</em>: If anything is missing or does not check out. Nothing is installed.</li>
+  <li><em>UpdateCanceled</em>: If <code class="language-plaintext highlighter-rouge">canceled</code> said so.</li>
+</ul>
+
+<h2 id="clean_environment">clean_environment</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">clean_environment</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Undo what PyInstaller did to the environment, for a program that this one starts.</p>
+
+<p>A packaged program puts its own libraries first on the library path, which would make the system’s <code class="language-plaintext highlighter-rouge">sh</code>, <code class="language-plaintext highlighter-rouge">tar</code> and the next
+Alto load them. PyInstaller keeps the original in <code class="language-plaintext highlighter-rouge">LD_LIBRARY_PATH_ORIG</code>, and asks a program that restarts itself to reset
+what it passed on. The desktop’s start-up token is for this launch only, so it is dropped too.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">env</code> (<em>Mapping</em>): The environment of this program.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>dict of str to str</em>: The environment to give the other.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">clean_environment</span><span class="p">({</span><span class="s">"LD_LIBRARY_PATH"</span><span class="p">:</span> <span class="s">"/app/lib"</span><span class="p">,</span> <span class="s">"LD_LIBRARY_PATH_ORIG"</span><span class="p">:</span> <span class="s">"/usr/lib"</span><span class="p">,</span> <span class="s">"_PYI_ARCHIVE_FILE"</span><span class="p">:</span> <span class="s">"x"</span><span class="p">})</span>
+<span class="go">{'LD_LIBRARY_PATH': '/usr/lib', 'PYINSTALLER_RESET_ENVIRONMENT': '1'}
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">clean_environment</span><span class="p">({</span><span class="s">"LD_LIBRARY_PATH"</span><span class="p">:</span> <span class="s">"/app/lib"</span><span class="p">,</span> <span class="s">"LD_LIBRARY_PATH_ORIG"</span><span class="p">:</span> <span class="s">""</span><span class="p">})</span>
+<span class="go">{'PYINSTALLER_RESET_ENVIRONMENT': '1'}
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">clean_environment</span><span class="p">({</span><span class="s">"HOME"</span><span class="p">:</span> <span class="s">"/home/me"</span><span class="p">})</span>
+<span class="go">{'HOME': '/home/me', 'PYINSTALLER_RESET_ENVIRONMENT': '1'}
+</span></code></pre></div></div>
+
+<h2 id="log_path">log_path</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">log_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span>
+</code></pre></div></div>
+
+<p>Give the file the Linux helper writes to, so that a failed update can be looked into.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Path</em>: <code class="language-plaintext highlighter-rouge">update.log</code> in Alto’s folder of the user’s cache.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">log_path</span><span class="p">().</span><span class="n">name</span>
+<span class="go">'update.log'
+</span></code></pre></div></div>
+
+<h2 id="windows_handoff_command">windows_handoff_command</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">windows_handoff_command</span><span class="p">(</span>
+    <span class="n">installer</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">pid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">alto</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Give the command that waits for Alto to end, runs the installer, and starts the old Alto again if the installer fails.</p>
+
+<p>The installer must not start while Alto is still closing: it would find Alto’s files in use and, with no one to answer, give
+up. So Alto starts this command and quits, and the command waits for Alto’s process to be gone before it begins.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">installer</code> (<em>Path</em>): The downloaded installer.</li>
+  <li><code class="language-plaintext highlighter-rouge">pid</code> (<em>int</em>): Alto’s process, which is waited for (for at most a minute). Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">alto</code> (<em>Path</em>): The installed <code class="language-plaintext highlighter-rouge">alto.exe</code>, which is started again if the installer fails, so that the person is not left with no Alto. When it succeeds, the installer starts Alto itself (<code class="language-plaintext highlighter-rouge">/RELAUNCH=1</code>). Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of str</em>: The program and its arguments.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">command</span> <span class="o">=</span> <span class="n">windows_handoff_command</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s">"C:/Temp/setup.exe"</span><span class="p">),</span> <span class="n">pid</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">alto</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s">"C:/Alto/alto.exe"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">POWERSHELL_ARGUMENTS</span><span class="p">)</span>
+<span class="go">('powershell.exe', True)
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">text</span> <span class="o">=</span> <span class="n">base64</span><span class="p">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]).</span><span class="n">decode</span><span class="p">(</span><span class="s">"utf-16-le"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">"Wait-Process -Id 42"</span> <span class="ow">in</span> <span class="n">text</span> <span class="ow">and</span> <span class="s">"/RELAUNCH=1"</span> <span class="ow">in</span> <span class="n">text</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="start_handoff">start_handoff</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">start_handoff</span><span class="p">(</span>
+    <span class="n">prepared</span><span class="p">:</span> <span class="n">Prepared</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">Target</span><span class="p">,</span>
+    <span class="n">pid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">log</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">environ</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Start the program that installs the update, and return at once so that Alto can quit.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">prepared</code> (<em>Prepared</em>): The checked update.</li>
+  <li><code class="language-plaintext highlighter-rouge">target</code> (<em>Target</em>): The copy that is replaced.</li>
+  <li><code class="language-plaintext highlighter-rouge">pid</code> (<em>int or None, default None</em>): The process to wait for, which is Alto; this one if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">log</code> (<em>Path or None, default None</em>): Where the Linux helper writes; <code class="language-plaintext highlighter-rouge">log_path()</code> if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">environ</code> (<em>Mapping or None, default None</em>): The environment to start from; this program’s if None. Keyword-only.</li>
+</ul>
+
+<p><strong>Raises</strong></p>
+
+<ul>
+  <li><em>UpdateError</em>: If the update is missing what the system needs.</li>
+</ul>
+
+<h2 id="new_work_folder">new_work_folder</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">new_work_folder</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span>
+</code></pre></div></div>
+
+<p>Make a new temporary folder for an update, whose name says what it is for.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Path</em>: The empty folder.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">folder</span> <span class="o">=</span> <span class="n">new_work_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">folder</span><span class="p">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="n">folder</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LEFTOVER_PREFIX</span><span class="p">)</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">folder</span><span class="p">.</span><span class="n">rmdir</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="remove_leftovers">remove_leftovers</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">remove_leftovers</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">older_than</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">86400.0</span><span class="p">,</span>
+    <span class="n">now</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div></div>
+
+<p>Remove the temporary folders of earlier updates that were never cleaned up, such as a Windows installer that was run and left.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">older_than</code> (<em>float, default 86400.0</em>): How old, in seconds, a folder must be. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">now</code> (<em>float or None, default None</em>): The time to measure from; the clock’s if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">root</code> (<em>Path or None, default None</em>): The folder to look in; the system’s temporary folder if None. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>int</em>: How many folders were removed.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">remove_leftovers</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s">"/no/such/folder"</span><span class="p">))</span>
+<span class="go">0
+</span></code></pre></div></div>
+
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-106/dev/api/alto.plugin_registry/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>alto.plugin_registry</span></a>
+            <a class="next" href="/alto/pr-106/dev/api/alto.settings/" rel="next"><span class="np-label">Next</span><span class="np-title">alto.settings<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-106/dev/assets/js/nav.js?v=1795479716" defer></script>
+  <script src="/alto/pr-106/dev/assets/js/toc.js?v=1795479716" defer></script>
+  
+</body>
+</html>

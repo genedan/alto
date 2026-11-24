@@ -1,0 +1,1866 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>alto.ui.transitions · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-106/latest/api/alto.ui.transitions/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="alto.ui.transitions · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-106/latest/api/alto.ui.transitions/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-106/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-106/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-106/dev/assets/css/site.css?v=1795479716">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-106/dev/">
+      <img src="/alto/pr-106/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-106/dev/" aria-label="Documentation preview for PR #106">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #106
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-106/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-106/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg" open>
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.transitions/" aria-current="page">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-106/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-106/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>alto.ui.transitions</h1>
+          
+<p>The transitions between the exercises and the lessons on the home page.</p>
+
+<p>A transition moves between two sets of cards. Each card is photographed first, as a sprite, and a sprite can be faded, slid,
+scaled, blurred or cut away from one side. A transition is a function that sets how every sprite looks at each moment, so ten
+different ones share one player.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">transition</span><span class="p">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">TRANSITIONS</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">['none', 'cascade', 'fade']
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">DEFAULT_TRANSITION</span>
+<span class="go">'cascade'
+</span></code></pre></div></div>
+
+<h2 id="sprite">Sprite</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Sprite</span><span class="p">(</span>
+    <span class="n">pixmap</span><span class="p">:</span> <span class="n">QPixmap</span><span class="p">,</span>
+    <span class="n">rect</span><span class="p">:</span> <span class="n">QRectF</span><span class="p">,</span>
+    <span class="n">opacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">dy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">sx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">sy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">blur</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">reveal</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">reveal_from</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>A photograph of one card, and how it is drawn at this moment.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">pixmap</code> (<em>QPixmap</em>): The photograph.</li>
+  <li><code class="language-plaintext highlighter-rouge">rect</code> (<em>QRectF</em>): Where the card is, in the canvas.</li>
+  <li><code class="language-plaintext highlighter-rouge">opacity</code> (<em>float</em>): 0 for invisible to 1 for solid.</li>
+  <li><code class="language-plaintext highlighter-rouge">dx</code> (<em>float</em>): How far it is moved right, in pixels.</li>
+  <li><code class="language-plaintext highlighter-rouge">dy</code> (<em>float</em>): How far it is moved down, in pixels.</li>
+  <li><code class="language-plaintext highlighter-rouge">sx</code> (<em>float</em>): How much it is stretched across, about its middle; 1 is as it was.</li>
+  <li><code class="language-plaintext highlighter-rouge">sy</code> (<em>float</em>): How much it is stretched down, about its middle.</li>
+  <li><code class="language-plaintext highlighter-rouge">blur</code> (<em>float</em>): 0 for sharp to 1 for fully blurred.</li>
+  <li><code class="language-plaintext highlighter-rouge">angle</code> (<em>float</em>): How far it is turned about its middle, in degrees, clockwise.</li>
+  <li><code class="language-plaintext highlighter-rouge">reveal</code> (<em>float</em>): How much of it shows, from 0 to 1.</li>
+  <li><code class="language-plaintext highlighter-rouge">reveal_from</code> (<em>int</em>): 1 to uncover it from the left, -1 from the right, 0 from the middle outwards.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">sprite</span> <span class="o">=</span> <span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">sprite</span><span class="p">.</span><span class="n">opacity</span><span class="p">,</span> <span class="n">sprite</span><span class="p">.</span><span class="n">reveal</span>
+<span class="go">(1.0, 1.0)
+</span></code></pre></div></div>
+
+<h2 id="scene">Scene</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Scene</span><span class="p">(</span>
+    <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">old</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sprite</span><span class="p">],</span>
+    <span class="n">new</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sprite</span><span class="p">],</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>What a transition is given at each moment: the time, the two sets of sprites and the direction.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">time</code> (<em>float</em>): The time since the transition began, in milliseconds.</li>
+  <li><code class="language-plaintext highlighter-rouge">old</code> (<em>sequence of Sprite</em>): The cards that are leaving.</li>
+  <li><code class="language-plaintext highlighter-rouge">new</code> (<em>sequence of Sprite</em>): The cards that are arriving.</li>
+  <li><code class="language-plaintext highlighter-rouge">direction</code> (<em>int</em>): 1 when going toward the lessons, -1 when coming back.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="p">[],</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="n">direction</span>
+<span class="go">1
+</span></code></pre></div></div>
+
+<h2 id="ease_out">ease_out</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">ease_out</span><span class="p">(</span><span class="n">progress</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div></div>
+
+<p>Ease a progress from 0 to 1 so that it starts fast and slows to a stop.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">progress</code> (<em>float</em>): How far along, from 0 to 1.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>float</em>: The eased progress.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ease_out</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">ease_out</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">ease_out</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">(0.0, 1.0, 0.875)
+</span></code></pre></div></div>
+
+<h2 id="ramp">ramp</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">ramp</span><span class="p">(</span>
+    <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div></div>
+
+<p>Say how far along a part of a transition is, from 0 before it starts to 1 once it has finished.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">time</code> (<em>float</em>): The time since the transition began, in milliseconds.</li>
+  <li><code class="language-plaintext highlighter-rouge">start</code> (<em>float</em>): When the part begins. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">length</code> (<em>float</em>): How long it lasts. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>float</em>: The progress, from 0 to 1.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ramp</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span> <span class="n">ramp</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span> <span class="n">ramp</span><span class="p">(</span><span class="mi">900</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="go">(0.0, 0.5, 1.0)
+</span></code></pre></div></div>
+
+<h2 id="hide">hide</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="n">sprites</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sprite</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Make sprites invisible.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">sprites</code> (<em>sequence of Sprite</em>): The sprites.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">card</span> <span class="o">=</span> <span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">hide</span><span class="p">([</span><span class="n">card</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">card</span><span class="p">.</span><span class="n">opacity</span>
+<span class="go">0.0
+</span></code></pre></div></div>
+
+<h2 id="fade_in">fade_in</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">fade_in</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a fade in: the new cards fade up from clear, and nothing of the old remains.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">fade_in</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span>
+<span class="go">0.0
+</span></code></pre></div></div>
+
+<h2 id="crossfade">crossfade</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">crossfade</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a crossfade: the old cards fade out as the new ones fade in.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())],</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">crossfade</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">old</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span><span class="p">,</span> <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span>
+<span class="go">(0.0, 1.0)
+</span></code></pre></div></div>
+
+<h2 id="slide">slide</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">slide</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a slide: both sets move sideways, toward the side of the switch that was pressed.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">slide</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">dx</span>
+<span class="go">60.0
+</span></code></pre></div></div>
+
+<h2 id="rise">rise</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">rise</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a rise: the old cards sink and fade, and the new ones rise into place.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">rise</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">dy</span><span class="p">,</span> <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span>
+<span class="go">(22.0, 0.0)
+</span></code></pre></div></div>
+
+<h2 id="cascade">cascade</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">cascade</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a cascade: the new cards arrive one after another, each rising a little as it appears.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">cascade</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span> <span class="o">&gt;</span> <span class="n">new</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">opacity</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="zoom">zoom</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">zoom</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a zoom: the old cards grow a little as they fade, and the new ones grow into place.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">zoom</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">sx</span>
+<span class="go">0.92
+</span></code></pre></div></div>
+
+<h2 id="flip">flip</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">flip</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a flip: each old card turns edge on and goes, then each new one turns face on.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">flip</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span>
+<span class="go">0.0
+</span></code></pre></div></div>
+
+<h2 id="blur">blur</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">blur</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a blur: the old cards dissolve into a blur and the new ones come into focus.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">blur</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">blur</span><span class="p">,</span> <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span>
+<span class="go">(1.0, 0.0)
+</span></code></pre></div></div>
+
+<h2 id="wipe">wipe</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">wipe</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a wipe: the new cards are uncovered from one side while the old ones fade.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">wipe</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">reveal</span><span class="p">,</span> <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">reveal_from</span>
+<span class="go">(0.0, -1)
+</span></code></pre></div></div>
+
+<h2 id="drop">drop</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">drop</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for drop and pop: the old cards drop away one by one, then the new ones pop in with a small bounce.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards that are leaving and arriving, and the direction.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">drop</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span>
+<span class="go">0.0
+</span></code></pre></div></div>
+
+<h2 id="transition">Transition</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Transition</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">about</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">frame</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Scene</span><span class="p">],</span> <span class="bp">None</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">compare</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+    <span class="n">length</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Scene</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">scene</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">compare</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>One way of moving between the exercises and the lessons.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>str</em>): What it is saved as.</li>
+  <li><code class="language-plaintext highlighter-rouge">label</code> (<em>str</em>): What the settings call it.</li>
+  <li><code class="language-plaintext highlighter-rouge">about</code> (<em>str</em>): A sentence saying what it looks like.</li>
+  <li><code class="language-plaintext highlighter-rouge">frame</code> (<em>callable or None</em>): Sets how every sprite looks in a scene; None for no transition at all.</li>
+  <li><code class="language-plaintext highlighter-rouge">length</code> (<em>callable</em>): Says how long it lasts, in milliseconds, from a scene that has the cards but no time.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">TRANSITIONS</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="motion">Motion</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Motion</span><span class="p">(</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">320.0</span><span class="p">,</span>
+    <span class="n">per_card</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">after</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'index'</span><span class="p">,</span>
+    <span class="n">ease</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'out'</span><span class="p">,</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">dy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">sx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">sy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">blur</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">fade</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="n">reveal</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">''</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>How one set of cards moves in a transition built from parts: when each card starts, how long it takes, and what it does.</p>
+
+<p>Every card goes between its resting look and a look given here, so the same description serves for cards arriving (from that
+look to rest) and leaving (from rest to that look).</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">length</code> (<em>float</em>): How long each card takes, in milliseconds.</li>
+  <li><code class="language-plaintext highlighter-rouge">per_card</code> (<em>float</em>): How much later each card starts than the one before it.</li>
+  <li><code class="language-plaintext highlighter-rouge">start</code> (<em>float</em>): When the first card starts.</li>
+  <li><code class="language-plaintext highlighter-rouge">after</code> (<em>bool</em>): True to wait until the cards that are leaving have all finished before starting; only for cards that are arriving.</li>
+  <li><code class="language-plaintext highlighter-rouge">order</code> (<em>str</em>): The order the cards start in: one of <code class="language-plaintext highlighter-rouge">ORDERS</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">ease</code> (<em>str</em>): How the motion is timed: one of <code class="language-plaintext highlighter-rouge">EASES</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">dx</code> (<em>float</em>): How far to the right the card is at the far look, in pixels; it follows the direction of the switch.</li>
+  <li><code class="language-plaintext highlighter-rouge">dy</code> (<em>float</em>): How far down the card is at the far look.</li>
+  <li><code class="language-plaintext highlighter-rouge">scale</code> (<em>float</em>): How big the card is at the far look, as a fraction of its size.</li>
+  <li><code class="language-plaintext highlighter-rouge">sx</code> (<em>float</em>): As well as <code class="language-plaintext highlighter-rouge">scale</code>, how wide, for a card that turns on its edge.</li>
+  <li><code class="language-plaintext highlighter-rouge">sy</code> (<em>float</em>): As well as <code class="language-plaintext highlighter-rouge">scale</code>, how tall.</li>
+  <li><code class="language-plaintext highlighter-rouge">angle</code> (<em>float</em>): How far the card is turned at the far look, in degrees; it follows the direction of the switch.</li>
+  <li><code class="language-plaintext highlighter-rouge">blur</code> (<em>float</em>): How blurred it is at the far look, from 0 to 1.</li>
+  <li><code class="language-plaintext highlighter-rouge">fade</code> (<em>bool</em>): True to fade between solid and clear; False to keep it solid, and hide it only once it is out of the way.</li>
+  <li><code class="language-plaintext highlighter-rouge">reveal</code> (<em>str</em>): “” for none, or “side” or “center” to uncover it from one side or from the middle.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Motion</span><span class="p">().</span><span class="n">order</span><span class="p">,</span> <span class="n">Motion</span><span class="p">().</span><span class="n">ease</span>
+<span class="go">('index', 'out')
+</span></code></pre></div></div>
+
+<h2 id="eased">eased</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">eased</span><span class="p">(</span>
+    <span class="n">progress</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div></div>
+
+<p>Time a progress from 0 to 1 in one of the ways a motion can be eased.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">progress</code> (<em>float</em>): How far along, from 0 to 1.</li>
+  <li><code class="language-plaintext highlighter-rouge">how</code> (<em>str</em>): One of <code class="language-plaintext highlighter-rouge">EASES</code>: “out” slows to a stop, “in” speeds up, “back” overshoots a little and settles, “linear” does neither. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>float</em>: The timed progress, which “back” takes a little past 1 on the way.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">eased</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s">"linear"</span><span class="p">),</span> <span class="n">eased</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s">"back"</span><span class="p">),</span> <span class="n">eased</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s">"in"</span><span class="p">)</span>
+<span class="go">(0.5, 1.0, 0.25)
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">eased</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s">"back"</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="ranks">ranks</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">ranks</span><span class="p">(</span>
+    <span class="n">sprites</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sprite</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Say where each sprite comes in an order: 0 for the first to start.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">sprites</code> (<em>sequence of Sprite</em>): The cards of one side.</li>
+  <li><code class="language-plaintext highlighter-rouge">order</code> (<em>str</em>): One of <code class="language-plaintext highlighter-rouge">ORDERS</code>: “index” is as laid out, “reverse” backwards, “outward” from the middle of the cards to the edges, “inward” the other way, “diagonal” from the top left to the bottom right, and “random” in a fixed scrambled order. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of int</em>: The rank of each sprite, in the sprites’ own order.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ranks</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s">"index"</span><span class="p">),</span> <span class="n">ranks</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s">"reverse"</span><span class="p">),</span> <span class="n">ranks</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s">"outward"</span><span class="p">)</span>
+<span class="go">([0, 1, 2], [2, 1, 0], [1, 0, 2])
+</span></code></pre></div></div>
+
+<h2 id="span">span</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">span</span><span class="p">(</span>
+    <span class="n">motion</span><span class="p">:</span> <span class="n">Motion</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div></div>
+
+<p>Say how long a motion takes for a number of cards, from when it starts to when the last card has finished.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">motion</code> (<em>Motion</em>): The motion.</li>
+  <li><code class="language-plaintext highlighter-rouge">count</code> (<em>int</em>): How many cards.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>float</em>: The time in milliseconds.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">span</span><span class="p">(</span><span class="n">Motion</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mf">300.0</span><span class="p">,</span> <span class="n">per_card</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">count</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">460.0
+</span></code></pre></div></div>
+
+<h2 id="move">move</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">move</span><span class="p">(</span>
+    <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">leaving</span><span class="p">:</span> <span class="n">Motion</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">arriving</span><span class="p">:</span> <span class="n">Motion</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Set the sprites for a transition built from a motion for the cards that leave and one for the cards that arrive.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">scene</code> (<em>Scene</em>): The time, the cards and the direction.</li>
+  <li><code class="language-plaintext highlighter-rouge">leaving</code> (<em>Motion or None</em>): What the old cards do; None for them to be gone at once.</li>
+  <li><code class="language-plaintext highlighter-rouge">arriving</code> (<em>Motion</em>): What the new cards do.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">move</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">leaving</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">arriving</span><span class="o">=</span><span class="n">Motion</span><span class="p">(</span><span class="n">dy</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">opacity</span><span class="p">,</span> <span class="n">new</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">dy</span>
+<span class="go">(0.0, 20.0)
+</span></code></pre></div></div>
+
+<h2 id="built">built</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">built</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">leaving</span><span class="p">:</span> <span class="n">Motion</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">arriving</span><span class="p">:</span> <span class="n">Motion</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Scene</span><span class="p">],</span> <span class="bp">None</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Scene</span><span class="p">],</span> <span class="nb">float</span><span class="p">]]</span>
+</code></pre></div></div>
+
+<p>Make the frame and length functions of a transition built from motions.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">leaving</code> (<em>Motion or None</em>): What the old cards do. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">arriving</code> (<em>Motion</em>): What the new cards do. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>tuple of (callable, callable)</em>: The frame function, and the length function.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">draw</span><span class="p">,</span> <span class="n">lasts</span> <span class="o">=</span> <span class="n">built</span><span class="p">(</span><span class="n">leaving</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">arriving</span><span class="o">=</span><span class="n">Motion</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">per_card</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">lasts</span><span class="p">(</span><span class="n">Scene</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="p">[],</span> <span class="n">new</span><span class="o">=</span><span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">())]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="go">400.0
+</span></code></pre></div></div>
+
+<h2 id="made">made</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">made</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">about</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">leaving</span><span class="p">:</span> <span class="n">Motion</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">arriving</span><span class="p">:</span> <span class="n">Motion</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Transition</span>
+</code></pre></div></div>
+
+<p>Make a transition from motions.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>str</em>): What it is saved as.</li>
+  <li><code class="language-plaintext highlighter-rouge">label</code> (<em>str</em>): What the settings call it. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">about</code> (<em>str</em>): A sentence saying what it looks like. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">leaving</code> (<em>Motion or None</em>): What the old cards do. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">arriving</code> (<em>Motion</em>): What the new cards do. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Transition</em>: The transition.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">made</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">"X"</span><span class="p">,</span> <span class="n">about</span><span class="o">=</span><span class="s">"Does x."</span><span class="p">,</span> <span class="n">leaving</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">arriving</span><span class="o">=</span><span class="n">Motion</span><span class="p">()).</span><span class="n">key</span>
+<span class="go">'x'
+</span></code></pre></div></div>
+
+<h2 id="transition_named">transition_named</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">transition_named</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Transition</span>
+</code></pre></div></div>
+
+<p>Find a transition by its key.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>str</em>): The key.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Transition</em>: The transition, or the default one if there is none with that key.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">transition_named</span><span class="p">(</span><span class="s">"flip"</span><span class="p">).</span><span class="n">label</span><span class="p">,</span> <span class="n">transition_named</span><span class="p">(</span><span class="s">"nonsense"</span><span class="p">).</span><span class="n">key</span>
+<span class="go">('Flip', 'cascade')
+</span></code></pre></div></div>
+
+<h2 id="saved_transition">saved_transition</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">saved_transition</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div></div>
+
+<p>Return the key of the transition that is chosen in the settings.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>str</em>: The key; the default if none is saved or the saved one no longer exists.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">store</span><span class="p">().</span><span class="n">remove</span><span class="p">(</span><span class="s">"ui/homeTransition"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">saved_transition</span><span class="p">()</span>
+<span class="go">'cascade'
+</span></code></pre></div></div>
+
+<h2 id="save_transition">save_transition</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">save_transition</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Remember which transition to use.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>str</em>): The key.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">save_transition</span><span class="p">(</span><span class="s">"flip"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">saved_transition</span><span class="p">()</span>
+<span class="go">'flip'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">store</span><span class="p">().</span><span class="n">remove</span><span class="p">(</span><span class="s">"ui/homeTransition"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="paint_sprites">paint_sprites</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">paint_sprites</span><span class="p">(</span>
+    <span class="n">painter</span><span class="p">:</span> <span class="n">QPainter</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">sprites</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sprite</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Draw sprites as they now look.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">painter</code> (<em>QPainter</em>): The painter to draw with.</li>
+  <li><code class="language-plaintext highlighter-rouge">sprites</code> (<em>sequence of Sprite</em>): The sprites, drawn in order. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtGui</span> <span class="kn">import</span> <span class="n">QImage</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">image</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">QImage</span><span class="p">.</span><span class="n">Format</span><span class="p">.</span><span class="n">Format_ARGB32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">brush</span> <span class="o">=</span> <span class="n">QPainter</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">paint_sprites</span><span class="p">(</span><span class="n">brush</span><span class="p">,</span> <span class="n">sprites</span><span class="o">=</span><span class="p">[</span><span class="n">Sprite</span><span class="p">(</span><span class="n">pixmap</span><span class="o">=</span><span class="n">QPixmap</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">rect</span><span class="o">=</span><span class="n">QRectF</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">brush</span><span class="p">.</span><span class="n">end</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="transitioncanvas">TransitionCanvas</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TransitionCanvas</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QWidget</code></p>
+
+<p>A see-through sheet laid over the cards, on which a transition is drawn.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">old</code> (<em>list of Sprite</em>): The cards that are leaving.</li>
+  <li><code class="language-plaintext highlighter-rouge">new</code> (<em>list of Sprite</em>): The cards that are arriving.</li>
+  <li><code class="language-plaintext highlighter-rouge">finished</code> (<em>Signal</em>): Emitted when a transition has played to its end.</li>
+  <li><code class="language-plaintext highlighter-rouge">running</code> (<em>bool</em>): True while a transition is playing.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span> <span class="o">=</span> <span class="n">TransitionCanvas</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">running</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build the canvas, hidden.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget it is laid over.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">TransitionCanvas</span><span class="p">().</span><span class="n">isHidden</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="transitioncanvascover">TransitionCanvas.cover</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">cover</span><span class="p">(</span><span class="n">old</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Sprite</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Show the old cards on the canvas as they are, so that they can be swapped for the new ones unseen.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">old</code> (<em>list of Sprite</em>): The photographs of the cards that are leaving.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span> <span class="o">=</span> <span class="n">TransitionCanvas</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">cover</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">running</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="transitioncanvasplay">TransitionCanvas.play</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">play</span><span class="p">(</span>
+    <span class="n">transition</span><span class="p">:</span> <span class="n">Transition</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Sprite</span><span class="p">],</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Play a transition from the old cards that cover the canvas to the new ones.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">transition</code> (<em>Transition</em>): Which one.</li>
+  <li><code class="language-plaintext highlighter-rouge">new</code> (<em>list of Sprite</em>): The photographs of the cards that are arriving. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">direction</code> (<em>int</em>): 1 when going toward the lessons, -1 when coming back. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span> <span class="o">=</span> <span class="n">TransitionCanvas</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">cover</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">play</span><span class="p">(</span><span class="n">TRANSITIONS</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">new</span><span class="o">=</span><span class="p">[],</span> <span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">running</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">stop</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="transitioncanvasstop">TransitionCanvas.stop</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">stop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>End the transition at once and take the canvas away.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span> <span class="o">=</span> <span class="n">TransitionCanvas</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">cover</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">running</span><span class="p">,</span> <span class="n">canvas</span><span class="p">.</span><span class="n">isHidden</span><span class="p">()</span>
+<span class="go">(False, True)
+</span></code></pre></div></div>
+
+<h3 id="transitioncanvaspaintevent">TransitionCanvas.paintEvent</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="n">_</span><span class="p">:</span> <span class="n">QPaintEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Draw every sprite as it now looks.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">_</code> (<em>QPaintEvent</em>): The paint request.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span> <span class="o">=</span> <span class="n">TransitionCanvas</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">canvas</span><span class="p">.</span><span class="n">grab</span><span class="p">().</span><span class="n">isNull</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-106/dev/api/alto.ui.transition_preview/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>alto.ui.transition_preview</span></a>
+            <a class="next" href="/alto/pr-106/dev/api/alto.ui.update_flow/" rel="next"><span class="np-label">Next</span><span class="np-title">alto.ui.update_flow<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-106/dev/assets/js/nav.js?v=1795479716" defer></script>
+  <script src="/alto/pr-106/dev/assets/js/toc.js?v=1795479716" defer></script>
+  
+</body>
+</html>
