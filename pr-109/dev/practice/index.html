@@ -1,0 +1,1475 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spaced Repetition · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-109/latest/practice/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Spaced Repetition · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-109/latest/practice/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-109/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-109/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-109/dev/assets/css/site.css?v=1795546798">
+  
+  <script defer src="/alto/pr-109/dev/assets/vendor/temml-0.14.0/temml.min.js"
+          onload="temml.renderMathInElement(document.querySelector('article'), {fences: '(', annotate: true})"></script>
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-109/dev/">
+      <img src="/alto/pr-109/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      <form class="docs-search" role="search" action="/alto/pr-109/dev/search/" method="get"
+            data-index="/alto/pr-109/dev/search-index.json" hidden>
+        <div class="search-field">
+          <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5"/></svg>
+          <input id="docs-search-input" name="q" type="search" enterkeyhint="search" placeholder="Search docs" aria-label="Search documentation"
+                 autocomplete="off" aria-controls="docs-search-results">
+        </div>
+        <div id="docs-search-results" class="search-results" hidden>
+          <div role="status" class="search-status"></div>
+          <ul></ul>
+        </div>
+      </form>
+      
+      <a class="dd-btn pr-link" href="/alto/pr-109/dev/" aria-label="Documentation preview for PR #109">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #109
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu" aria-label="Documentation">
+        <div class="nav-head">
+  <a href="/alto/pr-109/dev/contents/">Contents</a>
+  
+</div>
+
+        <div class="nav">
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-109/dev/using-alto/">Using Alto</a>
+  
+  <button type="button" class="nav-toggle" data-category="Using Alto" aria-controls="nav-using-alto"
+          aria-expanded="true" aria-label="Collapse Using Alto" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-using-alto">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/practice/" aria-current="page">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-109/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-109/dev/development/">For developers</a>
+  
+  <button type="button" class="nav-toggle" data-category="For developers" aria-controls="nav-for-developers"
+          aria-expanded="true" aria-label="Collapse For developers" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-for-developers">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-109/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/developer-guide/environment-setup/">Development environment</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/developer-guide/exercise-view/">Exercise view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-109/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-109/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-109/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-109/dev/about/">About</a>
+  
+  <button type="button" class="nav-toggle" data-category="About" aria-controls="nav-about"
+          aria-expanded="true" aria-label="Collapse About" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-about">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-109/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Spaced Repetition</h1>
+          <p>Choose a scheduling algorithm for your profile under <strong>Settings → Practice → Question scheduling</strong>. <strong>ASRS</strong> and <strong>ARTS</strong> let you practice for as long as you like. <strong>SM-2</strong> and <strong>FSRS</strong> give each card a review date. With either of those, the exercise pauses when you are caught up. Another review can come due later the same day.</p>
+
+<p>Consider a single Note Identification question, F♯ in treble clef. A scheduler can choose whether to show F♯ on the <strong>next turn</strong>, or it can set a <strong>due date</strong> for its next review. Even schedulers that make the same kind of decision use different evidence.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Scheduler</th>
+      <th>What changes after an answer?</th>
+      <th>How does F♯ return?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="#asrs">ASRS</a></td>
+      <td>Each attempt changes its strain.</td>
+      <td>A weighted draw on each turn. Its weight recovers as seconds pass.</td>
+    </tr>
+    <tr>
+      <td><a href="#arts">ARTS</a></td>
+      <td>The first answer sets how fast its priority grows.</td>
+      <td>It returns when its priority ranks highest. Each intervening question raises that priority.</td>
+    </tr>
+    <tr>
+      <td><a href="#sm-2">SM-2</a></td>
+      <td>The first answer updates its run of successes and ease factor.</td>
+      <td>Its review interval follows a sequence of day counts, with a short retry after a miss.</td>
+    </tr>
+    <tr>
+      <td><a href="#fsrs">FSRS</a></td>
+      <td>The first answer updates its estimated memory stability and difficulty.</td>
+      <td>After the learning steps, it gets a review date near the model’s 90% recall point.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="response-time-grading">Response-time grading</h2>
+
+<p>In automatic SM-2 and FSRS practice, Alto compares a correct first answer with your previous answers to the same exercise.
+The fastest 15% earn <strong>Easy</strong>, the slowest 15% earn <strong>Hard</strong>, and the middle earns <strong>Good</strong>. A miss always earns <strong>Again</strong>.
+Each exercise has its own distribution, so time spent placing notes on a staff has no effect on the cutoff for identifying a keyboard note.</p>
+
+<p>Open <strong>Settings → Practice → Response-time grading…</strong> to see the distribution for an exercise and its cutoffs in seconds.
+Change the Easy and Hard percentages there. Good gets the remaining share. The percentages apply to this profile across exercises
+and both calendar schedulers. A zero disables that tail. Answers exactly at a cutoff earn Good.</p>
+
+<p>Alto starts with Good until there are 40 eligible answers. It recalculates the cutoffs from the most recent 100 timed, correct
+first answers before grading each new response. Previous practice in any mode counts. Retries and interrupted timings are excluded.
+A correct interrupted answer earns Good. After calibration, the intervals appear to the right of the music, with Easy at the top, Good in the middle, and Hard at the bottom. Keyboard exercises show Hard, Good, and Easy from left to right beneath the keys. After a correct answer, Alto shows the assigned grade and interval.</p>
+
+<p>Keyboard Note Identification and Keyboard Interval Identification each need 40 timed, correct first answers of their own. If you see three intervals under one keyboard and a single interval under the other, the second exercise is still collecting timings.
+The scheduler uses the same intervals as the corresponding grade buttons.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-109/dev/assets/img/response-times.png" alt="Response-time grading for Note Identification with percentile settings, cutoffs in seconds, and the number of answers in each time range." loading="lazy" />
+  <img class="for-dark" src="/alto/pr-109/dev/assets/img/response-times-dark.png" alt="Response-time grading for Note Identification with percentile settings, cutoffs in seconds, and the number of answers in each time range." loading="lazy" />
+  
+</figure>
+
+<h2 id="self-grading-a-new-card">Self-grading a new card</h2>
+
+<p>In <strong>Settings → Practice</strong>, select <strong>Grade correct answers with Hard, Good, or Easy</strong>. After a correct answer, <strong>Hard</strong> and <strong>Good</strong> keep a new card in its short learning steps. <strong>Easy</strong> skips those steps. SM-2 starts its first Easy review at 4 days. With Alto’s default FSRS settings, the starting estimate is about 8.3 days.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-109/dev/assets/img/self-grading.png" alt="A correct Note Identification answer with the review intervals above Hard, Good, and Easy" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-109/dev/assets/img/self-grading-dark.png" alt="A correct Note Identification answer with the review intervals above Hard, Good, and Easy" loading="lazy" />
+  <figcaption>Choose a grade to schedule the card at the interval above that button.</figcaption>
+</figure>
+
+<table>
+  <thead>
+    <tr>
+      <th>First correct answer</th>
+      <th>SM-2</th>
+      <th>FSRS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Hard</td>
+      <td>5 min 30 s</td>
+      <td>5 min 30 s</td>
+    </tr>
+    <tr>
+      <td>Good</td>
+      <td>10 min</td>
+      <td>10 min</td>
+    </tr>
+    <tr>
+      <td>Easy</td>
+      <td>3–5 days</td>
+      <td>6–10 days</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Alto spreads reviews across nearby days so that cards learned together can come due on different days. This adjustment is called <em>fuzzing</em>. For example, two new FSRS cards can show <strong>7 days</strong> and <strong>9 days</strong> for Easy even though both start with the same estimate. If you reopen the same card before grading it, its preview stays the same.</p>
+
+<h2 id="asrs">ASRS</h2>
+
+<p>The <strong>Alto Spaced Repetition System (ASRS)</strong> is the default scheduler. For each turn, it generates a few questions and adds some you have answered before under the same exercise settings. It draws from that pool at random, giving more weight to questions you find difficult. A question you just answered gets less weight for a while. The better you know it, the longer that effect lasts.</p>
+
+<h3 id="strain">Strain</h3>
+
+<p>Each question has a score called <strong>strain</strong>, which says how much practice it needs. It starts at 1.5, stays between 0 and 6, and changes with each answer.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Answer</th>
+      <th>Change in strain</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Wrong</td>
+      <td>Add 1.5 for each miss.</td>
+    </tr>
+    <tr>
+      <td>Right on the first try</td>
+      <td>Subtract 0.5, then adjust for speed.</td>
+    </tr>
+    <tr>
+      <td>Right after a miss</td>
+      <td>Subtract 0.2.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="response-time">Response time</h3>
+
+<p>For a correct first answer, ASRS compares the time you took with the exercise’s <strong>par time</strong>. At par there is no speed adjustment. At half the par time or faster, ASRS subtracts another 0.6. At four times par or slower, it adds 1.0. The adjustment changes gradually in between. A slow but correct answer can therefore make the question more likely to return.</p>
+
+<details>
+  <summary>Par times by exercise</summary>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Exercise</th>
+        <th>Par time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Note Identification, Keyboard Note Identification</td>
+        <td>3 s</td>
+      </tr>
+      <tr>
+        <td>Key Signature Identification, Clef Basics, Notation Identification</td>
+        <td>5 s</td>
+      </tr>
+      <tr>
+        <td>Interval Identification, Keyboard Interval Identification, Chord Quality, Note Construction, Key Signature Construction</td>
+        <td>6 s</td>
+      </tr>
+      <tr>
+        <td>Circle of Fifths</td>
+        <td>7 s</td>
+      </tr>
+      <tr>
+        <td>Scale Identification, Interval Construction</td>
+        <td>8 s</td>
+      </tr>
+      <tr>
+        <td>Arpeggio Identification</td>
+        <td>9 s</td>
+      </tr>
+      <tr>
+        <td>Order of Keys</td>
+        <td>12 s</td>
+      </tr>
+      <tr>
+        <td>Scale Construction</td>
+        <td>25 s</td>
+      </tr>
+    </tbody>
+  </table>
+
+</details>
+
+<h3 id="probability-of-the-next-draw">Probability of the next draw</h3>
+
+<p>For a question with strain \(s\), ASRS sets a recovery time \(c\) in seconds. If \(t\) seconds have passed since the last answer, its weight \(w\) recovers according to</p>
+
+\[c = 120 \cdot 2^{3-s}\]
+
+\[w = e^{0.6s}\max\left(0.02,\,1-e^{-t/c}\right).\]
+
+<p>Higher strain gives a question both a higher eventual weight and a shorter recovery time. A fresh question gets a weight of \(e^{0.6\cdot 1.5}\approx 2.46\). To get the probability of drawing a question, divide its weight by the sum of all eligible weights.</p>
+
+<p>Suppose you miss F♯ once, moving its strain from 1.5 to 3, and leave it there. Later, the only two eligible candidates for a draw are F♯ and an unseen B. At strain 3 the recovery time is 120 seconds. After two minutes, F♯ has weight \(e^{1.8}(1-e^{-1})\approx 3.82\). Its chance of coming up next is</p>
+
+\[\frac{3.82}{3.82+2.46}\approx 61\%.\]
+
+<p>B can still win that draw.</p>
+
+<figure class="practice-chart">
+  <svg viewBox="0 0 403.2 190.8" class="practice-plot" role="img" aria-labelledby="asrs-title asrs-desc">
+    <title id="asrs-title">ASRS probability of drawing F♯</title>
+    <desc id="asrs-desc">With one unseen alternative, a missed F sharp has a 35% chance at 30 seconds, 49% at one minute and 61% at two minutes.</desc>
+    <defs>
+      <path id="asrs-m3f2d223dee" d="M 0 0 L 0 3" style="stroke: var(--muted); stroke-width: 0.8" />
+    </defs>
+    <use x="39.14" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m3f2d223dee" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="39.14" y="169.87">0</text>
+    <use x="126.78" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m3f2d223dee" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="126.78" y="169.87">60</text>
+    <use x="214.42" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m3f2d223dee" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="214.42" y="169.87">120</text>
+    <use x="302.06" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m3f2d223dee" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="302.06" y="169.87">180</text>
+    <use x="389.7" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m3f2d223dee" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="389.7" y="169.87">240</text>
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="214.42" y="185.51">Seconds since the last answer to F♯</text>
+    <path d="M 39.14 155.01 L 389.7 155.01" clip-path="url(#asrs-p4406b90dc8)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <defs>
+      <path id="asrs-m4461a38b5e" d="M 0 0 L -3 0" style="stroke: var(--muted); stroke-width: 0.8" />
+    </defs>
+    <use x="39.14" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m4461a38b5e" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="32.64" y="159.19">0</text>
+    <path d="M 39.14 118.05 L 389.7 118.05" clip-path="url(#asrs-p4406b90dc8)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="39.14" y="118.05" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m4461a38b5e" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="32.64" y="122.23">20</text>
+    <path d="M 39.14 81.09 L 389.7 81.09" clip-path="url(#asrs-p4406b90dc8)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="39.14" y="81.09" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m4461a38b5e" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="32.64" y="85.27">40</text>
+    <path d="M 39.14 44.14 L 389.7 44.14" clip-path="url(#asrs-p4406b90dc8)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="39.14" y="44.14" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m4461a38b5e" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="32.64" y="48.32">60</text>
+    <path d="M 39.14 7.18 L 389.7 7.18" clip-path="url(#asrs-p4406b90dc8)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="39.14" y="7.18" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#asrs-m4461a38b5e" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="32.64" y="11.36">80</text>
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="11.36" y="81.09" transform="rotate(-90 11.36 81.09)">Chance of drawing F♯ (%)</text>
+    <path d="M 39.14 146.34 L 42.06 146.34 L 43.53 144.43 L 46.45 138.15 L 49.37 132.4 L 52.29 127.12 L 55.21 122.25 L 58.13 117.75 L 61.05 113.58 L 63.97 109.69 L 66.9 106.08 L 71.28 101.09 L 75.66 96.57 L 80.04 92.45 L 84.42 88.68 L 88.81 85.22 L 93.19 82.04 L 97.57 79.1 L 101.95 76.38 L 107.79 73.05 L 113.64 70.02 L 119.48 67.26 L 125.32 64.73 L 131.17 62.4 L 138.47 59.75 L 145.77 57.35 L 153.08 55.16 L 161.84 52.78 L 170.6 50.64 L 180.83 48.4 L 191.05 46.4 L 202.74 44.36 L 214.42 42.55 L 227.57 40.75 L 242.18 38.99 L 258.24 37.3 L 275.77 35.7 L 294.76 34.22 L 315.21 32.85 L 337.12 31.61 L 361.95 30.42 L 389.7 29.32 L 389.7 29.32" clip-path="url(#asrs-p4406b90dc8)" style="fill: none; stroke: var(--accent); stroke-width: 2.3; stroke-linecap: square" />
+    <defs>
+      <path id="asrs-md0a2780aee" d="M 0 3 C 0.8 3 1.56 2.68 2.12 2.12 C 2.68 1.56 3 0.8 3 0 C 3 -0.8 2.68 -1.56 2.12 -2.12 C 1.56 -2.68 0.8 -3 0 -3 C -0.8 -3 -1.56 -2.68 -2.12 -2.12 C -2.68 -1.56 -3 -0.8 -3 0 C -3 0.8 -2.68 1.56 -2.12 2.12 C -1.56 2.68 -0.8 3 0 3 z" style="stroke: var(--accent)" />
+    </defs>
+    <g clip-path="url(#asrs-p4406b90dc8)">
+      <use x="214.42" y="42.55" style="fill: var(--accent); stroke: var(--accent)" href="#asrs-md0a2780aee" />
+    </g>
+    <path d="M 39.14 155.01 L 39.14 7.18" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <path d="M 39.14 155.01 L 389.7 155.01" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="214.42" y="35.55">61%</text>
+    <defs>
+      <clipPath id="asrs-p4406b90dc8">
+        <rect x="39.14" y="7.18" width="350.56" height="147.83" />
+      </clipPath>
+    </defs>
+  </svg>
+  <figcaption>With the same two candidates, elapsed time alone changes the odds.</figcaption>
+</figure>
+
+<h2 id="arts">ARTS</h2>
+
+<p><strong>Adaptive Response-Time-based Sequencing (ARTS)</strong> measures the gap between questions in turns. Its clock advances each time you give a first answer in this exercise. Retries during the same showing and time away from practice leave the clock where it was.</p>
+
+<h3 id="priority-per-turn">Priority per turn</h3>
+
+<p>Let \(h\) be the number of intervening first answers since you last answered F♯, and \(T\) the time in milliseconds you took on that first attempt. Alto uses a 100 ms reference time. The natural logarithm, \(\ln\), makes a slower correct answer count more, with a diminishing increase for each extra millisecond. <a href="https://kellmanlab.psych.ucla.edu/files/mettler_massey_kellman_2016.pdf">Mettler, Massey, and Kellman, equation 1</a></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Last first answer</th>
+      <th>Priority now</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Unseen</td>
+      <td>\(1\)</td>
+    </tr>
+    <tr>
+      <td>Incorrect</td>
+      <td>\(2h\)</td>
+    </tr>
+    <tr>
+      <td>Correct</td>
+      <td>\(0.11h\ln\!\left(\frac{\max(T,101)}{100}\right)\)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Alto compares eligible questions under the current exercise settings and selects the highest priority. It breaks ties at random.</p>
+
+<h3 id="a-fast-and-a-slow-identification">A fast and a slow identification</h3>
+
+<p>Suppose F♯ and an unseen B are eligible. If you last identified F♯ in <strong>one second</strong>, after three other questions its score is \(0.11\cdot 3\ln(10)\approx 0.76\). B wins with 1. Had you taken <strong>four seconds</strong>, the same three questions would give F♯ a score of \(0.11\cdot 3\ln(40)\approx 1.22\), and F♯ would win. If you missed F♯, just one intervening answer would give it a score of 2.</p>
+
+<figure class="practice-chart">
+  <svg viewBox="0 0 403.2 190.8" class="practice-plot" role="img" aria-labelledby="arts-title arts-desc">
+    <title id="arts-title">ARTS priority by intervening answers</title>
+    <desc id="arts-desc">An unseen question stays at priority one. A four-second correct answer overtakes it after three other questions. A one-second answer overtakes it after four.</desc>
+    <defs>
+      <path id="arts-mcbd3676ebe" d="M 0 0 L 0 3" style="stroke: var(--muted); stroke-width: 0.8" />
+    </defs>
+    <use x="48.67" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-mcbd3676ebe" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="48.67" y="169.87">0</text>
+    <use x="134.83" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-mcbd3676ebe" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="134.83" y="169.87">1</text>
+    <use x="220.99" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-mcbd3676ebe" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="220.99" y="169.87">2</text>
+    <use x="307.15" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-mcbd3676ebe" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="307.15" y="169.87">3</text>
+    <use x="393.31" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-mcbd3676ebe" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="393.31" y="169.87">4</text>
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="221.42" y="185.51">Other questions answered since F♯</text>
+    <path d="M 42.64 150.01 L 400.2 150.01" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <defs>
+      <path id="arts-m0e83e9c18a" d="M 0 0 L -3 0" style="stroke: var(--muted); stroke-width: 0.8" />
+    </defs>
+    <use x="42.64" y="150.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-m0e83e9c18a" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="36.14" y="154.19">0.0</text>
+    <path d="M 42.64 114.3 L 400.2 114.3" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="42.64" y="114.3" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-m0e83e9c18a" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="36.14" y="118.48">0.5</text>
+    <path d="M 42.64 78.6 L 400.2 78.6" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="42.64" y="78.6" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-m0e83e9c18a" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="36.14" y="82.77">1.0</text>
+    <path d="M 42.64 42.89 L 400.2 42.89" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="42.64" y="42.89" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-m0e83e9c18a" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="36.14" y="47.07">1.5</text>
+    <path d="M 42.64 7.18 L 400.2 7.18" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="42.64" y="7.18" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#arts-m0e83e9c18a" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="36.14" y="11.36">2.0</text>
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="11.36" y="79.31" transform="rotate(-90 11.36 79.31)">Priority score</text>
+    <path d="M 48.67 150.01 L 134.83 121.03 L 220.99 92.05 L 307.15 63.08 L 393.31 34.1" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: square" />
+    <defs>
+      <path id="arts-mdb6256f642" d="M 0 3 C 0.8 3 1.56 2.68 2.12 2.12 C 2.68 1.56 3 0.8 3 0 C 3 -0.8 2.68 -1.56 2.12 -2.12 C 1.56 -2.68 0.8 -3 0 -3 C -0.8 -3 -1.56 -2.68 -2.12 -2.12 C -2.68 -1.56 -3 -0.8 -3 0 C -3 0.8 -2.68 1.56 -2.12 2.12 C -1.56 2.68 -0.8 3 0 3 z" style="stroke: var(--accent)" />
+    </defs>
+    <g clip-path="url(#arts-pae175c9f37)">
+      <use x="48.67" y="150.01" style="fill: var(--accent); stroke: var(--accent)" href="#arts-mdb6256f642" />
+      <use x="134.83" y="121.03" style="fill: var(--accent); stroke: var(--accent)" href="#arts-mdb6256f642" />
+      <use x="220.99" y="92.05" style="fill: var(--accent); stroke: var(--accent)" href="#arts-mdb6256f642" />
+      <use x="307.15" y="63.08" style="fill: var(--accent); stroke: var(--accent)" href="#arts-mdb6256f642" />
+      <use x="393.31" y="34.1" style="fill: var(--accent); stroke: var(--accent)" href="#arts-mdb6256f642" />
+    </g>
+    <path d="M 48.67 150.01 L 134.83 131.92 L 220.99 113.83 L 307.15 95.75 L 393.31 77.66" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke-dasharray: 7.4,3.2; stroke-dashoffset: 0; stroke: var(--fg); stroke-width: 2" />
+    <defs>
+      <path id="arts-m56d495bc34" d="M -3 3 L 3 3 L 3 -3 L -3 -3 z" style="stroke: var(--fg); stroke-linejoin: miter" />
+    </defs>
+    <g clip-path="url(#arts-pae175c9f37)">
+      <use x="48.67" y="150.01" style="fill: var(--fg); stroke: var(--fg); stroke-linejoin: miter" href="#arts-m56d495bc34" />
+      <use x="134.83" y="131.92" style="fill: var(--fg); stroke: var(--fg); stroke-linejoin: miter" href="#arts-m56d495bc34" />
+      <use x="220.99" y="113.83" style="fill: var(--fg); stroke: var(--fg); stroke-linejoin: miter" href="#arts-m56d495bc34" />
+      <use x="307.15" y="95.75" style="fill: var(--fg); stroke: var(--fg); stroke-linejoin: miter" href="#arts-m56d495bc34" />
+      <use x="393.31" y="77.66" style="fill: var(--fg); stroke: var(--fg); stroke-linejoin: miter" href="#arts-m56d495bc34" />
+    </g>
+    <path d="M 42.64 78.6 L 400.2 78.6" clip-path="url(#arts-pae175c9f37)" style="fill: none; stroke-dasharray: 2,3.3; stroke-dashoffset: 0; stroke: var(--muted); stroke-width: 2" />
+    <path d="M 42.64 155.01 L 42.64 3.61" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <path d="M 42.64 155.01 L 400.2 155.01" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <path d="M 51.19 16.05 L 60.69 16.05 L 70.19 16.05" style="fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: square" />
+    <use x="60.69" y="16.05" style="fill: var(--accent); stroke: var(--accent)" href="#arts-mdb6256f642" />
+    <text style="font-size: 9.5px; text-anchor: start; fill: var(--fg)" x="77.79" y="19.38">Correct in 4 s</text>
+    <path d="M 51.19 30 L 60.69 30 L 70.19 30" style="fill: none; stroke-dasharray: 7.4,3.2; stroke-dashoffset: 0; stroke: var(--fg); stroke-width: 2" />
+    <use x="60.69" y="30" style="fill: var(--fg); stroke: var(--fg); stroke-linejoin: miter" href="#arts-m56d495bc34" />
+    <text style="font-size: 9.5px; text-anchor: start; fill: var(--fg)" x="77.79" y="33.32">Correct in 1 s</text>
+    <path d="M 51.19 43.94 L 60.69 43.94 L 70.19 43.94" style="fill: none; stroke-dasharray: 2,3.3; stroke-dashoffset: 0; stroke: var(--muted); stroke-width: 2" />
+    <text style="font-size: 9.5px; text-anchor: start; fill: var(--fg)" x="77.79" y="47.27">Unseen question</text>
+    <defs>
+      <clipPath id="arts-pae175c9f37">
+        <rect x="42.64" y="3.61" width="357.56" height="151.4" />
+      </clipPath>
+    </defs>
+  </svg>
+  <figcaption>After a correct answer, response time sets the increase in priority per turn.</figcaption>
+</figure>
+
+<h2 id="sm-2">SM-2</h2>
+
+<p>Alto’s SM-2 scheduler is based on Piotr Woźniak’s algorithm. Algorithm SM-2, © SuperMemo World, 1991. <a href="https://www.supermemo.com/">SuperMemo</a></p>
+
+<p><strong>SuperMemo 2 (SM-2)</strong> keeps a count of successive successful reviews, the last interval in days, and an <strong>ease factor</strong> \(E\) for each card. A new card starts with \(E=2.5\). During calibration, Alto grades a correct first answer Good and a miss Again. Under <strong>Settings → Practice</strong>, select <strong>Grade correct answers with Hard, Good, or Easy</strong> to choose the grade yourself. Each button shows its interval above it. A wrong answer records Again and advances automatically. The exercise’s <strong>Next Question</strong> preference is disabled while self-grading is on. <a href="https://super-memory.com/english/ol/sm2.htm">Original SM-2 specification</a></p>
+
+<h3 id="review-intervals-and-ease">Review intervals and ease</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>First submission during calibration</th>
+      <th>Change to the card</th>
+      <th>Next review</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Good (grade 4)</td>
+      <td>Add one success. Keep the current ease.</td>
+      <td>1 day for the first success and 6 days for the second. After that, \(I_{n}=\lceil I_{n-1}E\rceil\), the previous interval times the ease, rounded up to a whole day.</td>
+    </tr>
+    <tr>
+      <td>Again (grade 2)</td>
+      <td>Reset the success count and interval to zero. Set the ease to \(\max(1.3,E-0.32)\).</td>
+      <td>1 minute. The next showing starts a new review.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="self-graded-sm-2">Self-graded SM-2</h3>
+
+<p>The buttons use Anki’s default learning steps. A new card shows <strong>5 min 30 s</strong> for Hard and <strong>10 min</strong> for Good. Easy skips both steps and schedules a review around <strong>4 days</strong> later. At the second step, Hard repeats the ten-minute step and Good graduates the card with a one-day interval.</p>
+
+<p>Once a card graduates, Hard starts at 1.2 times the previous interval. Good multiplies the previous interval by the card’s ease, and Easy applies a further 1.3 multiplier. Good credits half the days overdue and Easy credits all of them. Hard lowers ease by 0.15, Easy raises it by 0.15, and Good preserves it. A miss lowers ease by 0.20 and starts a ten-minute relearning step. At that step Hard waits 15 minutes, Good schedules one day, and Easy schedules two days. <a href="https://docs.ankiweb.net/deck-options.html">Anki deck options</a></p>
+
+<h3 id="three-reviews-of-f-during-calibration">Three reviews of F♯ during calibration</h3>
+
+<p>Identify a new F♯ correctly on day 0 and it is due on day 1. Get it right on day 1 and it is due on day 7. A third success on day 7 gives an interval of \(6\cdot 2.5=15\) days, so the next due date is <strong>day 22</strong>.</p>
+
+<figure class="practice-chart">
+  <svg viewBox="0 0 403.2 190.8" class="practice-plot" role="img" aria-labelledby="sm2-title sm2-desc">
+    <title id="sm2-title">SM-2 interval after each successful review</title>
+    <desc id="sm2-desc">The first, second and third consecutive successes on a new card give next intervals of one, six and fifteen days.</desc>
+    <path d="M 93.51 155.01 L 93.51 3" clip-path="url(#sm2-p0f27ecdef3)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <defs>
+      <path id="sm2-m6ba9d54b06" d="M 0 0 L 0 3" style="stroke: var(--muted); stroke-width: 0.8" />
+    </defs>
+    <use x="93.51" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#sm2-m6ba9d54b06" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="93.51" y="169.87">0</text>
+    <path d="M 148.93 155.01 L 148.93 3" clip-path="url(#sm2-p0f27ecdef3)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="148.93" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#sm2-m6ba9d54b06" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="148.93" y="169.87">3</text>
+    <path d="M 204.36 155.01 L 204.36 3" clip-path="url(#sm2-p0f27ecdef3)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="204.36" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#sm2-m6ba9d54b06" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="204.36" y="169.87">6</text>
+    <path d="M 259.79 155.01 L 259.79 3" clip-path="url(#sm2-p0f27ecdef3)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="259.79" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#sm2-m6ba9d54b06" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="259.79" y="169.87">9</text>
+    <path d="M 315.21 155.01 L 315.21 3" clip-path="url(#sm2-p0f27ecdef3)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="315.21" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#sm2-m6ba9d54b06" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="315.21" y="169.87">12</text>
+    <path d="M 370.64 155.01 L 370.64 3" clip-path="url(#sm2-p0f27ecdef3)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="370.64" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#sm2-m6ba9d54b06" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="370.64" y="169.87">15</text>
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="246.85" y="185.51">Days until the next review</text>
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="90.01" y="37.12">First success</text>
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="90.01" y="83.18">Second success</text>
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="90.01" y="129.25">Third success</text>
+    <path d="M 93.51 21.89 L 111.98 21.89 L 111.98 44 L 93.51 44 z" clip-path="url(#sm2-p0f27ecdef3)" style="fill: var(--accent)" />
+    <path d="M 93.51 67.95 L 204.36 67.95 L 204.36 90.06 L 93.51 90.06 z" clip-path="url(#sm2-p0f27ecdef3)" style="fill: var(--accent)" />
+    <path d="M 93.51 114.01 L 370.64 114.01 L 370.64 136.12 L 93.51 136.12 z" clip-path="url(#sm2-p0f27ecdef3)" style="fill: var(--accent)" />
+    <path d="M 93.51 155.01 L 93.51 3" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <path d="M 93.51 155.01 L 400.2 155.01" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <text style="font-size: 11px; text-anchor: start; fill: var(--fg)" x="116.6" y="35.98">1</text>
+    <text style="font-size: 11px; text-anchor: start; fill: var(--fg)" x="208.98" y="82.04">6</text>
+    <text style="font-size: 11px; text-anchor: start; fill: var(--fg)" x="375.26" y="128.1">15</text>
+    <defs>
+      <clipPath id="sm2-p0f27ecdef3">
+        <rect x="93.51" y="3" width="306.69" height="152.01" />
+      </clipPath>
+    </defs>
+  </svg>
+  <figcaption>Each bar starts at a successful review and measures the gap to the next due date.</figcaption>
+</figure>
+
+<p>Suppose instead that you miss F♯ on day 7. Its ease falls to 2.18 and Alto schedules a retry one minute later. Three successive correct reviews from there give gaps of <strong>1, 6, and 14 days</strong>. The shorter third gap comes from the ceiling calculation \(\lceil 6\cdot 2.18\rceil=\lceil 13.08\rceil=14\).</p>
+
+<h2 id="fsrs">FSRS</h2>
+
+<p>The <strong>Free Spaced Repetition Scheduler (FSRS)</strong> models the chance you can recall a card as time passes. Alto uses FSRS-6 with its default parameters. A correct first submission earns <strong>Good</strong> during calibration. With self-grading on, you can choose <strong>Hard</strong>, <strong>Good</strong>, or <strong>Easy</strong> after a correct answer. A miss always earns <strong>Again</strong>. For a new card, Good puts its next learning step ten minutes away and Again puts it one minute away. A miss on a card already in review starts a ten-minute relearning step. <a href="https://github.com/open-spaced-repetition/py-fsrs">Python FSRS scheduler</a></p>
+
+<p>With self-grading, a new FSRS card starts with the same Hard and Good learning steps as SM-2. Easy graduates it directly using FSRS-6’s estimate of memory stability at 90% desired retention. On review cards, the three intervals use the same random adjustment and are ordered Hard, Good, Easy up to the maximum of 36,500 days. The interval printed above a button is the one Alto schedules. <a href="https://github.com/ankitects/anki/blob/main/rslib/src/scheduler/states/review.rs">Anki review scheduling</a></p>
+
+<h3 id="estimated-recall-and-the-review-date">Estimated recall and the review date</h3>
+
+<p>FSRS tracks <strong>difficulty</strong> (\(D\), from 1 to 10) and <strong>stability</strong> (\(S\), measured in days). A stability of 8 days means the model expects a 90% chance of recall eight days after a review. <strong>Retrievability</strong> (\(R\)) is the predicted chance of recall after \(t\) whole days. With Alto’s default parameters the curve is approximately</p>
+
+\[R(t)=\left(1+0.98035\,\frac{t}{S}\right)^{-0.1542}.\]
+
+<p>The factor 0.98035 is chosen so that \(R(S)=0.90\). At the 90% target the base review interval therefore equals the updated stability in days. FSRS rounds it to whole days and may vary the scheduled day slightly to spread reviews out.</p>
+
+<figure class="practice-chart">
+  <svg viewBox="0 0 403.2 190.8" class="practice-plot" role="img" aria-labelledby="fsrs-title fsrs-desc">
+    <title id="fsrs-title">FSRS predicted recall at two stabilities</title>
+    <desc id="fsrs-desc">A card with two days of stability reaches the 90% target on day two. A card with eight days of stability reaches it on day eight.</desc>
+    <defs>
+      <path id="fsrs-mdc7c90a3aa" d="M 0 0 L 0 3" style="stroke: var(--muted); stroke-width: 0.8" />
+    </defs>
+    <use x="46.14" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-mdc7c90a3aa" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="46.14" y="169.87">0</text>
+    <use x="115.55" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-mdc7c90a3aa" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="115.55" y="169.87">2</text>
+    <use x="184.97" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-mdc7c90a3aa" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="184.97" y="169.87">4</text>
+    <use x="254.38" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-mdc7c90a3aa" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="254.38" y="169.87">6</text>
+    <use x="323.79" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-mdc7c90a3aa" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="323.79" y="169.87">8</text>
+    <use x="393.2" y="155.01" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-mdc7c90a3aa" />
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--muted)" x="393.2" y="169.87">10</text>
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="219.67" y="185.51">Days since the last review</text>
+    <path d="M 46.14 149.38 L 393.2 149.38" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <defs>
+      <path id="fsrs-m719e3e79e4" d="M 0 0 L -3 0" style="stroke: var(--muted); stroke-width: 0.8" />
+    </defs>
+    <use x="46.14" y="149.38" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-m719e3e79e4" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="39.64" y="153.56">75</text>
+    <path d="M 46.14 121.23 L 393.2 121.23" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="46.14" y="121.23" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-m719e3e79e4" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="39.64" y="125.41">80</text>
+    <path d="M 46.14 93.08 L 393.2 93.08" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="46.14" y="93.08" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-m719e3e79e4" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="39.64" y="97.26">85</text>
+    <path d="M 46.14 64.93 L 393.2 64.93" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="46.14" y="64.93" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-m719e3e79e4" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="39.64" y="69.11">90</text>
+    <path d="M 46.14 36.78 L 393.2 36.78" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="46.14" y="36.78" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-m719e3e79e4" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="39.64" y="40.96">95</text>
+    <path d="M 46.14 8.63 L 393.2 8.63" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--line); stroke-width: 0.8; stroke-linecap: square" />
+    <use x="46.14" y="8.63" style="fill: var(--muted); stroke: var(--muted); stroke-width: 0.8" href="#fsrs-m719e3e79e4" />
+    <text style="font-size: 11px; text-anchor: end; fill: var(--muted)" x="39.64" y="12.81">100</text>
+    <text style="font-size: 11px; text-anchor: middle; fill: var(--fg)" x="11.36" y="79" transform="rotate(-90 11.36 79)">Predicted recall (%)</text>
+    <path d="M 46.14 8.63 L 80.85 18.58 L 115.55 27.34 L 150.26 35.16 L 184.97 42.22 L 219.67 48.63 L 254.38 54.5 L 289.08 59.91 L 323.79 64.93 L 358.5 69.6 L 393.2 73.96" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: square" />
+    <path d="M 46.14 8.63 L 80.85 42.22 L 115.55 64.93 L 150.26 81.92 L 184.97 95.4 L 219.67 106.51 L 254.38 115.94 L 289.08 124.11 L 323.79 131.29 L 358.5 137.69 L 393.2 143.45" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke-dasharray: 7.4,3.2; stroke-dashoffset: 0; stroke: var(--fg); stroke-width: 2" />
+    <path d="M 46.14 64.93 L 393.2 64.93" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke-dasharray: 2,3.3; stroke-dashoffset: 0; stroke: var(--muted); stroke-width: 2" />
+    <path d="M 46.14 155.01 L 46.14 3" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <path d="M 46.14 155.01 L 393.2 155.01" style="fill: none; stroke: var(--muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square" />
+    <path d="M 323.79 64.93" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: square" />
+    <defs>
+      <path id="fsrs-me081975ce1" d="M 0 3 C 0.8 3 1.56 2.68 2.12 2.12 C 2.68 1.56 3 0.8 3 0 C 3 -0.8 2.68 -1.56 2.12 -2.12 C 1.56 -2.68 0.8 -3 0 -3 C -0.8 -3 -1.56 -2.68 -2.12 -2.12 C -2.68 -1.56 -3 -0.8 -3 0 C -3 0.8 -2.68 1.56 -2.12 2.12 C -1.56 2.68 -0.8 3 0 3 z" style="stroke: var(--accent)" />
+    </defs>
+    <g clip-path="url(#fsrs-pe243a9c5c9)">
+      <use x="323.79" y="64.93" style="fill: var(--accent); stroke: var(--accent)" href="#fsrs-me081975ce1" />
+    </g>
+    <path d="M 115.55 64.93" clip-path="url(#fsrs-pe243a9c5c9)" style="fill: none; stroke: var(--fg); stroke-width: 1.5; stroke-linecap: square" />
+    <defs>
+      <path id="fsrs-m35cb354f68" d="M -3 3 L 3 3 L 3 -3 L -3 -3 z" style="stroke: var(--fg); stroke-linejoin: miter" />
+    </defs>
+    <g clip-path="url(#fsrs-pe243a9c5c9)">
+      <use x="115.55" y="64.93" style="fill: var(--fg); stroke: var(--fg); stroke-linejoin: miter" href="#fsrs-m35cb354f68" />
+    </g>
+    <path d="M 54.69 113.27 L 64.19 113.27 L 73.69 113.27" style="fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: square" />
+    <text style="font-size: 9.5px; text-anchor: start; fill: var(--fg)" x="81.29" y="116.59">Stability 8 days</text>
+    <path d="M 54.69 127.21 L 64.19 127.21 L 73.69 127.21" style="fill: none; stroke-dasharray: 7.4,3.2; stroke-dashoffset: 0; stroke: var(--fg); stroke-width: 2" />
+    <text style="font-size: 9.5px; text-anchor: start; fill: var(--fg)" x="81.29" y="130.54">Stability 2 days</text>
+    <path d="M 54.69 141.16 L 64.19 141.16 L 73.69 141.16" style="fill: none; stroke-dasharray: 2,3.3; stroke-dashoffset: 0; stroke: var(--muted); stroke-width: 2" />
+    <text style="font-size: 9.5px; text-anchor: start; fill: var(--fg)" x="81.29" y="144.48">90% target</text>
+    <defs>
+      <clipPath id="fsrs-pe243a9c5c9">
+        <rect x="46.14" y="3" width="347.06" height="152.01" />
+      </clipPath>
+    </defs>
+  </svg>
+  <figcaption>Both cards start at 100% estimated recall. The more stable card takes longer to reach the review target.</figcaption>
+</figure>
+
+<h3 id="a-successful-review-on-day-eight">A successful review on day eight</h3>
+
+<p>Suppose your F♯ card has \(D=5\) and \(S=8\) days. On day eight its predicted recall is 0.90. You identify F♯ correctly. For a <strong>Good</strong> review at least a day after the previous one, the stability update has two parts. The factor \(k\) depends on the card’s current difficulty and stability.</p>
+
+\[k = e^{1.8722}(11-D)S^{-0.1666}.\]
+
+\[S_{\mathrm{new}}=S\left[1+k\left(e^{0.796(1-R)}-1\right)\right].\]
+
+<p>The quantity in square brackets is about <strong>3.29</strong>, giving a new stability of <strong>26.29 days</strong> and a base interval of <strong>26 days</strong>. The term involving \(R\) explains why timing matters. If you recall the same card earlier, \(R\) is higher and the gain in stability is smaller. A miss uses a separate stability update before relearning.</p>
+
+<h2 id="review-intervals-for-f">Review intervals for F♯</h2>
+
+<p>Suppose you see a new F♯ card five times in Note Identification. Each row shows your answer and the gap <strong>until the next showing</strong>. For ASRS and ARTS, assume you answer one other question every 10 seconds. After each of those answers, F♯ competes with one unseen card. For SM-2 and FSRS, assume you review F♯ whenever it is due and the exercise is still collecting its first 40 timed answers.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Showing and answer</th>
+      <th>ASRS (median gap)</th>
+      <th>ARTS</th>
+      <th>SM-2</th>
+      <th>FSRS (base interval)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1. Correct in 4 s</td>
+      <td>9 questions (90 s)</td>
+      <td>3 questions (30 s)</td>
+      <td>1 day</td>
+      <td>10 min</td>
+    </tr>
+    <tr>
+      <td>2. Correct in 1 s</td>
+      <td>19 questions (190 s)</td>
+      <td>4 questions (40 s)</td>
+      <td>6 days</td>
+      <td>2 days</td>
+    </tr>
+    <tr>
+      <td>3. Correct in 1 s</td>
+      <td>19 questions (190 s)</td>
+      <td>4 questions (40 s)</td>
+      <td>15 days</td>
+      <td>11 days</td>
+    </tr>
+    <tr>
+      <td>4. Miss (corrected on the same showing in ASRS and ARTS)</td>
+      <td>8 questions (80 s)</td>
+      <td>1 question (10 s)</td>
+      <td>1 min</td>
+      <td>10 min</td>
+    </tr>
+    <tr>
+      <td>5. Correct in 4 s</td>
+      <td>11 questions (110 s)</td>
+      <td>3 questions (30 s)</td>
+      <td>1 day</td>
+      <td>2 days</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>After the first answer, ASRS draws F♯ again within nine intervening questions about half the time. ARTS picks it as soon as it outranks the unseen card, after three questions. On the fourth showing, ASRS counts both the miss and the correction. ARTS uses the first answer. In SM-2 and FSRS, the miss ends the showing. The fifth row is the scheduled retry. FSRS uses base intervals here. In practice, its small random adjustment to longer intervals can also change the dates of later reviews.</p>
+
+<h2 id="daily-limits">Daily limits</h2>
+
+<p>For SM-2 and FSRS, exercise tiles show <strong>new cards in blue</strong>, <strong>missed cards awaiting a correct answer in red</strong>, and <strong>due reviews in green</strong>. Below the search bar, <strong>New</strong>, <strong>Learn</strong>, and <strong>Due</strong> show the totals for checked exercise tiles that match the search text. A missed card stays in the red count while it waits and when it becomes due. Another miss on that card still counts as one. Due reviews come first. The default allowance for each exercise is <strong>10 new cards and 200 reviews per local day</strong>. Change those numbers in <strong>Settings → Practice</strong>, or open an exercise’s <strong>Daily Limits</strong> submenu and clear <strong>Use global</strong> to override either number for that exercise. Check <strong>Unlimited</strong> to remove the daily cap on new cards, reviews, or both. A limit of zero pauses that kind of practice.</p>
+
+<p>On the exercise screen, the counts appear at the top, immediately to the left of the score and streak, in <strong>blue / red / green</strong> order: new cards, outstanding incorrect cards, and due reviews. The underlined number identifies the current card’s queue. A retry that is due appears in both the red and green counts, with red underlined while you answer it.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-109/dev/assets/img/keyboard-review.png" alt="Keyboard Note Identification with the queue counts next to the streak and review intervals beneath the keyboard" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-109/dev/assets/img/keyboard-review-dark.png" alt="Keyboard Note Identification with the queue counts next to the streak and review intervals beneath the keyboard" loading="lazy" />
+  <figcaption>After calibration, the keyboard shows the next interval for each passing grade.</figcaption>
+</figure>
+
+<p>After a miss, Alto sets the card aside and offers other eligible questions. If the missed card is the only review left within your daily limit, the exercise shows its return time and resumes automatically when it is due.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-109/dev/assets/img/waiting-for-review.png" alt="An exercise waiting for a missed card, with its return time and the red outstanding-card count" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-109/dev/assets/img/waiting-for-review-dark.png" alt="An exercise waiting for a missed card, with its return time and the red outstanding-card count" loading="lazy" />
+  <figcaption>You can leave the exercise open. Practice resumes when the missed card is due.</figcaption>
+</figure>
+
+<p>The two algorithms share the day’s allowances and keep separate review dates. Opening a new card uses one introduction slot. If you leave before answering, you can return to that card without using another slot. The allowances reset at local midnight, and overdue reviews remain due.</p>
+
+<p>You can see the next review date for a specific card in the <a href="/alto/pr-109/dev/statistics/#browsing-the-database">database browser</a>.</p>
+
+<h2 id="switching-schedulers">Switching schedulers</h2>
+
+<p>When a card first moves between SM-2 and FSRS, it keeps its due date, full review interval, and learning or relearning step. A card on a 180-day interval with 20 days left will still be due in 20 days. After that first transfer, each scheduler resumes its own saved schedule for the card.</p>
+
+<p>For mature cards, FSRS estimates stability and difficulty from the SM-2 interval and ease, assuming 90% historical recall. In the other direction, SM-2 uses the full FSRS interval and starts ease at 2.5. <a href="https://docs.rs/fsrs/6.6.2/fsrs/struct.FSRS.html#method.memory_state_from_sm2">FSRS conversion from SM-2</a></p>
+
+<p>ARTS and ASRS record your answers in your practice history. Calendar due dates, new cards, missed cards awaiting review, and daily allowances are independent of that practice.</p>
+
+<h2 id="your-profile">Your profile</h2>
+
+<p>Alto tracks individual questions, such as identifying F♯4 in treble clef in D major. Changing the order of the answer buttons still counts as practice on the same question.</p>
+
+<p>Every submission is saved under your profile. A question that takes three tries leaves three entries, each with your answer, whether it was correct, and how long it took. Switching algorithms keeps that history. You can switch profiles in the menu (☰) and see your accuracy and response times in <a href="/alto/pr-109/dev/statistics/">Statistics</a>.</p>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-109/dev/exercises/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Exercises</span></a>
+            <a class="next" href="/alto/pr-109/dev/statistics/" rel="next"><span class="np-label">Next</span><span class="np-title">Statistics and database<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-109/dev/assets/js/nav.js?v=1795546798" defer></script>
+  <script src="/alto/pr-109/dev/assets/js/search.js?v=1795546798" defer></script>
+  <script src="/alto/pr-109/dev/assets/js/copy-code.js?v=1795546798" defer></script>
+  <script src="/alto/pr-109/dev/assets/js/toc.js?v=1795546798" defer></script>
+  
+</body>
+</html>
