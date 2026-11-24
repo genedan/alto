@@ -8,8 +8,10 @@
       block.className = "code-snippet";
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = "Copy";
+      button.title = "Copy code";
       button.setAttribute("aria-label", "Copy code");
+      button.innerHTML = '<svg class="i" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg>';
+      const icon = button.querySelector("use");
       const status = document.createElement("span");
       status.setAttribute("role", "status");
       let reset;
@@ -20,11 +22,11 @@
         clearTimeout(reset);
         try {
           await navigator.clipboard.writeText(pre.textContent);
-          button.textContent = "Copied";
+          icon.setAttribute("href", "#i-check");
           status.classList.remove("copy-help");
           status.textContent = "Code copied to clipboard.";
           reset = setTimeout(() => {
-            button.textContent = "Copy";
+            icon.setAttribute("href", "#i-copy");
             status.textContent = "";
           }, 2000);
         } catch {
@@ -33,7 +35,7 @@
           const selection = window.getSelection();
           selection.removeAllRanges();
           selection.addRange(range);
-          button.textContent = "Copy";
+          icon.setAttribute("href", "#i-copy");
           status.classList.add("copy-help");
           status.textContent = "Code selected. Use your device’s Copy command.";
         }
