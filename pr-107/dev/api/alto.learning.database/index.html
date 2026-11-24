@@ -1,0 +1,1851 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>alto.learning.database · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-107/latest/api/alto.learning.database/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="alto.learning.database · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-107/latest/api/alto.learning.database/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-107/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-107/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-107/dev/assets/css/site.css?v=1795538939">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-107/dev/">
+      <img src="/alto/pr-107/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-107/dev/" aria-label="Documentation preview for PR #107">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #107
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-107/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg" open>
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.database/" aria-current="page">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>alto.learning.database</h1>
+          
+<p>The SQLite store: profiles, every answer given, and what is known about
+each question. Pure Python (no Qt).</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">add_attempt</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">attempt_no</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">answer</span><span class="o">=</span><span class="s">"C"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">correct</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">duration_ms</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">answered_at</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">count_attempts</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+<span class="go">1
+</span></code></pre></div></div>
+
+<h2 id="check_snapshot">check_snapshot</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">check_snapshot</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Check that bytes are an intact Alto database that this version can
+read, and say what is in it.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">data</code> (<em>bytes</em>): A snapshot, as <code class="language-plaintext highlighter-rouge">Database.snapshot</code> returns it.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>tuple of (int, int, int)</em>: The schema version, the number of profiles and the number of answers.</li>
+</ul>
+
+<p><strong>Raises</strong></p>
+
+<ul>
+  <li><em>ValueError</em>: If the data is not a SQLite database, is damaged, is not an Alto database, or has a newer schema than this version knows.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">check_snapshot</span><span class="p">(</span><span class="n">Database</span><span class="p">().</span><span class="n">snapshot</span><span class="p">())</span> <span class="o">==</span> <span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">SCHEMA_VERSION</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">check_snapshot</span><span class="p">(</span><span class="sa">b</span><span class="s">"not a database"</span><span class="p">)</span>
+<span class="go">Traceback (most recent call last):
+</span><span class="c">    ...
+</span><span class="go">ValueError: This is not an Alto database.
+</span></code></pre></div></div>
+
+<h2 id="profile">Profile</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Profile</span><span class="p">(</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>A person who practices: their answers are kept apart from everyone
+else’s.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">id</code> (<em>int</em>): The profile’s row number in the database.</li>
+  <li><code class="language-plaintext highlighter-rouge">name</code> (<em>str</em>): The name shown in the interface. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Profile</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="go">Profile(id=1, name='Ada')
+</span></code></pre></div></div>
+
+<h2 id="itemrecord">ItemRecord</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ItemRecord</span><span class="p">(</span>
+    <span class="n">strain</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">seen</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">first_try_right</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">wrong_attempts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">total_first_ms</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">last_seen</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">signature</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">item_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">''</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>What a profile’s history says about one question.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">strain</code> (<em>float</em>): How much practice the question needs; higher means it comes back sooner.</li>
+  <li><code class="language-plaintext highlighter-rouge">seen</code> (<em>int</em>): How many times the question was shown and answered. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">first_try_right</code> (<em>int</em>): How many of those showings were answered right on the first try. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">wrong_attempts</code> (<em>int</em>): How many wrong answers there have been in all. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">total_first_ms</code> (<em>int</em>): Time to the first answer, summed over the showings, in milliseconds. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">last_seen</code> (<em>float</em>): When the question was last answered, as a timestamp. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">signature</code> (<em>str</em>): The exercise settings it was asked under; it is only asked again while these are unchanged. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">payload</code> (<em>str</em>): The question itself as JSON, so it can be asked again. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">item_key</code> (<em>str, default ““</em>): The question’s identity. Empty when the record is built to be saved, filled in when it is read back. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">record</span> <span class="o">=</span> <span class="n">ItemRecord</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">seen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">first_try_right</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">wrong_attempts</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">total_first_ms</span><span class="o">=</span><span class="mi">9000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">last_seen</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">signature</span><span class="o">=</span><span class="s">"s"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">payload</span><span class="o">=</span><span class="s">"{}"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">record</span><span class="p">.</span><span class="n">seen</span>
+<span class="go">3
+</span></code></pre></div></div>
+
+<h2 id="database">Database</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Database</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="s">':memory:'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The SQLite database behind profiles, answers and per-question
+history.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">conn</code> (<em>sqlite3.Connection</em>): The open connection, with rows returned as <code class="language-plaintext highlighter-rouge">sqlite3.Row</code> so columns can be read by name.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>  <span class="c1"># in memory; give a path to keep it on disk
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">profiles</span><span class="p">()</span>
+<span class="go">[]
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="go">Profile(id=1, name='Ada')
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Open the database, creating it and its tables if they do not
+exist.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">path</code> (<em>str or Path, default “:memory:”</em>): The file to use, whose folder is created if needed, or “:memory:” for a throwaway database.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">conn</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"PRAGMA user_version"</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">SCHEMA_VERSION</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="databasewrite_transaction">Database.write_transaction</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">contextmanager</span>
+<span class="k">def</span> <span class="nf">write_transaction</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="bp">None</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Share the caller’s write transaction or begin one before reading
+the state to be updated.</p>
+
+<p><strong>Yields</strong></p>
+
+<ul>
+  <li><em>None</em>: Control while the transaction is active.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">with</span> <span class="n">db</span><span class="p">.</span><span class="n">write_transaction</span><span class="p">():</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">print</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="n">conn</span><span class="p">.</span><span class="n">in_transaction</span><span class="p">)</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">conn</span><span class="p">.</span><span class="n">in_transaction</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="databaseclose">Database.close</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">close</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Close the connection.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="databasesnapshot">Database.snapshot</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">snapshot</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
+</code></pre></div></div>
+
+<p>Return the whole database as bytes: every profile, answer and
+question record, exactly as they are now.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>bytes</em>: A complete SQLite database, which <code class="language-plaintext highlighter-rouge">restore</code> can load into another database.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">check_snapshot</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="n">snapshot</span><span class="p">())</span> <span class="o">==</span> <span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">SCHEMA_VERSION</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="databaserestore">Database.restore</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Replace everything in the database with a snapshot, so it is
+exactly as it was when the snapshot was taken.</p>
+
+<p>Profiles, answers and question records that are here now are
+gone afterwards, and the ones in the snapshot take their
+place with the same ids. A snapshot made by an older version of
+Alto is brought up to date.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">data</code> (<em>bytes</em>): A snapshot, as <code class="language-plaintext highlighter-rouge">snapshot</code> returns it.</li>
+</ul>
+
+<p><strong>Raises</strong></p>
+
+<ul>
+  <li><em>ValueError</em>: If the data is not an intact Alto database, or was made by a newer version of Alto. The database is not changed.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">source</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">source</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">target</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">target</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Someone else"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">target</span><span class="p">.</span><span class="n">restore</span><span class="p">(</span><span class="n">source</span><span class="p">.</span><span class="n">snapshot</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">p</span><span class="p">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">target</span><span class="p">.</span><span class="n">profiles</span><span class="p">()]</span>
+<span class="go">['Ada']
+</span></code></pre></div></div>
+
+<h3 id="databaseprofiles">Database.profiles</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">profiles</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Profile</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return every profile, sorted by name without regard to case.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of Profile</em>: The profiles.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"ben"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">p</span><span class="p">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">profiles</span><span class="p">()]</span>
+<span class="go">['Ada', 'ben']
+</span></code></pre></div></div>
+
+<h3 id="databaseprofile">Database.profile</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span> <span class="o">|</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Return one profile by its id.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Profile or None</em>: The profile, or None if there is none with that id.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># noinspection PyUnresolvedReferences
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">profile</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">).</span><span class="n">name</span>
+<span class="go">'Ada'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">profile</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="databaseadd_profile">Database.add_profile</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">add_profile</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span>
+</code></pre></div></div>
+
+<p>Create a profile.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">name</code> (<em>str</em>): The name. Runs of spaces are collapsed to one, and case does not matter when checking for a duplicate.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Profile</em>: The new profile.</li>
+</ul>
+
+<p><strong>Raises</strong></p>
+
+<ul>
+  <li><em>ValueError</em>: If the name is empty, or is already taken.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"  Ada   Lovelace "</span><span class="p">)</span>
+<span class="go">Profile(id=1, name='Ada Lovelace')
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"ada lovelace"</span><span class="p">)</span>
+<span class="go">Traceback (most recent call last):
+</span><span class="c">    ...
+</span><span class="go">ValueError: There is already a profile called ada lovelace.
+</span></code></pre></div></div>
+
+<h3 id="databasedelete_profile">Database.delete_profile</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">delete_profile</span><span class="p">(</span><span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Delete a profile together with all of its answers and question
+history.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">delete_profile</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">profiles</span><span class="p">()</span>
+<span class="go">[]
+</span></code></pre></div></div>
+
+<h3 id="databaseget_item">Database.get_item</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_item</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">item_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemRecord</span> <span class="o">|</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Return what is known about one question for a profile.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str</em>): The exercise’s class name. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">item_key</code> (<em>str</em>): The question’s identity. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>ItemRecord or None</em>: The record, or None if the question has never been answered.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">get_item</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="databasesave_item">Database.save_item</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">save_item</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">item_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">ItemRecord</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Store what is known about a question, replacing any earlier
+record of it.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str</em>): The exercise’s class name. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">item_key</code> (<em>str</em>): The question’s identity. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">item</code> (<em>ItemRecord</em>): What to store. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">record</span> <span class="o">=</span> <span class="n">ItemRecord</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">seen</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">first_try_right</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">wrong_attempts</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">total_first_ms</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">last_seen</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">signature</span><span class="o">=</span><span class="s">"s"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">payload</span><span class="o">=</span><span class="s">"{}"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">save_item</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item</span><span class="o">=</span><span class="n">record</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># noinspection PyUnresolvedReferences
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">get_item</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">strain</span>
+<span class="go">2.0
+</span></code></pre></div></div>
+
+<h3 id="databaseadd_attempt">Database.add_attempt</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">add_attempt</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">item_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">attempt_no</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">correct</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">duration_ms</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">answered_at</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">timing_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p>Log one answer, right or wrong.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str</em>): The exercise’s class name. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">item_key</code> (<em>str</em>): The question’s identity. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">attempt_no</code> (<em>int</em>): 1 for the first answer to this showing of the question, 2 for the second and so on. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">answer</code> (<em>str</em>): What was answered. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">correct</code> (<em>bool</em>): Whether it was right. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">duration_ms</code> (<em>int</em>): How long it took, in milliseconds. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">answered_at</code> (<em>float</em>): When it was answered, as a timestamp. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">timing_valid</code> (<em>bool</em>): Whether the question remained available for an uninterrupted response.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">add_attempt</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">attempt_no</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">answer</span><span class="o">=</span><span class="s">"C"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">correct</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">duration_ms</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">answered_at</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">"answer"</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">"correct"</span><span class="p">])</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">attempts</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">[('C', 0)]
+</span></code></pre></div></div>
+
+<h3 id="databaseattempts">Database.attempts</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">attempts</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return all of a profile’s answers in the order they were given.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str or None, default None</em>): Only answers to this exercise (its class name); every exercise if None. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of sqlite3.Row</em>: Every column of each answer.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[</span><span class="s">"NoteNames"</span><span class="p">,</span> <span class="s">"IntervalNames"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">):</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">db</span><span class="p">.</span><span class="n">add_attempt</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">exercise</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">attempt_no</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answer</span><span class="o">=</span><span class="s">"x"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">correct</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">duration_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answered_at</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s">"exercise"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">attempts</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">)]</span>
+<span class="go">['NoteNames', 'IntervalNames']
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">r</span><span class="p">[</span><span class="s">"exercise"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">attempts</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">exercise</span><span class="o">=</span><span class="s">"IntervalNames"</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">['IntervalNames']
+</span></code></pre></div></div>
+
+<h3 id="databaseattempts_in">Database.attempts_in</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">attempts_in</span><span class="p">(</span>
+    <span class="n">profile_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">since</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">item_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return answers given, oldest first, for some profiles, an
+exercise and a period.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_ids</code> (<em>list of int or None, default None</em>): The profiles to include; every profile if None.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str or None, default None</em>): Only this exercise (its class name); every exercise if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">since</code> (<em>float or None, default None</em>): Only answers from this timestamp on; the whole history if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">item_key</code> (<em>str or None, default None</em>): Only answers for this question key. Pass the exercise to identify the question. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of sqlite3.Row</em>: Each answer’s exercise, attempt number, correctness, duration in milliseconds and time.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">):</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">db</span><span class="p">.</span><span class="n">add_attempt</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">attempt_no</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answer</span><span class="o">=</span><span class="s">"C"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">correct</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">duration_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answered_at</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">r</span><span class="p">[</span><span class="s">"answered_at"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">attempts_in</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="p">[</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">],</span> <span class="n">since</span><span class="o">=</span><span class="mf">15.0</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">[20.0, 30.0]
+</span></code></pre></div></div>
+
+<h3 id="databasefirst_attempts_per_day">Database.first_attempts_per_day</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">first_attempts_per_day</span><span class="p">(</span>
+    <span class="n">profile_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">since</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Count the questions first answered on each day, in local time,
+counting the days in the database.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_ids</code> (<em>list of int or None, default None</em>): The profiles to count; None for all of them.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str or None, default None</em>): Only this exercise’s questions; None for every exercise. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">since</code> (<em>float or None, default None</em>): Only answers from this time on, in seconds since the epoch. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>dict of str to int</em>: The number of first answers on each day that has any, by the day as “YYYY-MM-DD”.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span> <span class="n">attempt_no</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">db</span><span class="p">.</span><span class="n">add_attempt</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">attempt_no</span><span class="o">=</span><span class="n">attempt_no</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answer</span><span class="o">=</span><span class="s">"C"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">correct</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">duration_ms</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answered_at</span><span class="o">=</span><span class="mf">86_400.0</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="mi">43_200</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">list</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">db</span><span class="p">.</span><span class="n">first_attempts_per_day</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="p">[</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">).</span><span class="n">values</span><span class="p">()</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># the second try of a question is not counted
+</span><span class="go">[2]
+</span></code></pre></div></div>
+
+<h3 id="databasestrained_items">Database.strained_items</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">strained_items</span><span class="p">(</span>
+    <span class="n">profile_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">since</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">min_strain</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return the questions that need most practice, the same question
+from different profiles counted together.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_ids</code> (<em>list of int or None, default None</em>): The profiles to include; every profile if None.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str or None, default None</em>): Only this exercise (its class name); every exercise if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">since</code> (<em>float or None, default None</em>): Only questions last seen from this timestamp on; the whole history if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">min_strain</code> (<em>float, default 0.0</em>): Leave out questions with less strain than this. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">limit</code> (<em>int, default 10</em>): The most questions to return. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of sqlite3.Row</em>: Each question’s exercise, key, average strain, times seen, wrong attempts and stored payload, most strained first.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">strain</span> <span class="ow">in</span> <span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">(</span><span class="s">"easy"</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">(</span><span class="s">"hard"</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">):</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item</span> <span class="o">=</span> <span class="n">ItemRecord</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">strain</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">seen</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">first_try_right</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">wrong_attempts</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">total_first_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">last_seen</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">signature</span><span class="o">=</span><span class="s">"s"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">payload</span><span class="o">=</span><span class="s">"{}"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">db</span><span class="p">.</span><span class="n">save_item</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">item_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">r</span><span class="p">[</span><span class="s">"item_key"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">strained_items</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="p">[</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">],</span> <span class="n">min_strain</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">['hard']
+</span></code></pre></div></div>
+
+<h3 id="databasecount_attempts">Database.count_attempts</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">count_attempts</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">since</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">until</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div></div>
+
+<p>Return how many answers a profile has given, optionally of one
+exercise and within a period.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str or None, default None</em>): Count only answers to this exercise (a class name); all exercises if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">since</code> (<em>float or None, default None</em>): Count only answers given at or after this time (a timestamp). Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">until</code> (<em>float or None, default None</em>): Count only answers given before this time (a timestamp). Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>int</em>: The number of answers, wrong ones included.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">count_attempts</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+<span class="go">0
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">):</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">db</span><span class="p">.</span><span class="n">add_attempt</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">attempt_no</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answer</span><span class="o">=</span><span class="s">"C"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">correct</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">duration_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answered_at</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">count_attempts</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">until</span><span class="o">=</span><span class="mf">9.0</span>
+<span class="gp">...</span><span class="w"> </span><span class="c1"># from the start of the period up to, not including, its end
+</span><span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">1
+</span></code></pre></div></div>
+
+<h3 id="databaseattempt_rows">Database.attempt_rows</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">attempt_rows</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">since</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">until</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return the newest answers first, each with the stored question
+it was an answer to (if that is still known).</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">limit</code> (<em>int, default 10000</em>): The most rows to return. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str or None, default None</em>): Return only answers to this exercise (a class name); all exercises if None. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">since</code> (<em>float or None, default None</em>): Return only answers given at or after this time (a timestamp). Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">until</code> (<em>float or None, default None</em>): Return only answers given before this time (a timestamp). Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of sqlite3.Row</em>: Each answer’s time, exercise, question key, answer, correctness, attempt number, duration, question payload, and the question’s current due timestamp under the active scheduler (NULL if unscheduled).</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">):</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">db</span><span class="p">.</span><span class="n">add_attempt</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">attempt_no</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answer</span><span class="o">=</span><span class="s">"C"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">correct</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">duration_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">answered_at</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">r</span><span class="p">[</span><span class="s">"answered_at"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">attempt_rows</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">[2.0, 1.0]
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">r</span><span class="p">[</span><span class="s">"answered_at"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">attempt_rows</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="mf">1.5</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">[2.0]
+</span></code></pre></div></div>
+
+<h3 id="databaseitem_rows">Database.item_rows</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">item_rows</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return what is known about each of a profile’s questions, the
+most strained first.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">limit</code> (<em>int, default 10000</em>): The most rows to return. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of sqlite3.Row</em>: Every column of each question’s record and the active scheduler’s due timestamp, or NULL if unscheduled.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">item_rows</span><span class="p">(</span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+<span class="go">[]
+</span></code></pre></div></div>
+
+<h3 id="databaseprofile_rows">Database.profile_rows</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">profile_rows</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return every profile with how many answers and questions it has.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of sqlite3.Row</em>: Each profile’s id, name, creation time, number of answers and number of questions, sorted by name.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">r</span><span class="p">[</span><span class="s">"name"</span><span class="p">],</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">r</span><span class="p">[</span><span class="s">"attempts"</span><span class="p">],</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">r</span><span class="p">[</span><span class="s">"questions"</span><span class="p">],</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">profile_rows</span><span class="p">()</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">[('Ada', 0, 0)]
+</span></code></pre></div></div>
+
+<h3 id="databasereplay_candidates">Database.replay_candidates</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">replay_candidates</span><span class="p">(</span>
+    <span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exercise</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">signature</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">hardest</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span>
+    <span class="n">random_extra</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ItemRecord</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Return questions asked before under these same settings: the
+ones that need most practice, plus a few at random.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">profile_id</code> (<em>int</em>): The profile’s id.</li>
+  <li><code class="language-plaintext highlighter-rouge">exercise</code> (<em>str</em>): The exercise’s class name. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">signature</code> (<em>str</em>): The exercise’s current settings signature; only questions asked under it qualify. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">hardest</code> (<em>int, default 25</em>): How many of the most strained questions to include. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">random_extra</code> (<em>int, default 10</em>): How many more to pick at random. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of ItemRecord</em>: The questions, each at most once.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ada</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Ada"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">item</span> <span class="o">=</span> <span class="n">ItemRecord</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mf">3.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">seen</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">first_try_right</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">wrong_attempts</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">total_first_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">last_seen</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">signature</span><span class="o">=</span><span class="s">"s1"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">payload</span><span class="o">=</span><span class="s">"{}"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">save_item</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item_key</span><span class="o">=</span><span class="s">"k"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">row_</span><span class="p">.</span><span class="n">item_key</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">row_</span> <span class="ow">in</span> <span class="n">db</span><span class="p">.</span><span class="n">replay_candidates</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">signature</span><span class="o">=</span><span class="s">"s1"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">['k']
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">replay_candidates</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ada</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">exercise</span><span class="o">=</span><span class="s">"NoteNames"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">signature</span><span class="o">=</span><span class="s">"other settings"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">[]
+</span></code></pre></div></div>
+
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-107/dev/api/alto.learning.calendar/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>alto.learning.calendar</span></a>
+            <a class="next" href="/alto/pr-107/dev/api/alto.learning.grading/" rel="next"><span class="np-label">Next</span><span class="np-title">alto.learning.grading<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-107/dev/assets/js/nav.js?v=1795538939" defer></script>
+  <script src="/alto/pr-107/dev/assets/js/toc.js?v=1795538939" defer></script>
+  
+</body>
+</html>

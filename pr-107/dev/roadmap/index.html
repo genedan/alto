@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-107/latest/roadmap/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Roadmap · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-107/latest/roadmap/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-107/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-107/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-107/dev/assets/css/site.css?v=1795538939">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-107/dev/">
+      <img src="/alto/pr-107/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-107/dev/" aria-label="Documentation preview for PR #107">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #107
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-107/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/roadmap/" aria-current="page">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Roadmap</h1>
+          <h2 id="alpha-phase">Alpha phase</h2>
+
+<p>Alto is in alpha. <strong>Complete</strong> means the feature is available in the current development version. <strong>Planned</strong> marks the proposed development sequence. <strong>Under consideration</strong> marks a candidate for future work.</p>
+
+<p>Chord construction and staff-to-keyboard practice are next. Ear training and rhythm come next. Both provide the groundwork for melodic dictation and harmonic analysis.</p>
+
+<h3 id="notation-and-pitch">Notation and pitch</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Note identification and construction</td>
+      <td>Name a written note or place a named pitch in the requested octave and clef.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Clefs</td>
+      <td>Identify a clef or place its symbol on the correct staff line.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Notation symbols</td>
+      <td>Identify a highlighted symbol in a short excerpt, or find a named symbol on the staff.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Accidental scope</td>
+      <td>Work out which pitch sounds after a cancellation or a barline.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Enharmonic spelling</td>
+      <td>Respell a pitch to fit a specified key or harmonic role.</td>
+      <td>Under consideration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="intervals-and-instruments">Intervals and instruments</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Staff intervals</td>
+      <td>Identify written seconds through fifteenths, shown together or in ascending or descending order.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Keyboard notes and intervals</td>
+      <td>Name a highlighted piano key or identify the interval between two highlighted keys.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Interval construction</td>
+      <td>Place the second note a named interval above or below the first. Feedback distinguishes an incorrect staff position from an incorrect accidental.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Staff-to-keyboard practice</td>
+      <td>Select the piano key for a written note, then play scales and select chord tones on the keyboard.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Transposition</td>
+      <td>Rewrite a phrase in a new key or convert a transposing instrument’s part to concert pitch.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Interval inversion and reduction</td>
+      <td>Invert a minor sixth or reduce a major tenth to its simple interval.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Instrument ranges and fingerboards</td>
+      <td>Find an out-of-range note in a part or locate a pitch on a fretboard in a given tuning.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>MIDI performance</td>
+      <td>Play a written phrase on a connected keyboard.</td>
+      <td>Under consideration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="scales-and-tonality">Scales and tonality</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Scale identification and construction</td>
+      <td>Identify the key or mode of a written scale, or build the scale on the staff.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Key signatures</td>
+      <td>Identify and construct signatures and fill in missing sharps or flats in order.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Written scale degrees</td>
+      <td>Read a note as a scale degree or place a requested degree on the staff in a given key.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Relative keys</td>
+      <td>Find the relative major or minor on the circle of fifths.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Parallel keys</td>
+      <td>Compare scales that share a tonic but have different key signatures.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Other scale families</td>
+      <td>Build and compare pentatonic, blues, whole-tone, and octatonic scales.</td>
+      <td>Under consideration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="ear-training">Ear training</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Intervals by ear</td>
+      <td>Name an interval after hearing its notes in succession or together. Replay the example and see the notation after answering.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Chords by ear</td>
+      <td>Identify root-position triads by sound, then identify seventh chords and inversions.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Tonal scale degrees</td>
+      <td>Hear a key established, then identify the scale degree of a new pitch.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Pitch recall</td>
+      <td>Reproduce a sequence of two or three pitches.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Scales and tonal centers by ear</td>
+      <td>Identify a heard scale or find the tonic of a short phrase.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Singing and intonation</td>
+      <td>Sing a requested degree, continue a phrase, or judge a pitch against a reference.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Tuning and acoustics</td>
+      <td>Match frequency ratios, identify harmonic partials, or listen for beats between pitches.</td>
+      <td>Under consideration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="rhythm-and-meter">Rhythm and meter</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Durations, rests, dots, and ties</td>
+      <td>Complete a measure or replace tied notes with an equivalent duration.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Meter and grouping</td>
+      <td>Subdivide beats and correct the beaming or rest grouping in simple and compound meters.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Tuplets</td>
+      <td>Fill a beat with a triplet or another specified division.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Rhythm reading and imitation</td>
+      <td>Tap a steady pulse, a written rhythm, or a pattern heard after a count-in. Calibrated timing distinguishes missing or extra taps from tempo drift.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Rhythm dictation</td>
+      <td>Match a heard rhythm to written examples, then enter the pattern in the given meter.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Syncopation and groove</td>
+      <td>Locate a displaced accent or distinguish straight and swung subdivisions by ear.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Additive meter, polyrhythm, and rhythmic cycles</td>
+      <td>Group a measure of 7/8, align three pulses against two, or identify the return of a taught cycle.</td>
+      <td>Under consideration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="chords-and-functional-harmony">Chords and functional harmony</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Chord quality</td>
+      <td>Identify root-position triads and seventh chords on the staff.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Arpeggio inversions</td>
+      <td>Name the chord type and inversion from its notes written in succession.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Roman numerals on the circle of fifths</td>
+      <td>Name the highlighted chord by Roman numeral in a major key.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Chord construction</td>
+      <td>Spell a named triad or seventh chord by placing its notes on the staff.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Block-chord inversions</td>
+      <td>Identify the root, bass, and inversion when the chord tones are written together.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Diatonic function and minor-key harmony</td>
+      <td>Label or build chords in a major or minor key, including chords that use a raised degree in minor.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Cadences and progressions</td>
+      <td>Identify a cadence or analyze a short progression across different voicings.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Harmonic rhythm</td>
+      <td>Mark where the harmony changes within a phrase.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Chromatic harmony and modulation</td>
+      <td>Resolve an applied dominant, identify a borrowed or altered chord, or locate a pivot between keys.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Jazz and popular harmony</td>
+      <td>Read lead-sheet symbols, identify guide tones, build voicings, and analyze blues progressions or repeating chord patterns.</td>
+      <td>Under consideration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="melody-counterpoint-and-form">Melody, counterpoint, and form</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Melodic dictation</td>
+      <td>Write a heard phrase, with separate feedback on pitch and rhythm.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Two-voice dictation</td>
+      <td>Transcribe two independent lines from the same excerpt.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Contour and motif</td>
+      <td>Trace a melody’s shape, find a recurring motif, or transform it by inversion, retrograde, or augmentation.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Nonchord tones and voice leading</td>
+      <td>Identify a passing tone or suspension, or correct parallel fifths, voice crossing, or an unresolved tendency tone.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Counterpoint and four-part writing</td>
+      <td>Add a line to a given melody or realize a figured bass in four voices.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Phrase structure and form</td>
+      <td>Distinguish a period from a sentence or mark the sections of a piece.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Texture and orchestration</td>
+      <td>Identify a texture in an excerpt or choose a playable instrumental doubling.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Post-tonal theory</td>
+      <td>Find a pitch-class set’s prime form or identify a transformation of a twelve-tone row.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Modal traditions</td>
+      <td>Identify a characteristic phrase or mode segment from examples within a specific tradition.</td>
+      <td>Under consideration</td>
+    </tr>
+    <tr>
+      <td>Composition and improvisation</td>
+      <td>Write or play a short response that meets a given musical constraint.</td>
+      <td>Under consideration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="lessons-and-practice">Lessons and practice</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Guided lessons</td>
+      <td>Study pitches and notes, clefs, intervals, scales, key signatures, and the circle of fifths, then open related exercises.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Spaced repetition and statistics</td>
+      <td>Review questions under the selected scheduler and inspect accuracy, response times, and individual answers in a local profile.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Response-time grading</td>
+      <td>Inspect response times by exercise and adjust the percentiles used for automatic SM-2 and FSRS grades.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Mixed practice</td>
+      <td>Combine an earlier prerequisite, a current topic, and a passage that uses both in one suggested session.</td>
+      <td>Planned</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="app-features">App features</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>What the learner does</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Anki-compatible deck export</td>
+      <td>Export filtered exercise questions and optional review schedules for practice in Anki.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Instrument packs</td>
+      <td>Install third-party artwork, samples, and exercises for identifying fingerboard notes or marked instrument parts from one ZIP. <a href="/alto/pr-107/dev/plugins/">Plugins</a> · <a href="/alto/pr-107/dev/plugins/viola/">Viola plugin tutorial</a>.</td>
+      <td><strong class="roadmap-complete">Complete</strong></td>
+    </tr>
+    <tr>
+      <td>Instrument plugins</td>
+      <td>Add an instrument with its own sound and play it using an interactive on-screen version of the instrument.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Exercise and lesson plugins</td>
+      <td>Install custom exercises and lessons and use them alongside Alto’s built-in material.</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Glossary plugins</td>
+      <td>Install a plugin that adds new terms to the glossary, with definitions, interactive examples, and links to related lessons and exercises.</td>
+      <td>Planned</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="beta-phase">Beta phase</h2>
+
+<p>Alto is developed with the help of artificial intelligence. The main goal for beta is to replace prose generated by large language models with human-written text throughout the app and its documentation. Lessons, exercise prompts, and feedback should sound like a teacher explaining an idea to a student. The editorial review will also check definitions, musical examples, and answers for accuracy and correct errors where needed.</p>
+
+<p>A second goal is to refactor the codebase so it is easier to read, test, and maintain. That work includes simplifying complicated code, removing duplication, and using tests to verify behavior as the implementation changes.</p>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-107/dev/api/alto.ui.zoom/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>alto.ui.zoom</span></a>
+            <a class="next" href="/alto/pr-107/dev/release-notes/" rel="next"><span class="np-label">Next</span><span class="np-title">Release notes<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-107/dev/assets/js/nav.js?v=1795538939" defer></script>
+  <script src="/alto/pr-107/dev/assets/js/toc.js?v=1795538939" defer></script>
+  
+</body>
+</html>

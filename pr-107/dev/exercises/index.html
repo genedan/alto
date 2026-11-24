@@ -1,0 +1,1406 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exercises · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-107/latest/exercises/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Exercises · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-107/latest/exercises/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-107/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-107/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-107/dev/assets/css/site.css?v=1795538939">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-107/dev/">
+      <img src="/alto/pr-107/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-107/dev/" aria-label="Documentation preview for PR #107">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #107
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/exercises/" aria-current="page">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-107/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Exercises</h1>
+          <p>Each exercise has a <strong>?</strong> button with a short explanation. Open the sliders button to change an exercise’s settings.</p>
+
+<p>Hover over an answer button to see its keyboard shortcut. In Note, Interval, and Scale Construction, use the arrow keys to move the note and Return to place it. For keyboard practice in Notation Identification, choose <strong>Answer Button</strong> under <strong>Question Type</strong>. <a href="/alto/pr-107/dev/shortcuts/">Shortcuts</a></p>
+
+<p>Answer-choice exercises include <strong>Buttons</strong> in their settings. Choose <strong>All</strong> for the full answer bank or <strong>Limited</strong> to set a maximum. For questions with separate answer groups, such as a note name and an octave, the limit applies to each group. The exercise remembers its own selection.</p>
+
+<p>Each exercise remembers its own <strong>Next Question</strong> setting.</p>
+
+<ul>
+  <li><strong>Immediately</strong> flashes the correct button green and advances. The answer audio can finish while you read the next question. The music stays unanimated.</li>
+  <li><strong>Wait</strong> plays the animation and keeps the correct answer button green. Press <strong>Next</strong> when you’re ready.</li>
+  <li><strong>After Animation</strong> (default) advances automatically when the feedback finishes.</li>
+</ul>
+
+<p>With SM-2 or FSRS, a missed card returns later. If you grade correct answers yourself, choosing <strong>Hard</strong>, <strong>Good</strong>, or <strong>Easy</strong> schedules the card and advances to the next question. <a href="/alto/pr-107/dev/practice/">Spaced repetition</a></p>
+
+<h2 id="midi-keyboard-input">MIDI keyboard input</h2>
+
+<p>On Linux, connect a USB MIDI keyboard or open the Virtual MIDI Piano Keyboard (VMPK). In VMPK, choose <strong>Edit → MIDI Connections</strong> and set <strong>MIDI OUT Driver</strong> to <strong>ALSA</strong>. In Alto, open <strong>MIDI</strong> in the exercise toolbar and select the keyboard’s output. VMPK may appear as <strong>MIDI Out out</strong>. You can play in the VMPK window while Alto receives the notes.</p>
+
+<ul>
+  <li><strong>Note Identification.</strong> Play the note on the staff. Any octave counts when <strong>Octave</strong> is off.</li>
+  <li><strong>Interval Construction.</strong> Play the missing endpoint in the requested octave. For a perfect fifth above C4, play G4.</li>
+  <li><strong>Scale Construction.</strong> Play the scale in the requested direction. <strong>Undo</strong> removes the last note. The final note submits the scale unless the question asks for whole and half steps. In that case, mark the steps on screen and choose <strong>Answer</strong>.</li>
+</ul>
+
+<p>Alto uses the exercise’s written spelling for matching pitches. On Ubuntu, install <code class="language-plaintext highlighter-rouge">alsa-utils</code> if the MIDI menu prompts for it. Reopen the menu after connecting a device. Choose <strong>MIDI → Off</strong> to disconnect, or leave the exercise.</p>
+
+<h2 id="note-identification">Note Identification</h2>
+
+<p>A note is drawn on a staff. Press the button with its name.</p>
+
+<p>In the exercise settings you can choose:</p>
+
+<ul>
+  <li><strong>Clefs:</strong> the grand staff, or any of the seven single-staff clefs, listed in three groups: treble, bass, alto and
+tenor; then soprano, mezzo-soprano and baritone (written as an F clef, or as a C clef if you choose that in
+<a href="/alto/pr-107/dev/settings/">Settings</a>). Each clef is shown with its name beside it. The same list is used by every
+exercise with these single-staff clefs. The staff interval exercises also offer the grand staff.</li>
+  <li><strong>Range:</strong> the lowest and highest note that can appear, per clef.</li>
+  <li><strong>Key signatures:</strong> which keys appear. When a key is on, the note’s name has to agree with the signature.</li>
+  <li><strong>Note values:</strong> whole notes up to thirty-second notes, and the double whole note.</li>
+  <li><strong>Note names:</strong> letters (C D E), solfège (Do Re Mi), or the <strong>Scale degrees</strong> group, with <strong>Caret</strong>
+(1̂ 2̂ 3̂) and <strong>Function</strong> (Tonic, Supertonic, Mediant, and so on). Every option has a text label beside its preview.
+Choose <strong>Major</strong> or <strong>Natural minor</strong> as the reference scale. The question names the key. With an empty key signature,
+the choices use C major or A natural minor. Caret labels use accidental prefixes,
+while function labels use words such as <strong>Raised Supertonic</strong> and <strong>Lowered Mediant</strong>.</li>
+  <li><strong>Accidentals:</strong> whether notes with their own sharp, flat or natural sign appear.</li>
+  <li><strong>Octave:</strong> turn this on to answer with both the note name and its octave. Middle C is C4.</li>
+</ul>
+
+<p>The settings open in a pane on the right of the exercise. Each row names an option, and clicking it opens a page for
+that option. Changes apply to the next question right away.</p>
+
+<h2 id="notation-identification">Notation Identification</h2>
+
+<p>Choose a <strong>Question Type</strong> in the exercise settings. <strong>Answer Button</strong> is the default. A short phrase appears with one marking
+highlighted in blue. By default, choose its name from up to four answers or press its number key. In <strong>Click on Staff</strong>, the prompt names
+a component. Move the pointer over the music to highlight a component, then click to answer. In a repertoire excerpt, any occurrence of the named component counts. In a generated phrase, the prompt can specify
+a particular notehead, stem, or staff line.
+Open <strong>Terms</strong> in the exercise settings to select a whole group or check individual terms. Only checked terms can be highlighted or offered as answers.
+<strong>Select none</strong> clears every checkbox. Check a term to start a new selection, or turn the switch off to restore your previous selection.
+Choices favor the target’s category, then draw from other checked terms if space remains. When visually similar alternatives exist, most questions
+favor them. For example, a turn often appears alongside inverted, slashed, and vertical turns.</p>
+
+<p>Eight piano excerpts from Schubert’s <em>Erlkönig</em> and Schumann’s <em>Schöne Fremde</em> and <em>Die Lotosblume</em> are installed with Alto.
+The composer, title, and measure numbers appear beneath the music. Try selecting <strong>Tie</strong> and <strong>Slur</strong> together to practice
+telling the two curves apart in context. Terms outside the collection use generated phrases.
+The original editions are in the public domain, and the digital scores come from the <a href="https://fourscoreandmore.org/openscore/lieder/">OpenScore Lieder corpus</a>.</p>
+
+<p>Topics include note values and rests, clefs, accidentals and microtonal signs, meter, barlines, repeats, articulations,
+dynamics, ornaments, octave signs, and instrumental techniques. For example, you can isolate ties and slurs, compare
+quarter-tone accidentals, or practice bowing and pedal marks. For advanced markings, Alto uses the selected music font
+when it contains the symbol and the bundled Bravura font otherwise. Glyph codes follow the
+<a href="https://github.com/w3c/smufl/blob/gh-pages/metadata/glyphnames.json">Standard Music Font Layout index</a>.</p>
+
+<h2 id="rythmic-equations">Rythmic Equations</h2>
+
+<p>Choose the note symbol that makes both sides of the equation last the same amount of time.
+For example, a quarter note plus another quarter note equals a half note. The blank can appear on either side of the equals sign.
+Use <strong>Operators</strong> to choose addition, subtraction, multiplication, and division. Multiplication and division use whole-number factors from 2 through 8 when the selected symbols allow them. Use <strong>Symbols</strong> to select notes, rests, and dotted notes from double whole through thirty-second values. A selected note and rest of the same duration both count as correct. Turn on <strong>Ties</strong> or <strong>Beams</strong> to mix in questions where a pair of notes counts as one duration. Beams group eighth, sixteenth, or thirty-second notes.</p>
+
+<h2 id="keyboard-note-identification">Keyboard Note Identification</h2>
+
+<p>One key on a piano keyboard is highlighted. Press the button with its name.</p>
+
+<p>This exercise uses the <strong>Note names</strong> setting from Note Identification. Scale degrees follow the shown major key,
+or C major when key signatures are off. When octaves are required, degree and octave are separated: <strong>1̂ / 4</strong>.</p>
+
+<ul>
+  <li><strong>Black keys:</strong> include them. A black key has two names, such as C♯ and D♭, and either one is accepted.</li>
+  <li><strong>Octave number:</strong> also choose the octave from a second row. Octaves count up from C, so middle C is C4.</li>
+  <li><strong>Range:</strong> which part of the keyboard is asked.</li>
+  <li><strong>Key signatures:</strong> show a key signature above the keyboard. The name then has to follow that signature. F♯ and G♭ are no longer interchangeable.</li>
+</ul>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-107/dev/assets/img/keyboard.png" alt="Keyboard Note Identification with one highlighted key and the note name buttons" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-107/dev/assets/img/keyboard-dark.png" alt="Keyboard Note Identification with one highlighted key and the note name buttons" loading="lazy" />
+  
+</figure>
+
+<h2 id="note-construction">Note Construction</h2>
+
+<p>The reverse of note identification. A note name is shown, and you click the staff where that note belongs.
+It uses the <strong>Note names</strong> setting from Note Identification. With scale degrees selected, the question names the
+key, degree and octave. Under <strong>Question Type</strong>, choose <strong>Notes Only</strong> for note names or <strong>Scale and Degree</strong> to use selected keys. Switch between <strong>Major</strong> and <strong>Minor</strong> to choose signatures for each. To practice just one group, leave the other tab’s keys unchecked. Minor uses the natural minor scale.
+Under <strong>Degrees</strong>, check the scale degrees to practice. For example, choose D major and degree 3 to practice placing F♯.</p>
+
+<ul>
+  <li><strong>Octave</strong> is on by default. Turn it off to place the note in any octave. Middle C is C4. On a grand staff, click the upper staff for notes from middle C up and the lower staff for the notes below.</li>
+  <li><strong>Staff Key</strong> selects the signatures drawn on the staff independently of the keys in the prompts. Choose the unmarked
+signature for a staff with no sharps or flats. If the signatures differ, use the accidental buttons as needed.</li>
+  <li>Use the accidental buttons or right-click the staff to choose a sharp, flat, natural, or no sign.</li>
+  <li>A wrong click shows the note you placed so you can adjust and try again. Only the exact spelling counts, so G♯ is not A♭.</li>
+  <li><strong>Without the mouse:</strong> the <strong>Higher</strong> and <strong>Lower</strong> buttons (or the <kbd>↑</kbd> and <kbd>↓</kbd> keys) move the note a line or
+space, and <strong>Octave ↑</strong> and <strong>Octave ↓</strong> (<kbd>Page Up</kbd> and <kbd>Page Down</kbd>) an octave. Typing a letter from
+<kbd>A</kbd> to <kbd>G</kbd> jumps to the nearest note with that name.
+<strong>Place note</strong> (<kbd>Return</kbd>) places it. A line under the staff says which note is chosen, in words a screen reader can read.</li>
+</ul>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-107/dev/assets/img/note-construction.png" alt="Note Construction asking to place a note on a staff" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-107/dev/assets/img/note-construction-dark.png" alt="Note Construction asking to place a note on a staff" loading="lazy" />
+  
+</figure>
+
+<h2 id="clef-basics">Clef Basics</h2>
+
+<p>Clef Basics has two kinds of question, chosen with <strong>Question Type</strong> in the exercise settings: <strong>Clef Construction</strong>,
+which
+is described first, and <strong>Clef Identification</strong>, described at the end.</p>
+
+<p>In Clef Construction a blank staff is shown with the question under it, such as “Place the mezzo-soprano clef.” Every
+clef is one of three symbols,
+the <strong>G clef</strong>, the <strong>C clef</strong> or the <strong>F clef</strong>, put on a particular line of the staff:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Clef</th>
+      <th>Symbol and line</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Treble</td>
+      <td>The G clef on the second line</td>
+    </tr>
+    <tr>
+      <td>French violin</td>
+      <td>The G clef on the bottom line</td>
+    </tr>
+    <tr>
+      <td>Bass</td>
+      <td>The F clef on the fourth line</td>
+    </tr>
+    <tr>
+      <td>Subbass</td>
+      <td>The F clef on the top line</td>
+    </tr>
+    <tr>
+      <td>Alto</td>
+      <td>The C clef on the middle line</td>
+    </tr>
+    <tr>
+      <td>Tenor</td>
+      <td>The C clef on the fourth line</td>
+    </tr>
+    <tr>
+      <td>Mezzo-soprano</td>
+      <td>The C clef on the second line</td>
+    </tr>
+    <tr>
+      <td>Soprano</td>
+      <td>The C clef on the bottom line</td>
+    </tr>
+    <tr>
+      <td>Baritone</td>
+      <td>The F clef on the middle line, or the C clef on the top line: both are accepted</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Choose the symbol</strong> with the three buttons under the music, by turning the mouse wheel, or by right-clicking.</li>
+  <li><strong>Click where it goes.</strong> The symbol follows the pointer, in a lighter color, and is placed where you click. To mix
+things up it
+can be tried on any line or space of the staff, and on up to three ledger lines and spaces above and below it, but
+only
+the places in the table are right.</li>
+  <li><strong>Without the mouse:</strong> <kbd>←</kbd> and <kbd>→</kbd> choose the symbol, <kbd>↑</kbd> and <kbd>↓</kbd> move it up and
+down a line or
+space, and <kbd>Return</kbd> presses <strong>Answer</strong>.</li>
+</ul>
+
+<p>The right symbol in the wrong place is wrong, and so is another symbol in the right place. A wrong try turns red and
+clears so
+you can try again; only your first try counts toward your score. This exercise makes no sound.</p>
+
+<h3 id="clef-identification">Clef Identification</h3>
+
+<p>A clef is drawn on a staff, with “Which clef is this?” under it. Press the button with its name. There is a button for
+each clef
+that is asked for, and at least two buttons even if only one clef is asked for. A baritone clef is drawn the way you
+chose in
+<a href="/alto/pr-107/dev/settings/">Settings</a>. Like the other exercises with buttons, the buttons have keys, shown when
+you hover
+over them.</p>
+
+<h3 id="reference-and-lesson">Reference and lesson</h3>
+
+<p>The book button (experimental), beside the help button, opens a reference in a pane on the right: the three symbols and
+a
+picture of each clef with where its symbol goes. A button at the top opens the <a href="/alto/pr-107/dev/lessons/">Clef Basics lesson</a>.</p>
+
+<h3 id="settings">Settings</h3>
+
+<p>In the exercise settings you can choose:</p>
+
+<ul>
+  <li><strong>Question Type:</strong> Clef Construction or Clef Identification.</li>
+  <li><strong>Clefs:</strong> the clefs that are asked for: the seven clefs of the other exercises, then, at the bottom, the French
+violin and
+subbass clefs, which only this exercise has.</li>
+</ul>
+
+<h2 id="interval-identification">Interval Identification</h2>
+
+<p>Name the interval between the two written notes. By default the notes appear together on a treble or bass staff, and the exercise asks for both quality and number.</p>
+
+<p>An interval has a quality and a number. The number counts the letter names it spans, including both notes. The quality
+is <strong>P</strong> (perfect), <strong>M</strong> (major), <strong>m</strong> (minor), <strong>A</strong> (augmented) or <strong>d</strong> (diminished). So C to E is M3, and C to E♭
+is m3.</p>
+
+<ul>
+  <li><strong>Clefs</strong> chooses which staves can appear, including the grand staff.</li>
+  <li><strong>Range</strong> sets the lowest and highest written notes for each checked clef. Both notes must fit.</li>
+  <li><strong>Staff Key</strong> selects the signatures drawn on the staff. Choose zero for a blank signature.</li>
+  <li><strong>Display Mode</strong> defaults to <strong>Harmonic</strong>, which shows and plays both notes together. <strong>Melodic</strong> shows and plays them one at a time. Under Melodic, check <strong>Ascending</strong> (lower note first, the default), <strong>Descending</strong> (higher note first), or both to practice them in random order. You can also check both Harmonic and Melodic to mix presentations.</li>
+  <li><strong>Quality</strong> sets what you identify. For C up to E♭, choose <strong>3</strong> in <strong>Interval Only</strong>, <strong>m3</strong> in <strong>Interval and Quality</strong> (default), or <strong>m</strong> in <strong>Quality Only</strong>.</li>
+  <li><strong>Inversions</strong> asks you to name the inversion of the interval on the staff. For C4 up to E4, imagine moving C4 up an octave.
+E4 up to C5 is a minor sixth. Choose <strong>6</strong>, <strong>m6</strong>, or <strong>m</strong> according to your <strong>Quality</strong> setting.
+Reduce compound intervals first. A major tenth inverts like a major third, and a perfect octave inverts to a perfect unison.</li>
+  <li><strong>Intervals</strong> selects the spellings you want to practice, including compound intervals through a fifteenth.
+Each row shows one interval number. From left to right, the columns are augmented, major or perfect, minor, and diminished.
+The checklist and slider offer intervals that fit at least one selected clef’s range. For example, a staff range from C4 to E4 offers seconds and thirds.
+Drag the handles to select a span of interval numbers, then check individual spellings. <strong>Select all</strong> temporarily includes every available spelling.
+Widening a range restores any previously checked intervals that now fit.</li>
+  <li><strong>Accidentals</strong> controls the signs allowed beside either note. <strong>♮</strong> allows an unmarked note following the staff key. For example, in G major an unmarked F sounds as F♯. The default selection is <strong>♮</strong>, <strong>♭</strong>, and <strong>♯</strong>. Check <strong>𝄫</strong> for double flats or <strong>𝄪</strong> for double sharps.</li>
+  <li><strong>Note Value</strong> chooses which written durations can appear. Both notes use the same value.</li>
+  <li><strong>Buttons</strong> defaults to <strong>Limited</strong>, with six answers. Choose a <strong>Button count</strong> from 2 to 10. The count includes the correct answer.
+Choose <strong>All</strong> to show every eligible answer for the current staff range and selected intervals. Each distinct number or quality appears once when practicing that part alone.</li>
+</ul>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-107/dev/assets/img/intervals.png" alt="Interval Identification showing two notes and the interval buttons" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-107/dev/assets/img/intervals-dark.png" alt="Interval Identification showing two notes and the interval buttons" loading="lazy" />
+  
+</figure>
+
+<h2 id="interval-construction">Interval Construction</h2>
+
+<p>Place a second note on the staff to form the requested interval. For a minor third above C, count C, D, E, then choose a flat and place E♭. Clicking the staff submits the note. You can also move the caret with the arrow keys and press Enter.</p>
+
+<p>You can also play the endpoint on a <a href="#midi-keyboard-input">MIDI keyboard</a>.</p>
+
+<p><strong>Clefs</strong>, <strong>Range</strong>, and <strong>Staff Key</strong> determine where the notes can appear. <strong>Display Mode</strong> stacks harmonic intervals and places melodic notes in sequence, ascending or descending. Under <strong>Quality</strong>, choose <strong>Interval and Quality</strong> for an exact spelling, <strong>Interval Only</strong> for a number, or <strong>Quality Only</strong> for a quality. When several enabled intervals fit the prompt, any of their endpoints is correct. <strong>Intervals</strong>, <strong>Accidentals</strong>, and <strong>Note Value</strong> control which spellings, written signs, and durations appear.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-107/dev/assets/img/interval-construction.png" alt="Interval Construction showing the starting note, the requested interval, and the staff placement controls" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-107/dev/assets/img/interval-construction-dark.png" alt="Interval Construction showing the starting note, the requested interval, and the staff placement controls" loading="lazy" />
+  
+</figure>
+
+<h2 id="keyboard-interval-identification">Keyboard Interval Identification</h2>
+
+<p>Two piano keys are highlighted together. Identify the interval from the lower key to the higher key. Choose from a configurable
+number of interval buttons (six by default), show every selected interval, or answer with a quality letter and a number.
+The full answer bank stays in interval order and scrolls when needed.</p>
+
+<p>Count the half steps between the highlighted keys, including black keys. P means perfect, M means major, and m means minor.
+Six half steps form a tritone, shown as <strong>A4 / d5</strong>: the keyboard cannot distinguish an augmented fourth from a diminished fifth
+without written note spellings. The other distances use their standard interval names.</p>
+
+<p>A correct answer plays both notes together. Open the exercise settings to choose:</p>
+
+<ul>
+  <li><strong>Range:</strong> drag on the keyboard, adjust the lowest and highest keys with the arrows, or choose <strong>Entire keyboard</strong>.
+Both highlighted notes stay within this range. <strong>Reset to default</strong> restores C3–C5.</li>
+  <li><strong>Intervals:</strong> select the interval distances to practice. Only selected intervals appear as questions and answer choices.
+The list shows every distance that fits the range, including compound intervals beyond an octave: for example, C3–C5
+offers intervals through P15 (two octaves). Options use notation only and are grouped into <strong>Simple intervals</strong>
+(up to an octave) and <strong>Compound intervals</strong> (beyond an octave).
+Drag the two slider handles below <strong>Select all</strong> to select an interval range, such as m3–P8.
+Use the arrow buttons beside <strong>From</strong> and <strong>To</strong> to adjust either endpoint by one half step, or click an endpoint’s
+notation to choose an interval from its scrollable dropdown.
+These controls change the selected intervals, not the keyboard range.
+<strong>Select all</strong> temporarily selects every interval that fits; switching it off restores your previous selection. With no intervals selected,
+the exercise pauses until you select one. Narrowing the range removes intervals that no longer fit; if a nonempty
+selection no longer fits, minor seconds are selected so the exercise can continue.</li>
+</ul>
+
+<p>Open <strong>Buttons</strong> to choose one answer mode:</p>
+
+<ul>
+  <li><strong>Limited:</strong> use <strong>Button count</strong>, directly below this option, to choose the maximum number of answers (six by default).
+Type a count or use its arrows. The count includes the correct answer; fewer buttons appear when fewer intervals are selected.</li>
+  <li><strong>All:</strong> show every selected interval in a fixed, scrollable answer bank.</li>
+  <li><strong>Compact:</strong> click a quality letter and an interval number, in either order. <strong>Quality</strong> and <strong>Interval</strong> label the two groups
+above their buttons. Both A4 and d5 are accepted for a tritone, including corresponding compound spellings.</li>
+</ul>
+
+<p>The mode, limited button count, range, and interval selections are saved.</p>
+
+<p>These settings are saved independently of Keyboard Note Identification.</p>
+
+<h2 id="key-signature-identification">Key Signature Identification</h2>
+
+<p>A key signature is drawn on a staff and you press the tonic of the scale it belongs to. The kind of scale is written
+under the staff with a blank for the tonic: “_ Major”, “_ minor” or, for a mode, “_ Dorian”.</p>
+
+<p>This exercise makes no sound: a right answer plays no tone. The speaker button is a mute for the whole app, so it works here
+as everywhere else, but has nothing to silence in this exercise.</p>
+
+<p>A mode uses the key signature of a major key and starts from another note of it, so D Dorian has the signature of C major
+(no sharps or flats), started from D. By default Alto asks major and natural minor keys, on the treble and bass staves.
+In the exercise settings you can choose:</p>
+
+<ul>
+  <li><strong>Clefs:</strong> any of the seven clefs (treble, bass, alto, tenor, soprano, mezzo-soprano and baritone), for the signature that is drawn.</li>
+  <li><strong>Scales:</strong> major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.</li>
+  <li><strong>Key signatures:</strong> which of the fifteen signatures, from seven flats to seven sharps, can appear.</li>
+</ul>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-107/dev/assets/img/key-signatures.png" alt="Key Signature Identification showing three flats on an alto clef staff, with the caption _ Major under the staff" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-107/dev/assets/img/key-signatures-dark.png" alt="Key Signature Identification showing three flats on an alto clef staff, with the caption _ Major under the staff" loading="lazy" />
+  
+</figure>
+
+<h2 id="key-signature-construction">Key Signature Construction</h2>
+
+<p>The reverse of the exercise above. A blank staff is shown with the name of a key under it, such as “D Major”, “A♯ minor” or
+“E Dorian”. Build that key’s signature with the fork under the staff, then press <strong>Answer</strong> (or <kbd>Return</kbd>).</p>
+
+<p>The fork is shaped like a tuning fork lying on its side. Its stem, on the left, ends in a natural sign: no sharps or flats,
+C major. The stem opens into two tines: the top one has the sharps, 1 to 7, and the bottom one the flats, 1 to 7. A circle
+marks what you have chosen, and the staff shows that many sharps or flats as you move it. To choose:</p>
+
+<ul>
+  <li><strong>Click</strong> a number, or the natural sign. A number lights up a little as the mouse passes over it.</li>
+  <li><strong>Drag the circle</strong> along the fork. It follows the mouse, around the bend and out along either tine, and slides to the
+nearest number when you let go.</li>
+  <li><strong>Turn the mouse wheel</strong> to move the circle along the fork, one number for each notch: up toward more sharps, down
+toward more flats, passing through the natural sign on the way from one side to the other. The wheel works over the
+staff and the Answer button too.</li>
+  <li><strong>Press the arrow keys</strong> (<kbd>↑</kbd> or <kbd>→</kbd> for a sharp, <kbd>↓</kbd> or <kbd>←</kbd> for a flat) wherever
+the
+keyboard is on the exercise screen, and <kbd>Home</kbd> to go back to the natural sign. Then press <kbd>Return</kbd>.</li>
+</ul>
+
+<p>A wrong signature turns the circle red and puts it back on the natural sign so you can try again; only your first try
+counts toward your score. Like Key Signature Identification, this exercise makes no sound.</p>
+
+<p>In the exercise settings you can choose:</p>
+
+<ul>
+  <li><strong>Clefs:</strong> any of the seven clefs, for the staff the signature is built on.</li>
+  <li><strong>Scales:</strong> major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.</li>
+  <li><strong>Key signatures:</strong> which of the fifteen signatures, from seven flats to seven sharps, can be asked.</li>
+</ul>
+
+<p>The settings are kept apart from those of Key Signature Identification.</p>
+
+<h2 id="order-of-keys">Order of Keys</h2>
+
+<p>Read the key below the blank staff. Choose <strong>♯</strong> or <strong>♭</strong>, then click the line or space for each sign in order. Each click fills the next slot after the clef. For D major in treble clef, place F♯ on the top line, then C♯ in the third space.</p>
+
+<p>Use <strong>Undo</strong> (Backspace) to remove the last sign and <strong>Answer</strong> (Return) to submit. Submit the empty staff for a key with no sharps or flats, such as C major, A minor, or D Dorian. With the keyboard, choose a sharp with <strong>+</strong> or a flat with <strong>−</strong>, move up or down with the arrow keys, and press <strong>P</strong> to place each sign.</p>
+
+<p>Open the exercise settings to choose <strong>Clefs</strong>, <strong>Scales</strong>, and <strong>Key Signatures</strong>. By default, questions use treble and bass clefs, major and natural minor scales, and all 15 signatures. You can select any of the seven single-staff clefs and any of the seven diatonic modes. For example, selecting alto clef, Dorian, and two flats gives you C Dorian on an alto staff.</p>
+
+<p><strong>Starting Accidentals</strong> lets you choose how many sharps or flats are already on the staff. The default, <strong>0</strong>, starts with a blank signature. For example, with <strong>2 ♯</strong> selected, a question in A major shows two of its three sharps in their usual positions. Place the missing signs from left to right. You can enter up to seven signs in total, including those already shown. If the key needs six and you submit seven, the answer is marked wrong. <strong>Undo</strong> removes only signs you placed. When all the signs are already present, press <strong>Answer</strong>. Counts must fit one of your selected key signatures. If changing keys rules out every selected count, the setting returns to <strong>0</strong>.</p>
+
+<p><a id="scale-spelling"></a></p>
+
+<h2 id="scale-identification">Scale Identification</h2>
+
+<p>Read the eight notes on the staff. The first and last notes give the tonic. The pattern of whole and half steps gives the mode.
+For example, a scale from D to D with no sharps or flats is D Dorian. Under <strong>Question Type</strong>, check <strong>Key</strong> to answer D,
+<strong>Mode</strong> to answer Dorian, or both to identify the full scale.</p>
+
+<p>Open <strong>Clefs</strong> and <strong>Scales</strong> to choose the staves and modes to practice. <strong>Motion</strong> sets the direction of the written scale.
+<strong>Scale Key</strong> selects the signatures the scales may use, with separate Major and Minor tabs. <strong>Staff Key</strong> controls the signature
+drawn beside the clef. Read any accidentals beside the notes when the two signatures differ.</p>
+
+<p>Under <strong>Buttons</strong>, <strong>Limited</strong> offers complete answers up to the selected button count. With <strong>All</strong> and both question types
+enabled, choose a tonic and a mode from separate groups in either order.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-107/dev/assets/img/scales.png" alt="Scale Identification with an eight-note staff example and scale names on the answer buttons." loading="lazy" />
+  <img class="for-dark" src="/alto/pr-107/dev/assets/img/scales-dark.png" alt="Scale Identification with an eight-note staff example and scale names on the answer buttons." loading="lazy" />
+  
+</figure>
+
+<h2 id="scale-construction">Scale Construction</h2>
+
+<p>A blank staff is shown with the name of a scale under it, such as “D Major”, “E♭ minor” or “A Dorian”. Click the staff to
+place the scale’s notes from left to right in the requested direction, ending an octave from the first note: eight notes in
+all. In <strong>Motion</strong>, choose Ascending or Descending. The next note follows the pointer, snapped to a line or space, and each click puts it in the next place, so the notes
+do not move as you add more. With <strong>Octave</strong> off, choose any starting octave that leaves room for all eight notes.</p>
+
+<p>You never have to click the staff. <strong>Higher</strong>, <strong>Lower</strong>, <strong>Octave ↑</strong> and <strong>Octave ↓</strong> under it move the next note, the sign
+buttons choose its sign, and <strong>Place note</strong> puts it in the next place; the same things are on the keys (see
+<a href="/alto/pr-107/dev/shortcuts/">Shortcuts</a>), and <kbd>Return</kbd> places the note and, when everything is placed,
+answers.</p>
+
+<p>By default the staff has no key signature, so a note that needs a sharp or a flat needs its own sign (see
+<a href="#the-staffs-key-signature">the staff’s key signature</a> below for a staff that has one). To choose the sign for the next
+note:</p>
+
+<ul>
+  <li><strong>Right click</strong> the staff to step through no sign, ♯ and ♭, and around again.</li>
+  <li><strong>Turn the mouse wheel</strong> over the staff to step through them the same way: up goes no sign, ♯, ♭, and down goes the other
+way around.</li>
+  <li><strong>Press one of the sign buttons</strong> under the staff.</li>
+</ul>
+
+<p>Then click to place the note. A sign is used up by the note it goes on. Only the exact spelling counts, so G♯ is not A♭.</p>
+
+<ul>
+  <li><strong>Undo</strong> (or Backspace) takes back the last thing you placed.</li>
+  <li><strong>Answer</strong> (or Enter) hands in the scale once everything is placed.</li>
+</ul>
+
+<p>A wrong scale is cleared so that you can try again, and only your first try counts toward your score. With <strong>After Animation</strong>
+or <strong>Wait</strong>, a correct scale plays back. Each note turns green as it sounds, with the same timing when muted.</p>
+
+<p>In the exercise settings you can choose:</p>
+
+<ul>
+  <li><strong>Clefs:</strong> any of the seven clefs, for the staff the scale is placed on.</li>
+  <li><strong>Scales:</strong> major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.</li>
+  <li><strong>Staff Key:</strong> which key signatures may be drawn on the staff, from seven flats to seven sharps. It is separate from
+the scale’s own signature (below). By default only the blank staff, with no sharps or flats, is chosen.</li>
+  <li><strong>Scale Key:</strong> choose signatures separately on the Major and Minor tabs. Natural minor uses the Minor tab. Major and the other modes use the Major tab’s signatures.</li>
+  <li><strong>Octave:</strong> a switch, off by default. When it is on, the scale has to start in the octave named (below).</li>
+  <li><strong>Steps:</strong> a switch, off by default. When it is on, you also mark the whole and half steps between the notes (below).</li>
+</ul>
+
+<p>The settings are kept apart from those of the other exercises.</p>
+
+<h3 id="starting-in-the-right-octave">Starting in the right octave</h3>
+
+<p>By default the first and last notes must be an octave apart, and the scale is named without a starting octave,
+such as “G Major”. With <strong>Octave</strong> on, the name says which octave the first note is in, such as “G2 Major” or “B♭4 minor”,
+using the same numbers as note names everywhere in Alto (middle C is C4). The scale then has to be placed there: the right
+notes an octave higher or lower are wrong.</p>
+
+<p>The octave is part of the question, so scales are asked from well below to well above the staff. Alto only asks a scale
+that can be placed in full: all eight notes lie on the staff or on its ledger lines, within the furthest ledger line the
+staff can be clicked on. A bass clef G2 Major, which starts on the bottom line, can be asked; a scale that would run off
+the top of the ledger lines cannot.</p>
+
+<h3 id="the-staffs-key-signature">The staff’s key signature</h3>
+
+<p>The key signature on the staff and the key signature of the scale are two separate settings, so a scale can be asked on a
+staff whose signature is not its own. Each question picks one of each. For example, with two flats on the staff (the
+signature of B♭ major) and a C major scale to place:</p>
+
+<ul>
+  <li>A note you place with no sign takes the sign the staff’s signature gives its letter, as it would when you read music.
+With two flats, B and E are flat.</li>
+  <li>So C major needs a <strong>natural</strong> (♮) on its E and its B, which you choose with the sign buttons, a right click or the
+wheel. Right click and the wheel step through no sign, ♯, ♭ and ♮ when the staff has a signature.</li>
+  <li>Going the other way, a scale that has a flat the staff does not give needs that flat written as a sign.</li>
+</ul>
+
+<p>The notes the staff’s signature already covers are written with no sign, as in any score; only the notes that differ from it
+get one. Only the exact spelling counts, as ever.</p>
+
+<h3 id="marking-the-steps">Marking the steps</h3>
+
+<p>With <strong>Steps</strong> on, once the eight notes are placed two lines rise from each pair of neighboring notes to a point above
+them, starting with the first pair, with the step written over the point. The step that a click would mark is shown there in
+blue, as <strong>W</strong> (a whole step, two semitones) or <strong>H</strong> (a half step, one semitone). It starts as W. To choose:</p>
+
+<ul>
+  <li><strong>Turn the mouse wheel</strong> over the staff to switch between W and H (the wheel is for the signs until all the notes are
+placed).</li>
+  <li><strong>Right click</strong> the staff to switch between W and H.</li>
+  <li><strong>Press the W or H button</strong> under the staff.</li>
+</ul>
+
+<p>Then <strong>left click</strong> the staff to mark the step and move on to the next pair. Each new pair starts as W again, since most
+steps are whole. Undo takes back the steps, last first, before it takes back any notes. The scale is right when the notes
+and every step are right: a major scale is W W H W W W H, and a natural minor scale is W H W W H W W. The lines and letters turn
+green with the notes as the right scale plays.</p>
+
+<h2 id="circle-of-fifths">Circle of Fifths</h2>
+
+<p>A circle of fifths, drawn as two rings of twelve wedges. The outer ring holds the major keys, with C at the top and each
+step clockwise a fifth higher: G, D, A, E, B, then F♯ at the bottom, and around through the flats back to F. The inner ring
+holds their relative minors, so A minor sits under C major, E minor under G major, and so on. The wedges are colored by
+key signature: cyan for the flat keys on the left, through royal blue at C, to indigo for the sharp keys on the right (the
+<a href="#colors">colors</a> can be changed). The disc in the middle, which is the color of the window, shows the staff.</p>
+
+<p>Every question lights one cell and leaves its answer blank. There are three kinds, and the exercise settings (the sliders
+button) switch each on or off:</p>
+
+<ul>
+  <li><strong>Relative major.</strong> A minor key is shown, such as “F♯ minor”, with the wedge of the outer ring beside it blank. Press the
+name of its relative major, which has the same key signature: A, in this case.</li>
+  <li><strong>Relative minor.</strong> A major key is shown and the inner wedge beside it is blank. Press the name of its relative minor.</li>
+  <li><strong>Roman numerals.</strong> A key is in the middle with its staff and signature, and the six chords of the key that fit on the
+circle are lit. One of them is outlined. Press its Roman numeral.</li>
+</ul>
+
+<p>All of them are on buttons at the bottom, laid out like the Keyboard Note Identification screen: the letters in the middle row,
+the sharps above them and the flats below. For the minor keys the buttons read Am, F♯m and so on. You can also type: a letter,
+<kbd>Shift</kbd> and a letter for a sharp, or <kbd>Ctrl</kbd> and a letter for a flat. The numerals are on <kbd>1</kbd> to <kbd>6</kbd>.</p>
+
+<h3 id="colors">Colors</h3>
+
+<p>The <strong>Colors</strong> row of the exercise settings (the sliders button) chooses how the circle is colored. Pick one of fourteen
+presets, or press <strong>Create your own…</strong> to make one.</p>
+
+<ul>
+  <li><strong>Cyan to indigo</strong> is the default. Cyan runs through the flat keys, royal blue marks C and indigo the sharp keys, so a
+key’s color tells you how far it is from C.</li>
+  <li><strong>Midnight, Deepening, Two blues, Checker and Glacier</strong> are other blues to go with this site. Glacier, like Paper, has pale
+wedges with dark names, for a light window.</li>
+  <li><strong>Sharps and flats, Major and minor, Spectrum, After Scriabin, Ink, Ember, Color-blind safe and Paper</strong> are the other
+presets. Color-blind safe uses six hues from the Okabe and Ito palette.</li>
+</ul>
+
+<p>A scheme of your own is made in one of five ways: <strong>One color</strong>, <strong>Two rings</strong> (one color for the major keys and one for the
+minor), <strong>By key signature</strong> (a color for the flat keys, for C and for the sharp keys, blended between), <strong>Distance from C</strong>
+(a color for C and one for F♯, mirrored on both sides) and <strong>Around the circle</strong> (one color, turned a twelfth of the wheel
+for each step). The colors you choose are what a cell looks like when it is lit; the quiet cells are made from them. You can
+choose dark wedges with light names or light wedges with dark names, name the scheme, edit it later and delete it. Your schemes are saved with your other
+settings, up to 24 of them. The colors apply to every picture of the circle: the exercise, the lessons and the reference.
+Changing them keeps the question you are on.</p>
+
+<h3 id="keys-with-two-names">Keys with two names</h3>
+
+<p>Three of the wedges have two names on the circle: B and C♭, F♯ and G♭, and D♭ and C♯, with their minors G♯m and A♭m, D♯m and
+E♭m, and B♭m and A♯m. For these you press <strong>both</strong> names, in either order. A right first name is marked and its button is
+switched off, the middle of the circle says “and its other name”, and nothing is scored until the second is pressed. A wrong
+button at any point counts as a miss, and you can carry on until both are found.</p>
+
+<h3 id="roman-numerals-on-the-circle">Roman numerals on the circle</h3>
+
+<p>A key has seven chords, and the circle has room for six of them: its own wedge and the wedge on each side, on both rings. The
+<strong>outer</strong> ring holds the <strong>major</strong> chords, so it gets the capitals: I (the key itself), IV (one step counterclockwise) and V
+(one step clockwise). The <strong>inner</strong> ring holds the <strong>minor</strong> chords, so it gets the small letters: vi (under the key), ii (under
+IV) and iii (under V). In C major that is I = C, ii = Dm, iii = Em, IV = F, V = G and vi = Am.</p>
+
+<p>If you have seen pictures of this with two sets of numerals, one outer and one inner, they are one set shared between the two
+rings. The seventh chord, vii° (B diminished in C major), is diminished and does not sit on the circle, so it is never asked.
+A chord is spelled as its key spells it: in F♯ major the V is C♯, although that wedge is labeled D♭ with C♯ as its other name.</p>
+
+<h3 id="right-and-wrong-answers">Right and wrong answers</h3>
+
+<ul>
+  <li><strong>A right answer</strong> brightens the cell and writes its name in it, and puts the key’s staff and signature in the middle: “A major,
+3 sharps”. For a numeral question all six numerals appear.</li>
+  <li><strong>The book button</strong> (experimental), beside the help button, opens a reference in a pane on the right: a short description and
+an interactive circle with every key named. Click a key on either ring, or move with the arrow keys (Left and Right go around,
+Up and Down switch rings, Escape or a click in the middle starts again). The circle lights that key’s six chords, shows its
+key signature in the middle, and the text underneath explains it: its sharps or flats, which key it follows, its relative
+minor or major, and its chords. It shares the right-hand side with the settings, so opening one closes the other. It is a
+study aid, so it also gives away the answers. A button at the top of the pane opens the circle of fifths
+<a href="/alto/pr-107/dev/lessons/">lesson</a>.</li>
+  <li><strong>A wrong answer</strong> flashes the cell in the same red as the wrong button, striped so that it still shows on the red wedge at
+the top. The button is switched off and you can try again.
+Only your first try counts toward your score.</li>
+</ul>
+
+<p>This exercise makes no sound.</p>
+
+<h2 id="chord-quality">Chord Quality</h2>
+
+<p>A chord is drawn in root position on a treble or bass staff. Press its type:</p>
+
+<p>major, minor, diminished, augmented, major 7th, dominant 7th, minor 7th, half-diminished 7th and diminished 7th.</p>
+
+<p>Check the size of the intervals stacked above the lowest note to tell the types apart.</p>
+
+<h2 id="arpeggio-identification">Arpeggio Identification</h2>
+
+<p>A chord is drawn one note at a time, rising from its lowest note to the same note an octave higher. Press its type, then
+press its inversion. The answer counts once you have chosen both, in either order, and a wrong pair is cleared so you can
+try again.</p>
+
+<p>The inversion is which chord tone is lowest:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Inversion</th>
+      <th>Lowest note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Root position</td>
+      <td>the root</td>
+    </tr>
+    <tr>
+      <td>1st inversion</td>
+      <td>the third</td>
+    </tr>
+    <tr>
+      <td>2nd inversion</td>
+      <td>the fifth</td>
+    </tr>
+    <tr>
+      <td>3rd inversion</td>
+      <td>the seventh (seventh chords only)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>By default Alto asks major, minor, dominant 7th and diminished 7th arpeggios on the treble and bass staves, in every
+inversion. In the exercise settings you can choose:</p>
+
+<ul>
+  <li><strong>Clefs:</strong> any of the seven clefs, from treble to baritone.</li>
+  <li><strong>Arpeggio types:</strong> any of major, minor, diminished and augmented triads, and dominant 7th, major 7th, minor 7th,
+half-diminished 7th and diminished 7th chords. The type buttons below the staff follow your choice.</li>
+  <li><strong>Inversions:</strong> root position and the first three inversions. A triad has no 3rd inversion, so that choice only applies to seventh chords.</li>
+  <li><strong>Key signatures:</strong> draw a key signature from the keys you pick. The arpeggio then only gets a sign where it differs
+from the signature, so a natural sign appears where the chord needs one.</li>
+</ul>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-107/dev/assets/img/arpeggios.png" alt="Arpeggio Identification showing four notes rising on a staff, with a row of type buttons and a row of inversion buttons" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-107/dev/assets/img/arpeggios-dark.png" alt="Arpeggio Identification showing four notes rising on a staff, with a row of type buttons and a row of inversion buttons" loading="lazy" />
+  
+</figure>
+
+<h2 id="instrument-pack-exercises">Instrument pack exercises</h2>
+
+<p>Installed packs add exercises to the <strong>Instruments</strong> category. The example viola pack includes <strong>Viola Note Identification</strong> and <strong>Parts of the Viola</strong>. The example harpsichord pack adds <strong>Harpsichord Interval Identification</strong> and <strong>Parts of the Harpsichord</strong>. Download an example and follow its tutorial to create exercises with your own artwork and recordings. <a href="/alto/pr-107/dev/plugins/viola/">Viola plugin tutorial</a> · <a href="/alto/pr-107/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></p>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-107/dev/getting-started/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Getting started</span></a>
+            <a class="next" href="/alto/pr-107/dev/practice/" rel="next"><span class="np-label">Next</span><span class="np-title">Spaced Repetition<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-107/dev/assets/js/nav.js?v=1795538939" defer></script>
+  <script src="/alto/pr-107/dev/assets/js/toc.js?v=1795538939" defer></script>
+  
+</body>
+</html>

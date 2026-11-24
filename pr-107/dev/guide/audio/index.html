@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Computer audio · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-107/latest/guide/audio/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Computer audio · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-107/latest/guide/audio/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-107/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-107/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-107/dev/assets/css/site.css?v=1795538939">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-107/dev/">
+      <img src="/alto/pr-107/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      
+      <a class="dd-btn pr-link" href="/alto/pr-107/dev/" aria-label="Documentation preview for PR #107">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #107
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <details class="menu" id="menu">
+        <summary>Contents</summary>
+        <nav class="nav" aria-label="Documentation">
+          
+          
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group"><details data-nav-group="Using Alto" open>
+              <summary class="nav-head"><span class="grow">Using Alto</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="For developers" open>
+              <summary class="nav-head"><a class="grow" href="/alto/pr-107/dev/development/">For developers</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/audio/" aria-current="page">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-107/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-107/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></details></li>
+            
+            
+            <li class="nav-group"><details data-nav-group="About" open>
+              <summary class="nav-head"><span class="grow">About</span><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              <ul>
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-107/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></details></li>
+          </ul>
+        </nav>
+      </details>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Computer audio</h1>
+          <p>Alto plays notes: when you answer correctly, when you press “hear it” on an instrument, when an arpeggio is sounded. That
+needs very little code, but a few ideas about how computers represent and play sound, and a few about how instruments sound,
+are what make the code readable and what let you change it safely. This chapter starts with those ideas, then walks through
+<code class="language-plaintext highlighter-rouge">alto/audio.py</code>.</p>
+
+<h2 id="sound-as-numbers">Sound as numbers</h2>
+
+<p>Sound is air pressure varying over time. A microphone turns it into a voltage, and an <strong>analogue-to-digital converter</strong> measures
+that voltage many times a second. The list of measurements is a <strong>digital audio signal</strong>. Playing it back reverses the process.</p>
+
+<p>Three numbers describe a recording:</p>
+
+<ul>
+  <li><strong>Sample rate</strong>: how many measurements per second. Alto uses <strong>44,100 Hz</strong> (the Compact Disc rate; <code class="language-plaintext highlighter-rouge">SAMPLE_RATE</code> in <code class="language-plaintext highlighter-rouge">audio.py</code>).</li>
+  <li><strong>Bit depth</strong>: how precisely each measurement is stored. WAV files in Alto are <strong>16-bit</strong>: each sample is an integer from
+-32,768 to 32,767. Each bit adds about 6 dB of <strong>dynamic range</strong> (the gap between the quietest and loudest sound), so 16
+bits give about 96 dB.</li>
+  <li><strong>Channels</strong>: one (mono) or two (stereo). Alto’s recordings and everything it makes are mono.</li>
+</ul>
+
+<p>The encoding of plain samples like this is called <strong>PCM</strong>, <em>pulse-code modulation</em>. A <strong>WAV</strong> file is a PCM stream with a small
+header (the <strong>RIFF</strong> container) saying the rate, depth and channels. Python’s standard <code class="language-plaintext highlighter-rouge">wave</code> module reads and writes them,
+which is all <code class="language-plaintext highlighter-rouge">audio.py</code> needs:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="n">wave</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
+    <span class="n">pcm</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="s">"h"</span><span class="p">)</span>  <span class="c1"># signed 16-bit integers
+</span>    <span class="n">pcm</span><span class="p">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">w</span><span class="p">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">w</span><span class="p">.</span><span class="n">getnframes</span><span class="p">()))</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="o">/</span> <span class="mi">32768</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pcm</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">array.array("h")</code> holds signed 16-bit integers. A WAV file stores them little-endian, least significant byte first, and <code class="language-plaintext highlighter-rouge">wave</code>
+hands them over in the computer’s own byte order, swapping them itself on a big-endian computer, which is the order <code class="language-plaintext highlighter-rouge">array</code> reads.
+Dividing by 32,768 turns the integers into floating-point numbers between -1 and 1, which are easier to compute with. Writing does
+the reverse: multiply by 32,767 and store as 16-bit integers, which <code class="language-plaintext highlighter-rouge">wave</code> writes little-endian.</p>
+
+<h3 id="the-sampling-theorem-and-aliasing">The sampling theorem and aliasing</h3>
+
+<p>The <strong>Nyquist-Shannon sampling theorem</strong> says that a signal can be captured perfectly if it is sampled at more than twice its
+highest frequency. At 44,100 Hz, nothing above <strong>22,050 Hz</strong> can be represented, which is just above what people hear. A
+frequency that is <em>too</em> high is not lost but folded back down to a wrong, lower one. That is <strong>aliasing</strong>, and it is why
+recording equipment filters before sampling. It matters in Alto only when you change a sample’s speed (see below) or generate
+a sound with many high partials, which is why <code class="language-plaintext highlighter-rouge">synth_piano</code> stops adding partials above 12,000 Hz.</p>
+
+<h3 id="loudness">Loudness</h3>
+
+<ul>
+  <li><strong>Clipping</strong>: a sample cannot go beyond -1 or 1. A calculation that goes past it is flattened (“clipped”), which sounds harsh.
+Anything you generate should be scaled down (<strong>normalized</strong>) so its peak is below 1. <code class="language-plaintext highlighter-rouge">synth_piano</code> scales its result so the
+loudest sample is 0.8.</li>
+  <li><strong>Decibels</strong> are a logarithmic scale for amplitude: <code class="language-plaintext highlighter-rouge">20 * log10(ratio)</code>. Halving the amplitude is -6 dB. Because hearing is
+roughly logarithmic too, a linear volume of 0.5 does not sound “half as loud”; it sounds only a little quieter. Qt’s
+<code class="language-plaintext highlighter-rouge">QSoundEffect.setVolume</code> is linear. If you want a volume control that feels even, map it through a curve (Qt provides
+<code class="language-plaintext highlighter-rouge">QtAudio.convertVolume</code> for that).</li>
+  <li><strong>Summing sounds adds amplitudes</strong>, so a chord of four notes is louder, and can clip. Alto’s <code class="language-plaintext highlighter-rouge">play_notes</code> plays each note of a
+chord at <code class="language-plaintext highlighter-rouge">1.4 / sqrt(count)</code> of full volume: that keeps the loudness of a chord about the same however many notes it has, because uncorrelated
+signals add in <em>power</em> (the square of amplitude), not in amplitude.</li>
+</ul>
+
+<h2 id="pitch-frequency-and-the-numbers-behind-notes">Pitch, frequency and the numbers behind notes</h2>
+
+<p>A musical pitch is a <strong>frequency</strong> in hertz (cycles per second). Western music divides the octave into 12 equal ratios, <strong>equal
+temperament</strong>, so each semitone multiplies the frequency by 2^(1/12). <strong>MIDI</strong> (the Musical Instrument Digital Interface
+standard) numbers the notes: middle C is 60, A above it is 69, and each semitone adds one. The reference pitch A4 is 440 Hz (set
+by an international standard, ISO 16). The formula in <code class="language-plaintext highlighter-rouge">synth_piano</code> is the whole story:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f0</span> <span class="o">=</span> <span class="mf">440.0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">((</span><span class="n">midi</span> <span class="o">-</span> <span class="mi">69</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>  <span class="c1"># midi 60 gives 261.63 Hz
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Note.midi</code> in <code class="language-plaintext highlighter-rouge">alto/theory/pitch.py</code> computes the MIDI number from a spelled note. Note that C♯4 and D♭4 have the same MIDI
+number and the same frequency (in equal temperament), which is why audio works with MIDI numbers while the rest of Alto works
+with spelled notes.</p>
+
+<p>A real note is not a pure tone. It is a <strong>fundamental</strong> at <code class="language-plaintext highlighter-rouge">f0</code> plus <strong>overtones</strong>, or <strong>partials</strong>, at higher frequencies. In
+a string or a pipe the partials are close to whole-number multiples (the <strong>harmonic series</strong>: 2×, 3×, 4× …), and the mix of
+their strengths is what we hear as <strong>timbre</strong>, the difference between a flute and a viola playing the same note.</p>
+
+<h2 id="how-alto-plays-a-note">How Alto plays a note</h2>
+
+<p>Everything is in the class <code class="language-plaintext highlighter-rouge">Sounds</code> and a single shared instance, <code class="language-plaintext highlighter-rouge">sounds</code>, in <code class="language-plaintext highlighter-rouge">alto/audio.py</code>.</p>
+
+<h3 id="instruments-and-recordings">Instruments and recordings</h3>
+
+<p>An <code class="language-plaintext highlighter-rouge">Instrument</code> (a frozen dataclass) has a <code class="language-plaintext highlighter-rouge">key</code>, a <code class="language-plaintext highlighter-rouge">label</code>, a <code class="language-plaintext highlighter-rouge">folder</code> under <code class="language-plaintext highlighter-rouge">alto/assets/</code> and a few flags: <code class="language-plaintext highlighter-rouge">gain</code> (its level
+relative to the piano), <code class="language-plaintext highlighter-rouge">sustained</code> and, for instruments with several ways of playing (the viola’s arco and pizzicato), a
+<code class="language-plaintext highlighter-rouge">family</code> and a <code class="language-plaintext highlighter-rouge">variant</code>. Recordings are <strong>one mono WAV file per note</strong>, named by MIDI number: <code class="language-plaintext highlighter-rouge">alto/assets/samples/flute/72.wav</code>
+is the flute’s C5. Most come from the University of Iowa Electronic Music Studios’ Musical Instrument Samples, recorded in a
+studio, in most cases at every semitone.</p>
+
+<p>An instrument that plays one recording for each pitch is a <strong>sampler</strong>, and the technique is <strong>multisampling</strong>. Professional
+samplers add more: several recordings per note at different loudnesses (<strong>velocity layers</strong>), alternating takes to avoid a
+machine-gun repetition (<strong>round robin</strong>), and repeating a section of a long note to sustain it (<strong>looping</strong>). Alto needs none
+of these, since each note is played once at one level.</p>
+
+<h3 id="creating-the-sound">Creating the sound</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>play_midi(midi)
+   -&gt; _effect(inst, midi)          get or make a QSoundEffect for (instrument, note)
+        -&gt; _note_file(inst, midi)  find the WAV; make one if the note has no recording
+   -&gt; setVolume(...), play()
+</code></pre></div></div>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">_note_file</code></strong> returns the recording’s path if that note has one. If it does not, it picks the <em>nearest</em> recorded note and
+makes a new WAV by shifting its pitch (below), saved in <code class="language-plaintext highlighter-rouge">alto_sounds</code> in the system temporary folder and reused after that.
+The file’s name includes the size and modification time of the recording it came from, so a plugin update that replaces a
+recording gets a new file. The piano is special: beyond two semitones from a recording it is synthesized instead (below).
+Making a note takes a few tens of milliseconds, so <code class="language-plaintext highlighter-rouge">alto.ui.warmup</code> makes the current instrument’s missing notes ahead of
+time (<code class="language-plaintext highlighter-rouge">Sounds.unrecorded</code> and <code class="language-plaintext highlighter-rouge">Sounds.prepare</code>), one per idle moment after the window opens.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">_effect</code></strong> wraps the file in a <code class="language-plaintext highlighter-rouge">QSoundEffect</code> the first time and keeps it, so a note is loaded once.
+<strong><code class="language-plaintext highlighter-rouge">QSoundEffect</code></strong> is Qt Multimedia’s class for short, uncompressed sounds that must start with low delay: it loads the whole
+file into memory, so <code class="language-plaintext highlighter-rouge">play()</code> is quick. Qt has two others: <code class="language-plaintext highlighter-rouge">QMediaPlayer</code> streams longer, compressed audio and starts slower,
+and <code class="language-plaintext highlighter-rouge">QAudioSink</code> is a lower-level output that you feed raw samples yourself. Short WAV notes are what <code class="language-plaintext highlighter-rouge">QSoundEffect</code> is for.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">play_midi</code></strong> sets the volume (the requested volume times the instrument’s gain, capped at 1) and plays. It is wrapped in
+<code class="language-plaintext highlighter-rouge">try/except</code> and prints rather than raises: <strong>audio must never break an exercise</strong>, and machines with no sound card exist.
+<code class="language-plaintext highlighter-rouge">sounds.enabled</code> is the master switch the sound button controls; <code class="language-plaintext highlighter-rouge">force=True</code> plays anyway, for the instrument preview.</li>
+</ol>
+
+<p>A <strong>preview</strong> (the phrase played when you choose an instrument, and the sequences in some exercises) is one WAV with every note
+in it, so the notes stay evenly spaced whatever the computer is doing. <code class="language-plaintext highlighter-rouge">_preview_file</code> mixes it without leaving 16-bit integers:
+it reads the part of each note that is heard, fades out its tail, and adds the notes together with <code class="language-plaintext highlighter-rouge">map(operator.add, ...)</code>, so
+Python’s own C code does nearly all the work, at the rate the recordings share, so nothing is resampled. That is about as quick
+as NumPy would be. The clip is kept under a name made of everything it depends on, so a phrase is mixed once.</p>
+
+<h3 id="pitch-shifting-by-resampling">Pitch shifting by resampling</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">shift_pitch</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">semitones</span><span class="p">):</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">semitones</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">ceil</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">ratio</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_interpolate</span><span class="p">(</span>
+        <span class="n">samples</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span>
+    <span class="p">)</span>  <span class="c1"># the value at 0, ratio, 2 * ratio, ...
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">_interpolate</code> takes each position <code class="language-plaintext highlighter-rouge">x</code>, the sample <code class="language-plaintext highlighter-rouge">a</code> just before it and the one after, and returns <code class="language-plaintext highlighter-rouge">a + (after - a) * (x - i)</code>,
+where <code class="language-plaintext highlighter-rouge">i</code> is the whole part of <code class="language-plaintext highlighter-rouge">x</code>: a straight line between the two neighbors.</p>
+
+<p>To raise a recording by two semitones, read it 12% faster: take the samples at positions 0, 1.122, 2.245, … and interpolate
+between neighbors. This is <strong>resampling</strong>, and it is the simplest pitch shifter. It has two well-known side effects: the
+sound gets <strong>shorter</strong> (a note shifted up two semitones lasts 1/1.122 of the time, which the arithmetic above confirms: 70,560
+samples become 62,861), and the <strong>timbre</strong> changes, because everything speeds up together (the “chipmunk effect”). For one or
+two semitones on a flute or a viola neither is noticeable, which is why Alto shifts only to fill the odd missing note.</p>
+
+<p>If you ever need large shifts, there are better algorithms, each a topic of its own:</p>
+
+<ul>
+  <li><strong>Phase vocoder</strong>: works in the frequency domain, so it can change pitch without changing duration, at some cost in clarity.</li>
+  <li><strong>PSOLA</strong> (<em>pitch-synchronous overlap-add</em>): cuts the sound into one-period grains and overlaps them at new spacing; good for
+speech and single voices.</li>
+  <li><strong>Better interpolation</strong>: drawing straight lines is <strong>linear interpolation</strong>, which smooths the high frequencies slightly. Sinc or
+polynomial interpolation is more accurate (a polyphase resampler such as <code class="language-plaintext highlighter-rouge">scipy.signal.resample_poly</code>).</li>
+</ul>
+
+<h3 id="making-a-piano-with-arithmetic">Making a piano with arithmetic</h3>
+
+<p><code class="language-plaintext highlighter-rouge">synth_piano(midi)</code> makes a piano note without any recording. It is <strong>additive synthesis</strong>: build the sound by adding sine
+waves, one per partial. The code has several pieces of real physics, each one line:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f0</span> <span class="o">=</span> <span class="mf">440.0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">((</span><span class="n">midi</span> <span class="o">-</span> <span class="mi">69</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">17</span><span class="p">):</span>  <span class="c1"># the first 16 partials
+</span>    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">n</span> <span class="o">*</span> <span class="n">f0</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">inharm</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># stiff strings: partials sit slightly sharp
+</span>    <span class="n">amp</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n</span><span class="o">**</span><span class="mf">1.15</span>  <span class="c1"># higher partials are quieter
+</span>    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">7</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">amp</span> <span class="o">*=</span> <span class="mf">0.3</span>  <span class="c1"># the hammer strikes ~1/7 along the string, which suppresses these
+</span>    <span class="n">decay</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mf">2.2</span> <span class="o">+</span> <span class="mf">1.1</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="p">(</span><span class="n">midi</span> <span class="o">-</span> <span class="mi">60</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.03</span>
+    <span class="p">)</span>  <span class="c1"># higher partials, and higher notes, die faster
+</span>    <span class="n">phase</span> <span class="o">=</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span>
+    <span class="p">)</span>  <span class="c1"># one hammer strikes both strings, so they start together
+</span>    <span class="k">for</span> <span class="n">detune</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="o">-</span><span class="mf">0.0008</span><span class="p">,</span>
+        <span class="mf">0.0008</span><span class="p">,</span>
+    <span class="p">):</span>  <span class="c1"># two strings per note, slightly apart: the shimmer
+</span>        <span class="c1"># amp * 0.5 * sin(2π f (1 + detune) t + phase) * exp(-decay t), made one sample at a time
+</span>        <span class="n">step</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">detune</span><span class="p">)</span> <span class="o">/</span> <span class="n">SAMPLE_RATE</span>
+        <span class="n">turn</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">step</span><span class="p">),</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">step</span><span class="p">))</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="o">-</span><span class="n">decay</span> <span class="o">/</span> <span class="n">SAMPLE_RATE</span>
+        <span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">amp</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">complex</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phase</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">z</span><span class="p">.</span><span class="n">imag</span>
+            <span class="n">z</span> <span class="o">*=</span> <span class="n">turn</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>Inharmonicity.</strong> A stiff string’s partials are not exact multiples of the fundamental; they are slightly <em>sharper</em>, by a factor
+of <code class="language-plaintext highlighter-rouge">sqrt(1 + B n^2)</code> for a constant <code class="language-plaintext highlighter-rouge">B</code> of the string. This is why a piano’s octaves are tuned wide, and why a pure harmonic
+sound would not sound like a piano.</li>
+  <li><strong>Decay</strong> is an exponential, <code class="language-plaintext highlighter-rouge">exp(-decay * t)</code>; higher partials fade quicker, so the sound mellows as it rings.</li>
+  <li><strong>Strike point.</strong> Where the hammer hits a string, the partials that have a node there are not excited.</li>
+  <li><strong>Envelope.</strong> After the partials come an attack of a couple of milliseconds (<code class="language-plaintext highlighter-rouge">1 - exp(-t / 0.002)</code>), a dip into the sustain, a
+short burst of <strong>filtered noise</strong> for the hammer’s thump (white noise smoothed by a moving average, a crude low-pass filter),
+and a 50 ms fade-out so the file does not end with a click.</li>
+</ul>
+
+<p>Alto computes this in plain Python, without NumPy: multiplying a complex number by the same small rotation, which also shrinks
+it a little, traces a decaying sine one sample at a time, so no sine or exponential is computed per sample. A note takes a fraction
+of a second, and the result is saved, so each note is made once.</p>
+
+<p>You can check the result in a few lines. A Fourier transform shows the spectrum, and the loudest peak of a synthesized middle C
+is at 261.9 Hz (the frequency resolution of a 1.6 second clip is about 0.6 Hz, so this is the fundamental, 261.63 Hz). This uses
+NumPy, which the tests install (<code class="language-plaintext highlighter-rouge">pip install -e ".[dev]"</code>) and Alto itself does not need:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">alto.audio</span> <span class="kn">import</span> <span class="n">synth_piano</span><span class="p">,</span> <span class="n">SAMPLE_RATE</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">synth_piano</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">spectrum</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">abs</span><span class="p">(</span>
+    <span class="n">np</span><span class="p">.</span><span class="n">fft</span><span class="p">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">hanning</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<span class="p">)</span>  <span class="c1"># a window function reduces leakage
+</span><span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">fft</span><span class="p">.</span><span class="n">rfftfreq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SAMPLE_RATE</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">freqs</span><span class="p">[</span><span class="n">spectrum</span><span class="p">.</span><span class="n">argmax</span><span class="p">()])</span>
+</code></pre></div></div>
+
+<p>To listen, write it with <code class="language-plaintext highlighter-rouge">to_wav_bytes</code> and open the file:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">alto.audio</span> <span class="kn">import</span> <span class="n">to_wav_bytes</span>
+
+<span class="nb">open</span><span class="p">(</span><span class="s">"/tmp/c4.wav"</span><span class="p">,</span> <span class="s">"wb"</span><span class="p">).</span><span class="n">write</span><span class="p">(</span><span class="n">to_wav_bytes</span><span class="p">(</span><span class="n">synth_piano</span><span class="p">(</span><span class="mi">60</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h3 id="sustained-and-plucked-sounds">Sustained and plucked sounds</h3>
+
+<p>A marimba bar, once struck, rings and fades whatever you do. A flute or a bowed string ends when the player stops. <code class="language-plaintext highlighter-rouge">Instrument.sustained</code>
+captures that: when a <strong>sustained</strong> instrument plays a note, any note still sounding is <strong>released</strong> by <code class="language-plaintext highlighter-rouge">_release</code>: a 70 ms
+fade of the effect’s <code class="language-plaintext highlighter-rouge">volume</code> property with a <code class="language-plaintext highlighter-rouge">QPropertyAnimation</code>, then <code class="language-plaintext highlighter-rouge">stop()</code>. Without that, melodies on a flute would
+pile up. <code class="language-plaintext highlighter-rouge">stop_all</code> cancels all fades and silences everything.</p>
+
+<p>A piano is in between. Its recordings ring for a long time, but on a real piano a damper stops each string when the key is let
+go. A recording played in full sounds as if the <strong>damper pedal</strong> were held down: the notes of a scale pile up into a blur.
+<code class="language-plaintext highlighter-rouge">Instrument.damped</code> marks an instrument that is played without the pedal, and it gets the same release as a sustained one,
+so each note ends as the next begins, the way fingers move from key to key. The last note of a melody is left to fade by
+itself.</p>
+
+<p>An abrupt stop is audible as a click, and a fade avoids it. The same idea (<strong>an envelope</strong>) shapes every synthesized note.
+The classical envelope is <strong>ADSR</strong>: <em>attack</em> (how fast the sound begins), <em>decay</em>, <em>sustain</em> level, <em>release</em> (how it ends).</p>
+
+<h3 id="timing-a-sequence">Timing a sequence</h3>
+
+<p>To play a melody or an arpeggio, <code class="language-plaintext highlighter-rouge">_play_sequence</code> schedules each step with <code class="language-plaintext highlighter-rouge">QTimer.singleShot</code> and has three safeguards.</p>
+
+<ol>
+  <li><strong>Wait for loading.</strong> <code class="language-plaintext highlighter-rouge">QSoundEffect</code> loads in the background, and a note started before it is ready is silent. The sequence
+polls <code class="language-plaintext highlighter-rouge">status()</code> every 10 ms for up to a second before starting.</li>
+  <li><strong>Anchor the schedule to the start.</strong> Step <em>i</em> schedules step <em>i + 1</em> a full gap after step <em>i</em> <em>starts</em>, not after it
+finishes. If starting one note takes a while, the others are not pushed later and the rhythm stays even. The test
+<code class="language-plaintext highlighter-rouge">test_a_note_that_is_slow_to_start_does_not_upset_the_rhythm</code> checks this.</li>
+  <li><strong>A newer sequence cancels an older one.</strong> Each sequence has a run number, and a step that finds a newer number does nothing.
+This pattern, a <em>token</em>, appears in the animations too: callbacks scheduled for later cannot be canceled easily, so they
+check whether they are still wanted.</li>
+</ol>
+
+<h2 id="latency-and-the-limits-of-this-design">Latency and the limits of this design</h2>
+
+<p><strong>Latency</strong> is the delay between asking for a sound and hearing it. <code class="language-plaintext highlighter-rouge">QSoundEffect</code> is good enough here: a few tens of
+milliseconds. Real-time musical instruments need under about 10 ms, and for that you would use an audio library with a
+callback, such as <strong>PortAudio</strong>, and fill small buffers on a high-priority thread. If your program fills a buffer too late you
+get an <strong>underrun</strong> (a glitch). None of that applies to Alto, and it is the reason the playback code is short.</p>
+
+<h2 id="adding-an-instrument">Adding an instrument</h2>
+
+<p>The steps are in <a href="/alto/pr-107/dev/development/">For developers</a>: the WAV files named by MIDI number in
+<code class="language-plaintext highlighter-rouge">alto/assets/samples/&lt;key&gt;/</code>, an <code class="language-plaintext highlighter-rouge">Instrument</code> in <code class="language-plaintext highlighter-rouge">INSTRUMENTS</code>, an entry in <code class="language-plaintext highlighter-rouge">instrument_info.INFO</code>, and the credit in
+<code class="language-plaintext highlighter-rouge">THIRD_PARTY_NOTICES.md</code>. Check that the license permits redistribution. A few practical points:</p>
+
+<ul>
+  <li><strong>Trim silence at the start</strong>, or the note feels late. Normalize levels so that notes of one instrument are similar, then set
+<code class="language-plaintext highlighter-rouge">gain</code> to balance instruments against each other.</li>
+  <li><strong>Mono, 16-bit</strong> files at any common rate (44.1 or 48 kHz) work; <code class="language-plaintext highlighter-rouge">QSoundEffect</code> resamples at playback.</li>
+  <li>Mark <code class="language-plaintext highlighter-rouge">sustained=True</code> for bowed and blown instruments, and <code class="language-plaintext highlighter-rouge">damped=True</code> for an instrument with dampers, such as the piano; leave both off for struck and plucked ones that ring on.</li>
+  <li>Gaps are fine: a missing note is made from its nearest neighbor.</li>
+</ul>
+
+<h2 id="testing-audio-without-speakers">Testing audio without speakers</h2>
+
+<p>Tests never play sound. <code class="language-plaintext highlighter-rouge">tests/conftest.py</code> turns <code class="language-plaintext highlighter-rouge">sounds.enabled</code> off for every test, and <code class="language-plaintext highlighter-rouge">tests/test_audio.py</code> replaces
+<code class="language-plaintext highlighter-rouge">QSoundEffect</code> with a <code class="language-plaintext highlighter-rouge">FakeEffect</code> that records <code class="language-plaintext highlighter-rouge">play</code>, <code class="language-plaintext highlighter-rouge">stop</code> and <code class="language-plaintext highlighter-rouge">setVolume</code> calls in a list, so assertions are about <em>what
+would have been played</em>, in what order and how loudly. This is the general approach to testing anything with a side effect on
+the world: replace the world with a recorder.</p>
+
+<h2 id="words-to-search-for">Words to search for</h2>
+
+<p><em>PCM, WAV, RIFF.</em> <em>Nyquist frequency, aliasing, anti-aliasing filter.</em> <em>Quantisation, dither.</em> <em>Dynamic range, decibel,
+loudness, psychoacoustics, equal-loudness contours.</em> <em>Overtone, partial, harmonic series, timbre, inharmonicity.</em> <em>Additive,
+subtractive, FM, wavetable and physical-modeling synthesis.</em> <em>Karplus-Strong algorithm</em> (a famous few-line plucked-string
+model). <em>Convolution</em> and <em>impulse response</em> (how reverb is done). <em>Fourier transform, FFT, spectrogram, window function.</em>
+<em>Resampling, interpolation, sinc interpolation, polyphase filter.</em> <em>Time-stretching, phase vocoder, PSOLA.</em> <em>Sampler,
+multisampling, velocity layer, round robin, loop point.</em> <em>SoundFont and SFZ</em> (sample instrument formats). <em>Latency, buffer,
+underrun, callback.</em> <em>MIDI</em> (the standard also defines messages, channels and file formats).</p>
+
+<h2 id="further-reading">Further reading</h2>
+
+<ul>
+  <li>Julius O. Smith III, <em>Mathematics of the Discrete Fourier Transform</em>, <em>Introduction to Digital Filters</em>, <em>Physical Audio Signal
+Processing</em> and <em>Spectral Audio Signal Processing</em> (W3K Publishing, 2007; free at ccrma.stanford.edu/~jos, the author’s
+Stanford page, which is the primary source). The best free route from the sampling theorem to physical modeling of
+instruments.</li>
+  <li>Ken C. Pohlmann, <em>Principles of Digital Audio</em>, 6th ed. (McGraw-Hill, 2010): sampling, quantisation, converters, file formats.</li>
+  <li>Alan V. Oppenheim and Ronald W. Schafer, <em>Discrete-Time Signal Processing</em>, 3rd ed. (Pearson, 2010): the standard textbook
+on the mathematics behind everything above.</li>
+  <li>Claude E. Shannon, “Communication in the Presence of Noise”, <em>Proceedings of the IRE</em> 37(1), 1949: the sampling theorem.</li>
+  <li>Miller Puckette, <em>The Theory and Technique of Electronic Music</em> (World Scientific, 2007): a gentle book on building sound from
+oscillators and envelopes, and a good second read after this chapter.</li>
+  <li>Curtis Roads, <em>The Computer Music Tutorial</em> (MIT Press, 1996): the broad survey of the field.</li>
+  <li>Udo Zölzer (ed.), <em>DAFX: Digital Audio Effects</em>, 2nd ed. (Wiley, 2011): resampling, pitch shifting and time stretching, with the
+phase vocoder in detail.</li>
+  <li>Mark Dolson, “The Phase Vocoder: A Tutorial”, <em>Computer Music Journal</em> 10(4), 1986; and Jean Laroche and Mark Dolson, “Improved
+Phase Vocoder Time-Scale Modification of Audio”, <em>IEEE Transactions on Speech and Audio Processing</em> 7(3), 1999.</li>
+  <li>Kevin Karplus and Alex Strong, “Digital Synthesis of Plucked-String and Drum Timbres”, <em>Computer Music Journal</em> 7(2), 1983.</li>
+  <li>Harvey Fletcher, “Normal Vibration Frequencies of a Stiff Piano String”, <em>Journal of the Acoustical Society of America</em> 36(1),
+1964: the inharmonicity formula used in <code class="language-plaintext highlighter-rouge">synth_piano</code>.</li>
+  <li>Neville H. Fletcher and Thomas D. Rossing, <em>The Physics of Musical Instruments</em>, 2nd ed. (Springer, 1998): why instruments
+sound as they do.</li>
+  <li><em>MIDI 1.0 Detailed Specification</em>, MIDI Manufacturers Association, midi.org.</li>
+  <li>The University of Iowa Electronic Music Studios, <em>Musical Instrument Samples</em>, theremin.music.uiowa.edu/MIS.html: the source
+of the recordings Alto ships.</li>
+  <li>The Qt documentation for <code class="language-plaintext highlighter-rouge">QSoundEffect</code>, <code class="language-plaintext highlighter-rouge">QMediaPlayer</code>, <code class="language-plaintext highlighter-rouge">QAudioSink</code> and “Qt Multimedia”, doc.qt.io.</li>
+</ul>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-107/dev/guide/notation/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Rendering music notation</span></a>
+            <a class="next" href="/alto/pr-107/dev/guide/spaced-repetition/" rel="next"><span class="np-label">Next</span><span class="np-title">Spaced repetition and adaptive practice<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // The contents list is always open beside the page on wide screens, and starts closed on narrow ones.
+    var menu = document.getElementById("menu");
+    if (menu && window.matchMedia("(min-width: 821px)").matches) { menu.open = true; }
+
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-107/dev/assets/js/nav.js?v=1795538939" defer></script>
+  <script src="/alto/pr-107/dev/assets/js/toc.js?v=1795538939" defer></script>
+  
+</body>
+</html>
