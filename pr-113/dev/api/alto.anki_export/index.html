@@ -22,7 +22,7 @@
     try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
   </script>
   <link rel="icon" href="/alto/pr-113/dev/assets/img/icon.png">
-  <link rel="stylesheet" href="/alto/pr-113/dev/assets/css/site.css?v=1795635637">
+  <link rel="stylesheet" href="/alto/pr-113/dev/assets/css/site.css?v=1795640558">
   
 </head>
 <body>
@@ -770,7 +770,7 @@ review dates.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L60" aria-label="Source for Review">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L60" aria-label="Source for Review">[Source]</a></p>
 
 </div>
 
@@ -784,7 +784,7 @@ profile.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">profile_reviews</span><span class="p">(</span><span class="n">learner</span><span class="p">:</span> <span class="n">Learner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Review</span><span class="p">]]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L75" aria-label="Source for profile_reviews">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L75" aria-label="Source for profile_reviews">[Source]</a></p>
 
 </div>
 
@@ -807,7 +807,7 @@ profile.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Question</span><span class="p">,</span> <span class="n">Review</span> <span class="o">|</span> <span class="bp">None</span><span class="p">]]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L102" aria-label="Source for deck_candidates">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L102" aria-label="Source for deck_candidates">[Source]</a></p>
 
 </div>
 
@@ -833,7 +833,7 @@ questions.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L187" aria-label="Source for export_deck">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L187" aria-label="Source for export_deck">[Source]</a></p>
 
 </div>
 
@@ -865,7 +865,7 @@ complete.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L224" aria-label="Source for DeckSelection">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L224" aria-label="Source for DeckSelection">[Source]</a></p>
 
 </div>
 
@@ -881,7 +881,7 @@ complete.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L232" aria-label="Source for PlannedDeck">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L232" aria-label="Source for PlannedDeck">[Source]</a></p>
 
 </div>
 
@@ -895,7 +895,7 @@ exercise.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">plan_deck</span><span class="p">(</span><span class="n">selection</span><span class="p">:</span> <span class="n">DeckSelection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlannedDeck</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L242" aria-label="Source for plan_deck">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L242" aria-label="Source for plan_deck">[Source]</a></p>
 
 </div>
 
@@ -921,7 +921,7 @@ package.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L274" aria-label="Source for export_decks">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L274" aria-label="Source for export_decks">[Source]</a></p>
 
 </div>
 
@@ -949,7 +949,7 @@ package.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ExportControl</span><span class="p">()</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L311" aria-label="Source for ExportControl">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L311" aria-label="Source for ExportControl">[Source]</a></p>
 
 </div>
 
@@ -967,7 +967,7 @@ destination.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">confirm_cancel</span><span class="p">(</span><span class="n">confirm</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L323" aria-label="Source for ExportControl.confirm_cancel">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L323" aria-label="Source for ExportControl.confirm_cancel">[Source]</a></p>
 
 </div>
 
@@ -987,7 +987,7 @@ cancel.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">check</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L340" aria-label="Source for ExportControl.check">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L340" aria-label="Source for ExportControl.check">[Source]</a></p>
 
 </div>
 
@@ -1011,7 +1011,7 @@ cancellation.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L353" aria-label="Source for ExportControl.publish">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L353" aria-label="Source for ExportControl.publish">[Source]</a></p>
 
 </div>
 
@@ -1032,7 +1032,7 @@ cancellation.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/anki_export.py#L363" aria-label="Source for write_decks">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6ea5ed373d93b3db6fc4d733b36c1754c9be61b4/alto/anki_export.py#L363" aria-label="Source for write_decks">[Source]</a></p>
 
 </div>
 
@@ -1183,10 +1183,10 @@ cancellation.</p>
     if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
     show();
   </script>
-  <script src="/alto/pr-113/dev/assets/js/nav.js?v=1795635637" defer></script>
-  <script src="/alto/pr-113/dev/assets/js/search.js?v=1795635637" defer></script>
-  <script src="/alto/pr-113/dev/assets/js/copy-code.js?v=1795635637" defer></script>
-  <script src="/alto/pr-113/dev/assets/js/toc.js?v=1795635637" defer></script>
+  <script src="/alto/pr-113/dev/assets/js/nav.js?v=1795640558" defer></script>
+  <script src="/alto/pr-113/dev/assets/js/search.js?v=1795640558" defer></script>
+  <script src="/alto/pr-113/dev/assets/js/copy-code.js?v=1795640558" defer></script>
+  <script src="/alto/pr-113/dev/assets/js/toc.js?v=1795640558" defer></script>
   
 </body>
 </html>
