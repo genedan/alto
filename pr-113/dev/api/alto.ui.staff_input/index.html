@@ -1,0 +1,2845 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>alto.ui.staff_input · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-113/latest/api/alto.ui.staff_input/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="alto.ui.staff_input · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-113/latest/api/alto.ui.staff_input/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-113/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-113/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-113/dev/assets/css/site.css?v=1795635637">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-113/dev/">
+      <img src="/alto/pr-113/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      <form class="docs-search" role="search" action="/alto/pr-113/dev/search/" method="get"
+            data-index="/alto/pr-113/dev/search-index.json" hidden>
+        <div class="search-field">
+          <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5"/></svg>
+          <input id="docs-search-input" name="q" type="search" enterkeyhint="search" placeholder="Search docs" aria-label="Search documentation"
+                 autocomplete="off" aria-controls="docs-search-results">
+        </div>
+        <div id="docs-search-results" class="search-results" hidden>
+          <div role="status" class="search-status"></div>
+          <ul></ul>
+        </div>
+      </form>
+      
+      <a class="dd-btn pr-link" href="/alto/pr-113/dev/" aria-label="Documentation preview for PR #113">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #113
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu" aria-label="Documentation">
+        <div class="nav-head">
+  <a href="/alto/pr-113/dev/contents/">Contents</a>
+  
+</div>
+
+        <div class="nav">
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-113/dev/using-alto/">Using Alto</a>
+  
+  <button type="button" class="nav-toggle" data-category="Using Alto" aria-controls="nav-using-alto"
+          aria-expanded="true" aria-label="Collapse Using Alto" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-using-alto">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-113/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-113/dev/development/">For developers</a>
+  
+  <button type="button" class="nav-toggle" data-category="For developers" aria-controls="nav-for-developers"
+          aria-expanded="true" aria-label="Collapse For developers" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-for-developers">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-113/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/developer-guide/environment-setup/">Development environment</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/developer-guide/exercise-view/">Exercise view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-113/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-113/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.exercises.rhythm_equations/">rhythm_equations</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.duration/">duration</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg" open>
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.meter_staff/">meter_staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.metronome_spectrum/">metronome_spectrum</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.staff_input/" aria-current="page">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-113/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-113/dev/about/">About</a>
+  
+  <button type="button" class="nav-toggle" data-category="About" aria-controls="nav-about"
+          aria-expanded="true" aria-label="Collapse About" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-about">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-113/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>alto.ui.staff_input</h1>
+          
+<p>The staffs you click to place notes or a clef.</p>
+
+<p>One note for the note construction exercise, a row of them for scale
+construction, and a clef for the clef exercise.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">accidental</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">staff</span><span class="p">.</span><span class="n">locked</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="staffinput">StaffInput</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">StaffInput</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L65" aria-label="Source for StaffInput">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">StaffWidget</code></p>
+
+<p>A single staff you click to place a note, or place a note on with
+the keyboard.</p>
+
+<p>The note snaps to the nearest line or space and follows the pointer
+until you click. Without the mouse, a caret marks
+the note that would be placed: <code class="language-plaintext highlighter-rouge">move_cursor</code> and <code class="language-plaintext highlighter-rouge">jump_to_letter</code>
+move it, and <code class="language-plaintext highlighter-rouge">place_caret</code> places it.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">placed</code> (<em>Signal</em>): Emitted with the <code class="language-plaintext highlighter-rouge">Note</code> when you click, using the current <code class="language-plaintext highlighter-rouge">accidental</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">accidental_cycled</code> (<em>Signal</em>): Emitted on a right click: the owner steps through natural, sharp and flat.</li>
+  <li><code class="language-plaintext highlighter-rouge">caret_moved</code> (<em>Signal</em>): Emitted when the caret moves.</li>
+  <li><code class="language-plaintext highlighter-rouge">accidental</code> (<em>int or None</em>): The sign you chose (-1 flat, 0 natural, 1 sharp); None follows the key signature.</li>
+  <li><code class="language-plaintext highlighter-rouge">locked</code> (<em>bool</em>): Ignore the mouse (while feedback is showing).</li>
+  <li><code class="language-plaintext highlighter-rouge">caret</code> (<em>int or None</em>): The staff step of the note that the keyboard would place, as <code class="language-plaintext highlighter-rouge">Note.diatonic</code> counts them; None until the keyboard or a click has put it somewhere. Once it has a place the note is shown in the preview color while the pointer is away.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">note_at</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># the bottom line of the treble staff
+</span><span class="go">'E4'
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Create the staff.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns the staff.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">StaffInput</span><span class="p">().</span><span class="n">hasMouseTracking</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="staffinputreset">StaffInput.reset</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
+    <span class="n">clef</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">''</span><span class="p">,</span>
+    <span class="n">placement</span><span class="p">:</span> <span class="n">Question</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L144" aria-label="Source for StaffInput.reset">[Source]</a></p>
+
+</div>
+
+<p>Clear the staff for a new question, drawing a key signature.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">clef</code> (<em>str</em>): The clef to draw.</li>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>int, default 0</em>): The key signature: that many sharps if positive, flats if negative. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">caption</code> (<em>str, default ““</em>): Text to write under the staff. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">placement</code> (<em>Question or None</em>): Written placement question with an optional fixed starting note.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">accidental</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">locked</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"bass"</span><span class="p">,</span> <span class="n">key</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">accidental</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">locked</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">(True, False, -2)
+</span></code></pre></div></div>
+
+<h3 id="staffinputnote_at">StaffInput.note_at</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">note_at</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Note</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L194" aria-label="Source for StaffInput.note_at">[Source]</a></p>
+
+</div>
+
+<p>Return the note on the line or space nearest to a height on the
+staff.</p>
+
+<p>The note is kept within five ledger lines of the staff. On a
+grand staff, a click in the upper half is on the treble
+staff and the lower half on the bass staff.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">y</code> (<em>float</em>): The height in the widget, in pixels from the top.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Note</em>: The note, with the chosen accidental or, if none is chosen, the one the key signature gives it.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="mi">1</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># G major: F is sharp
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">bottom</span> <span class="o">=</span> <span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">note_at</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">bottom</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">staff</span><span class="p">.</span><span class="n">GAP</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># three steps above E4
+</span><span class="go">'A4'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">note_at</span><span class="p">(</span><span class="n">bottom</span> <span class="o">-</span> <span class="n">staff</span><span class="p">.</span><span class="n">GAP</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># one step above E4: F, sharp in this key
+</span><span class="go">'F♯4'
+</span></code></pre></div></div>
+
+<h3 id="staffinputnote_for">StaffInput.note_for</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">note_for</span><span class="p">(</span><span class="n">diatonic</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Note</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L257" aria-label="Source for StaffInput.note_for">[Source]</a></p>
+
+</div>
+
+<p>Return the note on a staff step, with the chosen sign or the one
+the key signature gives it.</p>
+
+<p>The step is kept within five ledger lines of the staff, as
+clicking is.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">diatonic</code> (<em>int</em>): The staff step, as <code class="language-plaintext highlighter-rouge">Note.diatonic</code> counts them.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Note</em>: The note.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="mi">1</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># G major: F is sharp
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">note_for</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"F4"</span><span class="p">).</span><span class="n">diatonic</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">'F♯4'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">accidental</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">note_for</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"F4"</span><span class="p">).</span><span class="n">diatonic</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">'F4'
+</span></code></pre></div></div>
+
+<h3 id="staffinputcaret_start">StaffInput.caret_start</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">caret_start</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L304" aria-label="Source for StaffInput.caret_start">[Source]</a></p>
+
+</div>
+
+<p>Return the staff step the caret starts from, when the keyboard
+first moves it.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>int</em>: The middle line of the staff, or middle C on a grand staff.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">from_diatonic</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">caret_start</span><span class="p">()))</span>
+<span class="go">'B4'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"grand"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">from_diatonic</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">caret_start</span><span class="p">()))</span>
+<span class="go">'C4'
+</span></code></pre></div></div>
+
+<h3 id="staffinputcaret_note">StaffInput.caret_note</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">caret_note</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Note</span> <span class="o">|</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L326" aria-label="Source for StaffInput.caret_note">[Source]</a></p>
+
+</div>
+
+<p>Return the note that the keyboard would place.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>Note or None</em>: The note at the caret, with the chosen sign; None if the caret has not been put anywhere.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"bass"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">caret_note</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">caret_note</span><span class="p">())</span>
+<span class="go">'D3'
+</span></code></pre></div></div>
+
+<h3 id="staffinputmove_cursor">StaffInput.move_cursor</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">move_cursor</span><span class="p">(</span><span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L348" aria-label="Source for StaffInput.move_cursor">[Source]</a></p>
+
+</div>
+
+<p>Move the caret up (positive) or down (negative) by staff steps,
+and show the note there.</p>
+
+<p>The first move starts from <code class="language-plaintext highlighter-rouge">caret_start</code>. The caret stays within
+the furthest ledger lines.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">steps</code> (<em>int</em>): How many lines and spaces to move; 7 is an octave.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">caret_note</span><span class="p">())</span>
+<span class="go">'C5'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">caret_note</span><span class="p">())</span>
+<span class="go">'C4'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_cursor</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="o">-</span><span class="mi">500</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># no further than the ledger lines go
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">caret</span> <span class="o">==</span> <span class="n">RANGE_LIMITS</span><span class="p">[</span><span class="s">"treble"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="staffinputjump_to_letter">StaffInput.jump_to_letter</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">jump_to_letter</span><span class="p">(</span><span class="n">letter</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L383" aria-label="Source for StaffInput.jump_to_letter">[Source]</a></p>
+
+</div>
+
+<p>Move the caret to the nearest note with a letter name, above or
+below where it is.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">letter</code> (<em>int</em>): The letter, counting from C as 0: D is 1, E is 2, F is 3, G is 4, A is 5 and B is 6.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># B4, the middle line
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">jump_to_letter</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">caret_note</span><span class="p">()</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># the nearest C is the one just above
+</span><span class="go">'C5'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">jump_to_letter</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">caret_note</span><span class="p">()</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># and the nearest G is the one just below
+</span><span class="go">'G4'
+</span></code></pre></div></div>
+
+<h3 id="staffinputplace_caret">StaffInput.place_caret</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">place_caret</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L420" aria-label="Source for StaffInput.place_caret">[Source]</a></p>
+
+</div>
+
+<p>Place the note at the caret, as a click would.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">placed</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">staff</span><span class="p">.</span><span class="n">placed</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">placed</span><span class="p">.</span><span class="n">append</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># the first press places the note at the start
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_caret</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">placed</span><span class="p">]</span>
+<span class="go">['B4']
+</span></code></pre></div></div>
+
+<h3 id="staffinputshow_note">StaffInput.show_note</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show_note</span><span class="p">(</span>
+    <span class="n">note</span><span class="p">:</span> <span class="n">Note</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">color</span><span class="p">:</span> <span class="n">QColor</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L443" aria-label="Source for StaffInput.show_note">[Source]</a></p>
+
+</div>
+
+<p>Draw a single note on the staff, or clear it.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">note</code> (<em>Note or None</em>): The note to draw; None clears the staff.</li>
+  <li><code class="language-plaintext highlighter-rouge">color</code> (<em>QColor or None, default None</em>): The color to draw it in; the notation’s own ink if None. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">show_note</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="go">1
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">show_note</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span>
+<span class="go">[]
+</span></code></pre></div></div>
+
+<h3 id="staffinputrefresh_preview">StaffInput.refresh_preview</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">refresh_preview</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L480" aria-label="Source for StaffInput.refresh_preview">[Source]</a></p>
+
+</div>
+
+<p>Redraw the note that would be placed, for example after the
+accidental changes.</p>
+
+<p>It is the pointer’s note while the pointer is over the staff,
+and otherwise the note at the caret, once the keyboard
+has put the caret somewhere.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># the pointer is not over the staff, and there is no caret:
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># nothing to redraw
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">refresh_preview</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span>
+<span class="go">[]
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span><span class="p">)</span>  <span class="c1"># the note at the caret
+</span><span class="go">1
+</span></code></pre></div></div>
+
+<h3 id="staffinputmousemoveevent">StaffInput.mouseMoveEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L512" aria-label="Source for StaffInput.mouseMoveEvent">[Source]</a></p>
+
+</div>
+
+<p>Show the note under the pointer, in a lighter color.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QMouseEvent</em>): The mouse move.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">point</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">50</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QMouseEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">MouseMove</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">NoButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">NoButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">'E4'
+</span></code></pre></div></div>
+
+<h3 id="staffinputleaveevent">StaffInput.leaveEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">leaveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L546" aria-label="Source for StaffInput.leaveEvent">[Source]</a></p>
+
+</div>
+
+<p>Remove the pointer’s note when the pointer leaves the staff,
+showing the note at the caret instead if there is one.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QEvent</em>): The leave event.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">show_note</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">leaveEvent</span><span class="p">(</span><span class="n">QEvent</span><span class="p">(</span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">Leave</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span>
+<span class="go">[]
+</span></code></pre></div></div>
+
+<h3 id="staffinputmousepressevent">StaffInput.mousePressEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L567" aria-label="Source for StaffInput.mousePressEvent">[Source]</a></p>
+
+</div>
+
+<p>Place the note on a left click, or step through the accidentals
+on a right click.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QMouseEvent</em>): The mouse press. Nothing happens while the staff is locked.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">StaffInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="s">"treble"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">placed</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">staff</span><span class="p">.</span><span class="n">placed</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">placed</span><span class="p">.</span><span class="n">append</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">point</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">50</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">mousePressEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QMouseEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">MouseButtonPress</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">LeftButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">LeftButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">placed</span><span class="p">]</span>
+<span class="go">['E4']
+</span></code></pre></div></div>
+
+<h2 id="scaleinput">ScaleInput</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ScaleInput</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L611" aria-label="Source for ScaleInput">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">StaffInput</code></p>
+
+<p>A staff you click to place the notes of a scale one after another,
+left to right, and then, if asked, its steps.</p>
+
+<p>The next note follows the pointer, snapped to a line or space, in
+the place it will take. Each click puts it there and
+moves on to the next place. The places are all drawn from the start,
+so the notes do not move as more are placed.</p>
+
+<p>When steps are asked for, once all the notes are placed two lines
+rise from each pair of neighboring notes to a point
+above them (a wedge). The step to be marked next is shown there, in
+the preview color, as “W” (whole) or “H” (half).
+The mouse wheel or a right click changes it, and a left click marks
+it and moves on to the next pair.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">notes_changed</code> (<em>Signal</em>): Emitted when a note or a step is placed or taken back.</li>
+  <li><code class="language-plaintext highlighter-rouge">step_selected</code> (<em>Signal</em>): Emitted with “W” or “H” when the step to be marked next changes.</li>
+  <li><code class="language-plaintext highlighter-rouge">accidental_stepped</code> (<em>Signal</em>): Emitted with 1 or -1 for each notch of the mouse wheel while notes are placed: the owner moves on to the next sign (1) or back to the one before (-1).</li>
+  <li><code class="language-plaintext highlighter-rouge">notes</code> (<em>list of Note</em>): The notes placed so far, left to right.</li>
+  <li><code class="language-plaintext highlighter-rouge">steps</code> (<em>list of str</em>): The steps marked so far, each “W” or “H”.</li>
+  <li><code class="language-plaintext highlighter-rouge">slots</code> (<em>int</em>): How many notes the scale has.</li>
+  <li><code class="language-plaintext highlighter-rouge">with_steps</code> (<em>bool</em>): Whether the steps are asked for too.</li>
+  <li><code class="language-plaintext highlighter-rouge">pending_step</code> (<em>str</em>): The step that a left click would mark next, “W” or “H”.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">point</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">50</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">mousePressEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QMouseEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">MouseButtonPress</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">LeftButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">LeftButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">],</span>
+<span class="gp">...</span><span class="w">     </span><span class="nb">len</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span><span class="p">),</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">(['E4'], 8)
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Create the staff.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns the staff.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ScaleInput</span><span class="p">().</span><span class="n">notes</span>
+<span class="go">[]
+</span></code></pre></div></div>
+
+<h3 id="scaleinputreset_scale">ScaleInput.reset_scale</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">reset_scale</span><span class="p">(</span>
+    <span class="n">clef</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">slots</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">''</span><span class="p">,</span>
+    <span class="n">with_steps</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L701" aria-label="Source for ScaleInput.reset_scale">[Source]</a></p>
+
+</div>
+
+<p>Clear the staff for a new scale: a staff with room for its
+notes, and the key signature it is to have.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">clef</code> (<em>str</em>): The clef to draw.</li>
+  <li><code class="language-plaintext highlighter-rouge">slots</code> (<em>int</em>): How many notes the scale has. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">caption</code> (<em>str, default ““</em>): The name of the scale, written under the staff. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">with_steps</code> (<em>bool, default False</em>): Also ask for the steps between the notes. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>int, default 0</em>): The key signature drawn on the staff: that many sharps if positive, flats if negative. It is the staff’s, not the scale’s: a note placed without a sign takes the sign the signature gives its letter. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">slots</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">)],</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"bass"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">caption</span><span class="o">=</span><span class="s">"D Major"</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">slots</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">caption</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">key</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">([], 8, 'D Major', 0)
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"bass"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">key</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">key</span>
+<span class="go">-2
+</span></code></pre></div></div>
+
+<h3 id="scaleinputcomplete">ScaleInput.complete</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="nb">property</span>
+<span class="k">def</span> <span class="nf">complete</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L766" aria-label="Source for ScaleInput.complete">[Source]</a></p>
+
+</div>
+
+<p>Report whether every note of the scale has been placed.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>bool</em>: True when there are as many notes as places.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">complete</span>
+<span class="go">False
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">complete</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="scaleinputplacing_steps">ScaleInput.placing_steps</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="nb">property</span>
+<span class="k">def</span> <span class="nf">placing_steps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L788" aria-label="Source for ScaleInput.placing_steps">[Source]</a></p>
+
+</div>
+
+<p>Report whether it is the turn of the steps: they are asked for,
+every note is placed and some step is still to mark.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>bool</em>: True while the next click marks a step.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">with_steps</span><span class="o">=</span><span class="bp">True</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">),</span> <span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"D4"</span><span class="p">)]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">placing_steps</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">steps</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"W"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">placing_steps</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="scaleinputdone">ScaleInput.done</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="nb">property</span>
+<span class="k">def</span> <span class="nf">done</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L820" aria-label="Source for ScaleInput.done">[Source]</a></p>
+
+</div>
+
+<p>Report whether everything asked for is placed: every note and,
+if they are asked for, every step.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>bool</em>: True when the scale can be handed in.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">with_steps</span><span class="o">=</span><span class="bp">True</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">),</span> <span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"D4"</span><span class="p">)]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">done</span>
+<span class="go">False
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">steps</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"W"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">done</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="scaleinputshow_note">ScaleInput.show_note</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show_note</span><span class="p">(</span>
+    <span class="n">note</span><span class="p">:</span> <span class="n">Note</span> <span class="o">|</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">color</span><span class="p">:</span> <span class="n">QColor</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L891" aria-label="Source for ScaleInput.show_note">[Source]</a></p>
+
+</div>
+
+<p>Show the pointer’s note in the next place, or take it away.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">note</code> (<em>Note or None</em>): The note to show; None shows none.</li>
+  <li><code class="language-plaintext highlighter-rouge">color</code> (<em>QColor or None, default None</em>): Unused: the note under the pointer is always drawn in the preview color. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">show_note</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"G4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">staff</span><span class="p">.</span><span class="n">notes</span>
+<span class="go">([Note(octave=4, letter=4, accidental=0)], [])
+</span></code></pre></div></div>
+
+<h3 id="scaleinputset_pending_step">ScaleInput.set_pending_step</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">set_pending_step</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L918" aria-label="Source for ScaleInput.set_pending_step">[Source]</a></p>
+
+</div>
+
+<p>Choose the step that the next click marks.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">step</code> (<em>str</em>): “W” for a whole step or “H” for a half step.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">with_steps</span><span class="o">=</span><span class="bp">True</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">chosen</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">staff</span><span class="p">.</span><span class="n">step_selected</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">chosen</span><span class="p">.</span><span class="n">append</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">set_pending_step</span><span class="p">(</span><span class="s">"H"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">pending_step</span><span class="p">,</span> <span class="n">chosen</span>
+<span class="go">('H', ['H'])
+</span></code></pre></div></div>
+
+<h3 id="scaleinputtoggle_step">ScaleInput.toggle_step</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">toggle_step</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L946" aria-label="Source for ScaleInput.toggle_step">[Source]</a></p>
+
+</div>
+
+<p>Switch the step that the next click marks between whole and
+half.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">with_steps</span><span class="o">=</span><span class="bp">True</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">toggle_step</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">pending_step</span>
+<span class="go">'H'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">toggle_step</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">pending_step</span>
+<span class="go">'W'
+</span></code></pre></div></div>
+
+<h3 id="scaleinputundo">ScaleInput.undo</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">undo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L966" aria-label="Source for ScaleInput.undo">[Source]</a></p>
+
+</div>
+
+<p>Take back the last thing placed: the last step if there is one,
+otherwise the last note.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">undo</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span>
+<span class="go">[]
+</span></code></pre></div></div>
+
+<h3 id="scaleinputwheelevent">ScaleInput.wheelEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">wheelEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QWheelEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L989" aria-label="Source for ScaleInput.wheelEvent">[Source]</a></p>
+
+</div>
+
+<p>Use the mouse wheel for what comes next: the sign of the note to
+place, or the step to mark.</p>
+
+<p>While notes are placed each notch asks the owner to move on to
+the next sign (up) or back to the one before (down).
+While steps are marked each notch switches between whole and
+half. Once everything is placed it does nothing.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QWheelEvent</em>): The wheel turn.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPoint</span><span class="p">,</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">with_steps</span><span class="o">=</span><span class="bp">True</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">signs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">staff</span><span class="p">.</span><span class="n">accidental_stepped</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">signs</span><span class="p">.</span><span class="n">append</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">here</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">turn</span> <span class="o">=</span> <span class="n">QWheelEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">here</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">here</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">NoButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Qt</span><span class="p">.</span><span class="n">ScrollPhase</span><span class="p">.</span><span class="n">NoScrollPhase</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">wheelEvent</span><span class="p">(</span><span class="n">turn</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">signs</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">pending_step</span>
+<span class="go">([1], 'W')
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">),</span> <span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"D4"</span><span class="p">)]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">wheelEvent</span><span class="p">(</span><span class="n">turn</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">signs</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">pending_step</span>
+<span class="go">([1], 'H')
+</span></code></pre></div></div>
+
+<h3 id="scaleinputcaret_start">ScaleInput.caret_start</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">caret_start</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1050" aria-label="Source for ScaleInput.caret_start">[Source]</a></p>
+
+</div>
+
+<p>Return the staff step the caret starts from: that of the last
+note placed, or the middle line.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>int</em>: Where the keyboard’s first move begins.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Note</span><span class="p">.</span><span class="n">from_diatonic</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">caret_start</span><span class="p">())</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># the middle line
+</span><span class="go">'B4'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"D4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">str</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Note</span><span class="p">.</span><span class="n">from_diatonic</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">caret_start</span><span class="p">())</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># the note before
+</span><span class="go">'D4'
+</span></code></pre></div></div>
+
+<h3 id="scaleinputplace_next">ScaleInput.place_next</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">place_next</span><span class="p">(</span><span class="n">note</span><span class="p">:</span> <span class="n">Note</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1076" aria-label="Source for ScaleInput.place_next">[Source]</a></p>
+
+</div>
+
+<p>Place the next note, or mark the next step once the notes are
+placed.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">note</code> (<em>Note or None, default None</em>): The note to place; the note at the caret if None. Ignored while steps are marked.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">with_steps</span><span class="o">=</span><span class="bp">True</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_next</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"C4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_next</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"D4"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># the notes are placed: this marks the first step
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_next</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">],</span> <span class="n">staff</span><span class="p">.</span><span class="n">steps</span>
+<span class="go">(['C4', 'D4'], ['W'])
+</span></code></pre></div></div>
+
+<h3 id="scaleinputplace_caret">ScaleInput.place_caret</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">place_caret</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1125" aria-label="Source for ScaleInput.place_caret">[Source]</a></p>
+
+</div>
+
+<p>Place the next note at the caret, or mark the next step, as a
+click would.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_caret</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">]</span>
+<span class="go">['D5']
+</span></code></pre></div></div>
+
+<h3 id="scaleinputmousepressevent">ScaleInput.mousePressEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1141" aria-label="Source for ScaleInput.mousePressEvent">[Source]</a></p>
+
+</div>
+
+<p>Place the next note or mark the next step on a left click;
+change the sign or the step on a right click.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QMouseEvent</em>): The mouse press. Nothing happens while the staff is locked or when everything is placed.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ScaleInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">point</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">50</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">press</span> <span class="o">=</span> <span class="n">QMouseEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">MouseButtonPress</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">LeftButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">LeftButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">press</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">mousePressEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">press</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>  <span class="c1"># every place is taken
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">]</span>
+<span class="go">['E4']
+</span></code></pre></div></div>
+
+<h2 id="signatureinput">SignatureInput</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SignatureInput</span><span class="p">(</span><span class="n">ScaleInput</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1192" aria-label="Source for SignatureInput">[Source]</a></p>
+
+</div>
+
+<p>Place accidentals in consecutive key-signature slots immediately
+after the clef.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">SignatureInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">caption</span><span class="o">=</span><span class="s">"D major"</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_next</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"F#5"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">notes</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">columns</span>
+<span class="go">([Note(octave=5, letter=3, accidental=1)], [])
+</span></code></pre></div></div>
+
+<h3 id="signatureinputreset_signature">SignatureInput.reset_signature</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">reset_signature</span><span class="p">(</span>
+    <span class="n">clef</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">starting_slots</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1212" aria-label="Source for SignatureInput.reset_signature">[Source]</a></p>
+
+</div>
+
+<p>Set the fixed signs for this question and clear the learner’s
+entries.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">clef</code> (<em>str</em>): Clef used to read the positions.</li>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>int</em>): Target signature.</li>
+  <li><code class="language-plaintext highlighter-rouge">caption</code> (<em>str</em>): Name of the key under the staff.</li>
+  <li><code class="language-plaintext highlighter-rouge">starting_slots</code> (<em>list of int</em>): Positions to fill before the learner begins.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">SignatureInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_signature</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">key</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">caption</span><span class="o">=</span><span class="s">"D major"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">starting_slots</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">staff</span><span class="p">.</span><span class="n">template</span><span class="p">),</span> <span class="n">staff</span><span class="p">.</span><span class="n">template</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">(7, Note(octave=5, letter=0, accidental=1))
+</span></code></pre></div></div>
+
+<h3 id="signatureinputentered_signature">SignatureInput.entered_signature</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">entered_signature</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Note</span> <span class="o">|</span> <span class="bp">None</span><span class="p">]</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1259" aria-label="Source for SignatureInput.entered_signature">[Source]</a></p>
+
+</div>
+
+<p>Combine the fixed signs and the learner’s entries in staff
+order.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>list of Note or None</em>: One pitch per occupied slot, with None in each remaining gap.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">SignatureInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_signature</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">key</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">caption</span><span class="o">=</span><span class="s">"D major"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">starting_slots</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_next</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"F#5"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">staff</span><span class="p">.</span><span class="n">entered_signature</span><span class="p">()</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="go">['F♯5', 'C♯5']
+</span></code></pre></div></div>
+
+<h3 id="signatureinputpaintevent">SignatureInput.paintEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QPaintEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1312" aria-label="Source for SignatureInput.paintEvent">[Source]</a></p>
+
+</div>
+
+<p>Draw the blank staff and caption, then the placed signs and the
+next sign under the pointer.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QPaintEvent</em>): The paint request.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">SignatureInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset_scale</span><span class="p">(</span><span class="s">"bass"</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_next</span><span class="p">(</span><span class="n">Note</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="s">"Bb2"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">grab</span><span class="p">().</span><span class="n">isNull</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h2 id="clefinput">ClefInput</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ClefInput</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1367" aria-label="Source for ClefInput">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">StaffWidget</code></p>
+
+<p>A blank staff on which you put a clef symbol: choose the G, C or F
+clef, then click where it goes.</p>
+
+<p>The symbol can go on any line or space of the staff and on the three
+ledger lines and spaces above and below it, and
+follows the pointer from place to place, in a lighter color, until
+you click. Without the mouse, <code class="language-plaintext highlighter-rouge">move_caret</code> moves it,
+<code class="language-plaintext highlighter-rouge">step_symbol</code> switches the symbol and <code class="language-plaintext highlighter-rouge">place_caret</code> places it.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">placed</code> (<em>Signal</em>): Emitted with the symbol (“G”, “C” or “F”) and its place when you click: 0 is the bottom line, 1 the space above it, up to 8 for the top line, with -6 to 14 allowed.</li>
+  <li><code class="language-plaintext highlighter-rouge">changed</code> (<em>Signal</em>): Emitted when the symbol chosen or the place the keyboard would use changes.</li>
+  <li><code class="language-plaintext highlighter-rouge">options</code> (<em>list of str</em>): The symbols that can be chosen, in the order the wheel goes through them.</li>
+  <li><code class="language-plaintext highlighter-rouge">selected</code> (<em>str</em>): The symbol chosen now.</li>
+  <li><code class="language-plaintext highlighter-rouge">locked</code> (<em>bool</em>): Ignore the mouse and the wheel (while feedback is showing).</li>
+  <li><code class="language-plaintext highlighter-rouge">caret</code> (<em>int or None</em>): The place the keyboard would put the symbol; None until the keyboard has moved it.</li>
+  <li><code class="language-plaintext highlighter-rouge">placed_symbol</code> (<em>str or None</em>): The symbol that has been placed and is drawn solid, with <code class="language-plaintext highlighter-rouge">placed_step</code> its place; None until one is.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">,</span> <span class="s">"F"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">step_symbol</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">selected</span>
+<span class="go">'F'
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Create the staff.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns the staff.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ClefInput</span><span class="p">().</span><span class="n">hasMouseTracking</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="clefinputreset">ClefInput.reset</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">''</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1451" aria-label="Source for ClefInput.reset">[Source]</a></p>
+
+</div>
+
+<p>Clear the staff for a new question and offer some symbols to
+choose from.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">options</code> (<em>list of str</em>): The symbols the wheel goes through, any of “G”, “C” and “F”; the first is chosen to begin with.</li>
+  <li><code class="language-plaintext highlighter-rouge">caption</code> (<em>str, default ““</em>): The question, written under the staff. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[</span><span class="s">"C"</span><span class="p">,</span> <span class="s">"F"</span><span class="p">],</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">caption</span><span class="o">=</span><span class="s">"Place the alto clef."</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">selected</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">placed_symbol</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">caption</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">('C', None, 'Place the alto clef.')
+</span></code></pre></div></div>
+
+<h3 id="clefinputselect">ClefInput.select</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1496" aria-label="Source for ClefInput.select">[Source]</a></p>
+
+</div>
+
+<p>Choose a symbol.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">symbol</code> (<em>str</em>): “G”, “C” or “F”; one that is not among the options is ignored.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">,</span> <span class="s">"C"</span><span class="p">,</span> <span class="s">"F"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="s">"F"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">selected</span>
+<span class="go">'F'
+</span></code></pre></div></div>
+
+<h3 id="clefinputstep_symbol">ClefInput.step_symbol</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">step_symbol</span><span class="p">(</span><span class="n">direction</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1527" aria-label="Source for ClefInput.step_symbol">[Source]</a></p>
+
+</div>
+
+<p>Choose the next symbol of the options, or the one before, going
+around.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">direction</code> (<em>int</em>): 1 for the next, -1 for the one before.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">,</span> <span class="s">"C"</span><span class="p">,</span> <span class="s">"F"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">step_symbol</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">selected</span>
+<span class="go">'F'
+</span></code></pre></div></div>
+
+<h3 id="clefinputstep_at">ClefInput.step_at</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">step_at</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1552" aria-label="Source for ClefInput.step_at">[Source]</a></p>
+
+</div>
+
+<p>Return the line or space nearest to a height in the widget.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">y</code> (<em>float</em>): The height, in pixels.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>int</em>: The place, 0 for the bottom line and 1 for the space above it, up to 8 for the top line; from the first ledger line below the staff (-6) to the third above it (14).</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">floor</span> <span class="o">=</span> <span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">step_at</span><span class="p">(</span><span class="n">floor</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">step_at</span><span class="p">(</span><span class="n">floor</span> <span class="o">-</span> <span class="mf">1.4</span> <span class="o">*</span> <span class="n">staff</span><span class="p">.</span><span class="n">GAP</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">step_at</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">step_at</span><span class="p">(</span><span class="mi">10_000</span><span class="p">),</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">(0, 3, 14, -6)
+</span></code></pre></div></div>
+
+<h3 id="clefinputmove_caret">ClefInput.move_caret</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">move_caret</span><span class="p">(</span><span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1588" aria-label="Source for ClefInput.move_caret">[Source]</a></p>
+
+</div>
+
+<p>Move the place the keyboard would put the symbol.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">steps</code> (<em>int</em>): How many lines and spaces up (positive) or down, stopping at the last ledger lines; the first move starts from the middle line.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_caret</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">caret</span>
+<span class="go">5
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_caret</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">caret</span>
+<span class="go">14
+</span></code></pre></div></div>
+
+<h3 id="clefinputplace">ClefInput.place</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">place</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1622" aria-label="Source for ClefInput.place">[Source]</a></p>
+
+</div>
+
+<p>Put the chosen symbol in a place, drawn solid, and say so.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">step</code> (<em>int</em>): The place, 0 for the bottom line, 1 for the space above it and so on.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"F"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">got</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">staff</span><span class="p">.</span><span class="n">placed</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">lambda</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="n">got</span><span class="p">.</span><span class="n">append</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">where</span><span class="p">)</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">got</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">placed_symbol</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">placed_step</span>
+<span class="go">([('F', 6)], 'F', 6)
+</span></code></pre></div></div>
+
+<h3 id="clefinputplace_caret">ClefInput.place_caret</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">place_caret</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1657" aria-label="Source for ClefInput.place_caret">[Source]</a></p>
+
+</div>
+
+<p>Place the symbol where the keyboard put it, or on the middle
+line if it has not moved.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">move_caret</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place_caret</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">placed_step</span>
+<span class="go">2
+</span></code></pre></div></div>
+
+<h3 id="clefinputclear_placed">ClefInput.clear_placed</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">clear_placed</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1673" aria-label="Source for ClefInput.clear_placed">[Source]</a></p>
+
+</div>
+
+<p>Take the placed symbol off the staff, so another can be tried.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">clear_placed</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">placed_symbol</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="clefinputset_clef_color">ClefInput.set_clef_color</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">set_clef_color</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="n">QColor</span> <span class="o">|</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1688" aria-label="Source for ClefInput.set_clef_color">[Source]</a></p>
+
+</div>
+
+<p>Draw the placed symbol in a color, for feedback, or back in
+black.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">color</code> (<em>QColor or None</em>): The color; None for black.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">set_clef_color</span><span class="p">(</span><span class="n">QColor</span><span class="p">(</span><span class="s">"#2e7d32"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">clef_color</span> <span class="o">==</span> <span class="n">QColor</span><span class="p">(</span><span class="s">"#2e7d32"</span><span class="p">)</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="clefinputmousemoveevent">ClefInput.mouseMoveEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1708" aria-label="Source for ClefInput.mouseMoveEvent">[Source]</a></p>
+
+</div>
+
+<p>Show the symbol in the place under the pointer, in a lighter
+color.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QMouseEvent</em>): The mouse move.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">point</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">50</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w">     </span><span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">staff</span><span class="p">.</span><span class="n">GAP</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QMouseEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">MouseMove</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">NoButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">NoButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">_hover</span>
+<span class="go">4
+</span></code></pre></div></div>
+
+<h3 id="clefinputleaveevent">ClefInput.leaveEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">leaveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1746" aria-label="Source for ClefInput.leaveEvent">[Source]</a></p>
+
+</div>
+
+<p>Stop following the pointer when it leaves the staff.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QEvent</em>): The leave event.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">_hover</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">leaveEvent</span><span class="p">(</span><span class="n">QEvent</span><span class="p">(</span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">Leave</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">_hover</span> <span class="ow">is</span> <span class="bp">None</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="clefinputmousepressevent">ClefInput.mousePressEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1767" aria-label="Source for ClefInput.mousePressEvent">[Source]</a></p>
+
+</div>
+
+<p>Place the symbol on a left click, or choose the next symbol on a
+right click.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QMouseEvent</em>): The mouse press. Nothing happens while the staff is locked.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">,</span> <span class="s">"F"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">point</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="mi">50</span><span class="p">,</span> <span class="n">staff</span><span class="p">.</span><span class="n">staff_bottoms</span><span class="p">()[</span><span class="s">"treble"</span><span class="p">]</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">mousePressEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QMouseEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QEvent</span><span class="p">.</span><span class="n">Type</span><span class="p">.</span><span class="n">MouseButtonPress</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">point</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">RightButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">RightButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">selected</span>
+<span class="go">'F'
+</span></code></pre></div></div>
+
+<h3 id="clefinputwheelevent">ClefInput.wheelEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">wheelEvent</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">QWheelEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1806" aria-label="Source for ClefInput.wheelEvent">[Source]</a></p>
+
+</div>
+
+<p>Choose the next symbol for each notch of the wheel turned up,
+and the one before for each turned down.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">event</code> (<em>QWheelEvent</em>): The wheel turn.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">PySide6.QtCore</span> <span class="kn">import</span> <span class="n">QPoint</span><span class="p">,</span> <span class="n">QPointF</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">,</span> <span class="s">"F"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">here</span> <span class="o">=</span> <span class="n">QPointF</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">wheelEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">QWheelEvent</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">here</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">here</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">MouseButton</span><span class="p">.</span><span class="n">NoButton</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">KeyboardModifier</span><span class="p">.</span><span class="n">NoModifier</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">Qt</span><span class="p">.</span><span class="n">ScrollPhase</span><span class="p">.</span><span class="n">NoScrollPhase</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">selected</span>
+<span class="go">'F'
+</span></code></pre></div></div>
+
+<h3 id="clefinputpaintevent">ClefInput.paintEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="n">_</span><span class="p">:</span> <span class="n">QPaintEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/412145efcaa01f4434b997aec89ece1ad4f8f65a/alto/ui/staff_input.py#L1847" aria-label="Source for ClefInput.paintEvent">[Source]</a></p>
+
+</div>
+
+<p>Draw the staff, then the symbol that was placed or, until one
+is, the one that would be placed.</p>
+
+<p>A symbol on a ledger line has the ledger lines it needs drawn
+behind it.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">_</code> (<em>QPaintEvent</em>): The paint request; the whole widget is always redrawn.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span> <span class="o">=</span> <span class="n">ClefInput</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">reset</span><span class="p">([</span><span class="s">"G"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">place</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">staff</span><span class="p">.</span><span class="n">grab</span><span class="p">().</span><span class="n">isNull</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-113/dev/api/alto.ui.staff/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>alto.ui.staff</span></a>
+            <a class="next" href="/alto/pr-113/dev/api/alto.ui.staff_playback/" rel="next"><span class="np-label">Next</span><span class="np-title">alto.ui.staff_playback<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-113/dev/assets/js/nav.js?v=1795635637" defer></script>
+  <script src="/alto/pr-113/dev/assets/js/search.js?v=1795635637" defer></script>
+  <script src="/alto/pr-113/dev/assets/js/copy-code.js?v=1795635637" defer></script>
+  <script src="/alto/pr-113/dev/assets/js/toc.js?v=1795635637" defer></script>
+  
+</body>
+</html>
