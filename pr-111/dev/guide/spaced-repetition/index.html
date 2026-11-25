@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spaced repetition and adaptive practice · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-111/latest/guide/spaced-repetition/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Spaced repetition and adaptive practice · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-111/latest/guide/spaced-repetition/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-111/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-111/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-111/dev/assets/css/site.css?v=1795612542">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-111/dev/">
+      <img src="/alto/pr-111/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      <form class="docs-search" role="search" action="/alto/pr-111/dev/search/" method="get"
+            data-index="/alto/pr-111/dev/search-index.json" hidden>
+        <div class="search-field">
+          <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5"/></svg>
+          <input id="docs-search-input" name="q" type="search" enterkeyhint="search" placeholder="Search docs" aria-label="Search documentation"
+                 autocomplete="off" aria-controls="docs-search-results">
+        </div>
+        <div id="docs-search-results" class="search-results" hidden>
+          <div role="status" class="search-status"></div>
+          <ul></ul>
+        </div>
+      </form>
+      
+      <a class="dd-btn pr-link" href="/alto/pr-111/dev/" aria-label="Documentation preview for PR #111">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #111
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu" aria-label="Documentation">
+        <div class="nav-head">
+  <a href="/alto/pr-111/dev/contents/">Contents</a>
+  
+</div>
+
+        <div class="nav">
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-111/dev/using-alto/">Using Alto</a>
+  
+  <button type="button" class="nav-toggle" data-category="Using Alto" aria-controls="nav-using-alto"
+          aria-expanded="true" aria-label="Collapse Using Alto" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-using-alto">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-111/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-111/dev/development/">For developers</a>
+  
+  <button type="button" class="nav-toggle" data-category="For developers" aria-controls="nav-for-developers"
+          aria-expanded="true" aria-label="Collapse For developers" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-for-developers">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-111/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/developer-guide/environment-setup/">Development environment</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/developer-guide/exercise-view/">Exercise view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-111/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/spaced-repetition/" aria-current="page">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-111/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.exercises.rhythm_equations/">rhythm_equations</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.duration/">duration</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.meter_staff/">meter_staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.metronome_spectrum/">metronome_spectrum</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-111/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-111/dev/about/">About</a>
+  
+  <button type="button" class="nav-toggle" data-category="About" aria-controls="nav-about"
+          aria-expanded="true" aria-label="Collapse About" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-about">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-111/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Spaced repetition and adaptive practice</h1>
+          <p>Alto’s central idea is that practice time should go where it is needed: questions you miss or answer slowly come back sooner and
+more often, and questions you know well fade into the background. This chapter explains the learning science behind that, the
+family of algorithms people use for it, how ASRS schedules questions during practice, and
+how to change it without breaking it.</p>
+
+<h2 id="practice-algorithms">Practice algorithms</h2>
+
+<p>Under <strong>Settings → Practice → Question scheduling</strong>, each profile can choose ASRS, ARTS, SM-2, or FSRS. The Alto Spaced Repetition System (ASRS) is the default.</p>
+
+<h3 id="arts">ARTS</h3>
+
+<p>Adaptive Response-Time-based Sequencing chooses the next question using your last first attempt and the number of other questions you have answered since. A miss can bring a question back after one intervening answer. A fast, correct answer usually gives you a longer gap. You can practice as long as you like.</p>
+
+<p>Alto applies the published ARTS priority equation to saved questions under the current exercise settings and a sample of freshly generated questions. It uses a 100-millisecond response-time reference to distinguish quick answers in music drills, a baseline priority of 1 for unseen questions, and a random choice among tied scores. Earlier first attempts in the same exercise count when you reopen the app or switch algorithms. <a href="https://kellmanlab.psych.ucla.edu/files/mettler_massey_kellman_2016.pdf">Mettler, Massey, and Kellman, equation 1</a></p>
+
+<h3 id="calendar-practice">Calendar practice</h3>
+
+<p>Under <strong>Settings → Practice</strong>, <strong>New cards/day</strong> and <strong>Maximum reviews/day</strong> set the daily allowance for each exercise. The defaults are 10 new cards and 200 reviews. Both algorithms share these settings and the day’s usage. To change one exercise, open its settings with the sliders button and choose <strong>Daily Limits</strong>. Clear <strong>Use global</strong> for either limit to override it. Each limit has an <strong>Unlimited</strong> checkbox. For example, you can keep new cards at 10 per day and review every card that comes due. A zero pauses that kind of practice.</p>
+
+<p>Exercise tiles show new cards in blue, outstanding incorrect cards in red, and today’s available reviews in green. The red count includes missed cards under the current settings even when their retry time is in the future or the daily review limit has been reached. Showing a new card uses an introduction slot. An unanswered new card stays available in blue so you can finish it after leaving the exercise. Grading the first answer completes the introduction. Grading a subsequent review uses one review slot, including a miss. A miss ends that showing. While the missed card waits for its scheduled retry, Alto offers other eligible cards. If only the retry remains and a review slot is available, the open exercise waits for it and resumes automatically. The allowances reset at local midnight, and overdue cards keep their scheduled dates.</p>
+
+<p>Due questions come first. By default, Alto grades the first submission automatically. During the initial timing calibration, SM-2 uses grade 4 for a correct answer and grade 2 for a miss, with a one-minute retry after a miss. FSRS uses Good and Again with the Python library’s default learning steps. The first time a card moves between SM-2 and FSRS, the new scheduler inherits its due date and review progress. On later switches, each scheduler resumes its own schedule for that card. ARTS and ASRS practice leaves both calendar queues intact. <a href="https://super-memory.com/english/ol/sm2.htm">SM-2 specification</a> · <a href="https://github.com/open-spaced-repetition/py-fsrs">Python FSRS</a></p>
+
+<p>During calibration, <strong>Next interval</strong> shows how long after a correct first answer the card will be due. The value appears at the lower right of the music,
+or on one line beneath the keyboard. A new SM-2 card shows <strong>1 day</strong>, and a new FSRS card shows <strong>10 min</strong>.</p>
+
+<p>After 40 timed, correct first answers in an exercise, automatic grading uses that profile’s rolling distribution. View the chart and adjust the cutoffs in <strong>Settings → Practice → Response-time grading…</strong>. Before you answer, the three possible intervals appear beside the music or in one row below the keyboard. A correct answer displays the assigned grade and interval. <a href="/alto/pr-111/dev/practice/#response-time-grading">Response-time grading</a>.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-111/dev/assets/img/keyboard-review.png" alt="A calibrated review showing Hard, Good, and Easy intervals below the keyboard" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-111/dev/assets/img/keyboard-review-dark.png" alt="A calibrated review showing Hard, Good, and Easy intervals below the keyboard" loading="lazy" />
+  
+</figure>
+
+<p>To choose your own interval, enable <strong>Grade correct answers with Hard, Good, or Easy</strong> in <strong>Settings → Practice</strong>. After a correct answer, the interval appears above each grade button. Choose how difficult it was to recall the answer to schedule the review and move on. Response time ends when you answer the exercise. A wrong answer automatically earns <strong>Again</strong> and moves you to the next available card. Self-grading disables the exercise’s <strong>Next Question</strong> setting. Both algorithms use Anki’s default learning steps. On a new card, Hard repeats in 5 min 30 s, Good advances to 10 min, and Easy skips to a day-based review. SM-2 starts Easy around four days. FSRS calculates it from memory stability at 90% desired retention. Alto applies the displayed delay from the time you choose a grade and uses its own daily limits. <a href="https://docs.ankiweb.net/deck-options.html">Anki deck options</a></p>
+
+<p>For the range above each grade button and an example of how Alto spreads new cards across review days, see <a href="/alto/pr-111/dev/practice/#self-grading-a-new-card">Self-grading a new card</a>.</p>
+
+<p>Note Identification, Note Construction, and Notation Identification count their full catalogs. In Notation Identification, each selected symbol counts as one card for <strong>Answer Button</strong> and one for <strong>Click on Staff</strong>. Different excerpts and staff positions share the symbol’s review date within each question type. If you select only Vertical turn and identify it correctly on your first SM-2 attempt, its first review is due one day later. Other generators sample questions up to the remaining daily allowance. With unlimited new cards, their blue count shows the next batch of up to 10 new questions and refills as you practice. A saved question is eligible under its original settings, when the exercise can adapt it to the current settings, or when the current generator produces the same question. Changing settings preserves its identity and schedule.</p>
+
+<h2 id="why-scheduling-matters-three-findings">Why scheduling matters: three findings</h2>
+
+<p>Cognitive psychology has measured these for well over a century. They are the reason such software exists.</p>
+
+<ol>
+  <li><strong>The forgetting curve.</strong> Hermann Ebbinghaus, memorising nonsense syllables in the 1880s, showed that memory decays quickly
+at first and then more slowly, roughly exponentially. Without review, most of a new item is gone in days.</li>
+  <li><strong>The spacing effect.</strong> The same amount of study produces better long-term memory if it is spread out over time than if it is
+crammed together. Each successful retrieval after a delay slows the next forgetting. That is the basis of <strong>spaced
+repetition</strong>: review an item just before you would forget it, and the gaps can grow.</li>
+  <li><strong>The testing effect</strong> (also <strong>retrieval practice</strong>). Trying to recall an answer strengthens memory more than re-reading it.
+Answering a question is not just a measurement, it is the exercise.</li>
+</ol>
+
+<p>A related idea, Robert Bjork’s <strong>desirable difficulties</strong>, is that conditions that make practice feel harder (spacing, mixing
+topics, testing instead of rereading) often make learning last longer. Mixing different kinds of problem is called
+<strong>interleaving</strong>, and it is why Alto lets an exercise draw from several clefs, keys and note values at once.</p>
+
+<h2 id="the-families-of-scheduling-algorithm">The families of scheduling algorithm</h2>
+
+<p>All of them answer the same question: given what happened the last few times a person saw an item, when should it come back?</p>
+
+<p><strong>Leitner boxes (1970s).</strong> Cards live in numbered boxes. A right answer moves a card up a box, which is reviewed less often; a
+wrong one sends it back to box 1. Simple, no arithmetic, and the origin of many apps.</p>
+
+<p><strong>SM-2 (SuperMemo, 1987).</strong> Piotr Wozniak’s algorithm, still the basis of many programs. Each item has an <strong>ease factor</strong> <code class="language-plaintext highlighter-rouge">EF</code>
+(starting at 2.5). After a review graded <code class="language-plaintext highlighter-rouge">q</code> from 0 to 5, the next interval is 1 day, then 6 days, then the previous interval
+times <code class="language-plaintext highlighter-rouge">EF</code>; <code class="language-plaintext highlighter-rouge">EF</code> itself moves up for easy reviews and down for hard ones, never below 1.3. A grade below 3 resets the item.
+Intervals grow geometrically, which matches the exponential forgetting curve.</p>
+
+<p><strong>Half-life regression (Duolingo, 2016).</strong> Burr Settles and Brendan Meeder model the probability of recall as
+<code class="language-plaintext highlighter-rouge">p = 2^(-Δ/h)</code>, where <code class="language-plaintext highlighter-rouge">Δ</code> is the time since last seen and <code class="language-plaintext highlighter-rouge">h</code> is a <strong>half-life</strong> (the delay at which recall falls to half). The
+half-life is <em>learned</em> from data from many users with a regression on features such as how often the word was seen and missed.</p>
+
+<p><strong>DSR models and FSRS (2020s).</strong> The <em>Difficulty, Stability, Retrievability</em> model treats memory as three numbers per item.
+<strong>Retrievability</strong> <code class="language-plaintext highlighter-rouge">R</code> is the probability of recall right now, a function of time and stability; <strong>stability</strong> <code class="language-plaintext highlighter-rouge">S</code> is how long
+until <code class="language-plaintext highlighter-rouge">R</code> falls to 90%; <strong>difficulty</strong> <code class="language-plaintext highlighter-rouge">D</code> is how hard the item is. After each review a formula updates <code class="language-plaintext highlighter-rouge">S</code> and <code class="language-plaintext highlighter-rouge">D</code>, with
+parameters fitted to review logs. <strong>FSRS</strong> (the <em>Free Spaced Repetition Scheduler</em>) is the open-source version used by Anki.</p>
+
+<p><strong>Rating systems and student models.</strong> Different in spirit: instead of scheduling, estimate a person’s <em>ability</em> and an item’s
+<em>difficulty</em>. <strong>Item response theory</strong> (IRT) and the <strong>Elo rating system</strong> do this; <strong>Bayesian knowledge tracing</strong> models the
+chance that a skill is “known” given a history of answers. Elo, adapted to education, is simple enough to code in a page.</p>
+
+<p><strong>Bandits and sampling.</strong> If you treat “which question next?” as a choice among options with different payoffs, you are in
+the territory of the <strong>multi-armed bandit</strong> problem and the <strong>exploration versus exploitation</strong> trade-off. A <strong>softmax</strong>
+(or <strong>Boltzmann</strong>) policy picks each option with probability proportional to <code class="language-plaintext highlighter-rouge">exp(β × value)</code>. Hold that thought.</p>
+
+<h2 id="asrs">ASRS</h2>
+
+<p>ASRS samples generated questions and prior attempts on each turn.</p>
+
+<ol>
+  <li><strong>It generates fresh questions.</strong> <code class="language-plaintext highlighter-rouge">FRESH = 10</code> new <code class="language-plaintext highlighter-rouge">Question</code>s are made by the exercise for each pick.</li>
+  <li><strong>It adds stored ones.</strong> From the database come questions this profile has met before <em>under the same settings</em>: the 25
+with the highest strain (<code class="language-plaintext highlighter-rouge">hardest</code>) plus 10 random ones (<code class="language-plaintext highlighter-rouge">random_extra</code>), from <code class="language-plaintext highlighter-rouge">Database.replay_candidates</code>.</li>
+  <li><strong>It gives each candidate a weight</strong> from the scheduler, and <strong>draws one at random in proportion to weight</strong>
+(<code class="language-plaintext highlighter-rouge">scheduler.choose</code>, which is <code class="language-plaintext highlighter-rouge">rng.choices(options, weights=weights)</code>). A question just asked (<code class="language-plaintext highlighter-rouge">avoid</code>) is excluded.</li>
+</ol>
+
+<p>That is a <strong>weighted sampler</strong>, not a calendar. There are no due dates, nothing is ever “overdue”, and the system degrades
+gracefully when you skip a week. The cost is that it has no explicit model of forgetting over long gaps. It uses recent time only
+to avoid repeating a question too soon.</p>
+
+<h3 id="the-strain">The strain</h3>
+
+<p>Every question a profile has met has a number, its <strong>strain</strong> (the database column <code class="language-plaintext highlighter-rouge">strain</code>; “how much practice it needs”),
+between 0 and <code class="language-plaintext highlighter-rouge">STRAIN_MAX = 6</code>. A new question starts at <code class="language-plaintext highlighter-rouge">NEW_STRAIN = 1.5</code>. After each attempt, <code class="language-plaintext highlighter-rouge">update_strain</code> changes it:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="ow">not</span> <span class="n">correct</span><span class="p">:</span>
+    <span class="n">strain</span> <span class="o">+=</span> <span class="n">WRONG_PENALTY</span>  <span class="c1"># +1.5: every wrong attempt pushes it up
+</span><span class="k">elif</span> <span class="n">attempt_no</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">strain</span> <span class="o">+=</span> <span class="o">-</span><span class="n">CORRECT_REWARD</span> <span class="o">+</span> <span class="n">speed_term</span><span class="p">(</span>
+        <span class="n">seconds</span><span class="p">,</span> <span class="n">par_seconds</span><span class="o">=</span><span class="n">par_seconds</span>
+    <span class="p">)</span>  <span class="c1"># -0.5, plus a speed adjustment
+</span><span class="k">else</span><span class="p">:</span>
+    <span class="n">strain</span> <span class="o">-=</span> <span class="n">RETRY_REWARD</span>  <span class="c1"># -0.2: right, but only after misses
+</span><span class="n">strain</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">strain</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">STRAIN_MAX</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>Speed matters.</strong> The <strong>first</strong> answer’s time is compared with the exercise’s <code class="language-plaintext highlighter-rouge">par_seconds</code>, a number each exercise sets for
+“how long a good first answer takes”. <code class="language-plaintext highlighter-rouge">speed_term</code> returns a bonus of up to -0.6 for answers at or below half of par, falling
+linearly to zero at par, then a penalty growing to +1.0 at four times par. For <code class="language-plaintext highlighter-rouge">par_seconds = 3</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>First answer took</th>
+      <th>Speed term</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1 s or less (≤ 0.5 × par)</td>
+      <td>-0.60</td>
+    </tr>
+    <tr>
+      <td>1.5 s</td>
+      <td>-0.60</td>
+    </tr>
+    <tr>
+      <td>3 s (par)</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <td>6 s</td>
+      <td>+0.33</td>
+    </tr>
+    <tr>
+      <td>12 s or more (≥ 4 × par)</td>
+      <td>+1.00</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A worked history, with <code class="language-plaintext highlighter-rouge">par_seconds = 3</code>: start at 1.5. A wrong answer in 4 s: 3.0. A right answer on the retry: 2.8. Then
+three quick right answers (1.5 s each, each -0.5 and -0.6): 1.7, 0.6, 0.0. The idea is that a question you <em>know</em> becomes
+unremarkable in about three confident answers, and a question you keep missing climbs toward the ceiling.</p>
+
+<h3 id="from-strain-to-the-chance-of-being-asked">From strain to the chance of being asked</h3>
+
+<p><code class="language-plaintext highlighter-rouge">scheduler.weight</code> turns strain into a number used for the draw:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">weight</span><span class="p">(</span><span class="n">strain</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">last_seen</span><span class="p">,</span> <span class="n">now</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">strain</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># never seen: a fixed middling weight
+</span>        <span class="k">return</span> <span class="n">math</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">WEIGHT_SLOPE</span> <span class="o">*</span> <span class="n">NEW_STRAIN</span><span class="p">)</span>  <span class="c1"># exp(0.6 * 1.5) = 2.46
+</span>    <span class="n">cooldown</span> <span class="o">=</span> <span class="n">BASE_COOLDOWN</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span>
+        <span class="mf">3.0</span> <span class="o">-</span> <span class="n">strain</span>
+    <span class="p">)</span>  <span class="c1"># seconds a question is "resting"
+</span>    <span class="n">recency</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">math</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="p">(</span><span class="n">last_seen</span> <span class="ow">or</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">cooldown</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">math</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">WEIGHT_SLOPE</span> <span class="o">*</span> <span class="n">strain</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">recency</span><span class="p">,</span> <span class="n">MIN_RECENCY</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>There are two factors.</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">exp(0.6 × strain)</code></strong> is the softmax idea: a weight that grows exponentially with strain. Each extra point of strain
+multiplies the weight by <code class="language-plaintext highlighter-rouge">e^0.6 ≈ 1.82</code>. A question at strain 6 is about 37 times as likely as one at strain 0.</li>
+  <li><strong>Recency</strong> keeps a question from coming back right away. It rises from 0 to 1 as time passes since the question was last
+seen, with a <em>cooldown</em> that is long for easy questions and short for hard ones: 960 s at strain 0, 120 s at strain 3,
+15 s at strain 6. After 60 seconds, a strain-1.5 question has recovered only 16% of its weight; a strain-6 one, 98%. A floor
+<code class="language-plaintext highlighter-rouge">MIN_RECENCY = 0.02</code> stops anything being impossible.</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Strain</th>
+      <th>Weight when long unseen</th>
+      <th>Cooldown</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1.0</td>
+      <td>960 s</td>
+    </tr>
+    <tr>
+      <td>1.5 (new)</td>
+      <td>2.5</td>
+      <td>339 s</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6.0</td>
+      <td>120 s</td>
+    </tr>
+    <tr>
+      <td>4.5</td>
+      <td>14.9</td>
+      <td>42 s</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>36.6</td>
+      <td>15 s</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Those two constants, <code class="language-plaintext highlighter-rouge">WEIGHT_SLOPE = 0.6</code> and <code class="language-plaintext highlighter-rouge">BASE_COOLDOWN = 120</code>, are the main dials. Raise the slope and practice
+concentrates harder on weak questions; lower it and it spreads out. Raise the cooldown and repeats are spaced further.</p>
+
+<h3 id="item-identity-and-the-settings-signature">Item identity and the settings signature</h3>
+
+<p>Two pieces of bookkeeping make the history meaningful. Both are easy to break.</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">Question.item_key()</code></strong> is a 20-character hash of <em>what is asked and where it is drawn</em>, not of the note value or the order of
+the buttons. The same note on the same clef is the same item, whatever the order of the answer buttons. If you add a field to
+<code class="language-plaintext highlighter-rouge">Question</code> that changes what the question <em>is</em>, you must decide whether it belongs in the key. Changing the key changes every
+item’s identity, which orphans users’ history, so do it only deliberately.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Exercise.settings_signature()</code></strong> identifies the settings that shape the questions. A stored question is only replayed while
+the signature of the exercise now matches the signature it was stored with. If a user turns off the bass clef, bass-clef items
+stop coming back, and they return when it is turned on again. An exercise that reads settings must override
+<code class="language-plaintext highlighter-rouge">settings_signature</code> or old questions would be replayed outside the user’s current settings.</li>
+</ul>
+
+<h3 id="what-is-stored">What is stored</h3>
+
+<p>Each answer writes two things in one pass (<code class="language-plaintext highlighter-rouge">Learner.record</code>): a row in <code class="language-plaintext highlighter-rouge">attempts</code> (always: wrong answers included, with the time in
+milliseconds), and an update of the <code class="language-plaintext highlighter-rouge">items</code> row for the question (strain, times seen, times right first try, times wrong, total
+first-answer time, the signature, and the question itself as JSON so it can be replayed). See
+<a href="/alto/pr-111/dev/guide/data/">Data and persistence</a>. The statistics page is computed from <code class="language-plaintext highlighter-rouge">attempts</code>: accuracy, median
+time, how many questions per day, the hardest questions (<code class="language-plaintext highlighter-rouge">strain</code> ordered), and the review heatmap.</p>
+
+<h2 id="trying-a-change-simulate-a-student">Trying a change: simulate a student</h2>
+
+<p>Do not tune this by feel. Change a constant, run a simulation, look at the numbers. A <strong>simulated learner</strong> needs only a small
+rule for “how likely is a right answer for this question”. The script below uses twenty fixed questions of falling difficulty,
+asks 400 questions, and reports how often each was asked and its final strain. It runs on an in-memory database and takes
+under a second.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="kn">from</span> <span class="nn">alto.exercises.base</span> <span class="kn">import</span> <span class="n">Exercise</span><span class="p">,</span> <span class="n">Question</span>
+<span class="kn">from</span> <span class="nn">alto.learning</span> <span class="kn">import</span> <span class="n">Database</span><span class="p">,</span> <span class="n">Learner</span>
+
+
+<span class="k">class</span> <span class="nc">Twenty</span><span class="p">(</span><span class="n">Exercise</span><span class="p">):</span>
+    <span class="s">"""Twenty fixed questions, "q0" to "q19"."""</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"Twenty"</span>
+    <span class="n">par_seconds</span> <span class="o">=</span> <span class="mf">3.0</span>
+
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">random</span><span class="p">.</span><span class="n">Random</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Question</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Question</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s">"q</span><span class="si">{</span><span class="n">rng</span><span class="p">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">"right"</span><span class="p">,</span> <span class="s">"wrong"</span><span class="p">],</span> <span class="n">answer</span><span class="o">=</span><span class="s">"right"</span>
+        <span class="p">)</span>
+
+
+<span class="n">skill</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sa">f</span><span class="s">"q</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s">"</span><span class="p">:</span> <span class="mf">0.95</span> <span class="o">-</span> <span class="mf">0.04</span> <span class="o">*</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="p">}</span>  <span class="c1"># chance of a right answer: q0 is easy, q19 is hard
+</span><span class="n">rng</span><span class="p">,</span> <span class="n">now</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="n">Random</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mf">1_000_000.0</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>  <span class="c1"># in memory: nothing is saved
+</span><span class="n">learner</span> <span class="o">=</span> <span class="n">Learner</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">db</span><span class="p">.</span><span class="n">add_profile</span><span class="p">(</span><span class="s">"Sim"</span><span class="p">))</span>
+<span class="n">exercise</span><span class="p">,</span> <span class="n">asked</span> <span class="o">=</span> <span class="n">Twenty</span><span class="p">(),</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">400</span><span class="p">):</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">learner</span><span class="p">.</span><span class="n">pick</span><span class="p">(</span><span class="n">exercise</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="n">now</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">rng</span><span class="p">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">skill</span><span class="p">[</span><span class="n">q</span><span class="p">.</span><span class="n">prompt</span><span class="p">]</span>
+    <span class="n">seconds</span> <span class="o">=</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">right</span> <span class="k">else</span> <span class="n">rng</span><span class="p">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+    <span class="n">learner</span><span class="p">.</span><span class="n">record</span><span class="p">(</span>
+        <span class="n">exercise</span><span class="p">,</span>
+        <span class="n">question</span><span class="o">=</span><span class="n">q</span><span class="p">,</span>
+        <span class="n">answer</span><span class="o">=</span><span class="s">"right"</span> <span class="k">if</span> <span class="n">right</span> <span class="k">else</span> <span class="s">"wrong"</span><span class="p">,</span>
+        <span class="n">correct</span><span class="o">=</span><span class="n">right</span><span class="p">,</span>
+        <span class="n">attempt_no</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">seconds</span><span class="o">=</span><span class="n">seconds</span><span class="p">,</span>
+        <span class="n">now</span><span class="o">=</span><span class="n">now</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">asked</span><span class="p">[</span><span class="n">q</span><span class="p">.</span><span class="n">prompt</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">now</span> <span class="o">+=</span> <span class="n">seconds</span> <span class="o">+</span> <span class="mf">1.0</span>  <span class="c1"># the next question appears a second later
+</span></code></pre></div></div>
+
+<p>Passing <code class="language-plaintext highlighter-rouge">now=</code> to <code class="language-plaintext highlighter-rouge">pick</code> and <code class="language-plaintext highlighter-rouge">record</code> is what lets a simulation run faster than real time. The run above gives, for a few of the
+questions:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>q0  asked 3  times, strain 0.0      (easy: nearly forgotten about)
+q5  asked 2  times, strain 0.0
+q10 asked 12 times, strain 3.18
+q15 asked 57 times, strain 5.05     (hard: asked most)
+q19 asked 56 times, strain 5.04
+</code></pre></div></div>
+
+<p>That is the intended behavior: the hard questions get about twenty times the attention of the easy ones, and the easy ones
+are still asked occasionally (new items, the random replays, and the floor on recency). Try halving <code class="language-plaintext highlighter-rouge">WEIGHT_SLOPE</code> and see how
+the spread flattens. A real evaluation would also model <em>forgetting</em> (a right-answer chance that falls with time since last
+seen) and look at long-run accuracy, as research on schedulers does.</p>
+
+<h2 id="design-problems-to-know-by-name">Design problems to know by name</h2>
+
+<ul>
+  <li><strong>Cold start.</strong> A new question has no history, so its weight is a guess. ASRS uses <code class="language-plaintext highlighter-rouge">NEW_STRAIN</code> for it.</li>
+  <li><strong>Leeches.</strong> An item that is failed again and again. It saturates at the strain ceiling and can crowd out everything else. Anki
+tags leeches and can suspend them; Alto does not, because strained questions are only more <em>likely</em>, and the recency term keeps them from
+repeating immediately.</li>
+  <li><strong>Ceiling and floor effects.</strong> Clipping strain to 0 and 6 loses information at the ends. That is a deliberate simplicity.</li>
+  <li><strong>Gaming.</strong> If the user always answers instantly, the speed bonus rewards them. The score counts only the first attempt.</li>
+  <li><strong>Non-stationarity.</strong> People improve and forget, so a model fitted once drifts. A scheduler that updates with every answer, as
+this one does, adapts for free.</li>
+  <li><strong>Response time as evidence.</strong> Using speed as well as correctness is common in research on fluency, and it is what makes a
+skill like sight-reading, where being right but slow is not yet mastery, trainable.</li>
+</ul>
+
+<h2 id="where-to-go-from-here">Where to go from here</h2>
+
+<p>If you wanted a true memory model, the next step would be to give each question a <strong>stability</strong> that grows with each successful
+retrieval and a <strong>retrievability</strong> that decays with time (the DSR family), and to schedule by “chance of recall now”. It suits
+fixed decks better than generated ones. For Alto’s generated questions, a better investment is probably in how <em>new</em> questions
+are chosen: adapting the range, clef and key to estimated ability, with an Elo-like rating of each setting.</p>
+
+<h2 id="words-to-search-for">Words to search for</h2>
+
+<p><em>Forgetting curve. Spacing effect. Testing effect. Retrieval practice. Desirable difficulties. Interleaving. Distributed
+practice versus massed practice. Overlearning.</em> <em>Leitner system. SM-2. Half-life regression. FSRS. DSR model.</em> <em>Item response
+theory. Elo rating. Bayesian knowledge tracing. Knowledge components.</em> <em>Multi-armed bandit. Exploration-exploitation. Softmax,
+Boltzmann distribution, inverse temperature.</em> <em>Cold start. Leech.</em></p>
+
+<h2 id="further-reading">Further reading</h2>
+
+<ul>
+  <li>Hermann Ebbinghaus, <em>Über das Gedächtnis</em> (Duncker &amp; Humblot, 1885); English translation by Henry A. Ruger and Clara E. Bussenius,
+<em>Memory: A Contribution to Experimental Psychology</em> (Teachers College, Columbia University, 1913). The original forgetting
+curve.</li>
+  <li>Nicholas J. Cepeda, Harold Pashler, Edward Vul, John T. Wixted and Doug Rohrer, “Distributed practice in verbal recall tasks: A
+review and quantitative synthesis”, <em>Psychological Bulletin</em> 132(3), 2006: the spacing effect, across hundreds of experiments.</li>
+  <li>Henry L. Roediger III and Jeffrey D. Karpicke, “Test-enhanced learning: Taking memory tests improves long-term retention”,
+<em>Psychological Science</em> 17(3), 2006: the testing effect.</li>
+  <li>Peter C. Brown, Henry L. Roediger III and Mark A. McDaniel, <em>Make It Stick: The Science of Successful Learning</em> (Belknap Press
+of Harvard University Press, 2014): a readable book that covers all of the above for non-specialists.</li>
+  <li>Robert A. Bjork, “Memory and metamemory considerations in the training of human beings”, in J. Metcalfe and A. Shimamura (eds.),
+<em>Metacognition: Knowing about Knowing</em> (MIT Press, 1994): desirable difficulties.</li>
+  <li>Paul Pimsleur, “A memory schedule”, <em>Modern Language Journal</em> 51(2), 1967: an early graduated-interval schedule.</li>
+  <li>Sebastian Leitner, <em>So lernt man lernen</em> (Herder, 1972): the box system, in German.</li>
+  <li>Piotr A. Wozniak and Edward J. Gorzelańczyk, “Optimization of repetition spacing in the practice of learning”, <em>Acta
+Neurobiologiae Experimentalis</em> 54, 1994; and Wozniak’s description of SM-2 at super-memory.com/english/ol/sm2.htm (the primary
+source, on the author’s own site).</li>
+  <li>Burr Settles and Brendan Meeder, “A Trainable Spaced Repetition Model for Language Learning”, <em>Proceedings of the 54th Annual
+Meeting of the Association for Computational Linguistics</em>, 2016: half-life regression, with the data and results.</li>
+  <li>J. Ye et al., “A Stochastic Shortest Path Algorithm for Optimizing Spaced Repetition Scheduling”,
+<em>Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining</em>, 2022: the basis of FSRS.</li>
+  <li>Radek Pelánek, “Applications of the Elo rating system in adaptive educational systems”, <em>Computers &amp; Education</em> 98, 2016.</li>
+  <li>Albert T. Corbett and John R. Anderson, “Knowledge tracing: Modeling the acquisition of procedural knowledge”, <em>User Modeling
+and User-Adapted Interaction</em> 4, 1995: Bayesian knowledge tracing.</li>
+  <li>Frederic M. Lord, <em>Applications of Item Response Theory to Practical Testing Problems</em> (Lawrence Erlbaum, 1980).</li>
+  <li>Richard S. Sutton and Andrew G. Barto, <em>Reinforcement Learning: An Introduction</em>, 2nd ed. (MIT Press, 2018): chapter 2 on
+multi-armed bandits, including softmax action selection (free from the authors at incompleteideas.net/book).</li>
+</ul>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-111/dev/guide/audio/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Computer audio</span></a>
+            <a class="next" href="/alto/pr-111/dev/guide/animation/" rel="next"><span class="np-label">Next</span><span class="np-title">Animation<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-111/dev/assets/js/nav.js?v=1795612542" defer></script>
+  <script src="/alto/pr-111/dev/assets/js/search.js?v=1795612542" defer></script>
+  <script src="/alto/pr-111/dev/assets/js/copy-code.js?v=1795612542" defer></script>
+  <script src="/alto/pr-111/dev/assets/js/toc.js?v=1795612542" defer></script>
+  
+</body>
+</html>
