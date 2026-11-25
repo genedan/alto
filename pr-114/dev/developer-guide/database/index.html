@@ -1,0 +1,1307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Database · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-114/latest/developer-guide/database/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Database · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux and Windows. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-114/latest/developer-guide/database/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-114/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-114/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643266">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-114/dev/">
+      <img src="/alto/pr-114/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      <form class="docs-search" role="search" action="/alto/pr-114/dev/search/" method="get"
+            data-index="/alto/pr-114/dev/search-index.json" hidden>
+        <div class="search-field">
+          <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5"/></svg>
+          <input id="docs-search-input" name="q" type="search" enterkeyhint="search" placeholder="Search docs" aria-label="Search documentation"
+                 autocomplete="off" aria-controls="docs-search-results">
+        </div>
+        <div id="docs-search-results" class="search-results" hidden>
+          <div role="status" class="search-status"></div>
+          <ul></ul>
+        </div>
+      </form>
+      
+      <a class="dd-btn pr-link" href="/alto/pr-114/dev/" aria-label="Documentation preview for PR #114">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #114
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu" aria-label="Documentation">
+        <div class="nav-head">
+  <a href="/alto/pr-114/dev/contents/">Contents</a>
+  
+</div>
+
+        <div class="nav">
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-114/dev/using-alto/">Using Alto</a>
+  
+  <button type="button" class="nav-toggle" data-category="Using Alto" aria-controls="nav-using-alto"
+          aria-expanded="true" aria-label="Collapse Using Alto" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-using-alto">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-114/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-114/dev/development/">For developers</a>
+  
+  <button type="button" class="nav-toggle" data-category="For developers" aria-controls="nav-for-developers"
+          aria-expanded="true" aria-label="Collapse For developers" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-for-developers">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-114/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/developer-guide/environment-setup/">Development environment</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/developer-guide/exercise-view/">Exercise view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/developer-guide/database/" aria-current="page">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-114/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-114/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.exercises.rhythm_equations/">rhythm_equations</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.duration/">duration</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.meter_staff/">meter_staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.metronome_spectrum/">metronome_spectrum</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-114/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-114/dev/about/">About</a>
+  
+  <button type="button" class="nav-toggle" data-category="About" aria-controls="nav-about"
+          aria-expanded="true" aria-label="Collapse About" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-about">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-114/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Database</h1>
+          <p>Alto keeps practice history for all local profiles in one SQLite file. At launch, <code class="language-plaintext highlighter-rouge">Database(database_path())</code> opens <code class="language-plaintext highlighter-rouge">alto.db</code> in the application data directory, or <code class="language-plaintext highlighter-rouge">$ALTO_HOME/data/alto.db</code> when a development directory is set. A new database uses schema version 7, recorded in SQLite’s <code class="language-plaintext highlighter-rouge">PRAGMA user_version</code>. <a href="/alto/pr-114/dev/developer-guide/application-launch/">Application launch</a></p>
+
+<p>A single question can produce several answers. Suppose Ada answers a note question incorrectly after three seconds, then correctly one second later. Alto appends <strong>two</strong> rows to <code class="language-plaintext highlighter-rouge">attempts</code>, with durations of 3,000 and 1,000 milliseconds. It maintains <strong>one</strong> row in <code class="language-plaintext highlighter-rouge">items</code> for Ada and that question. After this first showing, the row records one showing, one wrong attempt, zero first-try successes, and 3,000 milliseconds of first-answer time. The attempt log preserves the sequence. The item row gives the scheduler a summary it can use the next time Ada practices.</p>
+
+<h2 id="database-access">Database access</h2>
+
+<ul>
+  <li><strong>Connection and SQL.</strong> <code class="language-plaintext highlighter-rouge">alto.learning.database.Database</code> uses Python’s standard <code class="language-plaintext highlighter-rouge">sqlite3</code> module. It opens a connection, enables foreign keys, and issues SQL with bound parameters. Its row factory, <code class="language-plaintext highlighter-rouge">sqlite3.Row</code>, lets callers read columns by name. Some methods return <code class="language-plaintext highlighter-rouge">Profile</code> or <code class="language-plaintext highlighter-rouge">ItemRecord</code> dataclasses. Calling <code class="language-plaintext highlighter-rouge">Database()</code> without a path creates an in-memory database, which is useful for trying queries in a Python shell. <a href="/alto/pr-114/dev/api/alto.learning.database/#database">Database API</a></li>
+  <li><strong>Practice and replay.</strong> <code class="language-plaintext highlighter-rouge">Learner.record()</code> appends the attempt, reads the old item summary, and inserts or updates the item under its composite key. <code class="language-plaintext highlighter-rouge">Learner.pick()</code> reads summaries and uses the scheduler to choose among fresh questions and saved questions that match the exercise settings. Python’s <code class="language-plaintext highlighter-rouge">json</code> module encodes and decodes the saved question. <a href="/alto/pr-114/dev/api/alto.learning.learner/#learner">Learner API</a></li>
+  <li><strong>The database browser.</strong> The <strong>Answers</strong>, <strong>Questions</strong>, and <strong>Profiles</strong> tabs present rows from <code class="language-plaintext highlighter-rouge">attempts</code>, <code class="language-plaintext highlighter-rouge">items</code>, and <code class="language-plaintext highlighter-rouge">profiles</code>, respectively. <code class="language-plaintext highlighter-rouge">DatabasePage</code> requests rows through <code class="language-plaintext highlighter-rouge">Database</code>. Its Qt table model, <code class="language-plaintext highlighter-rouge">RowsModel</code>, supplies display values, and a <code class="language-plaintext highlighter-rouge">QSortFilterProxyModel</code> handles sorting and filtering. <a href="/alto/pr-114/dev/api/alto.ui.database_page/#databasepage">Database browser API</a></li>
+</ul>
+
+<h2 id="entityrelationship-diagram">Entity–relationship diagram</h2>
+
+<p>Each attempt and each item belongs to exactly one profile. A profile may have zero or more of either, and deleting it cascades to both tables. The solid lines show those foreign keys. The dashed line shows how Alto looks up an item summary for an attempt. Many attempts can match the same summary, but an attempt can match at most one because the join uses the item’s full primary key. Select a table to jump to its dictionary.</p>
+
+<figure class="db-schema">
+  <svg viewBox="0 0 720 338" width="720" height="338" aria-labelledby="schema-title schema-desc">
+    <title id="schema-title">Alto practice database</title>
+    <desc id="schema-desc">One profile can own many attempts, items, practice cards, practice limits, and daily review counts. A practice card has a separate schedule for each calendar algorithm used. Attempts and items are matched by profile ID, exercise, and item key.</desc>
+    <g fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M192 67V89H105V130 M288 67V89H375V130" />
+      <path d="M329 36H600V130 M600 226V260" />
+      <path d="M240 67V252H105V260 M240 252H375V260" />
+      <path d="M200 177H280" stroke-dasharray="5 4" />
+    </g>
+    <g fill="currentColor" font-size="14" text-anchor="middle">
+      <text x="345" y="30">1</text><text x="621" y="120">0..*</text>
+      <text x="586" y="243">1</text><text x="622" y="253">0..*</text>
+      <text x="179" y="82">1</text><text x="301" y="82">1</text>
+      <text x="82" y="120">0..*</text><text x="398" y="120">0..*</text>
+    </g>
+    <a href="#profiles" aria-label="Profiles data dictionary">
+      <rect x="151" y="4" width="178" height="63" rx="8" />
+      <text x="240" y="29" class="db-entity">profiles</text>
+      <text x="240" y="53">PK: id</text>
+    </a>
+    <a href="#attempts" aria-label="Attempts data dictionary">
+      <rect x="10" y="130" width="190" height="112" rx="8" />
+      <text x="105" y="158" class="db-entity">attempts</text>
+      <text x="105" y="188">PK: id</text>
+      <text x="105" y="214">FK: profile_id</text>
+    </a>
+    <a href="#items" aria-label="Items data dictionary">
+      <rect x="280" y="130" width="190" height="112" rx="8" />
+      <text x="375" y="158" class="db-entity">items</text>
+      <text x="375" y="181">PK: profile_id,</text>
+      <text x="375" y="201">exercise, item_key</text>
+      <text x="375" y="226">FK: profile_id</text>
+    </a>
+    <a href="#practice-cards" aria-label="Practice cards data dictionary">
+      <rect x="495" y="130" width="212" height="96" rx="8" />
+      <text x="601" y="157" class="db-entity">practice_cards</text>
+      <text x="601" y="185">PK: profile_id,</text>
+      <text x="601" y="206">exercise, item_key</text>
+    </a>
+    <a href="#practice-limits" aria-label="Practice limits data dictionary">
+      <rect x="10" y="260" width="190" height="72" rx="8" />
+      <text x="105" y="286" class="db-entity">practice_limits</text>
+      <text x="105" y="312">PK: profile + exercise</text>
+    </a>
+    <a href="#daily-reviews" aria-label="Daily reviews data dictionary">
+      <rect x="270" y="260" width="210" height="72" rx="8" />
+      <text x="375" y="286" class="db-entity">daily_reviews</text>
+      <text x="375" y="312">PK: profile + exercise + day</text>
+    </a>
+    <a href="#review-schedules" aria-label="Review schedules data dictionary">
+      <rect x="495" y="260" width="212" height="72" rx="8" />
+      <text x="601" y="286" class="db-entity">review_schedules</text>
+      <text x="601" y="312">PK: card + scheduler</text>
+    </a>
+  </svg>
+  <figcaption>PK = primary key. FK = foreign key. 0..* = zero or more rows.</figcaption>
+</figure>
+
+<h2 id="data-dictionary">Data dictionary</h2>
+
+<p>The tables below follow the column order in <code class="language-plaintext highlighter-rouge">alto/learning/database.py</code>. The introduction date is optional for cards first practiced with ASRS. SQLite supplies the integer primary keys when Alto inserts a profile or an attempt. The four item counters have explicit defaults of zero. Times ending in <code class="language-plaintext highlighter-rouge">_at</code>, along with <code class="language-plaintext highlighter-rouge">last_seen</code>, are Unix timestamps in seconds. Durations use milliseconds.</p>
+
+<h3 id="profiles">Profiles</h3>
+
+<p>One row per local practice profile.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>SQLite type</th>
+      <th>Key or default</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td>INTEGER</td>
+      <td>Primary key</td>
+      <td>Profile identifier used by both history tables.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">name</code></td>
+      <td>TEXT</td>
+      <td>Unique, <code class="language-plaintext highlighter-rouge">COLLATE NOCASE</code></td>
+      <td>Display name. Alto trims and collapses whitespace before insertion. SQLite’s case-insensitive comparison treats names such as Ada and ada as duplicates.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">created_at</code></td>
+      <td>REAL</td>
+      <td> </td>
+      <td>Time the profile was created.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">scheduler</code></td>
+      <td>TEXT</td>
+      <td>Default <code class="language-plaintext highlighter-rouge">Alto</code></td>
+      <td>The profile’s selected question scheduler. ASRS retains its original database identifier, <code class="language-plaintext highlighter-rouge">Alto</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">self_grading</code></td>
+      <td>INTEGER</td>
+      <td>Default 0</td>
+      <td>Whether this profile rates correct answers in SM-2 and FSRS.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">easy_percent</code></td>
+      <td>INTEGER</td>
+      <td>Default 15</td>
+      <td>Fastest share of correct first answers graded Easy, in percent.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">hard_percent</code></td>
+      <td>INTEGER</td>
+      <td>Default 15</td>
+      <td>Slowest share graded Hard, in percent.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="attempts">Attempts</h3>
+
+<p>One row per submitted answer, including each retry. The <code class="language-plaintext highlighter-rouge">attempts_by_item</code> index covers <code class="language-plaintext highlighter-rouge">(profile_id, exercise, item_key)</code>. The browser uses these three columns in a left join to obtain the question payload when an item summary exists. The <code class="language-plaintext highlighter-rouge">attempts_by_time</code> index covers <code class="language-plaintext highlighter-rouge">(profile_id, answered_at)</code>, for a profile’s answers since a date, which the statistics read. It is created when the database opens rather than in a schema version, since an index changes no data and an older Alto can still open the file.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>SQLite type</th>
+      <th>Key or default</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">id</code></td>
+      <td>INTEGER</td>
+      <td>Primary key</td>
+      <td>Identifier for this submission.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">profile_id</code></td>
+      <td>INTEGER</td>
+      <td>Foreign key → <code class="language-plaintext highlighter-rouge">profiles.id</code></td>
+      <td>Profile that submitted the answer.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">exercise</code></td>
+      <td>TEXT</td>
+      <td> </td>
+      <td>Python class name of the exercise, such as <code class="language-plaintext highlighter-rouge">NoteNames</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">item_key</code></td>
+      <td>TEXT</td>
+      <td> </td>
+      <td>Stable 20-character hexadecimal identifier returned by <code class="language-plaintext highlighter-rouge">Question.item_key()</code>. Reordering the answer buttons preserves this identifier.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">attempt_no</code></td>
+      <td>INTEGER</td>
+      <td> </td>
+      <td>Submission number within this showing of the question, starting at 1.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">answer</code></td>
+      <td>TEXT</td>
+      <td> </td>
+      <td>The answer the learner submitted.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">correct</code></td>
+      <td>INTEGER</td>
+      <td> </td>
+      <td>Alto writes 1 for a correct answer and 0 for an incorrect answer.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">duration_ms</code></td>
+      <td>INTEGER</td>
+      <td> </td>
+      <td>Elapsed time from presentation to the first answer, or from the preceding answer to a retry.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">answered_at</code></td>
+      <td>REAL</td>
+      <td> </td>
+      <td>Time the answer was submitted.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">timing_valid</code></td>
+      <td>INTEGER</td>
+      <td>Default 1</td>
+      <td>Set to zero when the exercise was hidden or Alto lost focus during the question. Older attempts retain their recorded times.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="items">Items</h3>
+
+<p>One row per distinct question practiced by a particular profile within an exercise. The first three columns together form the primary key. They also identify the submissions contributing to this summary. SQLite enforces the foreign key to <code class="language-plaintext highlighter-rouge">profiles</code>. Alto maintains the correspondence with <code class="language-plaintext highlighter-rouge">attempts</code> when it records an answer.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>SQLite type</th>
+      <th>Key or default</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">profile_id</code></td>
+      <td>INTEGER</td>
+      <td>Primary key (1), foreign key → <code class="language-plaintext highlighter-rouge">profiles.id</code></td>
+      <td>Profile whose history this row summarizes.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">exercise</code></td>
+      <td>TEXT</td>
+      <td>Primary key (2)</td>
+      <td>Exercise class name, as in <code class="language-plaintext highlighter-rouge">attempts.exercise</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">item_key</code></td>
+      <td>TEXT</td>
+      <td>Primary key (3)</td>
+      <td>Question identifier, as in <code class="language-plaintext highlighter-rouge">attempts.item_key</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">strain</code></td>
+      <td>REAL</td>
+      <td> </td>
+      <td>Scheduler score updated after each submission. A higher value gives the question more weight in later practice.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">seen</code></td>
+      <td>INTEGER</td>
+      <td>Default 0</td>
+      <td>Showings for which a first answer was submitted. A retry leaves this count unchanged.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">first_try_right</code></td>
+      <td>INTEGER</td>
+      <td>Default 0</td>
+      <td>Showings answered correctly on the first attempt.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">wrong_attempts</code></td>
+      <td>INTEGER</td>
+      <td>Default 0</td>
+      <td>Incorrect submissions across all showings, including retries.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">total_first_ms</code></td>
+      <td>INTEGER</td>
+      <td>Default 0</td>
+      <td>Sum of first-answer durations across showings, in milliseconds.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">last_seen</code></td>
+      <td>REAL</td>
+      <td> </td>
+      <td>Time of the most recent submission for this item, including a retry.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">signature</code></td>
+      <td>TEXT</td>
+      <td> </td>
+      <td>Identifier returned by <code class="language-plaintext highlighter-rouge">settings_signature()</code> for the most recently recorded exercise settings. Used to find eligible replay candidates.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">payload</code></td>
+      <td>TEXT</td>
+      <td> </td>
+      <td>JSON from <code class="language-plaintext highlighter-rouge">Question.to_dict()</code> for the most recently recorded question. Alto uses it for replay and answer previews.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="practice-cards">Practice cards</h3>
+
+<p>Each row identifies a calendar practice card. Version 6 removes adaptive-only entries from this table and retains their answer history in <code class="language-plaintext highlighter-rouge">items</code> and <code class="language-plaintext highlighter-rouge">attempts</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>SQLite type</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">profile_id</code>, <code class="language-plaintext highlighter-rouge">exercise</code>, <code class="language-plaintext highlighter-rouge">item_key</code></td>
+      <td>INTEGER, TEXT, TEXT</td>
+      <td>Composite primary key. Deleting the profile removes its cards.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">signature</code>, <code class="language-plaintext highlighter-rouge">payload</code></td>
+      <td>TEXT, TEXT</td>
+      <td>Exercise settings and playable question at introduction.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">introduced_on</code></td>
+      <td>TEXT</td>
+      <td>Local date of a calendar introduction. May be empty for scheduled cards imported by older versions.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pending_new</code></td>
+      <td>INTEGER</td>
+      <td>1 until the first answer to a new introduction, then 0.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="review-schedules">Review schedules</h3>
+
+<p>A practice card can have a separate schedule for SM-2 and FSRS. On entry to a calendar scheduler, missing schedules are initialized from the other calendar scheduler for that profile. The inherited row preserves the due timestamp and last grade, with the state translated for its new scheduler. Existing schedules resume independently.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>SQLite type</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">profile_id</code>, <code class="language-plaintext highlighter-rouge">exercise</code>, <code class="language-plaintext highlighter-rouge">item_key</code></td>
+      <td>INTEGER, TEXT, TEXT</td>
+      <td>Composite foreign key referencing the practice card, with cascading deletion.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">scheduler</code></td>
+      <td>TEXT</td>
+      <td>Together with the card identity, this forms the primary key.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">due</code></td>
+      <td>REAL</td>
+      <td>Unix timestamp of the next review.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">state</code></td>
+      <td>TEXT</td>
+      <td>Automatic SM-2 stores repetitions, interval and ease. Self-graded SM-2 also stores the learning phase, step and scheduled delay. FSRS stores its serialized card.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">last_rating</code></td>
+      <td>INTEGER</td>
+      <td>The most recent grade (1 Again, 2 Hard, 3 Good, 4 Easy). Again marks a missed card for the red counter.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="practice-limits">Practice limits</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">profile_id</code></td>
+      <td>INTEGER</td>
+      <td>Owning profile. Part of the primary key with <code class="language-plaintext highlighter-rouge">exercise</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">exercise</code></td>
+      <td>TEXT</td>
+      <td>Exercise class name, or an empty string for the profile defaults.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">new_cards</code></td>
+      <td>INTEGER</td>
+      <td>Daily new-card allowance. Zero pauses introductions, −1 allows unlimited introductions, and NULL inherits the default.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">reviews</code></td>
+      <td>INTEGER</td>
+      <td>Daily review allowance. Zero pauses reviews, −1 allows unlimited reviews, and NULL inherits the default.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="daily-reviews">Daily reviews</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">profile_id</code></td>
+      <td>INTEGER</td>
+      <td>Owning profile.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">exercise</code></td>
+      <td>TEXT</td>
+      <td>Exercise class name.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">day</code></td>
+      <td>TEXT</td>
+      <td>Local date. Together with profile and exercise, identifies the row.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">completed</code></td>
+      <td>INTEGER</td>
+      <td>Reviews graded that day across SM-2 and FSRS.</td>
+    </tr>
+  </tbody>
+</table>
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-114/dev/developer-guide/exercise-view/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Exercise view</span></a>
+            <a class="next" href="/alto/pr-114/dev/developer-guide/ui-style-guide/" rel="next"><span class="np-label">Next</span><span class="np-title">UI style guide<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643266" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643266" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643266" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643266" defer></script>
+  
+</body>
+</html>
