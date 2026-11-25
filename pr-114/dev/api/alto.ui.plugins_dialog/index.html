@@ -22,7 +22,7 @@
     try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
   </script>
   <link rel="icon" href="/alto/pr-114/dev/assets/img/icon.png">
-  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643266">
+  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643712">
   
 </head>
 <body>
@@ -83,7 +83,10 @@
   
 </div>
 
-        <div class="nav">
+        <button type="button" class="docs-menu-toggle" aria-expanded="false" aria-controls="docs-navigation" hidden>
+          Menu <svg class="i" width="16" height="16" aria-hidden="true"><use href="#i-chev-d"/></svg>
+        </button>
+        <div class="nav" id="docs-navigation">
           
           
           
@@ -775,7 +778,7 @@ that add or remove one on the right.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/plugins_dialog.py#L49" aria-label="Source for PluginsDialog">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/plugins_dialog.py#L49" aria-label="Source for PluginsDialog">[Source]</a></p>
 
 </div>
 
@@ -840,7 +843,7 @@ window handles local file installs, removal, and restarts.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">selected</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">InstalledPlugin</span> <span class="o">|</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/plugins_dialog.py#L191" aria-label="Source for PluginsDialog.selected">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/plugins_dialog.py#L191" aria-label="Source for PluginsDialog.selected">[Source]</a></p>
 
 </div>
 
@@ -868,7 +871,7 @@ window handles local file installs, removal, and restarts.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">refresh</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/plugins_dialog.py#L211" aria-label="Source for PluginsDialog.refresh">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/plugins_dialog.py#L211" aria-label="Source for PluginsDialog.refresh">[Source]</a></p>
 
 </div>
 
@@ -893,7 +896,7 @@ if it is still there.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">done</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/plugins_dialog.py#L274" aria-label="Source for PluginsDialog.done">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/plugins_dialog.py#L274" aria-label="Source for PluginsDialog.done">[Source]</a></p>
 
 </div>
 
@@ -1193,10 +1196,10 @@ finishes.</p>
     if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
     show();
   </script>
-  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643266" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643712" defer></script>
   
 </body>
 </html>

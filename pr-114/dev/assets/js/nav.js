@@ -1,6 +1,12 @@
 // Category links navigate normally. Their adjacent buttons control only the named list.
 (function () {
   "use strict";
+  const menu = document.querySelector(".docs-menu-toggle");
+  menu.hidden = false;
+  menu.addEventListener("click", () => {
+    menu.setAttribute("aria-expanded", String(menu.getAttribute("aria-expanded") !== "true"));
+  });
+
   const key = "alto-docs-nav";
   let closed = {};
   try { closed = JSON.parse(localStorage.getItem(key)) || {}; } catch (e) { /* Use the default state. */ }

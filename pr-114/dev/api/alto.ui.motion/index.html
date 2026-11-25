@@ -22,7 +22,7 @@
     try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
   </script>
   <link rel="icon" href="/alto/pr-114/dev/assets/img/icon.png">
-  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643266">
+  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643712">
   
 </head>
 <body>
@@ -83,7 +83,10 @@
   
 </div>
 
-        <div class="nav">
+        <button type="button" class="docs-menu-toggle" aria-expanded="false" aria-controls="docs-navigation" hidden>
+          Menu <svg class="i" width="16" height="16" aria-hidden="true"><use href="#i-chev-d"/></svg>
+        </button>
+        <div class="nav" id="docs-navigation">
           
           
           
@@ -798,7 +801,7 @@ since its pressed look is all there is to see in the meantime.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">instant</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L192" aria-label="Source for instant">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L192" aria-label="Source for instant">[Source]</a></p>
 
 </div>
 
@@ -823,7 +826,7 @@ since its pressed look is all there is to see in the meantime.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">set_instant</span><span class="p">(</span><span class="n">on</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L209" aria-label="Source for set_instant">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L209" aria-label="Source for set_instant">[Source]</a></p>
 
 </div>
 
@@ -856,7 +859,7 @@ time.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L253" aria-label="Source for later">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L253" aria-label="Source for later">[Source]</a></p>
 
 </div>
 
@@ -898,7 +901,7 @@ the learner can try again.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L295" aria-label="Source for start_timer">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L295" aria-label="Source for start_timer">[Source]</a></p>
 
 </div>
 
@@ -944,7 +947,7 @@ motion, such as moving on to the next question.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="n">animation</span><span class="p">:</span> <span class="n">QAbstractAnimation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L357" aria-label="Source for play">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L357" aria-label="Source for play">[Source]</a></p>
 
 </div>
 
@@ -989,7 +992,7 @@ until <code class="language-plaintext highlighter-rouge">settle</code> moves it 
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">busy</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L403" aria-label="Source for busy">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L403" aria-label="Source for busy">[Source]</a></p>
 
 </div>
 
@@ -1018,7 +1021,7 @@ timer or a running animation.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L421" aria-label="Source for settle">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L421" aria-label="Source for settle">[Source]</a></p>
 
 </div>
 
@@ -1073,7 +1076,7 @@ A step that always asks for itself again never settles:
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/motion.py#L572" aria-label="Source for set_shortcut">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/motion.py#L572" aria-label="Source for set_shortcut">[Source]</a></p>
 
 </div>
 
@@ -1377,10 +1380,10 @@ with instant motion it clicks the button at once.</p>
     if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
     show();
   </script>
-  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643266" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643712" defer></script>
   
 </body>
 </html>

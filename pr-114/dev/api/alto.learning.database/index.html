@@ -22,7 +22,7 @@
     try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
   </script>
   <link rel="icon" href="/alto/pr-114/dev/assets/img/icon.png">
-  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643266">
+  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643712">
   
 </head>
 <body>
@@ -83,7 +83,10 @@
   
 </div>
 
-        <div class="nav">
+        <button type="button" class="docs-menu-toggle" aria-expanded="false" aria-controls="docs-navigation" hidden>
+          Menu <svg class="i" width="16" height="16" aria-hidden="true"><use href="#i-chev-d"/></svg>
+        </button>
+        <div class="nav" id="docs-navigation">
           
           
           
@@ -780,7 +783,7 @@ each question. Pure Python (no Qt).</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">check_snapshot</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L211" aria-label="Source for check_snapshot">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L211" aria-label="Source for check_snapshot">[Source]</a></p>
 
 </div>
 
@@ -830,7 +833,7 @@ read, and say what is in it.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L292" aria-label="Source for Profile">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L292" aria-label="Source for Profile">[Source]</a></p>
 
 </div>
 
@@ -868,7 +871,7 @@ else’s.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L316" aria-label="Source for ItemRecord">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L316" aria-label="Source for ItemRecord">[Source]</a></p>
 
 </div>
 
@@ -911,7 +914,7 @@ else’s.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Database</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="s">':memory:'</span><span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L377" aria-label="Source for Database">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L377" aria-label="Source for Database">[Source]</a></p>
 
 </div>
 
@@ -961,7 +964,7 @@ exist.</p>
 <span class="k">def</span> <span class="nf">write_transaction</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="bp">None</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L477" aria-label="Source for Database.write_transaction">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L477" aria-label="Source for Database.write_transaction">[Source]</a></p>
 
 </div>
 
@@ -991,7 +994,7 @@ the state to be updated.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">close</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L503" aria-label="Source for Database.close">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L503" aria-label="Source for Database.close">[Source]</a></p>
 
 </div>
 
@@ -1010,7 +1013,7 @@ the state to be updated.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">snapshot</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L514" aria-label="Source for Database.snapshot">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L514" aria-label="Source for Database.snapshot">[Source]</a></p>
 
 </div>
 
@@ -1042,7 +1045,7 @@ question record, exactly as they are now.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L539" aria-label="Source for Database.restore">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L539" aria-label="Source for Database.restore">[Source]</a></p>
 
 </div>
 
@@ -1084,7 +1087,7 @@ Alto is brought up to date.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">profiles</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Profile</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L589" aria-label="Source for Database.profiles">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L589" aria-label="Source for Database.profiles">[Source]</a></p>
 
 </div>
 
@@ -1112,7 +1115,7 @@ Alto is brought up to date.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span> <span class="o">|</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L611" aria-label="Source for Database.profile">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L611" aria-label="Source for Database.profile">[Source]</a></p>
 
 </div>
 
@@ -1148,7 +1151,7 @@ Alto is brought up to date.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">add_profile</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L641" aria-label="Source for Database.add_profile">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L641" aria-label="Source for Database.add_profile">[Source]</a></p>
 
 </div>
 
@@ -1190,7 +1193,7 @@ Alto is brought up to date.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">delete_profile</span><span class="p">(</span><span class="n">profile_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L688" aria-label="Source for Database.delete_profile">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L688" aria-label="Source for Database.delete_profile">[Source]</a></p>
 
 </div>
 
@@ -1224,7 +1227,7 @@ history.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemRecord</span> <span class="o">|</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L715" aria-label="Source for Database.get_item">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L715" aria-label="Source for Database.get_item">[Source]</a></p>
 
 </div>
 
@@ -1269,7 +1272,7 @@ history.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L759" aria-label="Source for Database.save_item">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L759" aria-label="Source for Database.save_item">[Source]</a></p>
 
 </div>
 
@@ -1332,7 +1335,7 @@ record of it.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L839" aria-label="Source for Database.add_attempt">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L839" aria-label="Source for Database.add_attempt">[Source]</a></p>
 
 </div>
 
@@ -1384,7 +1387,7 @@ record of it.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L918" aria-label="Source for Database.attempts">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L918" aria-label="Source for Database.attempts">[Source]</a></p>
 
 </div>
 
@@ -1444,7 +1447,7 @@ record of it.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1037" aria-label="Source for Database.attempts_in">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1037" aria-label="Source for Database.attempts_in">[Source]</a></p>
 
 </div>
 
@@ -1502,7 +1505,7 @@ exercise and a period.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1108" aria-label="Source for Database.first_attempts_per_day">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1108" aria-label="Source for Database.first_attempts_per_day">[Source]</a></p>
 
 </div>
 
@@ -1560,7 +1563,7 @@ counting the days in the database.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1172" aria-label="Source for Database.strained_items">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1172" aria-label="Source for Database.strained_items">[Source]</a></p>
 
 </div>
 
@@ -1629,7 +1632,7 @@ from different profiles counted together.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1260" aria-label="Source for Database.count_attempts">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1260" aria-label="Source for Database.count_attempts">[Source]</a></p>
 
 </div>
 
@@ -1689,7 +1692,7 @@ exercise and within a period.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1395" aria-label="Source for Database.attempt_rows">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1395" aria-label="Source for Database.attempt_rows">[Source]</a></p>
 
 </div>
 
@@ -1752,7 +1755,7 @@ it was an answer to (if that is still known).</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1476" aria-label="Source for Database.answer_window">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1476" aria-label="Source for Database.answer_window">[Source]</a></p>
 
 </div>
 
@@ -1791,7 +1794,7 @@ it was an answer to (if that is still known).</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1518" aria-label="Source for Database.answer_page">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1518" aria-label="Source for Database.answer_page">[Source]</a></p>
 
 </div>
 
@@ -1833,7 +1836,7 @@ it was an answer to (if that is still known).</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1564" aria-label="Source for Database.item_rows">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1564" aria-label="Source for Database.item_rows">[Source]</a></p>
 
 </div>
 
@@ -1868,7 +1871,7 @@ most strained first.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">profile_rows</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">sqlite3</span><span class="p">.</span><span class="n">Row</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1605" aria-label="Source for Database.profile_rows">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1605" aria-label="Source for Database.profile_rows">[Source]</a></p>
 
 </div>
 
@@ -1909,7 +1912,7 @@ most strained first.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ItemRecord</span><span class="p">]</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/learning/database.py#L1637" aria-label="Source for Database.replay_candidates">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/learning/database.py#L1637" aria-label="Source for Database.replay_candidates">[Source]</a></p>
 
 </div>
 
@@ -2146,10 +2149,10 @@ ones that need most practice, plus a few at random.</p>
     if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
     show();
   </script>
-  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643266" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643712" defer></script>
   
 </body>
 </html>

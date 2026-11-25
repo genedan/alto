@@ -22,7 +22,7 @@
     try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
   </script>
   <link rel="icon" href="/alto/pr-114/dev/assets/img/icon.png">
-  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643266">
+  <link rel="stylesheet" href="/alto/pr-114/dev/assets/css/site.css?v=1795643712">
   
 </head>
 <body>
@@ -83,7 +83,10 @@
   
 </div>
 
-        <div class="nav">
+        <button type="button" class="docs-menu-toggle" aria-expanded="false" aria-controls="docs-navigation" hidden>
+          Menu <svg class="i" width="16" height="16" aria-hidden="true"><use href="#i-chev-d"/></svg>
+        </button>
+        <div class="nav" id="docs-navigation">
           
           
           
@@ -779,7 +782,7 @@ timeframe.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/stats_dialog.py#L86" aria-label="Source for since_for">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/stats_dialog.py#L86" aria-label="Source for since_for">[Source]</a></p>
 
 </div>
 
@@ -817,7 +820,7 @@ timeframe.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">format_duration</span><span class="p">(</span><span class="n">seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/stats_dialog.py#L132" aria-label="Source for format_duration">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/stats_dialog.py#L132" aria-label="Source for format_duration">[Source]</a></p>
 
 </div>
 
@@ -858,7 +861,7 @@ timeframe.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/stats_dialog.py#L168" aria-label="Source for period_title">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/stats_dialog.py#L168" aria-label="Source for period_title">[Source]</a></p>
 
 </div>
 
@@ -911,7 +914,7 @@ answers.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/stats_dialog.py#L229" aria-label="Source for Tile">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/stats_dialog.py#L229" aria-label="Source for Tile">[Source]</a></p>
 
 </div>
 
@@ -961,7 +964,7 @@ answers.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show_value</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/stats_dialog.py#L285" aria-label="Source for Tile.show_value">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/stats_dialog.py#L285" aria-label="Source for Tile.show_value">[Source]</a></p>
 
 </div>
 
@@ -992,7 +995,7 @@ answers.</p>
 <span class="p">)</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/stats_dialog.py#L304" aria-label="Source for StatsPage">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/stats_dialog.py#L304" aria-label="Source for StatsPage">[Source]</a></p>
 
 </div>
 
@@ -1059,7 +1062,7 @@ answers.</p>
   <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">refresh</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
 </code></pre></div>  </div>
 
-  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/6cddd834418874dac1d58b4cc19f628c68a5d9c1/alto/ui/stats_dialog.py#L620" aria-label="Source for StatsPage.refresh">[Source]</a></p>
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/912fcde3446c0e99ef472ff34f7a8bba19077c8f/alto/ui/stats_dialog.py#L620" aria-label="Source for StatsPage.refresh">[Source]</a></p>
 
 </div>
 
@@ -1395,10 +1398,10 @@ show it.</p>
     if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
     show();
   </script>
-  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643266" defer></script>
-  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643266" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/nav.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/search.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/copy-code.js?v=1795643712" defer></script>
+  <script src="/alto/pr-114/dev/assets/js/toc.js?v=1795643712" defer></script>
   
 </body>
 </html>
