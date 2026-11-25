@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Getting started · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux, Windows, and Apple Silicon Macs. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-116/latest/getting-started/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="Getting started · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux, Windows, and Apple Silicon Macs. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-116/latest/getting-started/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-116/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-116/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-116/dev/assets/css/site.css?v=1795648875">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-116/dev/">
+      <img src="/alto/pr-116/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      <form class="docs-search" role="search" action="/alto/pr-116/dev/search/" method="get"
+            data-index="/alto/pr-116/dev/search-index.json" hidden>
+        <div class="search-field">
+          <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5"/></svg>
+          <input id="docs-search-input" name="q" type="search" enterkeyhint="search" placeholder="Search docs" aria-label="Search documentation"
+                 autocomplete="off" aria-controls="docs-search-results">
+        </div>
+        <div id="docs-search-results" class="search-results" hidden>
+          <div role="status" class="search-status"></div>
+          <ul></ul>
+        </div>
+      </form>
+      
+      <a class="dd-btn pr-link" href="/alto/pr-116/dev/" aria-label="Documentation preview for PR #116">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #116
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu" aria-label="Documentation">
+        <details class="mobile-contents">
+          <summary aria-controls="docs-navigation">Contents</summary>
+        </details>
+        <div class="nav" id="docs-navigation">
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-116/dev/using-alto/">Using Alto</a>
+  
+  <button type="button" class="nav-toggle" data-category="Using Alto" aria-controls="nav-using-alto"
+          aria-expanded="true" aria-label="Collapse Using Alto" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-using-alto">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/getting-started/" aria-current="page">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-116/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-116/dev/development/">For developers</a>
+  
+  <button type="button" class="nav-toggle" data-category="For developers" aria-controls="nav-for-developers"
+          aria-expanded="true" aria-label="Collapse For developers" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-for-developers">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-116/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/developer-guide/environment-setup/">Development environment</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/developer-guide/exercise-view/">Exercise view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-116/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-116/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.exercises.rhythm_equations/">rhythm_equations</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.duration/">duration</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.meter_staff/">meter_staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.metronome_spectrum/">metronome_spectrum</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.settings_menu/">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-116/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-116/dev/about/">About</a>
+  
+  <button type="button" class="nav-toggle" data-category="About" aria-controls="nav-about"
+          aria-expanded="true" aria-label="Collapse About" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-about">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-116/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>Getting started</h1>
+          
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="os-windows" viewBox="0 0 24 24"><path d="M1.5 3.9 10.2 2.7v8.4H1.5zM11.3 2.55 22.5 1v10.1H11.3zM1.5 12.2h8.7v8.4L1.5 19.4zM11.3 12.2h11.2V23l-11.2-1.55z" /></symbol>
+  <symbol id="os-apple" viewBox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" /></symbol>
+  <symbol id="os-linux" viewBox="0 0 24 24"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z" /></symbol>
+  
+</svg>
+
+<fieldset class="os-picker" id="os-picker">
+  <legend>Operating system</legend>
+  <label><input type="radio" name="guide-os" value="linux" checked="" /><span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#os-linux" /></svg>Linux</span></label>
+  <label><input type="radio" name="guide-os" value="windows" /><span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#os-windows" /></svg>Windows</span></label>
+  <label><input type="radio" name="guide-os" value="macos" /><span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#os-apple" /></svg>Mac</span></label>
+</fieldset>
+
+<p><span id="what-you-need"></span><span id="download-and-install"></span></p>
+
+<h2 id="install-and-run">Install and run</h2>
+
+<div data-platforms="linux">
+
+  <h3 class="no-toc" id="linux-download">Linux download</h3>
+
+  <ol>
+    <li><a href="https://github.com/altosaurus/alto/releases/download/v0.0.2/alto-0.0.2-linux-x86_64.tar.gz">Download Alto for Linux</a> for an x86-64 desktop. The archive includes Python and Qt.</li>
+    <li>Extract the archive, open a terminal in the extracted folder, and run <code class="language-plaintext highlighter-rouge">sh install.sh install</code>.</li>
+    <li>Open <strong>Alto</strong> from your application menu.</li>
+  </ol>
+
+  <p>The installer puts Alto in <code class="language-plaintext highlighter-rouge">~/.local/opt/alto</code> and creates the command <code class="language-plaintext highlighter-rouge">~/.local/bin/alto</code> for your account.
+For other processor architectures, see <a href="#running-from-a-source-checkout">Running from a source checkout</a>.</p>
+
+</div>
+
+<div data-platforms="windows">
+
+  <h3 class="no-toc" id="windows-installer">Windows installer</h3>
+
+  <blockquote role="note" aria-label="Windows installer notice">
+    <p><strong>Windows installer signature.</strong> Alto 0.0.2 and earlier shipped unsigned. For releases that list a signed installer,
+right-click the downloaded file and open <strong>Properties → Digital Signatures → Details</strong> to check its publisher.
+<a href="#windows-installer-troubleshooting">Help with Windows installation warnings</a></p>
+  </blockquote>
+
+  <ol>
+    <li><a href="https://github.com/altosaurus/alto/releases/download/v0.0.2/alto-0.0.2-windows-x64-setup.exe">Download the 64-bit Windows installer</a> for Windows 10 or 11.</li>
+    <li>Open the downloaded <code class="language-plaintext highlighter-rouge">.exe</code> and follow the setup prompts.</li>
+    <li>Open <strong>Alto</strong> from the Start menu.</li>
+  </ol>
+
+  <p>The installer includes Python and Qt and installs Alto for your account.</p>
+
+</div>
+
+<div data-platforms="macos">
+
+  <h3 class="no-toc" id="mac-source-installation">Mac source installation</h3>
+
+  <p>You can also run Alto from source, including on Intel Macs.
+With Git and Python 3.11 or newer installed, open <strong>Terminal</strong> and run:</p>
+
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/altosaurus/alto.git
+<span class="nb">cd </span>alto
+python3 <span class="nt">-m</span> venv .venv
+.venv/bin/python <span class="nt">-m</span> pip <span class="nb">install</span> <span class="nt">-e</span> <span class="nb">.</span>
+.venv/bin/python <span class="nt">-m</span> alto
+</code></pre></div>  </div>
+
+  <p>To open Alto again, run <code class="language-plaintext highlighter-rouge">.venv/bin/python -m alto</code> from the same <code class="language-plaintext highlighter-rouge">alto</code> folder.</p>
+
+</div>
+
+<div data-platforms="linux windows">
+
+  <h3 class="no-toc" id="check-your-download">Check your download</h3>
+
+  <p>Download <code class="language-plaintext highlighter-rouge">SHA256SUMS</code> from the same <a href="https://github.com/altosaurus/alto/releases">release</a> as your download. It lists the SHA-256 checksum of each file.</p>
+
+  <div data-platforms="linux">
+    <p>In the folder containing the archive and <code class="language-plaintext highlighter-rouge">SHA256SUMS</code>, run:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sha256sum</span> <span class="nt">--check</span> <span class="nt">--ignore-missing</span> SHA256SUMS
+</code></pre></div>    </div>
+
+    <p>Look for <code class="language-plaintext highlighter-rouge">OK</code> after the archive name.</p>
+  </div>
+
+  <div data-platforms="windows">
+    <p>Open PowerShell in the folder containing the installer. Use the exact name of the file you downloaded:</p>
+
+    <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-FileHash</span><span class="w"> </span><span class="s2">".\alto-0.0.2-windows-x64-setup.exe"</span><span class="w"> </span><span class="nt">-Algorithm</span><span class="w"> </span><span class="nx">SHA256</span><span class="w">
+</span></code></pre></div>    </div>
+
+    <p>Open <code class="language-plaintext highlighter-rouge">SHA256SUMS</code> in Notepad and find the line naming that same <code class="language-plaintext highlighter-rouge">.exe</code>. Every character in its checksum should match
+the <strong>Hash</strong> printed by PowerShell (uppercase and lowercase are equivalent). If they differ, discard the installer
+and download it again from the official Alto release.</p>
+  </div>
+
+</div>
+
+<div data-platforms="windows">
+
+  <h3 class="no-toc" id="windows-installer-troubleshooting">Windows installer troubleshooting</h3>
+
+  <h4 id="edge-says-the-download-is-uncommon">Edge says the download is uncommon</h4>
+
+  <p>An uncommon-download warning means Microsoft Edge has little download history for that file. Check that you started
+from the <strong>altosaurus/alto</strong> GitHub release. If you choose to keep the file, <a href="#check-your-download">check its checksum</a>
+before opening it. If the browser or antivirus identifies a specific threat, stop and leave the file blocked.
+<a href="https://learn.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-smartscreen/microsoft-defender-smartscreen-overview">Microsoft’s SmartScreen guidance</a></p>
+
+  <h4 id="windows-protected-your-pc-or-unknown-publisher">“Windows protected your PC” or “Unknown publisher”</h4>
+
+  <p>If SmartScreen calls Alto an unrecognized app, select <strong>More info</strong> to see the filename and publisher. For releases that list a signed
+installer, check that Windows reports a valid signature under <strong>Properties → Digital Signatures → Details</strong> and that the
+checksum matches the release. If Windows reports <strong>Unknown publisher</strong> for a signed release, cancel setup and check the
+download. For the unsigned 0.0.2 and earlier installers, verify the checksum before deciding whether to run setup.
+<a href="https://learn.microsoft.com/windows/apps/package-and-deploy/smartscreen-reputation">How SmartScreen checks app reputation</a></p>
+
+  <h4 id="windows-blocks-the-installer-with-no-run-anyway-option">Windows blocks the installer with no “Run anyway” option</h4>
+
+  <p>On a work or school PC, your organization may control which apps can run. Give your IT team the Alto release link
+and the exact message so they can review it. If Windows 11 names <strong>Smart App Control</strong>, it has no per-app exception.
+Keep the protection enabled while you check the installer’s signature and the release download. <a href="https://support.microsoft.com/en-gb/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions">Microsoft’s Smart App Control FAQ</a></p>
+
+  <h4 id="setup-stops-at-microsoft-visual-c-runtime">Setup stops at “Microsoft Visual C++ Runtime”</h4>
+
+  <p>Alto needs Microsoft’s <strong>x64 Visual C++ Redistributable</strong>. If setup asks for administrator permission for that component,
+check that the prompt identifies <strong>Microsoft Corporation</strong> as the publisher. If its download fails or you’re installing
+offline, get the x64 package from Microsoft, install it, restart if prompted, then run Alto’s installer again.
+<a href="https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist">Microsoft’s runtime download</a></p>
+
+  <p>If you’re still stuck, include the Alto installer filename, your Windows version, and the exact message when you
+<a href="https://github.com/altosaurus/alto/issues">report an installation issue</a>.</p>
+
+</div>
+
+<div data-platforms="linux">
+
+  <h3 class="no-toc" id="install-as-a-program-linux">Install as a program (Linux)</h3>
+
+  <p>To install from GitHub with <a href="https://docs.astral.sh/uv/">uv</a>, run <code class="language-plaintext highlighter-rouge">sh scripts/alto-install.sh install</code> from the repository.
+Open Alto from the application menu. Use <code class="language-plaintext highlighter-rouge">sh scripts/alto-install.sh update</code> to update the program and refresh its menu entry
+and icon. The in-app updater can update this installation too. Choose <strong>Follow the main branch</strong> in <strong>Settings → Updates</strong>
+to get changes before release. Packaged installations follow releases.</p>
+</div>
+
+<div data-platforms="linux windows">
+
+  <h3 class="no-toc" id="running-from-a-source-checkout">Running from a source checkout</h3>
+
+  <p>For development, install Git and Python 3.11 or newer. Alto installs PySide6 and the other dependencies into the virtual
+environment. Run the following commands, then use <code class="language-plaintext highlighter-rouge">git pull</code> from the checkout to get source updates.</p>
+
+  <div data-platforms="linux">
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/altosaurus/alto.git
+<span class="nb">cd </span>alto
+python3 <span class="nt">-m</span> venv .venv
+.venv/bin/python <span class="nt">-m</span> pip <span class="nb">install</span> <span class="nt">-e</span> <span class="nb">.</span>
+.venv/bin/python <span class="nt">-m</span> alto
+</code></pre></div>    </div>
+
+  </div>
+
+  <div data-platforms="windows">
+    <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">git</span><span class="w"> </span><span class="nx">clone</span><span class="w"> </span><span class="nx">https://github.com/altosaurus/alto.git</span><span class="w">
+</span><span class="n">cd</span><span class="w"> </span><span class="nx">alto</span><span class="w">
+</span><span class="n">py</span><span class="w"> </span><span class="nt">-3</span><span class="w"> </span><span class="nt">-m</span><span class="w"> </span><span class="nx">venv</span><span class="w"> </span><span class="o">.</span><span class="nf">venv</span><span class="w">
+</span><span class="o">.</span><span class="nx">\.venv\Scripts\python.exe</span><span class="w"> </span><span class="nt">-m</span><span class="w"> </span><span class="nx">pip</span><span class="w"> </span><span class="nx">install</span><span class="w"> </span><span class="nt">-e</span><span class="w"> </span><span class="o">.</span><span class="w">
+</span><span class="o">.</span><span class="n">\.venv\Scripts\python.exe</span><span class="w"> </span><span class="nt">-m</span><span class="w"> </span><span class="nx">alto</span><span class="w">
+</span></code></pre></div>    </div>
+  </div>
+
+</div>
+
+<h2 id="updating-alto">Updating Alto</h2>
+
+<p>Open <strong>☰ → Tools</strong> and choose <strong>Check for updates…</strong> to check manually. Alto also checks for releases when the main grid is active,
+up to once every 24 hours. <strong>Settings → Updates</strong> shows your version and lets you turn automatic checks off.</p>
+
+<div data-platforms="linux windows">
+  <p>For a packaged installation, choose <strong>Yes</strong> to download an offered release, <strong>No</strong> for a reminder after 24 hours, or
+<strong>Don’t remind me again</strong> to skip it. Alto verifies the signature on <code class="language-plaintext highlighter-rouge">SHA256SUMS</code> with its built-in public key and
+checks the package against the signed list before installation. Press <strong>OK</strong> when prompted to restart.</p>
+</div>
+
+<div data-platforms="linux">
+  <p>You can also unpack a newer archive and run <code class="language-plaintext highlighter-rouge">sh install.sh install</code> again. A failed installation keeps your previous
+copy. If you run Alto straight from the unpacked folder, download the new archive yourself.</p>
+</div>
+
+<div data-platforms="windows">
+  <p>You can also run a newer Windows installer to update your copy.</p>
+</div>
+
+<div data-platforms="macos">
+
+  <p>For a source installation, quit Alto and run these commands in Terminal from your <code class="language-plaintext highlighter-rouge">alto</code> folder:</p>
+
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git pull
+.venv/bin/python <span class="nt">-m</span> pip <span class="nb">install</span> <span class="nt">-e</span> <span class="nb">.</span>
+.venv/bin/python <span class="nt">-m</span> alto
+</code></pre></div>  </div>
+</div>
+
+<h2 id="uninstalling-alto">Uninstalling Alto</h2>
+
+<div data-platforms="linux">
+  <p>For the Linux download, run <code class="language-plaintext highlighter-rouge">sh install.sh uninstall</code> from the extracted folder. For the uv installation, run
+<code class="language-plaintext highlighter-rouge">sh scripts/alto-install.sh uninstall</code> from the repository. Both commands remove the program and its menu entry
+and keep your practice history and settings. Add <code class="language-plaintext highlighter-rouge">--purge</code> to delete them too.</p>
+</div>
+
+<div data-platforms="windows">
+  <p>Open <strong>Settings → Apps</strong>, select <strong>Alto</strong>, and choose <strong>Uninstall</strong>. The uninstaller asks whether to also remove your
+practice history and settings.</p>
+</div>
+
+<div data-platforms="macos">
+  <p>Quit Alto. For a source installation, move the cloned <code class="language-plaintext highlighter-rouge">alto</code> folder, including its <code class="language-plaintext highlighter-rouge">.venv</code>, to the Trash.
+Your practice history is stored separately in <code class="language-plaintext highlighter-rouge">~/Library/Application Support/Alto/alto.db</code>.</p>
+</div>
+
+<p>To keep a copy of your practice history and settings, choose <strong>Export backup…</strong> in Alto before uninstalling. <a href="/alto/pr-116/dev/data/">Your data</a></p>
+
+<h2 id="first-launch">First launch</h2>
+
+<p>The first time you open Alto it asks you to create a profile.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-116/dev/assets/img/home.png" alt="The home screen after creating a profile" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-116/dev/assets/img/home-dark.png" alt="The home screen after creating a profile" loading="lazy" />
+  
+</figure>
+
+<p>Type a name and press <strong>Create profile</strong>. There is no password, and the name is only a label that keeps your history
+separate from anyone else who uses the same computer. Next time Alto opens straight into the profile you used last.</p>
+
+<p>To switch to someone else, or add another profile, open the menu (☰) and choose <strong>Profile</strong>.</p>
+
+<p>Alto includes the default Finale Maestro notation font. To use the optional Noto Music style, install the Noto Music
+font on your system and choose it in <a href="/alto/pr-116/dev/settings/">Settings</a>.</p>
+
+<h2 id="your-first-session">Your first session</h2>
+
+<ol>
+  <li>Click an exercise on the home screen.</li>
+  <li>Follow the prompt. Click an answer button or use the shortcut in its tooltip. For a construction question, place the requested note or sign.</li>
+  <li>A correct answer turns green. With the default scheduler, try a missed question again. With SM-2 or FSRS, a miss moves the card to the learning queue for a later retry.</li>
+  <li>The counter at the top shows how many you have right and your current streak.</li>
+</ol>
+
+<p>The <strong>Exercises / Lessons</strong> control at the top left selects what to browse. Alto starts with tiles. <strong>Navigation Pane</strong>
+opens the matching list on the left; before you start an activity, the main panel says “Select an exercise to begin.” or
+“Select a lesson to begin.” Use the separate <strong>Tiles</strong> grid button to return to tiles without losing your place.</p>
+
+<p>The icon-only <strong>Exercises / Lessons</strong> pair sits at the top left, followed by an open/close navigation-pane button, a divider,
+and a separate grid button for returning to tiles. Hover over an icon to see its name. The search field below filters the
+selected section by name, description or category, and follows the sidebar’s width. On the tile grid or during an exercise, click the funnel icon
+at the right end of the search row to open the filter sidebar. Click it again to collapse the sidebar and keep your filters.
+The sidebar opens on the right with every category expanded. Check or clear a category to include or
+hide its activities, or check individual exercises or lessons. The tiles and navigation list show the same matches.
+A dash means some activities in a category are checked. <strong>All categories</strong> selects or clears the whole list.</p>
+
+<p>Turn on <strong>Shuffle exercises</strong>, just left of the funnel, to practice the exercises in your filtered list. After each
+right or wrong answer, Alto prefers an exercise from another category. If the other available exercises are in the
+current category, it picks one of those. For example, selecting only <strong>Note Identification</strong> and <strong>Keyboard Note
+Identification</strong> makes them alternate when both have questions available. Your <strong>Next Question</strong> setting controls when
+the switch happens. With <strong>Wait</strong>, click <strong>Next</strong> after reviewing your answer. You can change the filters while answering
+a question. Shuffle uses the updated list for the next question and returns to the tiles if the list is empty.
+Click the highlighted shuffle icon again to turn it off.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-116/dev/assets/img/filtered-practice.png" alt="Exercise grid with two checked note exercises in the right sidebar and the blue shuffle icon above it" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-116/dev/assets/img/filtered-practice-dark.png" alt="Exercise grid with two checked note exercises in the right sidebar and the blue shuffle icon above it" loading="lazy" />
+  <figcaption>Only the checked exercises appear in the grid. The New, Learn, and Due totals at the left count cards from these two exercises.</figcaption>
+</figure>
+
+<p>During an exercise or lesson, <strong>Exercises / Lessons</strong> switches the list while keeping your activity on screen. Selecting
+an item starts or resumes it. The top-left pane button hides and shows the list without leaving your activity.
+<strong>Statistics</strong> and <strong>Browse database</strong> are at the top right. The sliders button opens the exercise’s own settings, and <strong>?</strong>
+explains it.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-116/dev/assets/img/filtered-exercise.png" alt="Note Identification with two exercises in the navigation pane, Shuffle enabled, and the Easy, Good, and Hard intervals beside the staff" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-116/dev/assets/img/filtered-exercise-dark.png" alt="Note Identification with two exercises in the navigation pane, Shuffle enabled, and the Easy, Good, and Hard intervals beside the staff" loading="lazy" />
+  <figcaption>The navigation pane lists the same two exercises as the filtered grid. The blue shuffle button stays available while you practice.</figcaption>
+</figure>
+
+<h2 id="glossary">Glossary</h2>
+
+<p>Open <strong>Glossary</strong> in the top toolbar to look up a term. Search for <em>minor</em>, for example, and select <strong>harmonic minor scale</strong>. You can hear the scale, try another example, or open a related exercise from the same page.</p>
+
+<figure class="shot">
+  <img class="for-light" src="/alto/pr-116/dev/assets/img/glossary.png" alt="Glossary search results for minor with harmonic minor scale selected and its notes labeled on a staff" loading="lazy" />
+  <img class="for-dark" src="/alto/pr-116/dev/assets/img/glossary-dark.png" alt="Glossary search results for minor with harmonic minor scale selected and its notes labeled on a staff" loading="lazy" />
+  <figcaption>In A harmonic minor, listen for the three half steps from F to G♯ and the half step from G♯ to A.</figcaption>
+</figure>
+
+<h2 id="running-the-tests">Running the tests</h2>
+
+<p>From a source checkout, install the development dependencies and run the test suite.</p>
+
+<div data-platforms="linux macos">
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.venv/bin/python <span class="nt">-m</span> pip <span class="nb">install</span> <span class="nt">-e</span> <span class="s2">".[dev]"</span>
+.venv/bin/python <span class="nt">-m</span> pytest
+</code></pre></div>  </div>
+</div>
+
+<div data-platforms="windows">
+  <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">.</span><span class="n">\.venv\Scripts\python.exe</span><span class="w"> </span><span class="nt">-m</span><span class="w"> </span><span class="nx">pip</span><span class="w"> </span><span class="nx">install</span><span class="w"> </span><span class="nt">-e</span><span class="w"> </span><span class="s2">".[dev]"</span><span class="w">
+</span><span class="o">.</span><span class="n">\.venv\Scripts\python.exe</span><span class="w"> </span><span class="nt">-m</span><span class="w"> </span><span class="nx">pytest</span><span class="w">
+</span></code></pre></div>  </div>
+</div>
+
+<script src="/alto/pr-116/dev/assets/js/downloads.js?v=1795648875" defer=""></script>
+
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-116/dev/using-alto/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>Using Alto</span></a>
+            <a class="next" href="/alto/pr-116/dev/exercises/" rel="next"><span class="np-label">Next</span><span class="np-title">Exercises<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-116/dev/assets/js/nav.js?v=1795648875" defer></script>
+  <script src="/alto/pr-116/dev/assets/js/search.js?v=1795648875" defer></script>
+  <script src="/alto/pr-116/dev/assets/js/copy-code.js?v=1795648875" defer></script>
+  <script src="/alto/pr-116/dev/assets/js/toc.js?v=1795648875" defer></script>
+  
+</body>
+</html>
