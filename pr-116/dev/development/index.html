@@ -22,7 +22,7 @@
     try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
   </script>
   <link rel="icon" href="/alto/pr-116/dev/assets/img/icon.png">
-  <link rel="stylesheet" href="/alto/pr-116/dev/assets/css/site.css?v=1795649689">
+  <link rel="stylesheet" href="/alto/pr-116/dev/assets/css/site.css?v=1795651957">
   
 </head>
 <body>
@@ -1617,7 +1617,15 @@ and open <code class="language-plaintext highlighter-rouge">http://127.0.0.1:800
 .venv/bin/python scripts/screenshots.py <span class="nt">--out</span> /tmp/shots   <span class="c"># somewhere else, to look before replacing</span>
 </code></pre></div></div>
 
-<p>It runs against a made-up profile and a temporary settings folder, so it never touches your own history or settings. It
+<p>For a release, start with <code class="language-plaintext highlighter-rouge">.venv/bin/python scripts/screenshots.py --review /tmp/alto-shot-review</code> using an empty directory.
+The script compares decoded pixels with the checked-in PNGs. It writes new or resized captures and those where at least
+0.5% of pixels differ by more than 16 levels in any 8-bit color channel. Each line reports the changed percentage.
+Review the candidates beside the existing screenshots and copy only those that show a change readers need to see.
+A different sample question, chart value, or row of practice data can cross the threshold without changing the instructions.
+For a small important detail, such as the version in Settings, use <code class="language-plaintext highlighter-rouge">--only settings-updates --force</code> to capture it regardless
+of the percentage. An empty <code class="language-plaintext highlighter-rouge">--out</code> folder gives you every capture for inspection.</p>
+
+<p>The sample profile uses fixed random seeds, a fixed date, and UTC. Each theme gets its own temporary settings folder. The script
 needs a display or <code class="language-plaintext highlighter-rouge">QT_QPA_PLATFORM=offscreen</code>. Fonts render slightly differently on each machine, so regenerate on the
 machine you normally use and look at the pictures before committing them. To add a picture, include it in a docs page
 with <code class="language-plaintext highlighter-rouge">shot.html</code>, and add its name to <code class="language-plaintext highlighter-rouge">SHOTS</code> in the script. <code class="language-plaintext highlighter-rouge">tests/test_docs.py</code> checks that both match and that both themes
@@ -1664,8 +1672,8 @@ test fails when it is not, so a changelog line always arrives with its page.</li
   <li>Check that every user-facing feature in the release has a guide entry explaining where to find it and how to use it.
 Compare the changes since the previous release tag with the changelog to catch any omissions. For each new or changed
 feature, follow the documented steps in the release candidate and add or correct instructions in the release PR.</li>
-  <li>With the release candidate installed in <code class="language-plaintext highlighter-rouge">.venv</code>, run <code class="language-plaintext highlighter-rouge">.venv/bin/python scripts/screenshots.py</code> to refresh every
-screenshot in <code class="language-plaintext highlighter-rouge">docs/assets/img/</code> in both themes. Review the light and dark images against their captions and alt text.
+  <li>With the release candidate installed in <code class="language-plaintext highlighter-rouge">.venv</code>, run the <a href="#keeping-the-docs-and-screenshots-current">screenshot comparison</a> for both themes.
+Review the changed images against their captions and alt text, including small release-specific details such as the displayed version.
 Exclude the <a href="/alto/pr-116/dev/developer-guide/ui-style-guide/">UI style guide</a> and its versioned screenshots in
 <code class="language-plaintext highlighter-rouge">docs/assets/ui-reference/</code> from this check. Update that baseline only for an explicitly requested visual change.
 For screenshots using <code class="language-plaintext highlighter-rouge">component-shot.html</code>, check that the image dimensions match the captures and each clickable region covers its component.
@@ -1928,10 +1936,10 @@ original directory so older answers can still be opened.</p>
     if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
     show();
   </script>
-  <script src="/alto/pr-116/dev/assets/js/nav.js?v=1795649689" defer></script>
-  <script src="/alto/pr-116/dev/assets/js/search.js?v=1795649689" defer></script>
-  <script src="/alto/pr-116/dev/assets/js/copy-code.js?v=1795649689" defer></script>
-  <script src="/alto/pr-116/dev/assets/js/toc.js?v=1795649689" defer></script>
+  <script src="/alto/pr-116/dev/assets/js/nav.js?v=1795651957" defer></script>
+  <script src="/alto/pr-116/dev/assets/js/search.js?v=1795651957" defer></script>
+  <script src="/alto/pr-116/dev/assets/js/copy-code.js?v=1795651957" defer></script>
+  <script src="/alto/pr-116/dev/assets/js/toc.js?v=1795651957" defer></script>
   
 </body>
 </html>
