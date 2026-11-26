@@ -1,0 +1,2600 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>alto.ui.settings_menu · Alto</title>
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux, Windows, and Apple Silicon Macs. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  
+  <link rel="canonical" href="https://genedan.github.io/alto/pr-118/api/alto.ui.settings_menu/">
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Alto">
+  <meta property="og:title" content="alto.ui.settings_menu · Alto">
+  <meta property="og:description" content="Alto is a free desktop music theory trainer for Linux, Windows, and Apple Silicon Macs. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  <meta property="og:url" content="https://genedan.github.io/alto/pr-118/api/alto.ui.settings_menu/">
+  <meta property="og:image" content="https://genedan.github.io/alto/pr-118/dev/assets/img/note-identification.png">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script>
+    // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+    try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+  </script>
+  <link rel="icon" href="/alto/pr-118/dev/assets/img/icon.png">
+  <link rel="stylesheet" href="/alto/pr-118/dev/assets/css/site.css?v=1795704297">
+  
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="/alto/pr-118/dev/">
+      <img src="/alto/pr-118/dev/assets/img/icon.png" alt="" width="30" height="30">
+      <span>Alto</span>
+    </a>
+    <div class="top-actions">
+      <form class="docs-search" role="search" action="/alto/pr-118/dev/search/" method="get"
+            data-index="/alto/pr-118/dev/search-index.json" hidden>
+        <div class="search-field">
+          <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5"/></svg>
+          <input id="docs-search-input" name="q" type="search" enterkeyhint="search" placeholder="Search docs" aria-label="Search documentation"
+                 autocomplete="off" aria-controls="docs-search-results">
+        </div>
+        <div id="docs-search-results" class="search-results" hidden>
+          <div role="status" class="search-status"></div>
+          <ul></ul>
+        </div>
+      </form>
+      
+      <a class="dd-btn pr-link" href="/alto/pr-118/dev/" aria-label="Documentation preview for PR #118">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #118
+      </a>
+      
+      <div class="dd" id="theme-dd">
+        <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+        <div class="dd-menu" id="theme-menu" role="menu" hidden>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+      <a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+        <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu" aria-label="Documentation">
+        <details class="mobile-contents">
+          <summary aria-controls="docs-navigation">Contents</summary>
+        </details>
+        <div class="nav" id="docs-navigation">
+          
+          
+          
+          
+          <ul class="nav-list">
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/">Home</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-118/dev/using-alto/">Using Alto</a>
+  
+  <button type="button" class="nav-toggle" data-category="Using Alto" aria-controls="nav-using-alto"
+          aria-expanded="true" aria-label="Collapse Using Alto" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-using-alto">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/getting-started/">Getting started</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/exercises/">Exercises</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/practice/">Spaced Repetition</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/statistics/">Statistics and database</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/lessons/">Lessons</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/settings/">Settings</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/shortcuts/">Shortcuts</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/data/">Your data</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-118/dev/plugins/">Plugins</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/plugins/api/">Plugin API</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/plugins/viola/">Viola plugin tutorial</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/plugins/harpsichord/">Harpsichord plugin tutorial</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-118/dev/development/">For developers</a>
+  
+  <button type="button" class="nav-toggle" data-category="For developers" aria-controls="nav-for-developers"
+          aria-expanded="true" aria-label="Collapse For developers" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-for-developers">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-118/dev/developer-guide/">Developer guide</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/developer-guide/environment-setup/">Development environment</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/developer-guide/application-launch/">Application launch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/developer-guide/exercise-view/">Exercise view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/developer-guide/exercises/">Exercises</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/developer-guide/database/">Database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/developer-guide/ui-style-guide/">UI style guide</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section">
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-118/dev/guide/">Resources</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/orientation/">Getting oriented</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/python/">Python beyond the basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/qt/">Qt and PySide6</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/styling/">Styling beyond QtWidgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/notation/">Rendering music notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/audio/">Computer audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/animation/">Animation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/exercises/">Building an exercise</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/data/">Data and persistence</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/quality/">Testing, quality and release</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/pitfalls/">Pitfalls and debugging</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/guide/reading/">Glossary and further reading</a></li>
+                
+                
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><details class="nav-section" open>
+              <summary class="nav-row"><a class="row grow" href="/alto/pr-118/dev/api/">API reference</a><svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+              
+              
+              
+              
+              <ul class="kids">
+                
+                
+                
+                <li><details class="nav-pkg">
+                  <summary>alto<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.anki_export/">anki_export</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.audio/">audio</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.circle_schemes/">circle_schemes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.instrument_info/">instrument_info</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.instrument_packs/">instrument_packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.location/">location</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.notation_excerpts/">notation_excerpts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.notation_terms/">notation_terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.plugin_registry/">plugin_registry</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.selfupdate/">selfupdate</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.settings/">settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.terms/">terms</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.updates/">updates</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.exercises<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.exercises.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.exercises.library/">library</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.exercises.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.exercises.rhythm_equations/">rhythm_equations</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.learning<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.backup/">backup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.calendar/">calendar</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.database/">database</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.grading/">grading</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.learner/">learner</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.scheduler/">scheduler</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.learning.stats/">stats</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.lessons<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.base/">base</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.circle_of_fifths/">circle_of_fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.clef_basics/">clef_basics</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.duration/">duration</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.intervals/">intervals</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.packs/">packs</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.lessons.scale_identification/">scale_identification</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg">
+                  <summary>alto.theory<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.theory.fifths/">fifths</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.theory.key_signatures/">key_signatures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.theory.pitch/">pitch</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.theory.scales/">scales</a></li>
+                
+                
+                </ul></details></li>
+                <li><details class="nav-pkg" open>
+                  <summary>alto.ui<svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg></summary>
+                  <ul>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.anki_exporter/">anki_exporter</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.answer_bank/">answer_bank</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.app_settings/">app_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.background/">background</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.backup_flow/">backup_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.charts/">charts</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.circle/">circle</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.circle_colors/">circle_colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.colors/">colors</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.database_page/">database_page</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.degree_text/">degree_text</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.dropdown/">dropdown</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.engraving/">engraving</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.exercise_settings/">exercise_settings</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.exercise_view/">exercise_view</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.fingerboard/">fingerboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.glossary/">glossary</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.home/">home</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.icons/">icons</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.instrument_picker/">instrument_picker</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.interval_range/">interval_range</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.key_fork/">key_fork</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.keyboard/">keyboard</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.keyboard_styles/">keyboard_styles</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.lesson/">lesson</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.lesson_nav/">lesson_nav</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.main_window/">main_window</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.meter_staff/">meter_staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.metronome_spectrum/">metronome_spectrum</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.midi_input/">midi_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.motion/">motion</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.notation/">notation</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.notes/">notes</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.pack_settings_panel/">pack_settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.package_update/">package_update</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.pictures/">pictures</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.plugins_dialog/">plugins_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.practice_limits/">practice_limits</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.profile_dialog/">profile_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.question_preview/">question_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.reference/">reference</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.response_times/">response_times</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.scale_explorer/">scale_explorer</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.score_excerpt/">score_excerpt</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.settings_menu/" aria-current="page">settings_menu</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.settings_panel/">settings_panel</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.staff/">staff</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.staff_input/">staff_input</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.staff_playback/">staff_playback</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.stats_dialog/">stats_dialog</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.store/">store</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.style/">style</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.theme/">theme</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.theme_cards/">theme_cards</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.theme_editor/">theme_editor</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.transition_preview/">transition_preview</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.transitions/">transitions</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.update_flow/">update_flow</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.warmup/">warmup</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.widgets/">widgets</a></li>
+                
+                
+                    <li><a class="row sub" href="/alto/pr-118/dev/api/alto.ui.zoom/">zoom</a></li>
+                
+                </ul></details></li>
+              </ul>
+            </details></li>
+            
+            
+            
+            
+            
+            
+            </ul></li>
+            
+            
+            
+            <li class="nav-group">
+              <div class="nav-head">
+  <a href="/alto/pr-118/dev/about/">About</a>
+  
+  <button type="button" class="nav-toggle" data-category="About" aria-controls="nav-about"
+          aria-expanded="true" aria-label="Collapse About" hidden>
+    <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+  </button>
+  
+</div>
+
+              <ul id="nav-about">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/roadmap/">Roadmap</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/release-notes/">Release notes</a></li>
+            
+            
+            
+            
+            
+            
+            
+            
+            <li><a class="row" href="/alto/pr-118/dev/credits/">License and credits</a></li>
+            
+            
+            
+            </ul></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+    <main id="content" class="content">
+      <div class="page-grid" id="page-grid">
+        <article>
+          <h1>alto.ui.settings_menu</h1>
+          
+<p>The building blocks of the settings panels that slide in beside an
+exercise.</p>
+
+<p>A panel is a menu of rows (Clefs, Range, Key signatures …) that each
+lead to a page, in a <code class="language-plaintext highlighter-rouge">SlideStack</code>. This module has the
+rows, switches, checklists and editors those pages are made of, and the
+panels’ shared base classes: <code class="language-plaintext highlighter-rouge">ExerciseSettingsPanel</code>
+(navigation and saving), <code class="language-plaintext highlighter-rouge">ClefsPanel</code> (a Clefs page) and
+<code class="language-plaintext highlighter-rouge">StaffRangePanel</code> (a Range page per clef). The panels themselves are
+in <code class="language-plaintext highlighter-rouge">alto.ui.settings_panel</code> and <code class="language-plaintext highlighter-rouge">alto.ui.pack_settings_panel</code>.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_key_label</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">'D  ·  2♯'
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span> <span class="o">=</span> <span class="n">MenuRow</span><span class="p">(</span><span class="s">"Clefs"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">title</span><span class="p">.</span><span class="n">text</span><span class="p">()</span>
+<span class="go">'&lt;b&gt;Clefs&lt;/b&gt;'
+</span></code></pre></div></div>
+
+<h2 id="guard_last">guard_last</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">guard_last</span><span class="p">(</span>
+    <span class="n">boxes</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QAbstractButton</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L110" aria-label="Source for guard_last">[Source]</a></p>
+
+</div>
+
+<p>Disable the only checked box, so that at least one choice always
+stays selected.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">boxes</code> (<em>iterable of QAbstractButton</em>): The checkboxes of one choice.</li>
+  <li><code class="language-plaintext highlighter-rouge">enabled</code> (<em>bool, default True</em>): False disables them all (for when the whole choice is switched off). Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(),</span> <span class="n">QCheckBox</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">first</span><span class="p">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">guard_last</span><span class="p">([</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">first</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">(),</span> <span class="n">second</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">()</span>
+<span class="go">(False, True)
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">second</span><span class="p">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">guard_last</span><span class="p">([</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">first</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="arrow_button">arrow_button</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">arrow_button</span><span class="p">(</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="n">Qt</span><span class="p">.</span><span class="n">ArrowType</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QToolButton</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L168" aria-label="Source for arrow_button">[Source]</a></p>
+
+</div>
+
+<p>Make a small arrow button that repeats while it is held.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kind</code> (<em>Qt.ArrowType</em>): Which way the arrow points.</li>
+  <li><code class="language-plaintext highlighter-rouge">tip</code> (<em>str</em>): The tooltip. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>QToolButton</em>: The button.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">button</span> <span class="o">=</span> <span class="n">arrow_button</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">Qt</span><span class="p">.</span><span class="n">ArrowType</span><span class="p">.</span><span class="n">UpArrow</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">tip</span><span class="o">=</span><span class="s">"Raise the lowest note"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">button</span><span class="p">.</span><span class="n">toolTip</span><span class="p">(),</span> <span class="n">button</span><span class="p">.</span><span class="n">autoRepeat</span><span class="p">()</span>
+<span class="go">('Raise the lowest note', True)
+</span></code></pre></div></div>
+
+<h2 id="rangeeditor">RangeEditor</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">RangeEditor</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">low</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">high</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">limits</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L211" aria-label="Source for RangeEditor">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QWidget</code></p>
+
+<p>A staff showing the lowest and highest note asked for a clef.</p>
+
+<p>Arrows on the left move the lower bound, arrows on the right move
+the upper bound.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">edited</code> (<em>Signal</em>): Emitted with the clef key, the lowest note and the highest note (as staff steps) after a change.</li>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>str</em>): The clef.</li>
+  <li><code class="language-plaintext highlighter-rouge">low</code> (<em>int</em>): The lowest note asked, as a staff step (<code class="language-plaintext highlighter-rouge">Note.diatonic</code>).</li>
+  <li><code class="language-plaintext highlighter-rouge">high</code> (<em>int</em>): The highest note asked.</li>
+  <li><code class="language-plaintext highlighter-rouge">limits</code> (<em>tuple of (int, int)</em>): The furthest the bounds may go.</li>
+  <li><code class="language-plaintext highlighter-rouge">staff</code> (<em>StaffWidget</em>): Shows the two notes.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">editor</span> <span class="o">=</span> <span class="n">RangeEditor</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"treble"</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">34</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">editor</span><span class="p">.</span><span class="n">caption_text</span><span class="p">.</span><span class="n">text</span><span class="p">()</span>
+<span class="go">'&lt;b&gt;C4 – B4&lt;/b&gt;'
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build the editor for a clef’s range.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">key</code> (<em>str</em>): The clef, a key of <code class="language-plaintext highlighter-rouge">RANGE_LIMITS</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">low</code> (<em>int</em>): The lowest note asked, as a staff step. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">high</code> (<em>int</em>): The highest note asked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">limits</code> (<em>tuple of (int, int) or None, default None</em>): The furthest the bounds may go, as staff steps; None for the clef’s usual limits. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns the editor. Keyword-only.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">RangeEditor</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"bass"</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">28</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">limits</span> <span class="o">==</span> <span class="n">settings</span><span class="p">.</span><span class="n">RANGE_LIMITS</span><span class="p">[</span><span class="s">"bass"</span><span class="p">]</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">RangeEditor</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"alto"</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">limits</span>
+<span class="go">(21, 30)
+</span></code></pre></div></div>
+
+<h2 id="keydiagram">KeyDiagram</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">KeyDiagram</span><span class="p">(</span>
+    <span class="n">keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L432" aria-label="Source for KeyDiagram">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QWidget</code></p>
+
+<p>A small fork showing which key signatures are selected.</p>
+
+<p>C major is on the left, then two rows of seven dots: 1 to 7 sharps
+on the top row and 1 to 7 flats on the bottom.
+Selected keys are filled, the rest are hollow.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">DOT, PITCH, ROW_GAP, PAD</code> (<em>float</em>): The dot radius and the spacing, in pixels.</li>
+  <li><code class="language-plaintext highlighter-rouge">keys</code> (<em>set of int</em>): The selected key signatures: sharps if positive, flats if negative.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">KeyDiagram</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">}).</span><span class="n">toolTip</span><span class="p">()</span>
+<span class="go">'C, D'
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Create the diagram.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">keys</code> (<em>set of int or None, default None</em>): The key signatures to show as selected.</li>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns it. Keyword-only.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">KeyDiagram</span><span class="p">().</span><span class="n">keys</span>
+<span class="go">set()
+</span></code></pre></div></div>
+
+<h3 id="keydiagramset_keys">KeyDiagram.set_keys</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">set_keys</span><span class="p">(</span><span class="n">keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L507" aria-label="Source for KeyDiagram.set_keys">[Source]</a></p>
+
+</div>
+
+<p>Choose which key signatures are shown as selected.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">keys</code> (<em>set of int</em>): Sharps if positive, flats if negative.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">diagram</span> <span class="o">=</span> <span class="n">KeyDiagram</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">diagram</span><span class="p">.</span><span class="n">set_keys</span><span class="p">({</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">diagram</span><span class="p">.</span><span class="n">toolTip</span><span class="p">()</span>
+<span class="go">'C, D, F'
+</span></code></pre></div></div>
+
+<h3 id="keydiagrampaintevent">KeyDiagram.paintEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="n">_</span><span class="p">:</span> <span class="n">QPaintEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L545" aria-label="Source for KeyDiagram.paintEvent">[Source]</a></p>
+
+</div>
+
+<p>Draw a dot for each key signature, filled when selected.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">_</code> (<em>QPaintEvent</em>): The paint request; the whole widget is always redrawn.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">KeyDiagram</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}).</span><span class="n">grab</span><span class="p">().</span><span class="n">isNull</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h2 id="label_with_picture">label_with_picture</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">label_with_picture</span><span class="p">(</span>
+    <span class="n">button</span><span class="p">:</span> <span class="n">QAbstractButton</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">picture</span><span class="p">:</span> <span class="n">_Picture</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L615" aria-label="Source for label_with_picture">[Source]</a></p>
+
+</div>
+
+<p>Label a checkbox or radio button with a picture instead of text.</p>
+
+<p>The name stays as the tooltip and the accessible name.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">button</code> (<em>QAbstractButton</em>): The button to label.</li>
+  <li><code class="language-plaintext highlighter-rouge">picture</code> (<em>_Picture</em>): The picture (a clef, a note value …). Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">name</code> (<em>str</em>): What it is called. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">box</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">label_with_picture</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">box</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">picture</span><span class="o">=</span><span class="n">ClefPictures</span><span class="p">([</span><span class="s">"treble"</span><span class="p">]),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">name</span><span class="o">=</span><span class="s">"Treble"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">box</span><span class="p">.</span><span class="n">toolTip</span><span class="p">(),</span> <span class="n">box</span><span class="p">.</span><span class="n">accessibleName</span><span class="p">()</span>
+<span class="go">('Treble', 'Treble')
+</span></code></pre></div></div>
+
+<h2 id="clef_choice_page">clef_choice_page</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">clef_choice_page</span><span class="p">(</span>
+    <span class="n">choices</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">selected</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">edited</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">object</span><span class="p">],</span>
+    <span class="n">back</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">object</span><span class="p">],</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'Clefs'</span><span class="p">,</span>
+    <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'One of the checked clefs is picked at random.'</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QCheckBox</span><span class="p">],</span> <span class="n">QWidget</span><span class="p">]</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L775" aria-label="Source for clef_choice_page">[Source]</a></p>
+
+</div>
+
+<p>Build the “Clefs” page that every exercise with a choice of clefs
+shares.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">choices</code> (<em>iterable of str</em>): The clefs to offer, from <code class="language-plaintext highlighter-rouge">settings.RANGE_KEYS</code>; “grand” is left out of exercises that cannot use the grand staff.</li>
+  <li><code class="language-plaintext highlighter-rouge">selected</code> (<em>set of str</em>): The clefs that start checked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">edited</code> (<em>callable</em>): Called whenever a box is checked or unchecked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">back</code> (<em>callable</em>): Called when the Back button is clicked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">title</code> (<em>str, default “Clefs”</em>): The page’s title. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">hint</code> (<em>str, default “One of the checked clefs is picked at random.”</em>): The gray line above the list. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>dict of str to QCheckBox</em>: The checkbox of each clef offered.</li>
+  <li><em>QWidget</em>: The page, with its title. The last checked clef cannot be unchecked.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">checked</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">boxes_</span><span class="p">,</span> <span class="n">page_</span> <span class="o">=</span> <span class="n">clef_choice_page</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">(</span><span class="s">"treble"</span><span class="p">,</span> <span class="s">"bass"</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="s">"bass"</span><span class="p">},</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">edited</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">checked</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">back</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">boxes_</span><span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"bass"</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">].</span><span class="n">isEnabled</span><span class="p">()</span>  <span class="c1"># it is the only one checked, so it stays checked
+</span><span class="go">False
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">boxes_</span><span class="p">[</span><span class="s">"treble"</span><span class="p">].</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="nb">sorted</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">c</span>
+<span class="gp">...</span><span class="w">         </span><span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">ticked_box</span> <span class="ow">in</span> <span class="n">boxes_</span><span class="p">.</span><span class="n">items</span><span class="p">()</span>
+<span class="gp">...</span><span class="w">         </span><span class="k">if</span> <span class="n">ticked_box</span><span class="p">.</span><span class="n">isChecked</span><span class="p">()</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">checked</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">(['bass', 'treble'], [1])
+</span></code></pre></div></div>
+
+<h2 id="show_keys">show_keys</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show_keys</span><span class="p">(</span>
+    <span class="n">row</span><span class="p">:</span> <span class="n">MenuRow</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">diagram</span><span class="p">:</span> <span class="n">KeyDiagram</span><span class="p">,</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L855" aria-label="Source for show_keys">[Source]</a></p>
+
+</div>
+
+<p>Show the selected keys as a diagram in a menu row, or “Off” when key
+signatures are switched off.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">row</code> (<em>MenuRow</em>): The menu row.</li>
+  <li><code class="language-plaintext highlighter-rouge">diagram</code> (<em>KeyDiagram</em>): The diagram to update. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">enabled</code> (<em>bool</em>): Whether key signatures are on. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">keys</code> (<em>set of int</em>): The selected key signatures. Keyword-only.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row_</span><span class="p">,</span> <span class="n">diagram_</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">MenuRow</span><span class="p">(</span><span class="s">"Key signatures"</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">KeyDiagram</span><span class="p">(),</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">show_keys</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">row_</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">diagram</span><span class="o">=</span><span class="n">diagram_</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">enabled</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">keys</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">},</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row_</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">text</span><span class="p">(),</span> <span class="n">diagram_</span><span class="p">.</span><span class="n">isHidden</span><span class="p">()</span>
+<span class="go">('Off', True)
+</span></code></pre></div></div>
+
+<h2 id="menurow">MenuRow</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MenuRow</span><span class="p">(</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">chevron</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="n">tall</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L948" aria-label="Source for MenuRow">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QPushButton</code></p>
+
+<p>A menu row: title on the left, current value and a chevron on the
+right.</p>
+
+<p>A <code class="language-plaintext highlighter-rouge">tall</code> row puts a picture on a second line of its own, using the
+full width, for summaries that need room to be
+readable.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">tall</code> (<em>bool</em>): Whether the row has a second line.</li>
+  <li><code class="language-plaintext highlighter-rouge">title</code> (<em>QLabel</em>): The title.</li>
+  <li><code class="language-plaintext highlighter-rouge">value</code> (<em>QLabel</em>): The current value, shown on the right.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span> <span class="o">=</span> <span class="n">MenuRow</span><span class="p">(</span><span class="s">"Range"</span><span class="p">,</span> <span class="n">tall</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">tall</span><span class="p">,</span> <span class="n">row</span><span class="p">.</span><span class="n">title</span><span class="p">.</span><span class="n">text</span><span class="p">()</span>
+<span class="go">(True, '&lt;b&gt;Range&lt;/b&gt;')
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build the row.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">title</code> (<em>str</em>): The row’s title.</li>
+  <li><code class="language-plaintext highlighter-rouge">chevron</code> (<em>bool, default True</em>): Show a chevron on the right, to say it opens a page. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">tall</code> (<em>bool, default False</em>): Give the row a second line for a picture. Keyword-only.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">MenuRow</span><span class="p">(</span><span class="s">"Clefs"</span><span class="p">).</span><span class="n">minimumHeight</span><span class="p">()</span>
+<span class="go">48
+</span></code></pre></div></div>
+
+<h3 id="menurowattach">MenuRow.attach</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="n">widget</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1049" aria-label="Source for MenuRow.attach">[Source]</a></p>
+
+</div>
+
+<p>Put a widget in the row.</p>
+
+<p>Just after the value text, or (in a tall row) centered on its
+own line below.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">widget</code> (<em>QWidget</em>): The widget, usually a small picture of the current choice.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span> <span class="o">=</span> <span class="n">MenuRow</span><span class="p">(</span><span class="s">"Clefs"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">picture</span> <span class="o">=</span> <span class="n">ClefPictures</span><span class="p">([</span><span class="s">"treble"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">picture</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># noinspection PyUnresolvedReferences
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">layout</span><span class="p">().</span><span class="n">indexOf</span><span class="p">(</span><span class="n">picture</span><span class="p">)</span>
+<span class="go">2
+</span></code></pre></div></div>
+
+<h3 id="menurowfit">MenuRow.fit</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">fit</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1078" aria-label="Source for MenuRow.fit">[Source]</a></p>
+
+</div>
+
+<p>Make a tall row as high as its contents need.</p>
+
+<p>A button does not size itself to a layout inside it.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span> <span class="o">=</span> <span class="n">MenuRow</span><span class="p">(</span><span class="s">"Range"</span><span class="p">,</span> <span class="n">tall</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">QLabel</span><span class="p">(</span><span class="s">"a picture"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">minimumHeight</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="switch">Switch</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Switch</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1095" aria-label="Source for Switch">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QAbstractButton</code></p>
+
+<p>A pill-shaped on/off switch whose knob slides across when toggled.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">W, H</code> (<em>int</em>): The switch’s size, in pixels.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">switch</span> <span class="o">=</span> <span class="n">Switch</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">switch</span><span class="p">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">switch</span><span class="p">.</span><span class="n">isChecked</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Create a switch that is off.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns it.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Switch</span><span class="p">().</span><span class="n">isChecked</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="switchsetchecked">Switch.setChecked</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">setChecked</span><span class="p">(</span><span class="n">on</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1180" aria-label="Source for Switch.setChecked">[Source]</a></p>
+
+</div>
+
+<p>Turn the switch on or off without animating, as when a setting
+is loaded.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">on</code> (<em>bool</em>): The new state.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">switch</span> <span class="o">=</span> <span class="n">Switch</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">switch</span><span class="p">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">switch</span><span class="p">.</span><span class="n">_pos</span>
+<span class="go">1.0
+</span></code></pre></div></div>
+
+<h3 id="switchpaintevent">Switch.paintEvent</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="n">_</span><span class="p">:</span> <span class="n">QPaintEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1204" aria-label="Source for Switch.paintEvent">[Source]</a></p>
+
+</div>
+
+<p>Draw the track, tinted between off and on, and the knob.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">_</code> (<em>QPaintEvent</em>): The paint request; the whole widget is always redrawn.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Switch</span><span class="p">().</span><span class="n">grab</span><span class="p">().</span><span class="n">isNull</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="switchsizehint">Switch.sizeHint</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sizeHint</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">QSize</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1236" aria-label="Source for Switch.sizeHint">[Source]</a></p>
+
+</div>
+
+<p>Return the switch’s fixed size.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>QSize</em>: <code class="language-plaintext highlighter-rouge">W</code> by <code class="language-plaintext highlighter-rouge">H</code>.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">Switch</span><span class="p">().</span><span class="n">sizeHint</span><span class="p">()</span>
+<span class="go">PySide6.QtCore.QSize(42, 24)
+</span></code></pre></div></div>
+
+<h2 id="togglerow">ToggleRow</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ToggleRow</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1253" aria-label="Source for ToggleRow">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">MenuRow</code></p>
+
+<p>A menu row with a switch that changes a setting in place instead of
+opening a page.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">switched</code> (<em>Signal</em>): Emitted with the new state when the row is clicked.</li>
+  <li><code class="language-plaintext highlighter-rouge">switch</code> (<em>Switch</em>): The switch.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span> <span class="o">=</span> <span class="n">ToggleRow</span><span class="p">(</span><span class="s">"Accidentals"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">changes</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">row</span><span class="p">.</span><span class="n">switched</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">changes</span><span class="p">.</span><span class="n">append</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">click</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">changes</span><span class="p">,</span> <span class="n">row</span><span class="p">.</span><span class="n">isOn</span><span class="p">()</span>
+<span class="go">([True], True)
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build the row with its switch off.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">title</code> (<em>str</em>): The row’s title.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ToggleRow</span><span class="p">(</span><span class="s">"Accidentals"</span><span class="p">).</span><span class="n">isOn</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="togglerowison">ToggleRow.isOn</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">isOn</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1327" aria-label="Source for ToggleRow.isOn">[Source]</a></p>
+
+</div>
+
+<p>Report whether the switch is on.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>bool</em>: True if on.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ToggleRow</span><span class="p">(</span><span class="s">"Accidentals"</span><span class="p">).</span><span class="n">isOn</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="togglerowseton">ToggleRow.setOn</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">setOn</span><span class="p">(</span><span class="n">on</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1344" aria-label="Source for ToggleRow.setOn">[Source]</a></p>
+
+</div>
+
+<p>Set the switch without announcing it, as when a setting is
+loaded.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">on</code> (<em>bool</em>): The new state.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span> <span class="o">=</span> <span class="n">ToggleRow</span><span class="p">(</span><span class="s">"Accidentals"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">setOn</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">isOn</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="subpage">subpage</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">subpage</span><span class="p">(</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">,</span>
+    <span class="n">back</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">object</span><span class="p">],</span>
+    <span class="n">fill</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QWidget</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1364" aria-label="Source for subpage">[Source]</a></p>
+
+</div>
+
+<p>Build a second-layer page: a Back button and title above a body.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">title</code> (<em>str</em>): The page’s title.</li>
+  <li><code class="language-plaintext highlighter-rouge">body</code> (<em>QWidget</em>): What the page shows. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">back</code> (<em>callable</em>): Called when Back is clicked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">fill</code> (<em>bool, default False</em>): Let the body take all the room (so a long page can scroll) instead of leaving space below it. Keyword-only.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>QWidget</em>: The page.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">calls</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">page_</span> <span class="o">=</span> <span class="n">subpage</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="s">"Clefs"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">body</span><span class="o">=</span><span class="n">QWidget</span><span class="p">(),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">back</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">calls</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"back"</span><span class="p">),</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">next</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">b</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">page_</span><span class="p">.</span><span class="n">findChildren</span><span class="p">(</span><span class="n">QToolButton</span><span class="p">)</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">if</span> <span class="n">b</span><span class="p">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s">"‹ Back"</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">click</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">calls</span>
+<span class="go">['back']
+</span></code></pre></div></div>
+
+<h2 id="slidestack">SlideStack</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">SlideStack</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1425" aria-label="Source for SlideStack">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QStackedWidget</code></p>
+
+<p>A stacked widget whose pages slide in from the right (going deeper)
+or the left (going back).</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">stack</span> <span class="o">=</span> <span class="n">SlideStack</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="n">sliding</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Create an empty stack.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns it.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">SlideStack</span><span class="p">().</span><span class="n">count</span><span class="p">()</span>
+<span class="go">0
+</span></code></pre></div></div>
+
+<h3 id="slidestacksliding">SlideStack.sliding</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="nb">property</span>
+<span class="k">def</span> <span class="nf">sliding</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1457" aria-label="Source for SlideStack.sliding">[Source]</a></p>
+
+</div>
+
+<p>Report whether a page is sliding in.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>bool</em>: True from the start of a slide until it finishes.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">SlideStack</span><span class="p">().</span><span class="n">sliding</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="slidestackslide_to">SlideStack.slide_to</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">slide_to</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1473" aria-label="Source for SlideStack.slide_to">[Source]</a></p>
+
+</div>
+
+<p>Slide to another page.</p>
+
+<p>Going to a later page slides it in from the right and going back
+slides it in from the left. A request made during a
+slide, or for the page already showing, is ignored.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">index</code> (<em>int</em>): The page to go to.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">stack</span> <span class="o">=</span> <span class="n">SlideStack</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="n">slide_to</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="n">sliding</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="exercisesettingspanel">ExerciseSettingsPanel</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ExerciseSettingsPanel</span><span class="p">(</span><span class="n">QWidget</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1540" aria-label="Source for ExerciseSettingsPanel">[Source]</a></p>
+
+</div>
+
+<p>What every exercise’s settings pane has in common: it says when a
+setting has been edited.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">changed</code> (<em>Signal</em>): Emitted after any setting is edited that changes what is asked, so the exercise asks a new question.</li>
+  <li><code class="language-plaintext highlighter-rouge">restyled</code> (<em>Signal</em>): Emitted after a setting is edited that changes only how the exercise looks, so the question stays and the picture is drawn again.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">panel</span> <span class="o">=</span> <span class="n">ExerciseSettingsPanel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">got</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span> <span class="o">=</span> <span class="n">panel</span><span class="p">.</span><span class="n">changed</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">lambda</span><span class="p">:</span> <span class="n">got</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">panel</span><span class="p">.</span><span class="n">changed</span><span class="p">.</span><span class="n">emit</span><span class="p">()</span>
+<span class="go">True
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">got</span>
+<span class="go">[1]
+</span></code></pre></div></div>
+
+<h3 id="exercisesettingspanelrefresh_limits">ExerciseSettingsPanel.refresh_limits</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">refresh_limits</span><span class="p">(</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">self_grading</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1603" aria-label="Source for ExerciseSettingsPanel.refresh_limits">[Source]</a></p>
+
+</div>
+
+<p>Update scheduling controls for the active scheduler and profile.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">mode</code> (<em>str</em>): Selected question scheduler.</li>
+  <li><code class="language-plaintext highlighter-rouge">self_grading</code> (<em>bool</em>): Disable Next Question when a passing grade advances the exercise.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Switching to ASRS hides the row and leaves its submenu.
+</code></pre></div></div>
+
+<h2 id="keyboardrangepanel">KeyboardRangePanel</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">KeyboardRangePanel</span><span class="p">(</span><span class="n">ExerciseSettingsPanel</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1738" aria-label="Source for KeyboardRangePanel">[Source]</a></p>
+
+</div>
+
+<p>Settings for selecting a practice range on a keyboard.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Keyboard note identification allows the lowest and highest keys to
+coincide.
+</code></pre></div></div>
+
+<h2 id="clefspanel">ClefsPanel</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ClefsPanel</span><span class="p">(</span><span class="n">ExerciseSettingsPanel</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1851" aria-label="Source for ClefsPanel">[Source]</a></p>
+
+</div>
+
+<p>A settings pane with a Clefs page, whose checkboxes choose the clefs
+that are asked about.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">cfg</code> (<em>ClefChoice</em>): The settings being edited.</li>
+  <li><code class="language-plaintext highlighter-rouge">boxes</code> (<em>dict of str to QCheckBox</em>): The checkbox of each clef.</li>
+  <li><code class="language-plaintext highlighter-rouge">clef_pictures</code> (<em>ClefPictures</em>): The clefs shown in the menu’s Clefs row.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span> <span class="nn">alto.ui.settings_panel</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ClefBasicsSettingsPanel</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">isinstance</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ClefBasicsSettingsPanel</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">settings</span><span class="p">.</span><span class="n">ClefBasicsSettings</span><span class="p">()</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">ClefsPanel</span><span class="p">,</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="staffrangepanel">StaffRangePanel</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">StaffRangePanel</span><span class="p">(</span><span class="n">ClefsPanel</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L1916" aria-label="Source for StaffRangePanel">[Source]</a></p>
+
+</div>
+
+<p>Shared navigation and per-clef pitch range editors.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Note and interval identification both open Range on page two.
+</code></pre></div></div>
+
+<h2 id="noteanswersettingspanel">NoteAnswerSettingsPanel</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NoteAnswerSettingsPanel</span><span class="p">(</span><span class="n">StaffRangePanel</span><span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2249" aria-label="Source for NoteAnswerSettingsPanel">[Source]</a></p>
+
+</div>
+
+<p>Staff range settings for note names and optional octaves.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A plugin and the built-in note identification exercise can both
+require the octave in an answer.
+</code></pre></div></div>
+
+<h2 id="keychecklist">KeyChecklist</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">KeyChecklist</span><span class="p">(</span>
+    <span class="n">selected</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">counts_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">key_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2344" aria-label="Source for KeyChecklist">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QWidget</code></p>
+
+<p>Checkboxes for the 15 major keys, flats on the left and sharps on
+the right.</p>
+
+<p>At least one stays checked. Each is labeled with a picture of its
+signature.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">changed</code> (<em>Signal</em>): Emitted after a box is checked or unchecked.</li>
+  <li><code class="language-plaintext highlighter-rouge">boxes</code> (<em>dict of int to QCheckBox</em>): The checkbox of each key signature, from -7 (seven flats) to 7 (seven sharps).</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">KeyChecklist</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">}).</span><span class="n">selected</span><span class="p">()</span> <span class="o">==</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build the checklist.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">selected</code> (<em>set of int</em>): The key signatures to check initially.</li>
+  <li><code class="language-plaintext highlighter-rouge">allow_empty</code> (<em>bool, default False</em>): Allow every key to be unchecked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">counts_only</code> (<em>bool, default False</em>): Label each box with its accidental count instead of drawing a signature. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">key_names</code> (<em>dict of int to str or None, default None</em>): Key names to display beside the signature diagrams. With None, show only diagrams. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns it. Keyword-only.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">KeyChecklist</span><span class="p">({</span><span class="mi">0</span><span class="p">}).</span><span class="n">boxes</span><span class="p">)</span>
+<span class="go">15
+</span></code></pre></div></div>
+
+<h3 id="keychecklistselected">KeyChecklist.selected</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">selected</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2486" aria-label="Source for KeyChecklist.selected">[Source]</a></p>
+
+</div>
+
+<p>Return the checked key signatures.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>set of int</em>: Sharps if positive, flats if negative.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">KeyChecklist</span><span class="p">({</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">}).</span><span class="n">selected</span><span class="p">()</span> <span class="o">==</span> <span class="p">{</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="keysignaturepage">KeySignaturePage</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">KeySignaturePage</span><span class="p">(</span>
+    <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">selected</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">key_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2522" aria-label="Source for KeySignaturePage">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QWidget</code></p>
+
+<p>The key signature sub-page: a switch for using key signatures at
+all, and the keys to draw from.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">changed</code> (<em>Signal</em>): Emitted after the switch or a key is changed.</li>
+  <li><code class="language-plaintext highlighter-rouge">switch_row</code> (<em>ToggleRow</em>): The “Use key signatures” switch.</li>
+  <li><code class="language-plaintext highlighter-rouge">checklist</code> (<em>KeyChecklist</em>): The keys; only enabled while the switch is on.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">page</span> <span class="o">=</span> <span class="n">KeySignaturePage</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="bp">True</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="n">enabled</span><span class="p">(),</span> <span class="n">page</span><span class="p">.</span><span class="n">selected</span><span class="p">()</span> <span class="o">==</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span>
+<span class="go">(True, True)
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build the page.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">enabled</code> (<em>bool</em>): Whether key signatures are on.</li>
+  <li><code class="language-plaintext highlighter-rouge">selected</code> (<em>set of int</em>): The key signatures to check initially. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">allow_empty</code> (<em>bool, default False</em>): Allow every key to be unchecked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">key_names</code> (<em>dict of int to str or None, default None</em>): Key names to display beside the signature diagrams. With None, show only diagrams. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns it. Keyword-only.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">page</span> <span class="o">=</span> <span class="n">KeySignaturePage</span><span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="n">checklist</span><span class="p">.</span><span class="n">isEnabled</span><span class="p">()</span>
+<span class="go">False
+</span></code></pre></div></div>
+
+<h3 id="keysignaturepageenabled">KeySignaturePage.enabled</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">enabled</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2600" aria-label="Source for KeySignaturePage.enabled">[Source]</a></p>
+
+</div>
+
+<p>Report whether key signatures are switched on.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>bool</em>: True if the switch is on.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">KeySignaturePage</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="bp">True</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">}</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">enabled</span><span class="p">()</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h3 id="keysignaturepageselected">KeySignaturePage.selected</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">selected</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2618" aria-label="Source for KeySignaturePage.selected">[Source]</a></p>
+
+</div>
+
+<p>Return the checked key signatures.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>set of int</em>: Sharps if positive, flats if negative.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">KeySignaturePage</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="bp">True</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">}</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">selected</span><span class="p">()</span> <span class="o">==</span> <span class="p">{</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">}</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+<h2 id="scalekeypicker">ScaleKeyPicker</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ScaleKeyPicker</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">major_keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">minor_keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2661" aria-label="Source for ScaleKeyPicker">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QTabWidget</code></p>
+
+<p>Select major and minor keys independently.</p>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ScaleKeyPicker</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">major_keys</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">},</span> <span class="n">minor_keys</span><span class="o">=</span><span class="p">{</span><span class="o">-</span><span class="mi">2</span><span class="p">}</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">count</span><span class="p">()</span>
+<span class="go">2
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build one checklist per mode.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">major_keys</code> (<em>set of int</em>): Selected major signatures. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">minor_keys</code> (<em>set of int</em>): Selected minor signatures. Keyword-only.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ScaleKeyPicker</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">major_keys</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span> <span class="n">minor_keys</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">}</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">currentIndex</span><span class="p">()</span>
+<span class="go">1
+</span></code></pre></div></div>
+
+<h2 id="choicechecklist">ChoiceChecklist</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ChoiceChecklist</span><span class="p">(</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">selected</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span>
+    <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">positions</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">QWidget</span> <span class="o">|</span> <span class="bp">None</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2721" aria-label="Source for ChoiceChecklist">[Source]</a></p>
+
+</div>
+
+<p>Bases: <code class="language-plaintext highlighter-rouge">QWidget</code></p>
+
+<p>Checkboxes for a list of choices, optionally under headings and
+allowing an empty selection.</p>
+
+<p><strong>Attributes</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">changed</code> (<em>Signal</em>): Emitted after a box is checked or unchecked.</li>
+  <li><code class="language-plaintext highlighter-rouge">allow_empty</code> (<em>bool</em>): Whether all choices may be unchecked.</li>
+  <li><code class="language-plaintext highlighter-rouge">boxes</code> (<em>dict</em>): The checkbox of each choice, by its key.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">groups</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="s">"Triads"</span><span class="p">,</span>
+<span class="gp">...</span><span class="w">         </span><span class="p">[</span>
+<span class="gp">...</span><span class="w">             </span><span class="p">(</span><span class="s">"major"</span><span class="p">,</span> <span class="s">"Major"</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">             </span><span class="p">(</span><span class="s">"minor"</span><span class="p">,</span> <span class="s">"Minor"</span><span class="p">),</span>
+<span class="gp">...</span><span class="w">         </span><span class="p">],</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">),</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="p">[(</span><span class="s">"x"</span><span class="p">,</span> <span class="s">"Other"</span><span class="p">)]),</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">checklist</span> <span class="o">=</span> <span class="n">ChoiceChecklist</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">groups</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="s">"major"</span><span class="p">}</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">checklist</span><span class="p">.</span><span class="n">selected</span><span class="p">()</span>
+<span class="go">{'major'}
+</span></code></pre></div></div>
+
+<p><strong>Constructor</strong></p>
+
+<p>Build the checklist.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">groups</code> (<em>list of tuple of (str, list of tuple of (object, str))</em>): The headings and, under each, the choices as (key, label); an empty heading shows none.</li>
+  <li><code class="language-plaintext highlighter-rouge">selected</code> (<em>set</em>): The keys to check initially. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">allow_empty</code> (<em>bool, default False</em>): Allow all choices to be unchecked. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">positions</code> (<em>mapping or None, default None</em>): Optional (row, column) for each key within its group. Keyword-only.</li>
+  <li><code class="language-plaintext highlighter-rouge">parent</code> (<em>QWidget or None, default None</em>): The widget that owns it. Keyword-only.</li>
+</ul>
+
+<p><strong>Constructor examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">checklist</span> <span class="o">=</span> <span class="n">ChoiceChecklist</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[(</span><span class="s">""</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s">"Root"</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">"1st"</span><span class="p">)])],</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">},</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="c1"># noinspection PyTypeChecker
+</span><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">sorted</span><span class="p">(</span><span class="n">checklist</span><span class="p">.</span><span class="n">boxes</span><span class="p">)</span>
+<span class="go">[0, 1]
+</span></code></pre></div></div>
+
+<h3 id="choicechecklistselected">ChoiceChecklist.selected</h3>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">selected</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">set</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2828" aria-label="Source for ChoiceChecklist.selected">[Source]</a></p>
+
+</div>
+
+<p>Return the checked choices.</p>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>set</em>: The keys of the checked boxes.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ChoiceChecklist</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">[(</span><span class="s">""</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s">"Root"</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">"1st"</span><span class="p">)])],</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">selected</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">},</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">selected</span><span class="p">()</span>
+<span class="go">{0, 1}
+</span></code></pre></div></div>
+
+<h2 id="buttons_page">buttons_page</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">buttons_page</span><span class="p">(</span>
+    <span class="n">cfg</span><span class="p">:</span> <span class="n">ButtonSettings</span> <span class="o">|</span> <span class="n">settings</span><span class="p">.</span><span class="n">IntervalSettings</span> <span class="o">|</span> <span class="n">settings</span><span class="p">.</span><span class="n">ScaleIdentificationSettings</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">changed</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="bp">None</span><span class="p">],</span>
+    <span class="n">back</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="bp">None</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QWidget</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2870" aria-label="Source for buttons_page">[Source]</a></p>
+
+</div>
+
+<p>Build the shared Limited and All answer-button submenu.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">cfg</code> (<em>ButtonSettings or IntervalSettings</em>): The exercise that owns the button mode and count.</li>
+  <li><code class="language-plaintext highlighter-rouge">changed</code> (<em>callable</em>): Save and apply an edit.</li>
+  <li><code class="language-plaintext highlighter-rouge">back</code> (<em>callable</em>): Return to the exercise settings menu.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>QWidget</em>: The Buttons page with the count picker below Limited.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Choosing All hides the count picker and retains its last value.
+</code></pre></div></div>
+
+<h2 id="direction_choices">direction_choices</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">direction_choices</span><span class="p">(</span>
+    <span class="n">cfg</span><span class="p">:</span> <span class="n">settings</span><span class="p">.</span><span class="n">ScaleIdentificationSettings</span> <span class="o">|</span> <span class="n">settings</span><span class="p">.</span><span class="n">ScaleConstructionSettings</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">edited</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="bp">None</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QWidget</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L2941" aria-label="Source for direction_choices">[Source]</a></p>
+
+</div>
+
+<p>Choose the direction of a scale.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">cfg</code> (<em>ScaleIdentificationSettings or ScaleConstructionSettings</em>): The exercise settings that store the selected motion.</li>
+  <li><code class="language-plaintext highlighter-rouge">edited</code> (<em>callable</em>): Save the edit and refresh the exercise.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>QWidget</em>: A pair of mutually exclusive Ascending and Descending radio buttons.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">cfg</span> <span class="o">=</span> <span class="n">settings</span><span class="p">.</span><span class="n">ScaleIdentificationSettings</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">choices</span> <span class="o">=</span> <span class="n">direction_choices</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">cfg</span><span class="p">,</span> <span class="n">edited</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">None</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="nb">next</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">     </span><span class="n">b</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">.</span><span class="n">findChildren</span><span class="p">(</span>
+<span class="gp">...</span><span class="w">         </span><span class="n">QRadioButton</span>
+<span class="gp">...</span><span class="w">     </span><span class="p">)</span>
+<span class="gp">...</span><span class="w">     </span><span class="k">if</span> <span class="n">b</span><span class="p">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s">"Descending"</span>
+<span class="gp">...</span><span class="w"> </span><span class="p">).</span><span class="n">click</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">motion</span>
+<span class="go">'descending'
+</span></code></pre></div></div>
+
+<h2 id="scrolling">scrolling</h2>
+
+<div class="api-signature">
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">scrolling</span><span class="p">(</span><span class="n">body</span><span class="p">:</span> <span class="n">QWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QScrollArea</span>
+</code></pre></div>  </div>
+
+  <p><a class="api-source" href="https://github.com/altosaurus/alto/blob/2d83ab5e455a1c7ffed1263d5c7e0ddfd150b429/alto/ui/settings_menu.py#L3012" aria-label="Source for scrolling">[Source]</a></p>
+
+</div>
+
+<p>Put a page’s body in a scroll area, so a long page scrolls inside
+the pane and never makes the window taller.</p>
+
+<p><strong>Parameters</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">body</code> (<em>QWidget</em>): What the page shows.</li>
+</ul>
+
+<p><strong>Returns</strong></p>
+
+<ul>
+  <li><em>QScrollArea</em>: The scroll area that holds it, with no frame and no sideways scrolling.</li>
+</ul>
+
+<p><strong>Examples</strong></p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">page</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">scrolling</span><span class="p">(</span><span class="n">page</span><span class="p">).</span><span class="n">widget</span><span class="p">()</span> <span class="ow">is</span> <span class="n">page</span>
+<span class="go">True
+</span></code></pre></div></div>
+
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            <a class="prev" href="/alto/pr-118/dev/api/alto.ui.score_excerpt/" rel="prev"><span class="np-label">Previous</span><span class="np-title"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>alto.ui.score_excerpt</span></a>
+            <a class="next" href="/alto/pr-118/dev/api/alto.ui.settings_panel/" rel="next"><span class="np-label">Next</span><span class="np-title">alto.ui.settings_panel<svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg></span></a>
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+    // remembered; System forgets it, and the page then follows the system again.
+    var root = document.documentElement, button = document.getElementById("theme-button");
+    var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function chosen() { return root.getAttribute("data-theme") || "system"; }
+    function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+    function show() {
+      button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+      for (var i = 0; i < items.length; i++) {
+        items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+      }
+    }
+    function open(isOpen) {
+      menu.hidden = !isOpen;
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+        checked.focus();
+      }
+    }
+    button.addEventListener("click", function () { open(menu.hidden); });
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener("click", function (event) {
+        var choice = event.currentTarget.getAttribute("data-theme-choice");
+        if (choice === "system") {
+          root.removeAttribute("data-theme");
+          try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+        } else {
+          root.setAttribute("data-theme", choice);
+          try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+        }
+        show();
+        open(false);
+        button.focus();
+      });
+    }
+    document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+    document.addEventListener("keydown", function (event) {
+      if (menu.hidden) { return; }
+      if (event.key === "Escape") { open(false); button.focus(); }
+      var at = Array.prototype.indexOf.call(items, document.activeElement);
+      if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+    });
+    if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+    show();
+  </script>
+  <script src="/alto/pr-118/dev/assets/js/nav.js?v=1795704297" defer></script>
+  <script src="/alto/pr-118/dev/assets/js/search.js?v=1795704297" defer></script>
+  <script src="/alto/pr-118/dev/assets/js/copy-code.js?v=1795704297" defer></script>
+  <script src="/alto/pr-118/dev/assets/js/toc.js?v=1795704297" defer></script>
+  
+</body>
+</html>
