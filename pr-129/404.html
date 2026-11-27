@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Page not found · Alto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <style>
+    :root { --bg: #fbfbfa; --fg: #1d2326; --accent: #1f6fb5; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #1b1f21; --fg: #e6eaeb; --accent: #6fb1ea; color-scheme: dark; } }
+    body { background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 64px max(16px, env(safe-area-inset-left, 0px)); }
+    main { max-width: 36rem; margin: 0 auto; }
+    a { color: var(--accent); }
+  </style>
+  <script>
+    // Handle old stable links that do not have a generated redirect page.
+    (function () {
+      var prefix = "/alto/pr-129/latest/";
+      if (location.pathname.indexOf(prefix) !== 0) { return; }
+      var rest = location.pathname.slice(prefix.length);
+      if (rest === "latest" || rest.indexOf("latest/") === 0) { return; }
+      location.replace("/alto/pr-129/" + rest + location.search + location.hash);
+    })();
+  </script>
+</head>
+<body>
+  <main>
+    <h1>Page not found</h1>
+    <p>There is no such page in these docs. It may have moved, or it may not exist in this version.</p>
+    <p><a href="/alto/pr-129/">Go to the latest docs</a> or <a href="/alto/pr-129/dev/">the development docs</a>.</p>
+  </main>
+</body>
+</html>
