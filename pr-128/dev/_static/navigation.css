@@ -1,0 +1,8 @@
+.breadcrumbs { margin-bottom: 1rem; color: var(--muted); font-size: .9rem; }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; gap: .25em .5em; list-style: none; padding: 0; margin: 0; }
+.breadcrumbs li { overflow-wrap: anywhere; }
+.breadcrumbs li + li::before { content: "/" / ""; margin-right: .5em; }
+.menu .row, #search-results li { overflow-wrap: anywhere; }
+#search-results li { margin-bottom: .85rem; }
+#search-results .context { color: var(--muted); }
+.body .highlighted { background: var(--accent-soft); color: var(--fg); font-weight: bold; }

@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Exercises · Alto</title>
+  <script>
+  // Apply a remembered choice before the page paints, so there is no flash of the other theme.
+  try { var saved = localStorage.getItem("alto-docs-theme"); if (saved === "light" || saved === "dark") { document.documentElement.setAttribute("data-theme", saved); } } catch (e) {}
+</script>
+  
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" />
+    <link rel="stylesheet" type="text/css" href="../_static/site.css?v=1b22aaff" />
+    <link rel="stylesheet" type="text/css" href="../_static/api.css?v=25e21200" />
+    <link rel="stylesheet" type="text/css" href="../_static/navigation.css?v=547812f5" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+    <script src="../_static/documentation_options.js?v=a5603611"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="author" title="About these documents" href="../about/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Spaced Repetition" href="../practice/" />
+    <link rel="prev" title="Getting started" href="../getting-started/" />
+   
+  <meta name="description" content="Alto is a free desktop music theory trainer for Linux, Windows, and Apple Silicon Macs. Its exercises use spaced repetition to schedule review of notes, intervals, chords, scales, and key signatures.">
+  
+  <meta name="robots" content="noindex">
+
+  </head><body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+</svg>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="topbar">
+    <a class="brand" href="../"><img src="../_static/icon.png" alt="" width="30" height="30"><span>Alto</span></a>
+    <div class="top-actions">
+      <form class="docs-search" role="search" action="../search/" method="get">
+        <div class="search-field">
+          <svg class="i" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5"/></svg>
+          <input name="q" type="search" enterkeyhint="search" placeholder="Search docs" aria-label="Search documentation">
+        </div>
+      </form>
+      
+      <a class="dd-btn pr-link" href="../" aria-label="Documentation preview for PR #128">
+        <svg class="i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v10m7-12h1a4 4 0 0 1 4 4v8M15 2l-3 3 3 3"/></svg>
+        pr #128
+      </a>
+      
+      <div class="dd" id="theme-dd">
+  <button type="button" class="dd-btn icon" id="theme-button" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Color theme" title="Color theme"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></button>
+  <div class="dd-menu" id="theme-menu" role="menu" hidden>
+    <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="light"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-sun"/></svg></span><span class="dd-text">Light</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+    <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="dark"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-moon"/></svg></span><span class="dd-text">Dark</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+    <button type="button" class="dd-item" role="menuitemradio" aria-checked="false" data-theme-choice="system"><span class="dd-ico"><svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-monitor"/></svg></span><span class="dd-text">System</span><svg class="i dd-check" width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg></button>
+  </div>
+</div>
+<a class="icon-link" href="https://github.com/altosaurus/alto" aria-label="Alto on GitHub" title="Alto on GitHub">
+  <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+</a>
+<script>
+  // Color theme: a picture of the current one, and a menu to choose Light, Dark or System (follow the computer). A choice is
+  // remembered; System forgets it, and the page then follows the system again.
+  var root = document.documentElement, button = document.getElementById("theme-button");
+  var menu = document.getElementById("theme-menu"), items = menu.querySelectorAll("[data-theme-choice]");
+  var systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+  function chosen() { return root.getAttribute("data-theme") || "system"; }
+  function effective() { return root.getAttribute("data-theme") || (systemDark.matches ? "dark" : "light"); }
+  function show() {
+    button.querySelector("use").setAttribute("href", effective() === "dark" ? "#i-moon" : "#i-sun");
+    for (var i = 0; i < items.length; i++) {
+      items[i].setAttribute("aria-checked", items[i].getAttribute("data-theme-choice") === chosen() ? "true" : "false");
+    }
+  }
+  function open(isOpen) {
+    menu.hidden = !isOpen;
+    button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    if (isOpen) {
+      var checked = menu.querySelector('[aria-checked="true"]') || items[0];
+      checked.focus();
+    }
+  }
+  button.addEventListener("click", function () { open(menu.hidden); });
+  for (var i = 0; i < items.length; i++) {
+    items[i].addEventListener("click", function (event) {
+      var choice = event.currentTarget.getAttribute("data-theme-choice");
+      if (choice === "system") {
+        root.removeAttribute("data-theme");
+        try { localStorage.removeItem("alto-docs-theme"); } catch (e) {}
+      } else {
+        root.setAttribute("data-theme", choice);
+        try { localStorage.setItem("alto-docs-theme", choice); } catch (e) {}
+      }
+      show();
+      open(false);
+      button.focus();
+    });
+  }
+  document.addEventListener("click", function (event) { if (!menu.hidden && !event.target.closest("#theme-dd")) { open(false); } });
+  document.addEventListener("keydown", function (event) {
+    if (menu.hidden) { return; }
+    if (event.key === "Escape") { open(false); button.focus(); }
+    var at = Array.prototype.indexOf.call(items, document.activeElement);
+    if (event.key === "ArrowDown") { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+    if (event.key === "ArrowUp") { event.preventDefault(); items[(at + items.length - 1) % items.length].focus(); }
+  });
+  if (systemDark.addEventListener) { systemDark.addEventListener("change", show); }
+  show();
+</script>
+    </div>
+  </header>
+  
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="menu" aria-label="Documentation">
+        <details class="mobile-contents"><summary aria-controls="docs-navigation">Contents</summary></details>
+        <div class="nav" id="docs-navigation">
+
+
+<ul class="nav-list">
+  <li><a class="row" href="../">Home</a></li>
+  <li><div class="nav-head">
+      <a class="row" href="../using-alto/">Using Alto</a>
+      <button type="button" class="nav-toggle" data-category="Using Alto" aria-controls="nav-using-alto" aria-expanded="true" aria-label="Collapse Using Alto" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-using-alto"><li><a class="row" href="../getting-started/">Getting started</a></li><li><a class="row" href="#" aria-current="page">Exercises</a></li><li><a class="row" href="../practice/">Spaced Repetition</a></li><li><a class="row" href="../statistics/">Statistics and database</a></li><li><a class="row" href="../lessons/">Lessons</a></li><li><a class="row" href="../settings/">Settings</a></li><li><a class="row" href="../shortcuts/">Shortcuts</a></li><li><a class="row" href="../data/">Your data</a></li><li><div class="nav-row">
+      <a class="row" href="../plugins/">Plugins</a>
+      <button type="button" class="nav-toggle" data-category="Plugins" aria-controls="nav-plugins" aria-expanded="true" aria-label="Collapse Plugins" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-plugins"><li><a class="row" href="../plugins/api/">Plugin API</a></li><li><a class="row" href="../plugins/viola/">Viola plugin tutorial</a></li><li><a class="row" href="../plugins/harpsichord/">Harpsichord plugin tutorial</a></li></ul></li></ul></li><li><div class="nav-head">
+      <a class="row" href="../development/">For developers</a>
+      <button type="button" class="nav-toggle" data-category="For developers" aria-controls="nav-development" aria-expanded="true" aria-label="Collapse For developers" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-development"><li><div class="nav-row">
+      <a class="row" href="../developer-guide/">Developer guide</a>
+      <button type="button" class="nav-toggle" data-category="Developer guide" aria-controls="nav-developer-guide" aria-expanded="true" aria-label="Collapse Developer guide" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-developer-guide"><li><a class="row" href="../developer-guide/environment-setup/">Development environment</a></li><li><a class="row" href="../developer-guide/application-launch/">Application launch</a></li><li><a class="row" href="../developer-guide/exercise-view/">Exercise view</a></li><li><a class="row" href="../developer-guide/exercises/">Exercises</a></li><li><a class="row" href="../developer-guide/database/">Database</a></li><li><a class="row" href="../developer-guide/ui-style-guide/">UI style guide</a></li><li><a class="row" href="../developer-guide/releases/">Releases</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../guide/">Resources</a>
+      <button type="button" class="nav-toggle" data-category="Resources" aria-controls="nav-guide/index" aria-expanded="true" aria-label="Collapse Resources" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-guide/index"><li><a class="row" href="../guide/orientation/">Getting oriented</a></li><li><a class="row" href="../guide/python/">Python beyond the basics</a></li><li><a class="row" href="../guide/qt/">Qt and PySide6</a></li><li><a class="row" href="../guide/styling/">Styling beyond QtWidgets</a></li><li><a class="row" href="../guide/notation/">Rendering music notation</a></li><li><a class="row" href="../guide/audio/">Computer audio</a></li><li><a class="row" href="../guide/spaced-repetition/">Spaced repetition and adaptive practice</a></li><li><a class="row" href="../guide/animation/">Animation</a></li><li><a class="row" href="../guide/exercises/">Building an exercise</a></li><li><a class="row" href="../guide/data/">Data and persistence</a></li><li><a class="row" href="../guide/quality/">Testing, quality and release</a></li><li><a class="row" href="../guide/pitfalls/">Pitfalls and debugging</a></li><li><a class="row" href="../guide/reading/">Glossary and further reading</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/">API reference</a>
+      <button type="button" class="nav-toggle" data-category="API reference" aria-controls="nav-api/index" aria-expanded="true" aria-label="Collapse API reference" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/index"><li><div class="nav-row">
+      <a class="row" href="../api/alto/">alto</a>
+      <button type="button" class="nav-toggle" data-category="alto" aria-controls="nav-api/alto" aria-expanded="true" aria-label="Collapse alto" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto"><li><div class="nav-row">
+      <a class="row" href="../api/alto.exercises/">exercises</a>
+      <button type="button" class="nav-toggle" data-category="exercises" aria-controls="nav-api/alto.exercises" aria-expanded="true" aria-label="Collapse exercises" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.exercises"><li><div class="nav-row">
+      <a class="row" href="../api/alto.exercises.base/">base</a>
+      <button type="button" class="nav-toggle" data-category="base" aria-controls="nav-api/alto.exercises.base" aria-expanded="true" aria-label="Collapse base" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.exercises.base"><li><a class="row" href="../api/alto.exercises.base/class-fingerboardposition/">FingerboardPosition</a></li><li><a class="row" href="../api/alto.exercises.base/class-pictureposition/">PicturePosition</a></li><li><a class="row" href="../api/alto.exercises.base/class-question/">Question</a></li><li><a class="row" href="../api/alto.exercises.base/function-note_from/">note_from</a></li><li><a class="row" href="../api/alto.exercises.base/function-signature/">signature</a></li><li><a class="row" href="../api/alto.exercises.base/class-exercise/">Exercise</a></li><li><a class="row" href="../api/alto.exercises.base/class-buttonsettings/">ButtonSettings</a></li><li><a class="row" href="../api/alto.exercises.base/class-choiceexercise/">ChoiceExercise</a></li><li><a class="row" href="../api/alto.exercises.base/function-register/">register</a></li><li><a class="row" href="../api/alto.exercises.base/function-pick_distractors/">pick_distractors</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.exercises.library/">library</a>
+      <button type="button" class="nav-toggle" data-category="library" aria-controls="nav-api/alto.exercises.library" aria-expanded="true" aria-label="Collapse library" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.exercises.library"><li><a class="row" href="../api/alto.exercises.library/class-notenames/">NoteNames</a></li><li><a class="row" href="../api/alto.exercises.library/class-intervalnames/">IntervalNames</a></li><li><a class="row" href="../api/alto.exercises.library/class-intervalconstruction/">IntervalConstruction</a></li><li><a class="row" href="../api/alto.exercises.library/class-keyboardintervals/">KeyboardIntervals</a></li><li><a class="row" href="../api/alto.exercises.library/class-keysignatures/">KeySignatures</a></li><li><a class="row" href="../api/alto.exercises.library/class-keysignatureconstruction/">KeySignatureConstruction</a></li><li><a class="row" href="../api/alto.exercises.library/class-orderofkeys/">OrderOfKeys</a></li><li><a class="row" href="../api/alto.exercises.library/class-scaleidentification/">ScaleIdentification</a></li><li><a class="row" href="../api/alto.exercises.library/class-scaleconstruction/">ScaleConstruction</a></li><li><a class="row" href="../api/alto.exercises.library/class-circleoffifths/">CircleOfFifths</a></li><li><a class="row" href="../api/alto.exercises.library/class-chordqualities/">ChordQualities</a></li><li><a class="row" href="../api/alto.exercises.library/class-arpeggionames/">ArpeggioNames</a></li><li><a class="row" href="../api/alto.exercises.library/class-keyboardnotes/">KeyboardNotes</a></li><li><a class="row" href="../api/alto.exercises.library/class-noteconstruction/">NoteConstruction</a></li><li><a class="row" href="../api/alto.exercises.library/class-clefbasics/">ClefBasics</a></li><li><a class="row" href="../api/alto.exercises.library/class-notationidentification/">NotationIdentification</a></li><li><a class="row" href="../api/alto.exercises.library/function-beat_meter/">beat_meter</a></li><li><a class="row" href="../api/alto.exercises.library/class-beatidentification/">BeatIdentification</a></li><li><a class="row" href="../api/alto.exercises.library/function-beat_positions/">beat_positions</a></li><li><a class="row" href="../api/alto.exercises.library/class-beatconstruction/">BeatConstruction</a></li><li><a class="row" href="../api/alto.exercises.library/class-rythmicequations/">RythmicEquations</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.exercises.packs/">packs</a>
+      <button type="button" class="nav-toggle" data-category="packs" aria-controls="nav-api/alto.exercises.packs" aria-expanded="true" aria-label="Collapse packs" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.exercises.packs"><li><a class="row" href="../api/alto.exercises.packs/class-packexercise/">PackExercise</a></li><li><a class="row" href="../api/alto.exercises.packs/function-read_controls/">read_controls</a></li><li><a class="row" href="../api/alto.exercises.packs/function-read_pack/">read_pack</a></li><li><a class="row" href="../api/alto.exercises.packs/function-pack_manifests/">pack_manifests</a></li><li><a class="row" href="../api/alto.exercises.packs/function-installed_pack_info/">installed_pack_info</a></li><li><a class="row" href="../api/alto.exercises.packs/class-installedplugin/">InstalledPlugin</a></li><li><a class="row" href="../api/alto.exercises.packs/function-installed_plugins/">installed_plugins</a></li><li><a class="row" href="../api/alto.exercises.packs/function-install_pack/">install_pack</a></li><li><a class="row" href="../api/alto.exercises.packs/function-load_packs/">load_packs</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.exercises.rhythm_equations/">rhythm_equations</a>
+      <button type="button" class="nav-toggle" data-category="rhythm_equations" aria-controls="nav-api/alto.exercises.rhythm_equations" aria-expanded="true" aria-label="Collapse rhythm_equations" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.exercises.rhythm_equations"><li><a class="row" href="../api/alto.exercises.rhythm_equations/function-equation_tokens/">equation_tokens</a></li><li><a class="row" href="../api/alto.exercises.rhythm_equations/function-counted_operands/">counted_operands</a></li><li><a class="row" href="../api/alto.exercises.rhythm_equations/function-number_question/">number_question</a></li><li><a class="row" href="../api/alto.exercises.rhythm_equations/function-equation_question/">equation_question</a></li></ul></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning/">learning</a>
+      <button type="button" class="nav-toggle" data-category="learning" aria-controls="nav-api/alto.learning" aria-expanded="true" aria-label="Collapse learning" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning"><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.backup/">backup</a>
+      <button type="button" class="nav-toggle" data-category="backup" aria-controls="nav-api/alto.learning.backup" aria-expanded="true" aria-label="Collapse backup" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.backup"><li><a class="row" href="../api/alto.learning.backup/class-backuperror/">BackupError</a></li><li><a class="row" href="../api/alto.learning.backup/class-backupinfo/">BackupInfo</a></li><li><a class="row" href="../api/alto.learning.backup/class-backup/">Backup</a></li><li><a class="row" href="../api/alto.learning.backup/function-app_version/">app_version</a></li><li><a class="row" href="../api/alto.learning.backup/function-encode_value/">encode_value</a></li><li><a class="row" href="../api/alto.learning.backup/function-decode_value/">decode_value</a></li><li><a class="row" href="../api/alto.learning.backup/function-write_backup/">write_backup</a></li><li><a class="row" href="../api/alto.learning.backup/function-read_backup/">read_backup</a></li><li><a class="row" href="../api/alto.learning.backup/function-restore_database/">restore_database</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.calendar/">calendar</a>
+      <button type="button" class="nav-toggle" data-category="calendar" aria-controls="nav-api/alto.learning.calendar" aria-expanded="true" aria-label="Collapse calendar" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.calendar"><li><a class="row" href="../api/alto.learning.calendar/class-reviewinterval/">ReviewInterval</a></li><li><a class="row" href="../api/alto.learning.calendar/class-calendarpractice/">CalendarPractice</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.database/">database</a>
+      <button type="button" class="nav-toggle" data-category="database" aria-controls="nav-api/alto.learning.database" aria-expanded="true" aria-label="Collapse database" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.database"><li><a class="row" href="../api/alto.learning.database/function-check_snapshot/">check_snapshot</a></li><li><a class="row" href="../api/alto.learning.database/class-profile/">Profile</a></li><li><a class="row" href="../api/alto.learning.database/class-itemrecord/">ItemRecord</a></li><li><a class="row" href="../api/alto.learning.database/class-database/">Database</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.grading/">grading</a>
+      <button type="button" class="nav-toggle" data-category="grading" aria-controls="nav-api/alto.learning.grading" aria-expanded="true" aria-label="Collapse grading" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.grading"><li><a class="row" href="../api/alto.learning.grading/class-sm2state/">Sm2State</a></li><li><a class="row" href="../api/alto.learning.grading/function-inherited_state/">inherited_state</a></li><li><a class="row" href="../api/alto.learning.grading/function-read_fsrs_card/">read_fsrs_card</a></li><li><a class="row" href="../api/alto.learning.grading/function-review_options/">review_options</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.learner/">learner</a>
+      <button type="button" class="nav-toggle" data-category="learner" aria-controls="nav-api/alto.learning.learner" aria-expanded="true" aria-label="Collapse learner" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.learner"><li><a class="row" href="../api/alto.learning.learner/class-practicecomplete/">PracticeComplete</a></li><li><a class="row" href="../api/alto.learning.learner/class-learner/">Learner</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.practice_session/">practice_session</a>
+      <button type="button" class="nav-toggle" data-category="practice_session" aria-controls="nav-api/alto.learning.practice_session" aria-expanded="true" aria-label="Collapse practice_session" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.practice_session"><li><a class="row" href="../api/alto.learning.practice_session/class-practicesession/">PracticeSession</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.response_times/">response_times</a>
+      <button type="button" class="nav-toggle" data-category="response_times" aria-controls="nav-api/alto.learning.response_times" aria-expanded="true" aria-label="Collapse response_times" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.response_times"><li><a class="row" href="../api/alto.learning.response_times/class-responsetimes/">ResponseTimes</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.scheduler/">scheduler</a>
+      <button type="button" class="nav-toggle" data-category="scheduler" aria-controls="nav-api/alto.learning.scheduler" aria-expanded="true" aria-label="Collapse scheduler" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.scheduler"><li><a class="row" href="../api/alto.learning.scheduler/function-arts_priority/">arts_priority</a></li><li><a class="row" href="../api/alto.learning.scheduler/function-speed_term/">speed_term</a></li><li><a class="row" href="../api/alto.learning.scheduler/function-update_strain/">update_strain</a></li><li><a class="row" href="../api/alto.learning.scheduler/function-weight/">weight</a></li><li><a class="row" href="../api/alto.learning.scheduler/function-choose/">choose</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.learning.stats/">stats</a>
+      <button type="button" class="nav-toggle" data-category="stats" aria-controls="nav-api/alto.learning.stats" aria-expanded="true" aria-label="Collapse stats" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.learning.stats"><li><a class="row" href="../api/alto.learning.stats/class-bucket/">Bucket</a></li><li><a class="row" href="../api/alto.learning.stats/class-exercisestats/">ExerciseStats</a></li><li><a class="row" href="../api/alto.learning.stats/class-hardquestion/">HardQuestion</a></li><li><a class="row" href="../api/alto.learning.stats/class-stats/">Stats</a></li><li><a class="row" href="../api/alto.learning.stats/function-period_end/">period_end</a></li><li><a class="row" href="../api/alto.learning.stats/function-describe/">describe</a></li><li><a class="row" href="../api/alto.learning.stats/function-daily_counts/">daily_counts</a></li><li><a class="row" href="../api/alto.learning.stats/function-collect/">collect</a></li></ul></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.lessons/">lessons</a>
+      <button type="button" class="nav-toggle" data-category="lessons" aria-controls="nav-api/alto.lessons" aria-expanded="true" aria-label="Collapse lessons" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.lessons"><li><div class="nav-row">
+      <a class="row" href="../api/alto.lessons.base/">base</a>
+      <button type="button" class="nav-toggle" data-category="base" aria-controls="nav-api/alto.lessons.base" aria-expanded="true" aria-label="Collapse base" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.lessons.base"><li><a class="row" href="../api/alto.lessons.base/class-task/">Task</a></li><li><a class="row" href="../api/alto.lessons.base/class-staff/">Staff</a></li><li><a class="row" href="../api/alto.lessons.base/class-step/">Step</a></li><li><a class="row" href="../api/alto.lessons.base/class-lesson/">Lesson</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.lessons.circle_of_fifths/">circle_of_fifths</a>
+      <button type="button" class="nav-toggle" data-category="circle_of_fifths" aria-controls="nav-api/alto.lessons.circle_of_fifths" aria-expanded="true" aria-label="Collapse circle_of_fifths" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.lessons.circle_of_fifths"><li><a class="row" href="../api/alto.lessons.circle_of_fifths/function-key_name/">key_name</a></li><li><a class="row" href="../api/alto.lessons.circle_of_fifths/function-summary/">summary</a></li><li><a class="row" href="../api/alto.lessons.circle_of_fifths/function-fifth_task/">fifth_task</a></li><li><a class="row" href="../api/alto.lessons.circle_of_fifths/function-sharps_task/">sharps_task</a></li><li><a class="row" href="../api/alto.lessons.circle_of_fifths/function-flats_task/">flats_task</a></li><li><a class="row" href="../api/alto.lessons.circle_of_fifths/function-relative_task/">relative_task</a></li><li><a class="row" href="../api/alto.lessons.circle_of_fifths/function-neighbor_task/">neighbor_task</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.lessons.clef_basics/">clef_basics</a>
+      <button type="button" class="nav-toggle" data-category="clef_basics" aria-controls="nav-api/alto.lessons.clef_basics" aria-expanded="true" aria-label="Collapse clef_basics" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.lessons.clef_basics"><li><a class="row" href="../api/alto.lessons.clef_basics/function-symbol_task/">symbol_task</a></li><li><a class="row" href="../api/alto.lessons.clef_basics/function-identify_task/">identify_task</a></li><li><a class="row" href="../api/alto.lessons.clef_basics/function-line_task/">line_task</a></li></ul></li><li><a class="row" href="../api/alto.lessons.duration/">duration</a></li><li><a class="row" href="../api/alto.lessons.intervals/">intervals</a></li><li><a class="row" href="../api/alto.lessons.key_signatures/">key_signatures</a></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.lessons.packs/">packs</a>
+      <button type="button" class="nav-toggle" data-category="packs" aria-controls="nav-api/alto.lessons.packs" aria-expanded="true" aria-label="Collapse packs" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.lessons.packs"><li><a class="row" href="../api/alto.lessons.packs/function-inline/">inline</a></li><li><a class="row" href="../api/alto.lessons.packs/function-read_lessons/">read_lessons</a></li><li><a class="row" href="../api/alto.lessons.packs/function-read_picture/">read_picture</a></li></ul></li><li><a class="row" href="../api/alto.lessons.pitches_and_notes/">pitches_and_notes</a></li><li><a class="row" href="../api/alto.lessons.scale_identification/">scale_identification</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.theory/">theory</a>
+      <button type="button" class="nav-toggle" data-category="theory" aria-controls="nav-api/alto.theory" aria-expanded="true" aria-label="Collapse theory" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.theory"><li><div class="nav-row">
+      <a class="row" href="../api/alto.theory.beat_placement/">beat_placement</a>
+      <button type="button" class="nav-toggle" data-category="beat_placement" aria-controls="nav-api/alto.theory.beat_placement" aria-expanded="true" aria-label="Collapse beat_placement" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.theory.beat_placement"><li><a class="row" href="../api/alto.theory.beat_placement/function-toggle_beat/">toggle_beat</a></li><li><a class="row" href="../api/alto.theory.beat_placement/function-number_beats/">number_beats</a></li><li><a class="row" href="../api/alto.theory.beat_placement/function-grade_beat_marks/">grade_beat_marks</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.theory.fifths/">fifths</a>
+      <button type="button" class="nav-toggle" data-category="fifths" aria-controls="nav-api/alto.theory.fifths" aria-expanded="true" aria-label="Collapse fifths" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.theory.fifths"><li><a class="row" href="../api/alto.theory.fifths/function-place_of_major/">place_of_major</a></li><li><a class="row" href="../api/alto.theory.fifths/function-relative_minor/">relative_minor</a></li><li><a class="row" href="../api/alto.theory.fifths/function-cells_of_key/">cells_of_key</a></li><li><a class="row" href="../api/alto.theory.fifths/function-numeral_chords/">numeral_chords</a></li><li><a class="row" href="../api/alto.theory.fifths/function-display_major/">display_major</a></li><li><a class="row" href="../api/alto.theory.fifths/function-display_minor/">display_minor</a></li><li><a class="row" href="../api/alto.theory.fifths/function-accidentals_of/">accidentals_of</a></li><li><a class="row" href="../api/alto.theory.fifths/function-explain/">explain</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.theory.key_signatures/">key_signatures</a>
+      <button type="button" class="nav-toggle" data-category="key_signatures" aria-controls="nav-api/alto.theory.key_signatures" aria-expanded="true" aria-label="Collapse key_signatures" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.theory.key_signatures"><li><a class="row" href="../api/alto.theory.key_signatures/function-key_signature_positions/">key_signature_positions</a></li><li><a class="row" href="../api/alto.theory.key_signatures/function-written_signature/">written_signature</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.theory.pitch/">pitch</a>
+      <button type="button" class="nav-toggle" data-category="pitch" aria-controls="nav-api/alto.theory.pitch" aria-expanded="true" aria-label="Collapse pitch" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.theory.pitch"><li><a class="row" href="../api/alto.theory.pitch/class-note/">Note</a></li><li><a class="row" href="../api/alto.theory.pitch/class-interval/">Interval</a></li><li><a class="row" href="../api/alto.theory.pitch/function-key_accidental/">key_accidental</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.theory.scales/">scales</a>
+      <button type="button" class="nav-toggle" data-category="scales" aria-controls="nav-api/alto.theory.scales" aria-expanded="true" aria-label="Collapse scales" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.theory.scales"><li><a class="row" href="../api/alto.theory.scales/function-major_key_tonic/">major_key_tonic</a></li><li><a class="row" href="../api/alto.theory.scales/function-mode_tonic/">mode_tonic</a></li><li><a class="row" href="../api/alto.theory.scales/function-arpeggio/">arpeggio</a></li><li><a class="row" href="../api/alto.theory.scales/function-build/">build</a></li><li><a class="row" href="../api/alto.theory.scales/function-key_signature/">key_signature</a></li><li><a class="row" href="../api/alto.theory.scales/function-format_key_signature/">format_key_signature</a></li><li><a class="row" href="../api/alto.theory.scales/function-all_tonics/">all_tonics</a></li></ul></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui/">ui</a>
+      <button type="button" class="nav-toggle" data-category="ui" aria-controls="nav-api/alto.ui" aria-expanded="true" aria-label="Collapse ui" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui"><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.anki_exporter/">anki_exporter</a>
+      <button type="button" class="nav-toggle" data-category="anki_exporter" aria-controls="nav-api/alto.ui.anki_exporter" aria-expanded="true" aria-label="Collapse anki_exporter" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.anki_exporter"><li><a class="row" href="../api/alto.ui.anki_exporter/function-card_fields/">card_fields</a></li><li><a class="row" href="../api/alto.ui.anki_exporter/class-ankiexporter/">AnkiExporter</a></li><li><a class="row" href="../api/alto.ui.anki_exporter/class-exportersession/">ExporterSession</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.answer_bank/">answer_bank</a>
+      <button type="button" class="nav-toggle" data-category="answer_bank" aria-controls="nav-api/alto.ui.answer_bank" aria-expanded="true" aria-label="Collapse answer_bank" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.answer_bank"><li><a class="row" href="../api/alto.ui.answer_bank/class-answerbank/">AnswerBank</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.app_settings/">app_settings</a>
+      <button type="button" class="nav-toggle" data-category="app_settings" aria-controls="nav-api/alto.ui.app_settings" aria-expanded="true" aria-label="Collapse app_settings" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.app_settings"><li><a class="row" href="../api/alto.ui.app_settings/function-load_metronome_click/">load_metronome_click</a></li><li><a class="row" href="../api/alto.ui.app_settings/class-previewcard/">PreviewCard</a></li><li><a class="row" href="../api/alto.ui.app_settings/class-stylecard/">StyleCard</a></li><li><a class="row" href="../api/alto.ui.app_settings/class-keyboardcard/">KeyboardCard</a></li><li><a class="row" href="../api/alto.ui.app_settings/class-keyboardbuilder/">KeyboardBuilder</a></li><li><a class="row" href="../api/alto.ui.app_settings/class-appsettingsdialog/">AppSettingsDialog</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.background/">background</a>
+      <button type="button" class="nav-toggle" data-category="background" aria-controls="nav-api/alto.ui.background" aria-expanded="true" aria-label="Collapse background" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.background"><li><a class="row" href="../api/alto.ui.background/function-run_in_background/">run_in_background</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.backup_flow/">backup_flow</a>
+      <button type="button" class="nav-toggle" data-category="backup_flow" aria-controls="nav-api/alto.ui.backup_flow" aria-expanded="true" aria-label="Collapse backup_flow" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.backup_flow"><li><a class="row" href="../api/alto.ui.backup_flow/function-default_name/">default_name</a></li><li><a class="row" href="../api/alto.ui.backup_flow/function-counted/">counted</a></li><li><a class="row" href="../api/alto.ui.backup_flow/function-describe/">describe</a></li><li><a class="row" href="../api/alto.ui.backup_flow/function-export_backup/">export_backup</a></li><li><a class="row" href="../api/alto.ui.backup_flow/function-safety_copy/">safety_copy</a></li><li><a class="row" href="../api/alto.ui.backup_flow/function-import_backup/">import_backup</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.charts/">charts</a>
+      <button type="button" class="nav-toggle" data-category="charts" aria-controls="nav-api/alto.ui.charts" aria-expanded="true" aria-label="Collapse charts" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.charts"><li><a class="row" href="../api/alto.ui.charts/function-nice_ticks/">nice_ticks</a></li><li><a class="row" href="../api/alto.ui.charts/class-stackedbarchart/">StackedBarChart</a></li><li><a class="row" href="../api/alto.ui.charts/class-linechart/">LineChart</a></li><li><a class="row" href="../api/alto.ui.charts/class-hbarchart/">HBarChart</a></li><li><a class="row" href="../api/alto.ui.charts/class-heatmapchart/">HeatmapChart</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.circle/">circle</a>
+      <button type="button" class="nav-toggle" data-category="circle" aria-controls="nav-api/alto.ui.circle" aria-expanded="true" aria-label="Collapse circle" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.circle"><li><a class="row" href="../api/alto.ui.circle/function-wedge_path/">wedge_path</a></li><li><a class="row" href="../api/alto.ui.circle/function-wedge_middle/">wedge_middle</a></li><li><a class="row" href="../api/alto.ui.circle/function-wedge_color/">wedge_color</a></li><li><a class="row" href="../api/alto.ui.circle/function-write_text/">write_text</a></li><li><a class="row" href="../api/alto.ui.circle/class-fifthscircle/">FifthsCircle</a></li><li><a class="row" href="../api/alto.ui.circle/function-question_circle/">question_circle</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.circle_colors/">circle_colors</a>
+      <button type="button" class="nav-toggle" data-category="circle_colors" aria-controls="nav-api/alto.ui.circle_colors" aria-expanded="true" aria-label="Collapse circle_colors" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.circle_colors"><li><a class="row" href="../api/alto.ui.circle_colors/function-blank/">blank</a></li><li><a class="row" href="../api/alto.ui.circle_colors/class-schemethumb/">SchemeThumb</a></li><li><a class="row" href="../api/alto.ui.circle_colors/class-schemepage/">SchemePage</a></li><li><a class="row" href="../api/alto.ui.circle_colors/class-schemeeditor/">SchemeEditor</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.colors/">colors</a>
+      <button type="button" class="nav-toggle" data-category="colors" aria-controls="nav-api/alto.ui.colors" aria-expanded="true" aria-label="Collapse colors" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.colors"><li><a class="row" href="../api/alto.ui.colors/function-blend/">blend</a></li><li><a class="row" href="../api/alto.ui.colors/function-blend_name/">blend_name</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.database_page/">database_page</a>
+      <button type="button" class="nav-toggle" data-category="database_page" aria-controls="nav-api/alto.ui.database_page" aria-expanded="true" aria-label="Collapse database_page" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.database_page"><li><a class="row" href="../api/alto.ui.database_page/class-rowsmodel/">RowsModel</a></li><li><a class="row" href="../api/alto.ui.database_page/class-questiontexts/">QuestionTexts</a></li><li><a class="row" href="../api/alto.ui.database_page/function-answer_cells/">answer_cells</a></li><li><a class="row" href="../api/alto.ui.database_page/function-open_preview/">open_preview</a></li><li><a class="row" href="../api/alto.ui.database_page/class-answerlist/">AnswerList</a></li><li><a class="row" href="../api/alto.ui.database_page/class-databasepage/">DatabasePage</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.degree_text/">degree_text</a>
+      <button type="button" class="nav-toggle" data-category="degree_text" aria-controls="nav-api/alto.ui.degree_text" aria-expanded="true" aria-label="Collapse degree_text" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.degree_text"><li><a class="row" href="../api/alto.ui.degree_text/function-draw_degree_text/">draw_degree_text</a></li><li><a class="row" href="../api/alto.ui.degree_text/function-degree_tooltip/">degree_tooltip</a></li><li><a class="row" href="../api/alto.ui.degree_text/class-degreebutton/">DegreeButton</a></li><li><a class="row" href="../api/alto.ui.degree_text/class-degreecheckbox/">DegreeCheckBox</a></li><li><a class="row" href="../api/alto.ui.degree_text/class-degreelabel/">DegreeLabel</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.dropdown/">dropdown</a>
+      <button type="button" class="nav-toggle" data-category="dropdown" aria-controls="nav-api/alto.ui.dropdown" aria-expanded="true" aria-label="Collapse dropdown" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.dropdown"><li><a class="row" href="../api/alto.ui.dropdown/class-fieldcombobox/">FieldComboBox</a></li><li><a class="row" href="../api/alto.ui.dropdown/function-style_combo_popup/">style_combo_popup</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.engraving/">engraving</a>
+      <button type="button" class="nav-toggle" data-category="engraving" aria-controls="nav-api/alto.ui.engraving" aria-expanded="true" aria-label="Collapse engraving" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.engraving"><li><a class="row" href="../api/alto.ui.engraving/function-notation_glyph/">notation_glyph</a></li><li><a class="row" href="../api/alto.ui.engraving/function-staff_line_width/">staff_line_width</a></li><li><a class="row" href="../api/alto.ui.engraving/function-ledger_width/">ledger_width</a></li><li><a class="row" href="../api/alto.ui.engraving/function-fill_path/">fill_path</a></li><li><a class="row" href="../api/alto.ui.engraving/function-draw_note/">draw_note</a></li><li><a class="row" href="../api/alto.ui.engraving/function-draw_beamed_notes/">draw_beamed_notes</a></li><li><a class="row" href="../api/alto.ui.engraving/function-draw_clef/">draw_clef</a></li><li><a class="row" href="../api/alto.ui.engraving/function-accidental_width/">accidental_width</a></li><li><a class="row" href="../api/alto.ui.engraving/function-draw_accidental/">draw_accidental</a></li><li><a class="row" href="../api/alto.ui.engraving/function-draw_brace/">draw_brace</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.exercise_settings/">exercise_settings</a>
+      <button type="button" class="nav-toggle" data-category="exercise_settings" aria-controls="nav-api/alto.ui.exercise_settings" aria-expanded="true" aria-label="Collapse exercise_settings" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.exercise_settings"><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_note_names/">load_note_names</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_note_names/">save_note_names</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_keyboard/">load_keyboard</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_keyboard/">save_keyboard</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_keyboard_intervals/">load_keyboard_intervals</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_keyboard_intervals/">save_keyboard_intervals</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_construction/">load_construction</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_construction/">save_construction</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_arpeggio/">load_arpeggio</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_arpeggio/">save_arpeggio</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_intervals/">load_intervals</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_key_settings/">save_key_settings</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_key_signatures/">load_key_signatures</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_key_construction/">load_key_construction</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_order_of_keys/">load_order_of_keys</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_scale_identification/">load_scale_identification</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_scale_construction/">load_scale_construction</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-saved_notation_terms/">saved_notation_terms</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_notation_terms/">load_notation_terms</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_clef_basics/">load_clef_basics</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_clef_basics/">save_clef_basics</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_circle/">load_circle</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_circle/">save_circle</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_pack_options/">load_pack_options</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-save_pack_options/">save_pack_options</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_choice_buttons/">load_choice_buttons</a></li><li><a class="row" href="../api/alto.ui.exercise_settings/function-load_exercise_settings/">load_exercise_settings</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.exercise_view/">exercise_view</a>
+      <button type="button" class="nav-toggle" data-category="exercise_view" aria-controls="nav-api/alto.ui.exercise_view" aria-expanded="true" aria-label="Collapse exercise_view" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.exercise_view"><li><a class="row" href="../api/alto.ui.exercise_view/function-choice_keys/">choice_keys</a></li><li><a class="row" href="../api/alto.ui.exercise_view/function-second_row_keys/">second_row_keys</a></li><li><a class="row" href="../api/alto.ui.exercise_view/function-note_name/">note_name</a></li><li><a class="row" href="../api/alto.ui.exercise_view/function-note_words/">note_words</a></li><li><a class="row" href="../api/alto.ui.exercise_view/class-exerciseview/">ExerciseView</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.fingerboard/">fingerboard</a>
+      <button type="button" class="nav-toggle" data-category="fingerboard" aria-controls="nav-api/alto.ui.fingerboard" aria-expanded="true" aria-label="Collapse fingerboard" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.fingerboard"><li><a class="row" href="../api/alto.ui.fingerboard/function-ruler_reach/">ruler_reach</a></li><li><a class="row" href="../api/alto.ui.fingerboard/function-ruler_base/">ruler_base</a></li><li><a class="row" href="../api/alto.ui.fingerboard/function-neck_view/">neck_view</a></li><li><a class="row" href="../api/alto.ui.fingerboard/function-manual_style/">manual_style</a></li><li><a class="row" href="../api/alto.ui.fingerboard/class-fingerboardwidget/">FingerboardWidget</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.glossary/">glossary</a>
+      <button type="button" class="nav-toggle" data-category="glossary" aria-controls="nav-api/alto.ui.glossary" aria-expanded="true" aria-label="Collapse glossary" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.glossary"><li><a class="row" href="../api/alto.ui.glossary/class-glossarypage/">GlossaryPage</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.home/">home</a>
+      <button type="button" class="nav-toggle" data-category="home" aria-controls="nav-api/alto.ui.home" aria-expanded="true" aria-label="Collapse home" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.home"><li><a class="row" href="../api/alto.ui.home/function-category_tree/">category_tree</a></li><li><a class="row" href="../api/alto.ui.home/class-tilecard/">TileCard</a></li><li><a class="row" href="../api/alto.ui.home/function-exercise_icon/">exercise_icon</a></li><li><a class="row" href="../api/alto.ui.home/function-lesson_icon/">lesson_icon</a></li><li><a class="row" href="../api/alto.ui.home/class-exercisecard/">ExerciseCard</a></li><li><a class="row" href="../api/alto.ui.home/function-lesson_card/">lesson_card</a></li><li><a class="row" href="../api/alto.ui.home/class-homepage/">HomePage</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.icons/">icons</a>
+      <button type="button" class="nav-toggle" data-category="icons" aria-controls="nav-api/alto.ui.icons" aria-expanded="true" aria-label="Collapse icons" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.icons"><li><a class="row" href="../api/alto.ui.icons/function-set_palette_icon/">set_palette_icon</a></li><li><a class="row" href="../api/alto.ui.icons/function-set_svg_icon/">set_svg_icon</a></li><li><a class="row" href="../api/alto.ui.icons/function-set_item_icons/">set_item_icons</a></li><li><a class="row" href="../api/alto.ui.icons/function-svg_icon/">svg_icon</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.instrument_picker/">instrument_picker</a>
+      <button type="button" class="nav-toggle" data-category="instrument_picker" aria-controls="nav-api/alto.ui.instrument_picker" aria-expanded="true" aria-label="Collapse instrument_picker" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.instrument_picker"><li><a class="row" href="../api/alto.ui.instrument_picker/function-sound_picker_layout/">sound_picker_layout</a></li><li><a class="row" href="../api/alto.ui.instrument_picker/function-load_instrument/">load_instrument</a></li><li><a class="row" href="../api/alto.ui.instrument_picker/function-save_instrument/">save_instrument</a></li><li><a class="row" href="../api/alto.ui.instrument_picker/function-tokens/">tokens</a></li><li><a class="row" href="../api/alto.ui.instrument_picker/function-format_size/">format_size</a></li><li><a class="row" href="../api/alto.ui.instrument_picker/class-instrumentpicker/">InstrumentPicker</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.interval_range/">interval_range</a>
+      <button type="button" class="nav-toggle" data-category="interval_range" aria-controls="nav-api/alto.ui.interval_range" aria-expanded="true" aria-label="Collapse interval_range" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.interval_range"><li><a class="row" href="../api/alto.ui.interval_range/class-intervalrangeslider/">IntervalRangeSlider</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.key_fork/">key_fork</a>
+      <button type="button" class="nav-toggle" data-category="key_fork" aria-controls="nav-api/alto.ui.key_fork" aria-expanded="true" aria-label="Collapse key_fork" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.key_fork"><li><a class="row" href="../api/alto.ui.key_fork/function-node_position/">node_position</a></li><li><a class="row" href="../api/alto.ui.key_fork/function-route/">route</a></li><li><a class="row" href="../api/alto.ui.key_fork/function-path_between/">path_between</a></li><li><a class="row" href="../api/alto.ui.key_fork/function-point_along/">point_along</a></li><li><a class="row" href="../api/alto.ui.key_fork/function-nearest_on_fork/">nearest_on_fork</a></li><li><a class="row" href="../api/alto.ui.key_fork/function-fork_path/">fork_path</a></li><li><a class="row" href="../api/alto.ui.key_fork/function-draw_natural/">draw_natural</a></li><li><a class="row" href="../api/alto.ui.key_fork/class-keyfork/">KeyFork</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.keyboard/">keyboard</a>
+      <button type="button" class="nav-toggle" data-category="keyboard" aria-controls="nav-api/alto.ui.keyboard" aria-expanded="true" aria-label="Collapse keyboard" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.keyboard"><li><a class="row" href="../api/alto.ui.keyboard/class-keyboardwidget/">KeyboardWidget</a></li><li><a class="row" href="../api/alto.ui.keyboard/class-keyboardspan/">KeyboardSpan</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.keyboard_styles/">keyboard_styles</a>
+      <button type="button" class="nav-toggle" data-category="keyboard_styles" aria-controls="nav-api/alto.ui.keyboard_styles" aria-expanded="true" aria-label="Collapse keyboard_styles" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.keyboard_styles"><li><a class="row" href="../api/alto.ui.keyboard_styles/class-keyboardstyle/">KeyboardStyle</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-custom_colors/">custom_colors</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-custom_style/">custom_style</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-style_for/">style_for</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-current/">current</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-load_style/">load_style</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-set_style/">set_style</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-set_custom_color/">set_custom_color</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-on_redraw/">on_redraw</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-reversed_key/">reversed_key</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-key_brush/">key_brush</a></li><li><a class="row" href="../api/alto.ui.keyboard_styles/function-edge_color/">edge_color</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.lesson/">lesson</a>
+      <button type="button" class="nav-toggle" data-category="lesson" aria-controls="nav-api/alto.ui.lesson" aria-expanded="true" aria-label="Collapse lesson" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.lesson"><li><a class="row" href="../api/alto.ui.lesson/function-saved_step/">saved_step</a></li><li><a class="row" href="../api/alto.ui.lesson/function-save_step/">save_step</a></li><li><a class="row" href="../api/alto.ui.lesson/class-stepview/">StepView</a></li><li><a class="row" href="../api/alto.ui.lesson/class-lessonview/">LessonView</a></li><li><a class="row" href="../api/alto.ui.lesson/class-lessonspage/">LessonsPage</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.lesson_nav/">lesson_nav</a>
+      <button type="button" class="nav-toggle" data-category="lesson_nav" aria-controls="nav-api/alto.ui.lesson_nav" aria-expanded="true" aria-label="Collapse lesson_nav" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.lesson_nav"><li><a class="row" href="../api/alto.ui.lesson_nav/function-section_item/">section_item</a></li><li><a class="row" href="../api/alto.ui.lesson_nav/class-lessonnav/">LessonNav</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.main_window/">main_window</a>
+      <button type="button" class="nav-toggle" data-category="main_window" aria-controls="nav-api/alto.ui.main_window" aria-expanded="true" aria-label="Collapse main_window" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.main_window"><li><a class="row" href="../api/alto.ui.main_window/function-default_size/">default_size</a></li><li><a class="row" href="../api/alto.ui.main_window/class-mainwindow/">MainWindow</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.meter_staff/">meter_staff</a>
+      <button type="button" class="nav-toggle" data-category="meter_staff" aria-controls="nav-api/alto.ui.meter_staff" aria-expanded="true" aria-label="Collapse meter_staff" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.meter_staff"><li><a class="row" href="../api/alto.ui.meter_staff/class-meterbutton/">MeterButton</a></li><li><a class="row" href="../api/alto.ui.meter_staff/class-meterstaff/">MeterStaff</a></li><li><a class="row" href="../api/alto.ui.meter_staff/class-beatplacementstaff/">BeatPlacementStaff</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.metronome_spectrum/">metronome_spectrum</a>
+      <button type="button" class="nav-toggle" data-category="metronome_spectrum" aria-controls="nav-api/alto.ui.metronome_spectrum" aria-expanded="true" aria-label="Collapse metronome_spectrum" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.metronome_spectrum"><li><a class="row" href="../api/alto.ui.metronome_spectrum/class-metronomespectrum/">MetronomeSpectrum</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.midi_input/">midi_input</a>
+      <button type="button" class="nav-toggle" data-category="midi_input" aria-controls="nav-api/alto.ui.midi_input" aria-expanded="true" aria-label="Collapse midi_input" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.midi_input"><li><a class="row" href="../api/alto.ui.midi_input/class-midiinput/">MidiInput</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.motion/">motion</a>
+      <button type="button" class="nav-toggle" data-category="motion" aria-controls="nav-api/alto.ui.motion" aria-expanded="true" aria-label="Collapse motion" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.motion"><li><a class="row" href="../api/alto.ui.motion/function-instant/">instant</a></li><li><a class="row" href="../api/alto.ui.motion/function-set_instant/">set_instant</a></li><li><a class="row" href="../api/alto.ui.motion/function-later/">later</a></li><li><a class="row" href="../api/alto.ui.motion/function-start_timer/">start_timer</a></li><li><a class="row" href="../api/alto.ui.motion/function-play/">play</a></li><li><a class="row" href="../api/alto.ui.motion/function-busy/">busy</a></li><li><a class="row" href="../api/alto.ui.motion/function-settle/">settle</a></li><li><a class="row" href="../api/alto.ui.motion/function-set_shortcut/">set_shortcut</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.notation/">notation</a>
+      <button type="button" class="nav-toggle" data-category="notation" aria-controls="nav-api/alto.ui.notation" aria-expanded="true" aria-label="Collapse notation" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.notation"><li><a class="row" href="../api/alto.ui.notation/class-notationstyle/">NotationStyle</a></li><li><a class="row" href="../api/alto.ui.notation/function-baritone_clef/">baritone_clef</a></li><li><a class="row" href="../api/alto.ui.notation/function-clef_shape/">clef_shape</a></li><li><a class="row" href="../api/alto.ui.notation/function-set_baritone_clef/">set_baritone_clef</a></li><li><a class="row" href="../api/alto.ui.notation/function-current/">current</a></li><li><a class="row" href="../api/alto.ui.notation/function-load_style/">load_style</a></li><li><a class="row" href="../api/alto.ui.notation/function-set_style/">set_style</a></li><li><a class="row" href="../api/alto.ui.notation/function-on_redraw/">on_redraw</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.notes/">notes</a>
+      <button type="button" class="nav-toggle" data-category="notes" aria-controls="nav-api/alto.ui.notes" aria-expanded="true" aria-label="Collapse notes" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.notes"><li><a class="row" href="../api/alto.ui.notes/function-note_shape/">note_shape</a></li><li><a class="row" href="../api/alto.ui.notes/function-draw_note/">draw_note</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.pack_settings_panel/">pack_settings_panel</a>
+      <button type="button" class="nav-toggle" data-category="pack_settings_panel" aria-controls="nav-api/alto.ui.pack_settings_panel" aria-expanded="true" aria-label="Collapse pack_settings_panel" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.pack_settings_panel"><li><a class="row" href="../api/alto.ui.pack_settings_panel/class-packsettingspanel/">PackSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.pack_settings_panel/class-packkeyboardsettingspanel/">PackKeyboardSettingsPanel</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.package_update/">package_update</a>
+      <button type="button" class="nav-toggle" data-category="package_update" aria-controls="nav-api/alto.ui.package_update" aria-expanded="true" aria-label="Collapse package_update" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.package_update"><li><a class="row" href="../api/alto.ui.package_update/class-updatepreparer/">UpdatePreparer</a></li><li><a class="row" href="../api/alto.ui.package_update/class-packageupdatedialog/">PackageUpdateDialog</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.pictures/">pictures</a>
+      <button type="button" class="nav-toggle" data-category="pictures" aria-controls="nav-api/alto.ui.pictures" aria-expanded="true" aria-label="Collapse pictures" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.pictures"><li><a class="row" href="../api/alto.ui.pictures/function-symbol_icon/">symbol_icon</a></li><li><a class="row" href="../api/alto.ui.pictures/class-clefpictures/">ClefPictures</a></li><li><a class="row" href="../api/alto.ui.pictures/class-valuepictures/">ValuePictures</a></li><li><a class="row" href="../api/alto.ui.pictures/function-rhythm_picture/">rhythm_picture</a></li><li><a class="row" href="../api/alto.ui.pictures/class-keysignaturepicture/">KeySignaturePicture</a></li><li><a class="row" href="../api/alto.ui.pictures/class-rangepictures/">RangePictures</a></li><li><a class="row" href="../api/alto.ui.pictures/class-namepicture/">NamePicture</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.plugins_dialog/">plugins_dialog</a>
+      <button type="button" class="nav-toggle" data-category="plugins_dialog" aria-controls="nav-api/alto.ui.plugins_dialog" aria-expanded="true" aria-label="Collapse plugins_dialog" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.plugins_dialog"><li><a class="row" href="../api/alto.ui.plugins_dialog/class-pluginsdialog/">PluginsDialog</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.practice_limits/">practice_limits</a>
+      <button type="button" class="nav-toggle" data-category="practice_limits" aria-controls="nav-api/alto.ui.practice_limits" aria-expanded="true" aria-label="Collapse practice_limits" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.practice_limits"><li><a class="row" href="../api/alto.ui.practice_limits/class-dailylimitseditor/">DailyLimitsEditor</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.profile_dialog/">profile_dialog</a>
+      <button type="button" class="nav-toggle" data-category="profile_dialog" aria-controls="nav-api/alto.ui.profile_dialog" aria-expanded="true" aria-label="Collapse profile_dialog" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.profile_dialog"><li><a class="row" href="../api/alto.ui.profile_dialog/class-profiledialog/">ProfileDialog</a></li><li><a class="row" href="../api/alto.ui.profile_dialog/function-remember_profile/">remember_profile</a></li><li><a class="row" href="../api/alto.ui.profile_dialog/function-startup_profile/">startup_profile</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.question_preview/">question_preview</a>
+      <button type="button" class="nav-toggle" data-category="question_preview" aria-controls="nav-api/alto.ui.question_preview" aria-expanded="true" aria-label="Collapse question_preview" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.question_preview"><li><a class="row" href="../api/alto.ui.question_preview/class-questionpreview/">QuestionPreview</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.reference/">reference</a>
+      <button type="button" class="nav-toggle" data-category="reference" aria-controls="nav-api/alto.ui.reference" aria-expanded="true" aria-label="Collapse reference" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.reference"><li><a class="row" href="../api/alto.ui.reference/class-explorablecircle/">ExplorableCircle</a></li><li><a class="row" href="../api/alto.ui.reference/class-referencepanel/">ReferencePanel</a></li><li><a class="row" href="../api/alto.ui.reference/class-clefreferencepanel/">ClefReferencePanel</a></li><li><a class="row" href="../api/alto.ui.reference/class-scalereferencepanel/">ScaleReferencePanel</a></li><li><a class="row" href="../api/alto.ui.reference/class-notereferencepanel/">NoteReferencePanel</a></li><li><a class="row" href="../api/alto.ui.reference/class-pluginreferencepanel/">PluginReferencePanel</a></li><li><a class="row" href="../api/alto.ui.reference/function-reference_panel_for/">reference_panel_for</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.response_times/">response_times</a>
+      <button type="button" class="nav-toggle" data-category="response_times" aria-controls="nav-api/alto.ui.response_times" aria-expanded="true" aria-label="Collapse response_times" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.response_times"><li><a class="row" href="../api/alto.ui.response_times/class-responsetimedialog/">ResponseTimeDialog</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.scale_explorer/">scale_explorer</a>
+      <button type="button" class="nav-toggle" data-category="scale_explorer" aria-controls="nav-api/alto.ui.scale_explorer" aria-expanded="true" aria-label="Collapse scale_explorer" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.scale_explorer"><li><a class="row" href="../api/alto.ui.scale_explorer/class-scaleexplorer/">ScaleExplorer</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.score_excerpt/">score_excerpt</a>
+      <button type="button" class="nav-toggle" data-category="score_excerpt" aria-controls="nav-api/alto.ui.score_excerpt" aria-expanded="true" aria-label="Collapse score_excerpt" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.score_excerpt"><li><a class="row" href="../api/alto.ui.score_excerpt/class-scoreexcerpt/">ScoreExcerpt</a></li><li><a class="row" href="../api/alto.ui.score_excerpt/function-score_artwork/">score_artwork</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.settings_menu/">settings_menu</a>
+      <button type="button" class="nav-toggle" data-category="settings_menu" aria-controls="nav-api/alto.ui.settings_menu" aria-expanded="true" aria-label="Collapse settings_menu" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.settings_menu"><li><a class="row" href="../api/alto.ui.settings_menu/function-guard_last/">guard_last</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-arrow_button/">arrow_button</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-rangeeditor/">RangeEditor</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-keydiagram/">KeyDiagram</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-label_with_picture/">label_with_picture</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-clef_choice_page/">clef_choice_page</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-show_keys/">show_keys</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-menurow/">MenuRow</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-switch/">Switch</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-togglerow/">ToggleRow</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-subpage/">subpage</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-slidestack/">SlideStack</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-exercisesettingspanel/">ExerciseSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-keyboardrangepanel/">KeyboardRangePanel</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-clefspanel/">ClefsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-staffrangepanel/">StaffRangePanel</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-noteanswersettingspanel/">NoteAnswerSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-keychecklist/">KeyChecklist</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-keysignaturepage/">KeySignaturePage</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-scalekeypicker/">ScaleKeyPicker</a></li><li><a class="row" href="../api/alto.ui.settings_menu/class-choicechecklist/">ChoiceChecklist</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-buttons_page/">buttons_page</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-direction_choices/">direction_choices</a></li><li><a class="row" href="../api/alto.ui.settings_menu/function-scrolling/">scrolling</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.settings_panel/">settings_panel</a>
+      <button type="button" class="nav-toggle" data-category="settings_panel" aria-controls="nav-api/alto.ui.settings_panel" aria-expanded="true" aria-label="Collapse settings_panel" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.settings_panel"><li><a class="row" href="../api/alto.ui.settings_panel/class-notenamesettingspanel/">NoteNameSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-keyboardsettingspanel/">KeyboardSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-noteconstructionsettingspanel/">NoteConstructionSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-intervalsettingspanel/">IntervalSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-keyboardintervalsettingspanel/">KeyboardIntervalSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-arpeggiosettingspanel/">ArpeggioSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-keysignaturesettingspanel/">KeySignatureSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-notationsettingspanel/">NotationSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-clefbasicssettingspanel/">ClefBasicsSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/function-settings_inversion_names/">settings_inversion_names</a></li><li><a class="row" href="../api/alto.ui.settings_panel/class-circlesettingspanel/">CircleSettingsPanel</a></li><li><a class="row" href="../api/alto.ui.settings_panel/function-settings_panel_for/">settings_panel_for</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.staff/">staff</a>
+      <button type="button" class="nav-toggle" data-category="staff" aria-controls="nav-api/alto.ui.staff" aria-expanded="true" aria-label="Collapse staff" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.staff"><li><a class="row" href="../api/alto.ui.staff/function-clef_targets/">clef_targets</a></li><li><a class="row" href="../api/alto.ui.staff/function-clef_target_of/">clef_target_of</a></li><li><a class="row" href="../api/alto.ui.staff/function-draw_key_signature/">draw_key_signature</a></li><li><a class="row" href="../api/alto.ui.staff/function-draw_signature_sign/">draw_signature_sign</a></li><li><a class="row" href="../api/alto.ui.staff/class-staffwidget/">StaffWidget</a></li><li><a class="row" href="../api/alto.ui.staff/function-keyboard_key_staff/">keyboard_key_staff</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.staff_input/">staff_input</a>
+      <button type="button" class="nav-toggle" data-category="staff_input" aria-controls="nav-api/alto.ui.staff_input" aria-expanded="true" aria-label="Collapse staff_input" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.staff_input"><li><a class="row" href="../api/alto.ui.staff_input/class-staffinput/">StaffInput</a></li><li><a class="row" href="../api/alto.ui.staff_input/class-scaleinput/">ScaleInput</a></li><li><a class="row" href="../api/alto.ui.staff_input/class-signatureinput/">SignatureInput</a></li><li><a class="row" href="../api/alto.ui.staff_input/class-clefinput/">ClefInput</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.staff_playback/">staff_playback</a>
+      <button type="button" class="nav-toggle" data-category="staff_playback" aria-controls="nav-api/alto.ui.staff_playback" aria-expanded="true" aria-label="Collapse staff_playback" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.staff_playback"><li><a class="row" href="../api/alto.ui.staff_playback/class-staffplayback/">StaffPlayback</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.stats_dialog/">stats_dialog</a>
+      <button type="button" class="nav-toggle" data-category="stats_dialog" aria-controls="nav-api/alto.ui.stats_dialog" aria-expanded="true" aria-label="Collapse stats_dialog" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.stats_dialog"><li><a class="row" href="../api/alto.ui.stats_dialog/function-since_for/">since_for</a></li><li><a class="row" href="../api/alto.ui.stats_dialog/function-format_duration/">format_duration</a></li><li><a class="row" href="../api/alto.ui.stats_dialog/function-period_title/">period_title</a></li><li><a class="row" href="../api/alto.ui.stats_dialog/class-tile/">Tile</a></li><li><a class="row" href="../api/alto.ui.stats_dialog/class-statspage/">StatsPage</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.store/">store</a>
+      <button type="button" class="nav-toggle" data-category="store" aria-controls="nav-api/alto.ui.store" aria-expanded="true" aria-label="Collapse store" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.store"><li><a class="row" href="../api/alto.ui.store/function-store/">store</a></li><li><a class="row" href="../api/alto.ui.store/function-int_value/">int_value</a></li><li><a class="row" href="../api/alto.ui.store/function-text_value/">text_value</a></li><li><a class="row" href="../api/alto.ui.store/function-bool_value/">bool_value</a></li><li><a class="row" href="../api/alto.ui.store/function-save_bool/">save_bool</a></li><li><a class="row" href="../api/alto.ui.store/function-list_value/">list_value</a></li><li><a class="row" href="../api/alto.ui.store/function-choices_value/">choices_value</a></li><li><a class="row" href="../api/alto.ui.store/function-keys_value/">keys_value</a></li><li><a class="row" href="../api/alto.ui.store/function-joined/">joined</a></li><li><a class="row" href="../api/alto.ui.store/function-export_settings/">export_settings</a></li><li><a class="row" href="../api/alto.ui.store/function-import_settings/">import_settings</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.style/">style</a>
+      <button type="button" class="nav-toggle" data-category="style" aria-controls="nav-api/alto.ui.style" aria-expanded="true" aria-label="Collapse style" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.style"><li><a class="row" href="../api/alto.ui.style/function-navigation_heading_style/">navigation_heading_style</a></li><li><a class="row" href="../api/alto.ui.style/function-app_style/">app_style</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.theme/">theme</a>
+      <button type="button" class="nav-toggle" data-category="theme" aria-controls="nav-api/alto.ui.theme" aria-expanded="true" aria-label="Collapse theme" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.theme"><li><a class="row" href="../api/alto.ui.theme/class-customtheme/">CustomTheme</a></li><li><a class="row" href="../api/alto.ui.theme/function-hsl_hex/">hsl_hex</a></li><li><a class="row" href="../api/alto.ui.theme/function-seeded_themes/">seeded_themes</a></li><li><a class="row" href="../api/alto.ui.theme/function-family_of/">family_of</a></li><li><a class="row" href="../api/alto.ui.theme/function-variant_key/">variant_key</a></li><li><a class="row" href="../api/alto.ui.theme/class-themerecord/">ThemeRecord</a></li><li><a class="row" href="../api/alto.ui.theme/function-user_records/">user_records</a></li><li><a class="row" href="../api/alto.ui.theme/function-save_user_records/">save_user_records</a></li><li><a class="row" href="../api/alto.ui.theme/function-new_family_id/">new_family_id</a></li><li><a class="row" href="../api/alto.ui.theme/function-upsert_user_theme/">upsert_user_theme</a></li><li><a class="row" href="../api/alto.ui.theme/function-delete_user_theme/">delete_user_theme</a></li><li><a class="row" href="../api/alto.ui.theme/function-theme_of/">theme_of</a></li><li><a class="row" href="../api/alto.ui.theme/function-user_themes/">user_themes</a></li><li><a class="row" href="../api/alto.ui.theme/function-families/">families</a></li><li><a class="row" href="../api/alto.ui.theme/function-custom_theme/">custom_theme</a></li><li><a class="row" href="../api/alto.ui.theme/function-scheme_of/">scheme_of</a></li><li><a class="row" href="../api/alto.ui.theme/function-preview_colors/">preview_colors</a></li><li><a class="row" href="../api/alto.ui.theme/function-theme_palette/">theme_palette</a></li><li><a class="row" href="../api/alto.ui.theme/function-saved_theme/">saved_theme</a></li><li><a class="row" href="../api/alto.ui.theme/function-save_theme/">save_theme</a></li><li><a class="row" href="../api/alto.ui.theme/function-system_is_dark/">system_is_dark</a></li><li><a class="row" href="../api/alto.ui.theme/function-apply_theme/">apply_theme</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.theme_cards/">theme_cards</a>
+      <button type="button" class="nav-toggle" data-category="theme_cards" aria-controls="nav-api/alto.ui.theme_cards" aria-expanded="true" aria-label="Collapse theme_cards" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.theme_cards"><li><a class="row" href="../api/alto.ui.theme_cards/function-colors_of/">colors_of</a></li><li><a class="row" href="../api/alto.ui.theme_cards/class-themethumb/">ThemeThumb</a></li><li><a class="row" href="../api/alto.ui.theme_cards/class-themecard/">ThemeCard</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.theme_editor/">theme_editor</a>
+      <button type="button" class="nav-toggle" data-category="theme_editor" aria-controls="nav-api/alto.ui.theme_editor" aria-expanded="true" aria-label="Collapse theme_editor" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.theme_editor"><li><a class="row" href="../api/alto.ui.theme_editor/class-themeeditor/">ThemeEditor</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.transition_preview/">transition_preview</a>
+      <button type="button" class="nav-toggle" data-category="transition_preview" aria-controls="nav-api/alto.ui.transition_preview" aria-expanded="true" aria-label="Collapse transition_preview" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.transition_preview"><li><a class="row" href="../api/alto.ui.transition_preview/function-make_sides/">make_sides</a></li><li><a class="row" href="../api/alto.ui.transition_preview/class-stage/">Stage</a></li><li><a class="row" href="../api/alto.ui.transition_preview/class-transitionpreview/">TransitionPreview</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.transitions/">transitions</a>
+      <button type="button" class="nav-toggle" data-category="transitions" aria-controls="nav-api/alto.ui.transitions" aria-expanded="true" aria-label="Collapse transitions" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.transitions"><li><a class="row" href="../api/alto.ui.transitions/class-sprite/">Sprite</a></li><li><a class="row" href="../api/alto.ui.transitions/class-scene/">Scene</a></li><li><a class="row" href="../api/alto.ui.transitions/function-ease_out/">ease_out</a></li><li><a class="row" href="../api/alto.ui.transitions/function-ramp/">ramp</a></li><li><a class="row" href="../api/alto.ui.transitions/function-hide/">hide</a></li><li><a class="row" href="../api/alto.ui.transitions/function-fade_in/">fade_in</a></li><li><a class="row" href="../api/alto.ui.transitions/function-crossfade/">crossfade</a></li><li><a class="row" href="../api/alto.ui.transitions/function-slide/">slide</a></li><li><a class="row" href="../api/alto.ui.transitions/function-rise/">rise</a></li><li><a class="row" href="../api/alto.ui.transitions/function-cascade/">cascade</a></li><li><a class="row" href="../api/alto.ui.transitions/function-zoom/">zoom</a></li><li><a class="row" href="../api/alto.ui.transitions/function-flip/">flip</a></li><li><a class="row" href="../api/alto.ui.transitions/function-blur/">blur</a></li><li><a class="row" href="../api/alto.ui.transitions/function-wipe/">wipe</a></li><li><a class="row" href="../api/alto.ui.transitions/function-drop/">drop</a></li><li><a class="row" href="../api/alto.ui.transitions/class-transition/">Transition</a></li><li><a class="row" href="../api/alto.ui.transitions/class-motion/">Motion</a></li><li><a class="row" href="../api/alto.ui.transitions/function-eased/">eased</a></li><li><a class="row" href="../api/alto.ui.transitions/function-ranks/">ranks</a></li><li><a class="row" href="../api/alto.ui.transitions/function-span/">span</a></li><li><a class="row" href="../api/alto.ui.transitions/function-move/">move</a></li><li><a class="row" href="../api/alto.ui.transitions/function-built/">built</a></li><li><a class="row" href="../api/alto.ui.transitions/function-made/">made</a></li><li><a class="row" href="../api/alto.ui.transitions/function-transition_named/">transition_named</a></li><li><a class="row" href="../api/alto.ui.transitions/function-saved_transition/">saved_transition</a></li><li><a class="row" href="../api/alto.ui.transitions/function-save_transition/">save_transition</a></li><li><a class="row" href="../api/alto.ui.transitions/function-paint_sprites/">paint_sprites</a></li><li><a class="row" href="../api/alto.ui.transitions/class-transitioncanvas/">TransitionCanvas</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.update_flow/">update_flow</a>
+      <button type="button" class="nav-toggle" data-category="update_flow" aria-controls="nav-api/alto.ui.update_flow" aria-expanded="true" aria-label="Collapse update_flow" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.update_flow"><li><a class="row" href="../api/alto.ui.update_flow/function-brief/">brief</a></li><li><a class="row" href="../api/alto.ui.update_flow/class-commandrunner/">CommandRunner</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-saved_channel/">saved_channel</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-save_channel/">save_channel</a></li><li><a class="row" href="../api/alto.ui.update_flow/class-waitdialog/">WaitDialog</a></li><li><a class="row" href="../api/alto.ui.update_flow/class-checkdialog/">CheckDialog</a></li><li><a class="row" href="../api/alto.ui.update_flow/class-releasefetcher/">ReleaseFetcher</a></li><li><a class="row" href="../api/alto.ui.update_flow/class-dailyreleasecheck/">DailyReleaseCheck</a></li><li><a class="row" href="../api/alto.ui.update_flow/class-releasedialog/">ReleaseDialog</a></li><li><a class="row" href="../api/alto.ui.update_flow/class-updatedialog/">UpdateDialog</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-check_for_updates/">check_for_updates</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-check_release/">check_release</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-offer_release/">offer_release</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-check_main/">check_main</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-install/">install</a></li><li><a class="row" href="../api/alto.ui.update_flow/function-update_package/">update_package</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.warmup/">warmup</a>
+      <button type="button" class="nav-toggle" data-category="warmup" aria-controls="nav-api/alto.ui.warmup" aria-expanded="true" aria-label="Collapse warmup" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.warmup"><li><a class="row" href="../api/alto.ui.warmup/function-warmup_steps/">warmup_steps</a></li><li><a class="row" href="../api/alto.ui.warmup/function-start/">start</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.widgets/">widgets</a>
+      <button type="button" class="nav-toggle" data-category="widgets" aria-controls="nav-api/alto.ui.widgets" aria-expanded="true" aria-label="Collapse widgets" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.widgets"><li><a class="row" href="../api/alto.ui.widgets/function-vertical_scroll_area/">vertical_scroll_area</a></li><li><a class="row" href="../api/alto.ui.widgets/function-busy_progress_bar/">busy_progress_bar</a></li><li><a class="row" href="../api/alto.ui.widgets/class-practicecounts/">PracticeCounts</a></li><li><a class="row" href="../api/alto.ui.widgets/class-sidebartoggle/">SidebarToggle</a></li><li><a class="row" href="../api/alto.ui.widgets/class-helpbutton/">HelpButton</a></li><li><a class="row" href="../api/alto.ui.widgets/class-segmentedcontrol/">SegmentedControl</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.ui.zoom/">zoom</a>
+      <button type="button" class="nav-toggle" data-category="zoom" aria-controls="nav-api/alto.ui.zoom" aria-expanded="true" aria-label="Collapse zoom" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.ui.zoom"><li><a class="row" href="../api/alto.ui.zoom/function-percent/">percent</a></li><li><a class="row" href="../api/alto.ui.zoom/function-factor/">factor</a></li><li><a class="row" href="../api/alto.ui.zoom/function-px/">px</a></li><li><a class="row" href="../api/alto.ui.zoom/function-css/">css</a></li><li><a class="row" href="../api/alto.ui.zoom/function-apply_font/">apply_font</a></li><li><a class="row" href="../api/alto.ui.zoom/function-set_percent/">set_percent</a></li><li><a class="row" href="../api/alto.ui.zoom/function-step/">step</a></li><li><a class="row" href="../api/alto.ui.zoom/function-reset/">reset</a></li><li><a class="row" href="../api/alto.ui.zoom/function-load/">load</a></li><li><a class="row" href="../api/alto.ui.zoom/class-wheelzoom/">WheelZoom</a></li></ul></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.anki_export/">anki_export</a>
+      <button type="button" class="nav-toggle" data-category="anki_export" aria-controls="nav-api/alto.anki_export" aria-expanded="true" aria-label="Collapse anki_export" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.anki_export"><li><a class="row" href="../api/alto.anki_export/class-review/">Review</a></li><li><a class="row" href="../api/alto.anki_export/function-profile_reviews/">profile_reviews</a></li><li><a class="row" href="../api/alto.anki_export/function-deck_candidates/">deck_candidates</a></li><li><a class="row" href="../api/alto.anki_export/function-export_deck/">export_deck</a></li><li><a class="row" href="../api/alto.anki_export/class-deckselection/">DeckSelection</a></li><li><a class="row" href="../api/alto.anki_export/class-planneddeck/">PlannedDeck</a></li><li><a class="row" href="../api/alto.anki_export/function-plan_deck/">plan_deck</a></li><li><a class="row" href="../api/alto.anki_export/function-export_decks/">export_decks</a></li><li><a class="row" href="../api/alto.anki_export/class-exportcontrol/">ExportControl</a></li><li><a class="row" href="../api/alto.anki_export/function-write_decks/">write_decks</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.audio/">audio</a>
+      <button type="button" class="nav-toggle" data-category="audio" aria-controls="nav-api/alto.audio" aria-expanded="true" aria-label="Collapse audio" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.audio"><li><a class="row" href="../api/alto.audio/function-synth_piano/">synth_piano</a></li><li><a class="row" href="../api/alto.audio/class-instrument/">Instrument</a></li><li><a class="row" href="../api/alto.audio/function-instrument_groups/">instrument_groups</a></li><li><a class="row" href="../api/alto.audio/function-read_wav/">read_wav</a></li><li><a class="row" href="../api/alto.audio/function-shift_pitch/">shift_pitch</a></li><li><a class="row" href="../api/alto.audio/function-to_wav_bytes/">to_wav_bytes</a></li><li><a class="row" href="../api/alto.audio/function-write_file_atomically/">write_file_atomically</a></li><li><a class="row" href="../api/alto.audio/function-metronome_preview_pcm/">metronome_preview_pcm</a></li><li><a class="row" href="../api/alto.audio/class-sounds/">Sounds</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.circle_schemes/">circle_schemes</a>
+      <button type="button" class="nav-toggle" data-category="circle_schemes" aria-controls="nav-api/alto.circle_schemes" aria-expanded="true" aria-label="Collapse circle_schemes" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.circle_schemes"><li><a class="row" href="../api/alto.circle_schemes/class-cellmaker/">CellMaker</a></li><li><a class="row" href="../api/alto.circle_schemes/class-customrecord/">CustomRecord</a></li><li><a class="row" href="../api/alto.circle_schemes/class-scheme/">Scheme</a></li><li><a class="row" href="../api/alto.circle_schemes/function-rgb_of/">rgb_of</a></li><li><a class="row" href="../api/alto.circle_schemes/function-hex_of/">hex_of</a></li><li><a class="row" href="../api/alto.circle_schemes/function-hsl_of/">hsl_of</a></li><li><a class="row" href="../api/alto.circle_schemes/function-signature_of/">signature_of</a></li><li><a class="row" href="../api/alto.circle_schemes/function-preset/">preset</a></li><li><a class="row" href="../api/alto.circle_schemes/function-record_of/">record_of</a></li><li><a class="row" href="../api/alto.circle_schemes/function-clean_record/">clean_record</a></li><li><a class="row" href="../api/alto.circle_schemes/function-custom_scheme/">custom_scheme</a></li><li><a class="row" href="../api/alto.circle_schemes/function-dump_customs/">dump_customs</a></li><li><a class="row" href="../api/alto.circle_schemes/function-load_customs/">load_customs</a></li><li><a class="row" href="../api/alto.circle_schemes/function-resolve/">resolve</a></li><li><a class="row" href="../api/alto.circle_schemes/function-next_custom_key/">next_custom_key</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.instrument_info/">instrument_info</a>
+      <button type="button" class="nav-toggle" data-category="instrument_info" aria-controls="nav-api/alto.instrument_info" aria-expanded="true" aria-label="Collapse instrument_info" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.instrument_info"><li><a class="row" href="../api/alto.instrument_info/class-instrumentinfo/">InstrumentInfo</a></li><li><a class="row" href="../api/alto.instrument_info/class-coverage/">Coverage</a></li><li><a class="row" href="../api/alto.instrument_info/function-coverage/">coverage</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.instrument_packs/">instrument_packs</a>
+      <button type="button" class="nav-toggle" data-category="instrument_packs" aria-controls="nav-api/alto.instrument_packs" aria-expanded="true" aria-label="Collapse instrument_packs" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.instrument_packs"><li><a class="row" href="../api/alto.instrument_packs/class-packstring/">PackString</a></li><li><a class="row" href="../api/alto.instrument_packs/class-answeranimation/">AnswerAnimation</a></li><li><a class="row" href="../api/alto.instrument_packs/class-packview/">PackView</a></li><li><a class="row" href="../api/alto.instrument_packs/class-packkeyboard/">PackKeyboard</a></li><li><a class="row" href="../api/alto.instrument_packs/class-packkeyboardstyle/">PackKeyboardStyle</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_keyboard_style/">read_keyboard_style</a></li><li><a class="row" href="../api/alto.instrument_packs/class-packinstrument/">PackInstrument</a></li><li><a class="row" href="../api/alto.instrument_packs/function-identifier/">identifier</a></li><li><a class="row" href="../api/alto.instrument_packs/function-pitch/">pitch</a></li><li><a class="row" href="../api/alto.instrument_packs/class-packfiles/">PackFiles</a></li><li><a class="row" href="../api/alto.instrument_packs/function-image_point/">image_point</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_sound_info/">read_sound_info</a></li><li><a class="row" href="../api/alto.instrument_packs/function-plain_text/">plain_text</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_text/">read_text</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_focus/">read_focus</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_marker_size/">read_marker_size</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_icon/">read_icon</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_picture_file/">read_picture_file</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_views/">read_views</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_keyboards/">read_keyboards</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_positions/">read_positions</a></li><li><a class="row" href="../api/alto.instrument_packs/function-read_instrument/">read_instrument</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.location/">location</a>
+      <button type="button" class="nav-toggle" data-category="location" aria-controls="nav-api/alto.location" aria-expanded="true" aria-label="Collapse location" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.location"><li><a class="row" href="../api/alto.location/function-alto_home/">alto_home</a></li><li><a class="row" href="../api/alto.location/function-database_path/">database_path</a></li><li><a class="row" href="../api/alto.location/function-settings_folder/">settings_folder</a></li><li><a class="row" href="../api/alto.location/function-desktop_name/">desktop_name</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.notation_excerpts/">notation_excerpts</a>
+      <button type="button" class="nav-toggle" data-category="notation_excerpts" aria-controls="nav-api/alto.notation_excerpts" aria-expanded="true" aria-label="Collapse notation_excerpts" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.notation_excerpts"><li><a class="row" href="../api/alto.notation_excerpts/class-excerpt/">Excerpt</a></li><li><a class="row" href="../api/alto.notation_excerpts/function-excerpts/">excerpts</a></li><li><a class="row" href="../api/alto.notation_excerpts/function-passages_by_term/">passages_by_term</a></li></ul></li><li><a class="row" href="../api/alto.notation_terms/">notation_terms</a></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.plugin_registry/">plugin_registry</a>
+      <button type="button" class="nav-toggle" data-category="plugin_registry" aria-controls="nav-api/alto.plugin_registry" aria-expanded="true" aria-label="Collapse plugin_registry" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.plugin_registry"><li><a class="row" href="../api/alto.plugin_registry/function-install_registered/">install_registered</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.selfupdate/">selfupdate</a>
+      <button type="button" class="nav-toggle" data-category="selfupdate" aria-controls="nav-api/alto.selfupdate" aria-expanded="true" aria-label="Collapse selfupdate" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.selfupdate"><li><a class="row" href="../api/alto.selfupdate/class-updateerror/">UpdateError</a></li><li><a class="row" href="../api/alto.selfupdate/class-updatecanceled/">UpdateCanceled</a></li><li><a class="row" href="../api/alto.selfupdate/class-target/">Target</a></li><li><a class="row" href="../api/alto.selfupdate/class-prepared/">Prepared</a></li><li><a class="row" href="../api/alto.selfupdate/function-self_update_target/">self_update_target</a></li><li><a class="row" href="../api/alto.selfupdate/function-download/">download</a></li><li><a class="row" href="../api/alto.selfupdate/function-extract_tarball/">extract_tarball</a></li><li><a class="row" href="../api/alto.selfupdate/function-ignore_progress/">ignore_progress</a></li><li><a class="row" href="../api/alto.selfupdate/function-prepare_update/">prepare_update</a></li><li><a class="row" href="../api/alto.selfupdate/function-clean_environment/">clean_environment</a></li><li><a class="row" href="../api/alto.selfupdate/function-log_path/">log_path</a></li><li><a class="row" href="../api/alto.selfupdate/function-windows_handoff_command/">windows_handoff_command</a></li><li><a class="row" href="../api/alto.selfupdate/function-start_handoff/">start_handoff</a></li><li><a class="row" href="../api/alto.selfupdate/function-new_work_folder/">new_work_folder</a></li><li><a class="row" href="../api/alto.selfupdate/function-remove_leftovers/">remove_leftovers</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.settings/">settings</a>
+      <button type="button" class="nav-toggle" data-category="settings" aria-controls="nav-api/alto.settings" aria-expanded="true" aria-label="Collapse settings" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.settings"><li><a class="row" href="../api/alto.settings/function-spell/">spell</a></li><li><a class="row" href="../api/alto.settings/function-diatonic_name/">diatonic_name</a></li><li><a class="row" href="../api/alto.settings/class-clefchoice/">ClefChoice</a></li><li><a class="row" href="../api/alto.settings/class-keychoice/">KeyChoice</a></li><li><a class="row" href="../api/alto.settings/class-staffrangesettings/">StaffRangeSettings</a></li><li><a class="row" href="../api/alto.settings/class-notenamesettings/">NoteNameSettings</a></li><li><a class="row" href="../api/alto.settings/class-packexercisesettings/">PackExerciseSettings</a></li><li><a class="row" href="../api/alto.settings/class-intervalsettings/">IntervalSettings</a></li><li><a class="row" href="../api/alto.settings/function-beat_note/">beat_note</a></li><li><a class="row" href="../api/alto.settings/function-key_name/">key_name</a></li><li><a class="row" href="../api/alto.settings/class-keyboardsettings/">KeyboardSettings</a></li><li><a class="row" href="../api/alto.settings/function-keyboard_interval_name/">keyboard_interval_name</a></li><li><a class="row" href="../api/alto.settings/class-keyboardintervalsettings/">KeyboardIntervalSettings</a></li><li><a class="row" href="../api/alto.settings/class-constructionsettings/">ConstructionSettings</a></li><li><a class="row" href="../api/alto.settings/class-arpeggiosettings/">ArpeggioSettings</a></li><li><a class="row" href="../api/alto.settings/class-keysignaturesettings/">KeySignatureSettings</a></li><li><a class="row" href="../api/alto.settings/class-orderofkeyssettings/">OrderOfKeysSettings</a></li><li><a class="row" href="../api/alto.settings/class-keyconstructionsettings/">KeyConstructionSettings</a></li><li><a class="row" href="../api/alto.settings/class-scaleidentificationsettings/">ScaleIdentificationSettings</a></li><li><a class="row" href="../api/alto.settings/class-scaleconstructionsettings/">ScaleConstructionSettings</a></li><li><a class="row" href="../api/alto.settings/class-clefbasicssettings/">ClefBasicsSettings</a></li><li><a class="row" href="../api/alto.settings/class-notationsettings/">NotationSettings</a></li><li><a class="row" href="../api/alto.settings/class-circlesettings/">CircleSettings</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.terms/">terms</a>
+      <button type="button" class="nav-toggle" data-category="terms" aria-controls="nav-api/alto.terms" aria-expanded="true" aria-label="Collapse terms" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.terms"><li><a class="row" href="../api/alto.terms/class-pluginterm/">PluginTerm</a></li><li><a class="row" href="../api/alto.terms/function-register_term/">register_term</a></li><li><a class="row" href="../api/alto.terms/function-read_terms/">read_terms</a></li></ul></li><li><div class="nav-row">
+      <a class="row" href="../api/alto.updates/">updates</a>
+      <button type="button" class="nav-toggle" data-category="updates" aria-controls="nav-api/alto.updates" aria-expanded="true" aria-label="Collapse updates" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-api/alto.updates"><li><a class="row" href="../api/alto.updates/class-source/">Source</a></li><li><a class="row" href="../api/alto.updates/function-short/">short</a></li><li><a class="row" href="../api/alto.updates/function-parse_direct_url/">parse_direct_url</a></li><li><a class="row" href="../api/alto.updates/function-installed_source/">installed_source</a></li><li><a class="row" href="../api/alto.updates/function-is_tool_install/">is_tool_install</a></li><li><a class="row" href="../api/alto.updates/class-installkind/">InstallKind</a></li><li><a class="row" href="../api/alto.updates/function-is_frozen/">is_frozen</a></li><li><a class="row" href="../api/alto.updates/function-install_kind/">install_kind</a></li><li><a class="row" href="../api/alto.updates/function-cannot_update/">cannot_update</a></li><li><a class="row" href="../api/alto.updates/function-find_program/">find_program</a></li><li><a class="row" href="../api/alto.updates/function-check_command/">check_command</a></li><li><a class="row" href="../api/alto.updates/function-install_command/">install_command</a></li><li><a class="row" href="../api/alto.updates/function-parse_ls_remote/">parse_ls_remote</a></li><li><a class="row" href="../api/alto.updates/class-asset/">Asset</a></li><li><a class="row" href="../api/alto.updates/class-release/">Release</a></li><li><a class="row" href="../api/alto.updates/function-version_key/">version_key</a></li><li><a class="row" href="../api/alto.updates/function-is_newer/">is_newer</a></li><li><a class="row" href="../api/alto.updates/function-installed_version/">installed_version</a></li><li><a class="row" href="../api/alto.updates/function-parse_latest_release/">parse_latest_release</a></li><li><a class="row" href="../api/alto.updates/function-release_answer/">release_answer</a></li><li><a class="row" href="../api/alto.updates/function-fetch_text/">fetch_text</a></li><li><a class="row" href="../api/alto.updates/function-ssl_context/">ssl_context</a></li><li><a class="row" href="../api/alto.updates/function-platform_asset_name/">platform_asset_name</a></li><li><a class="row" href="../api/alto.updates/function-find_asset/">find_asset</a></li><li><a class="row" href="../api/alto.updates/function-parse_checksums/">parse_checksums</a></li><li><a class="row" href="../api/alto.updates/function-verify_signature/">verify_signature</a></li><li><a class="row" href="../api/alto.updates/function-self_check/">self_check</a></li></ul></li></ul></li></ul></li></ul></li><li><div class="nav-head">
+      <a class="row" href="../about/">About</a>
+      <button type="button" class="nav-toggle" data-category="About" aria-controls="nav-about" aria-expanded="true" aria-label="Collapse About" hidden>
+        <svg class="i chev" width="14" height="14" aria-hidden="true"><use href="#i-chev-r"/></svg>
+      </button>
+    </div><ul class="kids" id="nav-about"><li><a class="row" href="../roadmap/">Roadmap</a></li><li><a class="row" href="../release-notes/">Release notes</a></li><li><a class="row" href="../credits/">License and credits</a></li></ul></li><li><a class="row" href="../contents/">Contents</a></li>
+</ul></div>
+      </nav>
+    </aside>
+    <main id="content" class="content" role="main">
+      <div class="page-grid body" id="page-grid">
+        <article>
+          
+          <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <ol>
+              <li><a href="../">Home</a></li>
+              <li><a href="../using-alto/">Using Alto</a></li>
+              <li aria-current="page">Exercises</li>
+            </ol>
+          </nav>
+          
+          
+  <section class="tex2jax_ignore mathjax_ignore" id="exercises">
+<h1>Exercises</h1>
+<p>Each exercise has a <strong>?</strong> button with a short explanation. Open the sliders button to change an exercise’s settings.</p>
+<p>Hover over an answer button to see its keyboard shortcut. In Note, Interval, and Scale Construction, use the arrow keys to move the note and Return to place it. For keyboard practice in Notation Identification, choose <strong>Answer Button</strong> under <strong>Question Type</strong>. <a class="reference external" href="../shortcuts/">Shortcuts</a></p>
+<p>Answer-choice exercises include <strong>Buttons</strong> in their settings. Choose <strong>All</strong> for the full answer bank or <strong>Limited</strong> to set a maximum. For questions with separate answer groups, such as a note name and an octave, the limit applies to each group. The exercise remembers its own selection.</p>
+<p>Each exercise remembers its own <strong>Next Question</strong> setting.</p>
+<ul class="simple">
+<li><p><strong>Immediately</strong> flashes the correct button green and advances. The answer audio can finish while you read the next question. The music stays unanimated.</p></li>
+<li><p><strong>Wait</strong> plays the animation and keeps the correct answer button green. Press <strong>Next</strong> when you’re ready.</p></li>
+<li><p><strong>After Animation</strong> (default) advances automatically when the feedback finishes.</p></li>
+</ul>
+<p>With SM-2 or FSRS, a missed card returns later. If you grade correct answers yourself, choosing <strong>Hard</strong>, <strong>Good</strong>, or <strong>Easy</strong> schedules the card and advances to the next question. <a class="reference external" href="../practice/">Spaced repetition</a></p>
+<section id="midi-keyboard-input">
+<h2>MIDI keyboard input</h2>
+<p>On Linux, connect a USB MIDI keyboard or open the Virtual MIDI Piano Keyboard (VMPK). In VMPK, choose <strong>Edit → MIDI Connections</strong> and set <strong>MIDI OUT Driver</strong> to <strong>ALSA</strong>. In Alto, open <strong>MIDI</strong> in the exercise toolbar and select the keyboard’s output. VMPK may appear as <strong>MIDI Out out</strong>. You can play in the VMPK window while Alto receives the notes.</p>
+<ul class="simple">
+<li><p><strong>Note Identification.</strong> Play the note on the staff for note-name or scale-degree answers. Any octave counts when <strong>Octave</strong> is off. Use the answer buttons for <strong>Scale</strong>.</p></li>
+<li><p><strong>Interval Construction.</strong> Play the missing endpoint in the requested octave. For a perfect fifth above C4, play G4.</p></li>
+<li><p><strong>Scale Construction.</strong> Play the scale in the requested direction. <strong>Undo</strong> removes the last note. The final note submits the scale unless the question asks for whole and half steps. In that case, mark the steps on screen and choose <strong>Answer</strong>.</p></li>
+</ul>
+<p>Alto uses the exercise’s written spelling for matching pitches. On Ubuntu, install <code class="docutils literal notranslate"><span class="pre">alsa-utils</span></code> if the MIDI menu prompts for it. Reopen the menu after connecting a device. Choose <strong>MIDI → Off</strong> to disconnect, or leave the exercise.</p>
+</section>
+<section id="note-identification">
+<h2>Note Identification</h2>
+<p>A note is drawn on a staff. By default, press the button with its name. To practice identifying keys, choose
+<strong>Answer Type → Scale</strong> and use the clue beneath the note to identify the scale.</p>
+<p>In the exercise settings you can choose:</p>
+<ul class="simple">
+<li><p><strong>Clefs:</strong> the grand staff, or any of the seven single-staff clefs, listed in three groups: treble, bass, alto and
+tenor; then soprano, mezzo-soprano and baritone (written as an F clef, or as a C clef if you choose that in
+<a class="reference external" href="../settings/">Settings</a>). Each clef is shown with its name beside it. The same list is used by every
+exercise with these single-staff clefs. The staff interval exercises also offer the grand staff.</p></li>
+<li><p><strong>Range:</strong> the lowest and highest note that can appear, per clef.</p></li>
+<li><p><strong>Staff Key</strong> selects the signatures drawn after the clef. Choose zero for a blank staff signature.</p></li>
+<li><p><strong>Scale Key</strong> has separate <strong>Major</strong> and <strong>Minor</strong> tabs. Each lists 15 keys by name and shows their signatures. Select any mix of major and minor keys, keeping at least one checked across the two tabs. For example, with two sharps on the staff and G major in the question, F♯ is degree 7 of G major. The staff signature supplies the sharp on F.</p></li>
+<li><p><strong>Note values:</strong> whole notes up to thirty-second notes, and the double whole note.</p></li>
+<li><p><strong>Answer Type:</strong> choose <strong>Scale</strong>, letters (C D E), solfège (Do Re Mi), or the <strong>Scale degrees</strong> group, with <strong>Caret</strong>
+(1̂ 2̂ 3̂) and <strong>Function</strong> (Tonic, Supertonic, Mediant, and so on). Every option has a text label beside its preview.
+The degree question names the reference key. C major and A minor both have a blank signature, but E is degree 3 of C major and degree 5 of A natural minor. Caret labels use accidental prefixes,
+while function labels use words such as <strong>Raised Supertonic</strong> and <strong>Lowered Mediant</strong>.
+In <strong>Scale</strong>, the clue pairs the degree with <strong>M</strong> for major or <strong>m</strong> for minor. Choose the tonic (the first note of the scale).
+For F♯ with <strong>3̂ M</strong>, choose <strong>D</strong>. For G♯ with <strong>7̂ m harmonic</strong>, choose <strong>A</strong>.
+Each selected minor key can appear as <strong>natural</strong>, <strong>harmonic</strong>, <strong>melodic (asc.)</strong>, or <strong>melodic (desc.)</strong>.
+Melodic minor questions use only <strong>6̂</strong> and <strong>7̂</strong>. Both are raised on the way up and return to their natural minor pitches on the way down.
+All 15 major keys are available initially in <strong>Scale</strong>. <strong>Scale Key</strong> remembers this answer type’s selections separately from note naming,
+and <strong>Buttons</strong> controls how many choices appear.</p></li>
+<li><p><strong>Accidentals</strong> allows pitches outside the reference key in note-naming practice. A written accidental also appears whenever a pitch differs from the staff signature.</p></li>
+<li><p><strong>Octave:</strong> turn this on to answer with both the note name and its octave. Middle C is C4.</p></li>
+</ul>
+<p>The settings open in a pane on the right of the exercise. Each row names an option, and clicking it opens a page for
+that option. Changes apply to the next question right away.</p>
+</section>
+<section id="notation-identification">
+<h2>Notation Identification</h2>
+<p>Choose a <strong>Question Type</strong> in the exercise settings. <strong>Answer Button</strong> is the default. A short phrase appears with one marking
+highlighted in blue. By default, choose its name from up to four answers or press its number key. In <strong>Click on Staff</strong>, the prompt names
+a component. Move the pointer over the music to highlight a component, then click to answer. In a repertoire excerpt, any occurrence of the named component counts. In a generated phrase, the prompt can specify
+a particular notehead, stem, or staff line.
+Open <strong>Terms</strong> in the exercise settings to select a whole group or check individual terms. Only checked terms can be highlighted or offered as answers.
+<strong>Select none</strong> clears every checkbox. Check a term to start a new selection, or turn the switch off to restore your previous selection.
+Choices favor the target’s category, then draw from other checked terms if space remains. When visually similar alternatives exist, most questions
+favor them. For example, a turn often appears alongside inverted, slashed, and vertical turns.</p>
+<p>Eight piano excerpts from Schubert’s <em>Erlkönig</em> and Schumann’s <em>Schöne Fremde</em> and <em>Die Lotosblume</em> are installed with Alto.
+The composer, title, and measure numbers appear beneath the music. Try selecting <strong>Tie</strong> and <strong>Slur</strong> together to practice
+telling the two curves apart in context. Terms outside the collection use generated phrases.
+The original editions are in the public domain, and the digital scores come from the <a class="reference external" href="https://fourscoreandmore.org/openscore/lieder/">OpenScore Lieder corpus</a>.</p>
+<p>Topics include note values and rests, clefs, accidentals and microtonal signs, meter, barlines, repeats, articulations,
+dynamics, ornaments, octave signs, and instrumental techniques. For example, you can isolate ties and slurs, compare
+quarter-tone accidentals, or practice bowing and pedal marks. For advanced markings, Alto uses the selected music font
+when it contains the symbol and the bundled Bravura font otherwise. Glyph codes follow the
+<a class="reference external" href="https://github.com/w3c/smufl/blob/gh-pages/metadata/glyphnames.json">Standard Music Font Layout index</a>.</p>
+</section>
+<section id="beat-identification">
+<h2>Beat Identification</h2>
+<p>Under <strong>Rhythm Component</strong>, choose what to identify in two measures of rhythm.</p>
+<ul class="simple">
+<li><p><strong>Time signature</strong> (default). Identify the hidden time signature. Choose <strong>2/4</strong>, <strong>3/4</strong>, <strong>4/4</strong>, <strong>6/8</strong>,
+<strong>9/8</strong>, or <strong>12/8</strong>.</p></li>
+<li><p><strong>Beat and meter</strong>. Read the time signature at the start of the rhythm and look at how ordinary eighth notes divide
+the beat. Groups of two are <strong>simple</strong> and groups of three are <strong>compound</strong>. Then count the main beats in one
+measure, including rests. Two beats are <strong>duple</strong>, three are <strong>triple</strong>, and four are <strong>quadruple</strong>.</p></li>
+</ul>
+<p>For example, 3/4 and 6/8 both fit six eighth notes per measure. In 3/4, three groups of two make <strong>simple triple</strong>.
+In 6/8, two groups of three make <strong>compound duple</strong>.</p>
+<p>Under <strong>Note Type</strong>, check the values you want to read. Dotted half and dotted quarter are separate choices.
+Eighth notes can also appear as eighth rests. Alto chooses meters that fit your selection. For example,
+selecting only <strong>Whole note</strong> gives one whole note in each measure of 4/4.</p>
+<p>Turn on <strong>Tuplets</strong> for occasional numbered groups. Alto uses the frequencies measured in score openings
+published from 1700 to 1899, targeting about one tuplet group per 148 ordinary notes or rests. Most questions
+contain only ordinary rhythms. About 91% of the sampled groups were triplets and 6% were sextuplets.
+Quadruplets, quintuplets, septuplets, and nonuplets can also appear when they fit the measure and your selected
+note types. For example, three triplet eighth notes last one quarter beat.</p>
+<p>Use <strong>Buttons</strong> to show <strong>All</strong> answers or a <strong>Limited</strong> set with the <strong>Button count</strong> you choose.</p>
+</section>
+<section id="beat-construction">
+<h2>Beat Construction</h2>
+<p>Read the time signature and click the start of each main beat in both measures. Place a mark even if a note is still
+sounding or there is a rest. In 2/4, 3/4, and 4/4, mark every quarter-note beat. In 6/8, 9/8, and 12/8, mark the start
+of each group of three eighth notes.</p>
+<p>Each new rhythm includes at least one rest. Use <strong>Note Type</strong> to choose the durations of both notes and rests.
+Turn on <strong>Tuplets</strong> to practice placing the main beats through triplets and duplets.
+Beat Construction remembers both settings independently of Beat Identification.</p>
+<p>Click a blank to fill it with a beat number. Numbers start at 1 in each measure and follow the written order. Click a
+number again to clear it, or use <strong>Undo</strong> to remove your last mark. Use the arrow keys and <strong>Space</strong> to fill or clear a blank
+with the keyboard. Choose <strong>Answer</strong> or press <strong>Return</strong> when both measures are marked. After a correct answer,
+listen to the written rhythm. Alto taps each note once and keeps rests silent.</p>
+</section>
+<section id="rythmic-equations">
+<h2>Rythmic Equations</h2>
+<p>Use <strong>Answer Type</strong> to choose what fills the blank. <strong>Symbol</strong> (the default) asks for a note or rest. <strong>Number</strong> shows numbered buttons. A number can be a missing factor, as in “half note ÷ □ = quarter note,” or a duration. For a duration, the question gives the counting unit: with <strong>Count in eighth notes</strong>, a quarter note plus a quarter note equals <strong>4</strong>. Check both types to practice a mix.</p>
+<p>For symbol answers, choose the note symbol that makes both sides of the equation last the same amount of time.
+For example, a quarter note plus another quarter note equals a half note. The blank can appear on either side of the equals sign.
+Under <strong>Operators</strong>, set <strong>Left operators</strong> and <strong>Right operators</strong> to choose how many arithmetic signs appear on each side of the equals sign (0–3 per side). The default is one on the left and zero on the right. Use the checkboxes under each count to select the signs allowed on that side. For example, set both counts to one, select only <strong>Addition (+)</strong> on the left and only <strong>Multiplication (×)</strong> on the right, and you can get <strong>quarter note + quarter note = □ × 2</strong>.</p>
+<p>Turn on <strong>Parentheses</strong> to practice order of operations. Set at least two operators on one side so there is something to group. For example, in <strong>(quarter note + quarter note) ÷ 2 = □</strong>, add the two quarter notes first, then divide by two. With the switch off (the default), you can work from left to right on each side.</p>
+<p>Multiplication and division use whole-number factors from 2 through 8 when the selected symbols allow them. Use <strong>Symbols</strong> to select notes, rests, and dotted notes from double whole through thirty-second values. A selected note and rest of the same duration both count as correct. Turn on <strong>Ties</strong> or <strong>Beams</strong> to mix in questions where a pair of notes counts as one duration. Beams group eighth, sixteenth, or thirty-second notes.</p>
+</section>
+<section id="keyboard-note-identification">
+<h2>Keyboard Note Identification</h2>
+<p>One key on a piano keyboard is highlighted. Press the button with its name.</p>
+<p>Use this exercise’s <strong>Note names</strong> setting to choose <strong>Letters</strong>, <strong>Solfège</strong>, <strong>Caret</strong>, or <strong>Function</strong> independently of Note Identification. Scale degrees follow the shown major key,
+or C major when key signatures are off. When octaves are required, degree and octave are separated: <strong>1̂ / 4</strong>.</p>
+<ul class="simple">
+<li><p><strong>Black keys:</strong> include them. A black key has two names, such as C♯ and D♭, and either one is accepted.</p></li>
+<li><p><strong>Octave number:</strong> also choose the octave from a second row. Octaves count up from C, so middle C is C4.</p></li>
+<li><p><strong>Range:</strong> which part of the keyboard is asked.</p></li>
+<li><p><strong>Key signatures:</strong> show a key signature above the keyboard. The name then has to follow that signature. F♯ and G♭ are no longer interchangeable.</p></li>
+</ul>
+<figure class="shot">
+  <img class="for-light" src="../assets/img/keyboard.png" alt="Keyboard Note Identification with one highlighted key and the note name buttons" loading="lazy">
+  <img class="for-dark" src="../assets/img/keyboard-dark.png" alt="Keyboard Note Identification with one highlighted key and the note name buttons" loading="lazy">
+  
+</figure></section>
+<section id="note-construction">
+<h2>Note Construction</h2>
+<p>The reverse of note identification. A note name is shown, and you click the staff where that note belongs.
+It uses the naming system selected under <strong>Answer Type</strong> in Note Identification. Choosing <strong>Scale</strong> there keeps the last naming system for Note Construction. With scale degrees selected, the question names the
+key, degree and octave. Under <strong>Question Type</strong>, choose <strong>Notes Only</strong> for note names or <strong>Scale and Degree</strong> to use selected keys. Switch between <strong>Major</strong> and <strong>Minor</strong> to choose signatures for each. To practice just one group, leave the other tab’s keys unchecked. Minor uses the natural minor scale.
+Under <strong>Degrees</strong>, check the scale degrees to practice. For example, choose D major and degree 3 to practice placing F♯.</p>
+<ul class="simple">
+<li><p><strong>Octave</strong> is on by default. Turn it off to place the note in any octave. Middle C is C4. On a grand staff, click the upper staff for notes from middle C up and the lower staff for the notes below.</p></li>
+<li><p><strong>Staff Key</strong> selects the signatures drawn on the staff independently of the keys in the prompts. Choose the unmarked
+signature for a staff with no sharps or flats. If the signatures differ, use the accidental buttons as needed.</p></li>
+<li><p>Use the accidental buttons or right-click the staff to choose a sharp, flat, natural, or no sign.</p></li>
+<li><p>A wrong click shows the note you placed so you can adjust and try again. Only the exact spelling counts, so G♯ is not A♭.</p></li>
+<li><p><strong>Without the mouse:</strong> the <strong>Higher</strong> and <strong>Lower</strong> buttons (or the <kbd>↑</kbd> and <kbd>↓</kbd> keys) move the note a line or
+space, and <strong>Octave ↑</strong> and <strong>Octave ↓</strong> (<kbd>Page Up</kbd> and <kbd>Page Down</kbd>) an octave. Typing a letter from
+<kbd>A</kbd> to <kbd>G</kbd> jumps to the nearest note with that name.
+<strong>Place note</strong> (<kbd>Return</kbd>) places it. A line under the staff says which note is chosen, in words a screen reader can read.</p></li>
+</ul>
+<figure class="shot">
+  <img class="for-light" src="../assets/img/note-construction.png" alt="Note Construction asking to place a note on a staff" loading="lazy">
+  <img class="for-dark" src="../assets/img/note-construction-dark.png" alt="Note Construction asking to place a note on a staff" loading="lazy">
+  
+</figure></section>
+<section id="clef-basics">
+<h2>Clef Basics</h2>
+<p>Clef Basics has two kinds of question, chosen with <strong>Question Type</strong> in the exercise settings: <strong>Clef Construction</strong>,
+which
+is described first, and <strong>Clef Identification</strong>, described at the end.</p>
+<p>In Clef Construction a blank staff is shown with the question under it, such as “Place the mezzo-soprano clef.” Every
+clef is one of three symbols,
+the <strong>G clef</strong>, the <strong>C clef</strong> or the <strong>F clef</strong>, put on a particular line of the staff:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Clef</p></th>
+<th class="head"><p>Symbol and line</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Treble</p></td>
+<td><p>The G clef on the second line</p></td>
+</tr>
+<tr class="row-odd"><td><p>French violin</p></td>
+<td><p>The G clef on the bottom line</p></td>
+</tr>
+<tr class="row-even"><td><p>Bass</p></td>
+<td><p>The F clef on the fourth line</p></td>
+</tr>
+<tr class="row-odd"><td><p>Subbass</p></td>
+<td><p>The F clef on the top line</p></td>
+</tr>
+<tr class="row-even"><td><p>Alto</p></td>
+<td><p>The C clef on the middle line</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tenor</p></td>
+<td><p>The C clef on the fourth line</p></td>
+</tr>
+<tr class="row-even"><td><p>Mezzo-soprano</p></td>
+<td><p>The C clef on the second line</p></td>
+</tr>
+<tr class="row-odd"><td><p>Soprano</p></td>
+<td><p>The C clef on the bottom line</p></td>
+</tr>
+<tr class="row-even"><td><p>Baritone</p></td>
+<td><p>The F clef on the middle line, or the C clef on the top line: both are accepted</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p><strong>Choose the symbol</strong> with the three buttons under the music, by turning the mouse wheel, or by right-clicking.</p></li>
+<li><p><strong>Click where it goes.</strong> The symbol follows the pointer, in a lighter color, and is placed where you click. To mix
+things up it
+can be tried on any line or space of the staff, and on up to three ledger lines and spaces above and below it, but
+only
+the places in the table are right.</p></li>
+<li><p><strong>Without the mouse:</strong> <kbd>←</kbd> and <kbd>→</kbd> choose the symbol, <kbd>↑</kbd> and <kbd>↓</kbd> move it up and
+down a line or
+space, and <kbd>Return</kbd> presses <strong>Answer</strong>.</p></li>
+</ul>
+<p>The right symbol in the wrong place is wrong, and so is another symbol in the right place. A wrong try turns red and
+clears so
+you can try again; only your first try counts toward your score. This exercise makes no sound.</p>
+<section id="clef-identification">
+<h3>Clef Identification</h3>
+<p>A clef is drawn on a staff, with “Which clef is this?” under it. Press the button with its name. There is a button for
+each clef
+that is asked for, and at least two buttons even if only one clef is asked for. A baritone clef is drawn the way you
+chose in
+<a class="reference external" href="../settings/">Settings</a>. Like the other exercises with buttons, the buttons have keys, shown when
+you hover
+over them.</p>
+</section>
+<section id="reference-and-lesson">
+<h3>Reference and lesson</h3>
+<p>The book button (experimental), beside the help button, opens a reference in a pane on the right: the three symbols and
+a
+picture of each clef with where its symbol goes. A button at the top opens the <a class="reference external" href="../lessons/">Clef Basics lesson</a>.</p>
+</section>
+<section id="settings">
+<h3>Settings</h3>
+<p>In the exercise settings you can choose:</p>
+<ul class="simple">
+<li><p><strong>Question Type:</strong> Clef Construction or Clef Identification.</p></li>
+<li><p><strong>Clefs:</strong> the clefs that are asked for: the seven clefs of the other exercises, then, at the bottom, the French
+violin and
+subbass clefs, which only this exercise has.</p></li>
+</ul>
+</section>
+</section>
+<section id="interval-identification">
+<h2>Interval Identification</h2>
+<p>Name the interval between the two written notes. By default the notes appear together on a treble or bass staff, and the exercise asks for both quality and number.</p>
+<p>An interval has a quality and a number. The number counts the letter names it spans, including both notes. The quality
+is <strong>P</strong> (perfect), <strong>M</strong> (major), <strong>m</strong> (minor), <strong>A</strong> (augmented) or <strong>d</strong> (diminished). So C to E is M3, and C to E♭
+is m3.</p>
+<ul class="simple">
+<li><p><strong>Clefs</strong> chooses which staves can appear, including the grand staff.</p></li>
+<li><p><strong>Range</strong> sets the lowest and highest written notes for each checked clef. Both notes must fit.</p></li>
+<li><p><strong>Staff Key</strong> selects the signatures drawn on the staff. Choose zero for a blank signature.</p></li>
+<li><p><strong>Display Mode</strong> defaults to <strong>Harmonic</strong>, which shows and plays both notes together. <strong>Melodic</strong> shows and plays them one at a time. Under Melodic, check <strong>Ascending</strong> (lower note first, the default), <strong>Descending</strong> (higher note first), or both to practice them in random order. You can also check both Harmonic and Melodic to mix presentations.</p></li>
+<li><p><strong>Quality</strong> sets what you identify. For C up to E♭, choose <strong>3</strong> in <strong>Interval Only</strong>, <strong>m3</strong> in <strong>Interval and Quality</strong> (default), or <strong>m</strong> in <strong>Quality Only</strong>.</p></li>
+<li><p><strong>Inversions</strong> asks you to name the inversion of the interval on the staff. For C4 up to E4, imagine moving C4 up an octave.
+E4 up to C5 is a minor sixth. Choose <strong>6</strong>, <strong>m6</strong>, or <strong>m</strong> according to your <strong>Quality</strong> setting.
+Reduce compound intervals first. A major tenth inverts like a major third, and a perfect octave inverts to a perfect unison.</p></li>
+<li><p><strong>Intervals</strong> selects the spellings you want to practice, including compound intervals through a fifteenth.
+Each row shows one interval number. From left to right, the columns are augmented, major or perfect, minor, and diminished.
+The checklist and slider offer intervals that fit at least one selected clef’s range. For example, a staff range from C4 to E4 offers seconds and thirds.
+Drag the handles to select a span of interval numbers, then check individual spellings. <strong>Select all</strong> temporarily includes every available spelling.
+Widening a range restores any previously checked intervals that now fit.</p></li>
+<li><p><strong>Accidentals</strong> controls the signs allowed beside either note. <strong>♮</strong> allows an unmarked note following the staff key. For example, in G major an unmarked F sounds as F♯. The default selection is <strong>♮</strong>, <strong>♭</strong>, and <strong>♯</strong>. Check <strong>𝄫</strong> for double flats or <strong>𝄪</strong> for double sharps.</p></li>
+<li><p><strong>Note Value</strong> chooses which written durations can appear. Both notes use the same value.</p></li>
+<li><p><strong>Buttons</strong> defaults to <strong>Limited</strong>, with six answers. Choose a <strong>Button count</strong> from 2 to 10. The count includes the correct answer.
+Choose <strong>All</strong> to show every eligible answer for the current staff range and selected intervals. Each distinct number or quality appears once when practicing that part alone.</p></li>
+</ul>
+<figure class="shot">
+  <img class="for-light" src="../assets/img/intervals.png" alt="Interval Identification showing two notes and the interval buttons" loading="lazy">
+  <img class="for-dark" src="../assets/img/intervals-dark.png" alt="Interval Identification showing two notes and the interval buttons" loading="lazy">
+  
+</figure></section>
+<section id="interval-construction">
+<h2>Interval Construction</h2>
+<p>Place a second note on the staff to form the requested interval. For a minor third above C, count C, D, E, then choose a flat and place E♭. Clicking the staff submits the note. You can also move the caret with the arrow keys and press Enter.</p>
+<p>You can also play the endpoint on a <a class="reference external" href="#midi-keyboard-input">MIDI keyboard</a>.</p>
+<p><strong>Clefs</strong>, <strong>Range</strong>, and <strong>Staff Key</strong> determine where the notes can appear. <strong>Display Mode</strong> stacks harmonic intervals and places melodic notes in sequence, ascending or descending. Under <strong>Quality</strong>, choose <strong>Interval and Quality</strong> for an exact spelling, <strong>Interval Only</strong> for a number, or <strong>Quality Only</strong> for a quality. When several enabled intervals fit the prompt, any of their endpoints is correct. <strong>Intervals</strong>, <strong>Accidentals</strong>, and <strong>Note Value</strong> control which spellings, written signs, and durations appear.</p>
+<figure class="shot">
+  <img class="for-light" src="../assets/img/interval-construction.png" alt="Interval Construction showing the starting note, the requested interval, and the staff placement controls" loading="lazy">
+  <img class="for-dark" src="../assets/img/interval-construction-dark.png" alt="Interval Construction showing the starting note, the requested interval, and the staff placement controls" loading="lazy">
+  
+</figure></section>
+<section id="keyboard-interval-identification">
+<h2>Keyboard Interval Identification</h2>
+<p>Two piano keys are highlighted together. Identify the interval from the lower key to the higher key. Choose from a configurable
+number of interval buttons (six by default), show every selected interval, or answer with a quality letter and a number.
+The full answer bank stays in interval order and scrolls when needed.</p>
+<p>Count the half steps between the highlighted keys, including black keys. P means perfect, M means major, and m means minor.
+Six half steps form a tritone, shown as <strong>A4 / d5</strong>: the keyboard cannot distinguish an augmented fourth from a diminished fifth
+without written note spellings. The other distances use their standard interval names.</p>
+<p>A correct answer plays both notes together. Open the exercise settings to choose:</p>
+<ul class="simple">
+<li><p><strong>Range:</strong> drag on the keyboard, adjust the lowest and highest keys with the arrows, or choose <strong>Entire keyboard</strong>.
+Both highlighted notes stay within this range. <strong>Reset to default</strong> restores C3–C5.</p></li>
+<li><p><strong>Intervals:</strong> select the interval distances to practice. Only selected intervals appear as questions and answer choices.
+The list shows every distance that fits the range, including compound intervals beyond an octave: for example, C3–C5
+offers intervals through P15 (two octaves). Options use notation only and are grouped into <strong>Simple intervals</strong>
+(up to an octave) and <strong>Compound intervals</strong> (beyond an octave).
+Drag the two slider handles below <strong>Select all</strong> to select an interval range, such as m3–P8.
+Use the arrow buttons beside <strong>From</strong> and <strong>To</strong> to adjust either endpoint by one half step, or click an endpoint’s
+notation to choose an interval from its scrollable dropdown.
+These controls change the selected intervals, not the keyboard range.
+<strong>Select all</strong> temporarily selects every interval that fits; switching it off restores your previous selection. With no intervals selected,
+the exercise pauses until you select one. Narrowing the range removes intervals that no longer fit; if a nonempty
+selection no longer fits, minor seconds are selected so the exercise can continue.</p></li>
+</ul>
+<p>Open <strong>Buttons</strong> to choose one answer mode:</p>
+<ul class="simple">
+<li><p><strong>Limited:</strong> use <strong>Button count</strong>, directly below this option, to choose the maximum number of answers (six by default).
+Type a count or use its arrows. The count includes the correct answer; fewer buttons appear when fewer intervals are selected.</p></li>
+<li><p><strong>All:</strong> show every selected interval in a fixed, scrollable answer bank.</p></li>
+<li><p><strong>Compact:</strong> click a quality letter and an interval number, in either order. <strong>Quality</strong> and <strong>Interval</strong> label the two groups
+above their buttons. Both A4 and d5 are accepted for a tritone, including corresponding compound spellings.</p></li>
+</ul>
+<p>The mode, limited button count, range, and interval selections are saved.</p>
+<p>These settings are saved independently of Keyboard Note Identification.</p>
+</section>
+<section id="key-signature-identification">
+<h2>Key Signature Identification</h2>
+<p>A key signature is drawn on a staff and you press the tonic of the scale it belongs to. The kind of scale is written
+under the staff with a blank for the tonic: “_ Major”, “_ minor” or, for a mode, “_ Dorian”.</p>
+<p>This exercise makes no sound: a right answer plays no tone. The speaker button is a mute for the whole app, so it works here
+as everywhere else, but has nothing to silence in this exercise.</p>
+<p>A mode uses the key signature of a major key and starts from another note of it, so D Dorian has the signature of C major
+(no sharps or flats), started from D. By default Alto asks major and natural minor keys, on the treble and bass staves.
+In the exercise settings you can choose:</p>
+<ul class="simple">
+<li><p><strong>Clefs:</strong> any of the seven clefs (treble, bass, alto, tenor, soprano, mezzo-soprano and baritone), for the signature that is drawn.</p></li>
+<li><p><strong>Scales:</strong> major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.</p></li>
+<li><p><strong>Key signatures:</strong> which of the fifteen signatures, from seven flats to seven sharps, can appear.</p></li>
+</ul>
+<figure class="shot">
+  <img class="for-light" src="../assets/img/key-signatures.png" alt="Key Signature Identification showing three flats on an alto clef staff, with the caption _ Major under the staff" loading="lazy">
+  <img class="for-dark" src="../assets/img/key-signatures-dark.png" alt="Key Signature Identification showing three flats on an alto clef staff, with the caption _ Major under the staff" loading="lazy">
+  
+</figure></section>
+<section id="key-signature-construction">
+<h2>Key Signature Construction</h2>
+<p>The reverse of the exercise above. A blank staff is shown with the name of a key under it, such as “D Major”, “A♯ minor” or
+“E Dorian”. Build that key’s signature with the fork under the staff, then press <strong>Answer</strong> (or <kbd>Return</kbd>).</p>
+<p>The fork is shaped like a tuning fork lying on its side. Its stem, on the left, ends in a natural sign: no sharps or flats,
+C major. The stem opens into two tines: the top one has the sharps, 1 to 7, and the bottom one the flats, 1 to 7. A circle
+marks what you have chosen, and the staff shows that many sharps or flats as you move it. To choose:</p>
+<ul class="simple">
+<li><p><strong>Click</strong> a number, or the natural sign. A number lights up a little as the mouse passes over it.</p></li>
+<li><p><strong>Drag the circle</strong> along the fork. It follows the mouse, around the bend and out along either tine, and slides to the
+nearest number when you let go.</p></li>
+<li><p><strong>Turn the mouse wheel</strong> to move the circle along the fork, one number for each notch: up toward more sharps, down
+toward more flats, passing through the natural sign on the way from one side to the other. The wheel works over the
+staff and the Answer button too.</p></li>
+<li><p><strong>Press the arrow keys</strong> (<kbd>↑</kbd> or <kbd>→</kbd> for a sharp, <kbd>↓</kbd> or <kbd>←</kbd> for a flat) wherever
+the
+keyboard is on the exercise screen, and <kbd>Home</kbd> to go back to the natural sign. Then press <kbd>Return</kbd>.</p></li>
+</ul>
+<p>A wrong signature turns the circle red and puts it back on the natural sign so you can try again; only your first try
+counts toward your score. Like Key Signature Identification, this exercise makes no sound.</p>
+<p>In the exercise settings you can choose:</p>
+<ul class="simple">
+<li><p><strong>Clefs:</strong> any of the seven clefs, for the staff the signature is built on.</p></li>
+<li><p><strong>Scales:</strong> major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.</p></li>
+<li><p><strong>Key signatures:</strong> which of the fifteen signatures, from seven flats to seven sharps, can be asked.</p></li>
+</ul>
+<p>The settings are kept apart from those of Key Signature Identification.</p>
+</section>
+<section id="order-of-keys">
+<h2>Order of Keys</h2>
+<p>Read the key below the blank staff. Choose <strong>♯</strong> or <strong>♭</strong>, then click the line or space for each sign in order. Each click fills the next slot after the clef. For D major in treble clef, place F♯ on the top line, then C♯ in the third space.</p>
+<p>Use <strong>Undo</strong> (Backspace) to remove the last sign and <strong>Answer</strong> (Return) to submit. Submit the empty staff for a key with no sharps or flats, such as C major, A minor, or D Dorian. With the keyboard, choose a sharp with <strong>+</strong> or a flat with <strong>−</strong>, move up or down with the arrow keys, and press <strong>P</strong> to place each sign.</p>
+<p>Open the exercise settings to choose <strong>Clefs</strong>, <strong>Scales</strong>, and <strong>Key Signatures</strong>. By default, questions use treble and bass clefs, major and natural minor scales, and all 15 signatures. You can select any of the seven single-staff clefs and any of the seven diatonic modes. For example, selecting alto clef, Dorian, and two flats gives you C Dorian on an alto staff.</p>
+<p><strong>Starting Accidentals</strong> lets you choose how many sharps or flats are already on the staff. The default, <strong>0</strong>, starts with a blank signature. For example, with <strong>2 ♯</strong> selected, a question in A major shows two of its three sharps in their usual positions. Place the missing signs from left to right. You can enter up to seven signs in total, including those already shown. If the key needs six and you submit seven, the answer is marked wrong. <strong>Undo</strong> removes only signs you placed. When all the signs are already present, press <strong>Answer</strong>. Counts must fit one of your selected key signatures. If changing keys rules out every selected count, the setting returns to <strong>0</strong>.</p>
+<p><a id="scale-spelling"></a></p>
+</section>
+<section id="scale-identification">
+<h2>Scale Identification</h2>
+<p>Read the eight notes on the staff. The first and last notes give the tonic. The pattern of whole and half steps gives the mode.
+For example, a scale from D to D with no sharps or flats is D Dorian. Under <strong>Question Type</strong>, check <strong>Key</strong> to answer D,
+<strong>Mode</strong> to answer Dorian, or both to identify the full scale.</p>
+<p>Open <strong>Clefs</strong> and <strong>Scales</strong> to choose the staves and modes to practice. <strong>Motion</strong> sets the direction of the written scale.
+<strong>Scale Key</strong> selects the signatures the scales may use, with separate Major and Minor tabs. <strong>Staff Key</strong> controls the signature
+drawn beside the clef. Read any accidentals beside the notes when the two signatures differ.</p>
+<p>Under <strong>Buttons</strong>, <strong>Limited</strong> offers complete answers up to the selected button count. With <strong>All</strong> and both question types
+enabled, choose a tonic and a mode from separate groups in either order.</p>
+<figure class="shot">
+  <img class="for-light" src="../assets/img/scales.png" alt="Scale Identification with an eight-note staff example and scale names on the answer buttons." loading="lazy">
+  <img class="for-dark" src="../assets/img/scales-dark.png" alt="Scale Identification with an eight-note staff example and scale names on the answer buttons." loading="lazy">
+  
+</figure></section>
+<section id="scale-construction">
+<h2>Scale Construction</h2>
+<p>A blank staff is shown with the name of a scale under it, such as “D Major”, “E♭ minor” or “A Dorian”. Click the staff to
+place the scale’s notes from left to right in the requested direction, ending an octave from the first note: eight notes in
+all. In <strong>Motion</strong>, choose Ascending or Descending. The next note follows the pointer, snapped to a line or space, and each click puts it in the next place, so the notes
+do not move as you add more. With <strong>Octave</strong> off, choose any starting octave that leaves room for all eight notes.</p>
+<p>You never have to click the staff. <strong>Higher</strong>, <strong>Lower</strong>, <strong>Octave ↑</strong> and <strong>Octave ↓</strong> under it move the next note, the sign
+buttons choose its sign, and <strong>Place note</strong> puts it in the next place; the same things are on the keys (see
+<a class="reference external" href="../shortcuts/">Shortcuts</a>), and <kbd>Return</kbd> places the note and, when everything is placed,
+answers.</p>
+<p>By default the staff has no key signature, so a note that needs a sharp or a flat needs its own sign (see
+<a class="reference external" href="#the-staffs-key-signature">the staff’s key signature</a> below for a staff that has one). To choose the sign for the next
+note:</p>
+<ul class="simple">
+<li><p><strong>Right click</strong> the staff to step through no sign, ♯ and ♭, and around again.</p></li>
+<li><p><strong>Turn the mouse wheel</strong> over the staff to step through them the same way: up goes no sign, ♯, ♭, and down goes the other
+way around.</p></li>
+<li><p><strong>Press one of the sign buttons</strong> under the staff.</p></li>
+</ul>
+<p>Then click to place the note. A sign is used up by the note it goes on. Only the exact spelling counts, so G♯ is not A♭.</p>
+<ul class="simple">
+<li><p><strong>Undo</strong> (or Backspace) takes back the last thing you placed.</p></li>
+<li><p><strong>Answer</strong> (or Enter) hands in the scale once everything is placed.</p></li>
+</ul>
+<p>A wrong scale is cleared so that you can try again, and only your first try counts toward your score. With <strong>After Animation</strong>
+or <strong>Wait</strong>, a correct scale plays back. Each note turns green as it sounds, with the same timing when muted.</p>
+<p>In the exercise settings you can choose:</p>
+<ul class="simple">
+<li><p><strong>Clefs:</strong> any of the seven clefs, for the staff the scale is placed on.</p></li>
+<li><p><strong>Scales:</strong> major (Ionian), Dorian, Phrygian, Lydian, Mixolydian, minor (Aeolian) and Locrian.</p></li>
+<li><p><strong>Staff Key:</strong> which key signatures may be drawn on the staff, from seven flats to seven sharps. It is separate from
+the scale’s own signature (below). By default only the blank staff, with no sharps or flats, is chosen.</p></li>
+<li><p><strong>Scale Key:</strong> choose signatures separately on the Major and Minor tabs. Natural minor uses the Minor tab. Major and the other modes use the Major tab’s signatures.</p></li>
+<li><p><strong>Octave:</strong> a switch, off by default. When it is on, the scale has to start in the octave named (below).</p></li>
+<li><p><strong>Steps:</strong> a switch, off by default. When it is on, you also mark the whole and half steps between the notes (below).</p></li>
+</ul>
+<p>The settings are kept apart from those of the other exercises.</p>
+<section id="starting-in-the-right-octave">
+<h3>Starting in the right octave</h3>
+<p>By default the first and last notes must be an octave apart, and the scale is named without a starting octave,
+such as “G Major”. With <strong>Octave</strong> on, the name says which octave the first note is in, such as “G2 Major” or “B♭4 minor”,
+using the same numbers as note names everywhere in Alto (middle C is C4). The scale then has to be placed there: the right
+notes an octave higher or lower are wrong.</p>
+<p>The octave is part of the question, so scales are asked from well below to well above the staff. Alto only asks a scale
+that can be placed in full: all eight notes lie on the staff or on its ledger lines, within the furthest ledger line the
+staff can be clicked on. A bass clef G2 Major, which starts on the bottom line, can be asked; a scale that would run off
+the top of the ledger lines cannot.</p>
+</section>
+<section id="the-staffs-key-signature">
+<h3>The staff’s key signature</h3>
+<p>The key signature on the staff and the key signature of the scale are two separate settings, so a scale can be asked on a
+staff whose signature is not its own. Each question picks one of each. For example, with two flats on the staff (the
+signature of B♭ major) and a C major scale to place:</p>
+<ul class="simple">
+<li><p>A note you place with no sign takes the sign the staff’s signature gives its letter, as it would when you read music.
+With two flats, B and E are flat.</p></li>
+<li><p>So C major needs a <strong>natural</strong> (♮) on its E and its B, which you choose with the sign buttons, a right click or the
+wheel. Right click and the wheel step through no sign, ♯, ♭ and ♮ when the staff has a signature.</p></li>
+<li><p>Going the other way, a scale that has a flat the staff does not give needs that flat written as a sign.</p></li>
+</ul>
+<p>The notes the staff’s signature already covers are written with no sign, as in any score; only the notes that differ from it
+get one. Only the exact spelling counts, as ever.</p>
+</section>
+<section id="marking-the-steps">
+<h3>Marking the steps</h3>
+<p>With <strong>Steps</strong> on, once the eight notes are placed two lines rise from each pair of neighboring notes to a point above
+them, starting with the first pair, with the step written over the point. The step that a click would mark is shown there in
+blue, as <strong>W</strong> (a whole step, two semitones) or <strong>H</strong> (a half step, one semitone). It starts as W. To choose:</p>
+<ul class="simple">
+<li><p><strong>Turn the mouse wheel</strong> over the staff to switch between W and H (the wheel is for the signs until all the notes are
+placed).</p></li>
+<li><p><strong>Right click</strong> the staff to switch between W and H.</p></li>
+<li><p><strong>Press the W or H button</strong> under the staff.</p></li>
+</ul>
+<p>Then <strong>left click</strong> the staff to mark the step and move on to the next pair. Each new pair starts as W again, since most
+steps are whole. Undo takes back the steps, last first, before it takes back any notes. The scale is right when the notes
+and every step are right: a major scale is W W H W W W H, and a natural minor scale is W H W W H W W. The lines and letters turn
+green with the notes as the right scale plays.</p>
+</section>
+</section>
+<section id="circle-of-fifths">
+<h2>Circle of Fifths</h2>
+<p>A circle of fifths, drawn as two rings of twelve wedges. The outer ring holds the major keys, with C at the top and each
+step clockwise a fifth higher: G, D, A, E, B, then F♯ at the bottom, and around through the flats back to F. The inner ring
+holds their relative minors, so A minor sits under C major, E minor under G major, and so on. The wedges are colored by
+key signature: cyan for the flat keys on the left, through royal blue at C, to indigo for the sharp keys on the right (the
+<a class="reference external" href="#colors">colors</a> can be changed). The disc in the middle, which is the color of the window, shows the staff.</p>
+<p>Every question lights one cell and leaves its answer blank. There are three kinds, and the exercise settings (the sliders
+button) switch each on or off:</p>
+<ul class="simple">
+<li><p><strong>Relative major.</strong> A minor key is shown, such as “F♯ minor”, with the wedge of the outer ring beside it blank. Press the
+name of its relative major, which has the same key signature: A, in this case.</p></li>
+<li><p><strong>Relative minor.</strong> A major key is shown and the inner wedge beside it is blank. Press the name of its relative minor.</p></li>
+<li><p><strong>Roman numerals.</strong> A key is in the middle with its staff and signature, and the six chords of the key that fit on the
+circle are lit. One of them is outlined. Press its Roman numeral.</p></li>
+</ul>
+<p>All of them are on buttons at the bottom, laid out like the Keyboard Note Identification screen: the letters in the middle row,
+the sharps above them and the flats below. For the minor keys the buttons read Am, F♯m and so on. You can also type: a letter,
+<kbd>Shift</kbd> and a letter for a sharp, or <kbd>Ctrl</kbd> and a letter for a flat. The numerals are on <kbd>1</kbd> to <kbd>6</kbd>.</p>
+<section id="colors">
+<h3>Colors</h3>
+<p>The <strong>Colors</strong> row of the exercise settings (the sliders button) chooses how the circle is colored. Pick one of fourteen
+presets, or press <strong>Create your own…</strong> to make one.</p>
+<ul class="simple">
+<li><p><strong>Cyan to indigo</strong> is the default. Cyan runs through the flat keys, royal blue marks C and indigo the sharp keys, so a
+key’s color tells you how far it is from C.</p></li>
+<li><p><strong>Midnight, Deepening, Two blues, Checker and Glacier</strong> are other blues to go with this site. Glacier, like Paper, has pale
+wedges with dark names, for a light window.</p></li>
+<li><p><strong>Sharps and flats, Major and minor, Spectrum, After Scriabin, Ink, Ember, Color-blind safe and Paper</strong> are the other
+presets. Color-blind safe uses six hues from the Okabe and Ito palette.</p></li>
+</ul>
+<p>A scheme of your own is made in one of five ways: <strong>One color</strong>, <strong>Two rings</strong> (one color for the major keys and one for the
+minor), <strong>By key signature</strong> (a color for the flat keys, for C and for the sharp keys, blended between), <strong>Distance from C</strong>
+(a color for C and one for F♯, mirrored on both sides) and <strong>Around the circle</strong> (one color, turned a twelfth of the wheel
+for each step). The colors you choose are what a cell looks like when it is lit; the quiet cells are made from them. You can
+choose dark wedges with light names or light wedges with dark names, name the scheme, edit it later and delete it. Your schemes are saved with your other
+settings, up to 24 of them. The colors apply to every picture of the circle: the exercise, the lessons and the reference.
+Changing them keeps the question you are on.</p>
+</section>
+<section id="keys-with-two-names">
+<h3>Keys with two names</h3>
+<p>Three of the wedges have two names on the circle: B and C♭, F♯ and G♭, and D♭ and C♯, with their minors G♯m and A♭m, D♯m and
+E♭m, and B♭m and A♯m. For these you press <strong>both</strong> names, in either order. A right first name is marked and its button is
+switched off, the middle of the circle says “and its other name”, and nothing is scored until the second is pressed. A wrong
+button at any point counts as a miss, and you can carry on until both are found.</p>
+</section>
+<section id="roman-numerals-on-the-circle">
+<h3>Roman numerals on the circle</h3>
+<p>A key has seven chords, and the circle has room for six of them: its own wedge and the wedge on each side, on both rings. The
+<strong>outer</strong> ring holds the <strong>major</strong> chords, so it gets the capitals: I (the key itself), IV (one step counterclockwise) and V
+(one step clockwise). The <strong>inner</strong> ring holds the <strong>minor</strong> chords, so it gets the small letters: vi (under the key), ii (under
+IV) and iii (under V). In C major that is I = C, ii = Dm, iii = Em, IV = F, V = G and vi = Am.</p>
+<p>If you have seen pictures of this with two sets of numerals, one outer and one inner, they are one set shared between the two
+rings. The seventh chord, vii° (B diminished in C major), is diminished and does not sit on the circle, so it is never asked.
+A chord is spelled as its key spells it: in F♯ major the V is C♯, although that wedge is labeled D♭ with C♯ as its other name.</p>
+</section>
+<section id="right-and-wrong-answers">
+<h3>Right and wrong answers</h3>
+<ul class="simple">
+<li><p><strong>A right answer</strong> brightens the cell and writes its name in it, and puts the key’s staff and signature in the middle: “A major,
+3 sharps”. For a numeral question all six numerals appear.</p></li>
+<li><p><strong>The book button</strong> (experimental), beside the help button, opens a reference in a pane on the right: a short description and
+an interactive circle with every key named. Click a key on either ring, or move with the arrow keys (Left and Right go around,
+Up and Down switch rings, Escape or a click in the middle starts again). The circle lights that key’s six chords, shows its
+key signature in the middle, and the text underneath explains it: its sharps or flats, which key it follows, its relative
+minor or major, and its chords. It shares the right-hand side with the settings, so opening one closes the other. It is a
+study aid, so it also gives away the answers. A button at the top of the pane opens the circle of fifths
+<a class="reference external" href="../lessons/">lesson</a>.</p></li>
+<li><p><strong>A wrong answer</strong> flashes the cell in the same red as the wrong button, striped so that it still shows on the red wedge at
+the top. The button is switched off and you can try again.
+Only your first try counts toward your score.</p></li>
+</ul>
+<p>This exercise makes no sound.</p>
+</section>
+</section>
+<section id="chord-quality">
+<h2>Chord Quality</h2>
+<p>A chord is drawn in root position on a treble or bass staff. Press its type:</p>
+<p>major, minor, diminished, augmented, major 7th, dominant 7th, minor 7th, half-diminished 7th and diminished 7th.</p>
+<p>Check the size of the intervals stacked above the lowest note to tell the types apart.</p>
+</section>
+<section id="arpeggio-identification">
+<h2>Arpeggio Identification</h2>
+<p>A chord is drawn one note at a time, rising from its lowest note to the same note an octave higher. Press its type, then
+press its inversion. The answer counts once you have chosen both, in either order, and a wrong pair is cleared so you can
+try again.</p>
+<p>The inversion is which chord tone is lowest:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Inversion</p></th>
+<th class="head"><p>Lowest note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Root position</p></td>
+<td><p>the root</p></td>
+</tr>
+<tr class="row-odd"><td><p>1st inversion</p></td>
+<td><p>the third</p></td>
+</tr>
+<tr class="row-even"><td><p>2nd inversion</p></td>
+<td><p>the fifth</p></td>
+</tr>
+<tr class="row-odd"><td><p>3rd inversion</p></td>
+<td><p>the seventh (seventh chords only)</p></td>
+</tr>
+</tbody>
+</table>
+<p>By default Alto asks major, minor, dominant 7th and diminished 7th arpeggios on the treble and bass staves, in every
+inversion. In the exercise settings you can choose:</p>
+<ul class="simple">
+<li><p><strong>Clefs:</strong> any of the seven clefs, from treble to baritone.</p></li>
+<li><p><strong>Arpeggio types:</strong> any of major, minor, diminished and augmented triads, and dominant 7th, major 7th, minor 7th,
+half-diminished 7th and diminished 7th chords. The type buttons below the staff follow your choice.</p></li>
+<li><p><strong>Inversions:</strong> root position and the first three inversions. A triad has no 3rd inversion, so that choice only applies to seventh chords.</p></li>
+<li><p><strong>Key signatures:</strong> draw a key signature from the keys you pick. The arpeggio then only gets a sign where it differs
+from the signature, so a natural sign appears where the chord needs one.</p></li>
+</ul>
+<figure class="shot">
+  <img class="for-light" src="../assets/img/arpeggios.png" alt="Arpeggio Identification showing four notes rising on a staff, with a row of type buttons and a row of inversion buttons" loading="lazy">
+  <img class="for-dark" src="../assets/img/arpeggios-dark.png" alt="Arpeggio Identification showing four notes rising on a staff, with a row of type buttons and a row of inversion buttons" loading="lazy">
+  
+</figure></section>
+<section id="instrument-pack-exercises">
+<h2>Instrument pack exercises</h2>
+<p>Installed packs add exercises to the <strong>Instruments</strong> category. The example viola pack includes <strong>Viola Note Identification</strong> and <strong>Parts of the Viola</strong>. The example harpsichord pack adds <strong>Harpsichord Interval Identification</strong> and <strong>Parts of the Harpsichord</strong>. Download an example and follow its tutorial to create exercises with your own artwork and recordings. <a class="reference external" href="../plugins/viola/">Viola plugin tutorial</a> · <a class="reference external" href="../plugins/harpsichord/">Harpsichord plugin tutorial</a></p>
+</section>
+</section>
+
+
+          
+          <nav class="page-nav" aria-label="Previous and next pages">
+            
+            <a class="prev" rel="prev" href="../getting-started/">
+              <span class="np-label">Previous</span>
+              <span class="np-title">
+                <svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-prev"/></svg>
+                Getting started
+                
+              </span>
+            </a>
+            
+            <a class="next" rel="next" href="../practice/">
+              <span class="np-label">Next</span>
+              <span class="np-title">
+                
+                Spaced Repetition
+                <svg class="i" width="18" height="18" aria-hidden="true"><use href="#i-next"/></svg>
+              </span>
+            </a>
+            
+          </nav>
+          
+        </article>
+        <nav class="toc" id="toc" aria-label="On this page" hidden></nav>
+      </div>
+      <footer>Alto is open source under the <a href="https://github.com/altosaurus/alto/blob/main/LICENSE">MIT License</a>.</footer>
+    </main>
+  </div>
+  <script>
+    // Sphinx wraps text matches in new elements. Keep diagram labels,
+    // accessible SVG descriptions, formulas, and embedded data intact.
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".body :is(svg *, math *, script, style)").forEach(node => node.classList.add("nohighlight"));
+    });
+  </script>
+  
+  <script src="../_static/nav.js" defer></script>
+  <script src="../_static/copy-code.js" defer></script>
+  <script src="../_static/toc.js" defer></script>
+
+  </body>
+</html>

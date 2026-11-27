@@ -1,0 +1,16 @@
+[
+  {
+    "id": "viola",
+    "code": "71",
+    "name": "Viola Instrument Pack",
+    "description": "Practice naming notes on the viola fingerboard and identifying the parts of the instrument. Two lessons and 49 bowed viola recordings let you hear each semitone from C3 to C7.",
+    "repository": "https://github.com/altosaurus/viola-plugin-tutorial"
+  },
+  {
+    "id": "harpsichord",
+    "code": "73",
+    "name": "Harpsichord Instrument Pack",
+    "description": "Train your ear and your eye on a Flemish double harpsichord: name the interval between two highlighted keys, name the instrument's parts, and work through two lessons with glossary entries.",
+    "repository": "https://github.com/altosaurus/harpsichord-plugin-tutorial"
+  }
+]
