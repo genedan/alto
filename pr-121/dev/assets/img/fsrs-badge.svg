@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="71" height="20" viewBox="0 0 71 20" role="img" aria-labelledby="title">
+  <title id="title">FSRS 6</title>
+  <defs>
+    <clipPath id="corners"><rect width="71" height="20" rx="3"/></clipPath>
+    <linearGradient id="sheen" x2="0" y2="1">
+      <stop stop-color="#fff" stop-opacity=".1"/>
+      <stop offset="1" stop-opacity=".1"/>
+    </linearGradient>
+  </defs>
+  <g clip-path="url(#corners)">
+    <rect width="54" height="20" fill="#555"/>
+    <rect x="54" width="17" height="20" fill="#5154a5"/>
+    <rect width="71" height="20" fill="url(#sheen)"/>
+  </g>
+  <!-- Open Spaced Repetition logo from https://github.com/open-spaced-repetition/py-fsrs/blob/main/osr_logo.png -->
+  <image x="5" y="2" width="16" height="16" xlink:href="data:image/png;base64,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"/>
+  <g fill="white" font-family="Verdana, Geneva, DejaVu Sans, sans-serif" font-size="11" text-anchor="middle">
+    <text x="37" y="14">FSRS</text>
+    <text x="62.5" y="14">6</text>
+  </g>
+</svg>
