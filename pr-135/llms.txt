@@ -1,0 +1,13 @@
+# Alto
+
+> Alto is a free, open-source desktop music theory trainer for Linux and Windows. It drills reading notes on any clef, naming intervals, chords and arpeggios, spelling scales, key signatures and keyboard keys, and uses spaced repetition to ask again, sooner, the questions you get wrong or answer slowly.
+
+The links below are the latest release's docs. Older releases are under their version, such as /v0.0.0/, and /dev/ is the development version.
+
+- [Home](https://genedan.github.io/alto/pr-135/): what Alto is and what you can practice
+- [Getting started](https://genedan.github.io/alto/pr-135/getting-started/): download, install, update and uninstall
+- [Exercises](https://genedan.github.io/alto/pr-135/exercises/): every exercise and its options
+- [Spaced Repetition](https://genedan.github.io/alto/pr-135/practice/): how Alto schedules practice questions
+- [Statistics](https://genedan.github.io/alto/pr-135/statistics/): the progress charts
+- [Releases](https://github.com/altosaurus/alto/releases): downloads and the changelog
+- [Source code](https://github.com/altosaurus/alto): MIT licensed, written in Python with PySide6
