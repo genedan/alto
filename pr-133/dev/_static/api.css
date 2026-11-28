@@ -1,0 +1,21 @@
+/* Sphinx Python signatures and NumPy field tables. */
+dl.py { margin: 1rem 0 2rem; }
+dl.py > dd { margin: 0; }
+dl.py > dt.sig {
+  margin: 0 0 .75rem;
+  padding: .8rem 1rem;
+  border-radius: 10px;
+  background: var(--code-bg);
+  font: .9rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+  scroll-margin-top: 7rem;
+}
+.sig-name { font-weight: 700; }
+.sig-param { font-style: normal; }
+.sig .reference.external { white-space: nowrap; }
+dl.py caption, dl.py .rubric {
+  margin: 1rem 0 .5rem;
+  text-align: left;
+  font-weight: 700;
+}
+.highlight { background: transparent; }
